@@ -1,5 +1,5 @@
 # System.Text.Kdl
-C# support for [KDL](kdl.dev) in the style of the [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to) library.
+C# support for [KDL](https://kdl.dev) in the style of the [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to) library.
 
 > This is a goal / passion project for [me](https://github.com/el2iot2) personally. I will be using it
 > as a self-directed exercise to expand my skills with several key SDKs in modern
