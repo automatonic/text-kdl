@@ -1,0 +1,18 @@
+{
+    "tools": {
+      "dotnet": "9.0.101",
+      "runtimes": {
+        "dotnet": [
+          "9.0.0"
+        ]
+      },
+      "vs": {
+        "version": "17.8.0"
+      }
+    },
+    "sdk": {
+      "version": "9.0.101",
+      "allowPrerelease": true,
+      "rollForward": "latestFeature"
+    }
+  }

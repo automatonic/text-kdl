@@ -1,0 +1,99 @@
+namespace System
+{
+    /// <summary>
+    /// String resources, but bypassing the dotnet runtime tasks and just using const strings
+    /// </summary>
+    internal static partial class SR
+    {
+        public const string Argument_InvalidOffLen = "Argument_InvalidOffLen";
+        public const string ArgumentOutOfRange_Generic_MustBeNonNegative = "ArgumentOutOfRange_Generic_MustBeNonNegative";
+        public const string ArrayDepthTooLarge = "ArrayDepthTooLarge";
+        public const string ArrayIndexNegative = "ArrayIndexNegative";
+        public const string ArrayTooSmall = "ArrayTooSmall";
+        public const string BufferMaximumSizeExceeded = "BufferMaximumSizeExceeded";
+        public const string CallFlushToAvoidDataLoss = "CallFlushToAvoidDataLoss";
+        public const string CannotDecodeInvalidBase64 = "CannotDecodeInvalidBase64";
+        public const string CannotEncodeInvalidUTF16 = "CannotEncodeInvalidUTF16";
+        public const string CannotEncodeInvalidUTF8 = "CannotEncodeInvalidUTF8";
+        public const string CannotReadIncompleteUTF16 = "CannotReadIncompleteUTF16";
+        public const string CannotReadInvalidUTF16 = "CannotReadInvalidUTF16";
+        public const string CannotSkip = "CannotSkip";
+        public const string CannotStartObjectArrayAfterPrimitiveOrClose = "CannotStartObjectArrayAfterPrimitiveOrClose";
+        public const string CannotStartObjectArrayWithoutProperty = "CannotStartObjectArrayWithoutProperty";
+        public const string CannotTranscodeInvalidUtf16 = "CannotTranscodeInvalidUtf16";
+        public const string CannotTranscodeInvalidUtf8 = "CannotTranscodeInvalidUtf8";
+        public const string CannotWriteCommentWithEmbeddedDelimiter = "CannotWriteCommentWithEmbeddedDelimiter";
+        public const string CannotWriteEndAfterProperty = "CannotWriteEndAfterProperty";
+        public const string CannotWritePropertyAfterProperty = "CannotWritePropertyAfterProperty";
+        public const string CannotWritePropertyWithinArray = "CannotWritePropertyWithinArray";
+        public const string CannotWriteValueAfterPrimitiveOrClose = "CannotWriteValueAfterPrimitiveOrClose";
+        public const string CannotWriteValueWithinObject = "CannotWriteValueWithinObject";
+        public const string CommentHandlingMustBeValid = "CommentHandlingMustBeValid";
+        public const string DepthTooLarge = "DepthTooLarge";
+        public const string DestinationTooShort = "DestinationTooShort";
+        public const string EmptyKdlIsInvalid = "EmptyKdlIsInvalid";
+        public const string EndOfCommentNotFound = "EndOfCommentNotFound";
+        public const string EndOfStringNotFound = "EndOfStringNotFound";
+        public const string ExpectedEndAfterSingleKdl = "ExpectedEndAfterSingleKdl";
+        public const string ExpectedEndOfDigitNotFound = "ExpectedEndOfDigitNotFound";
+        public const string ExpectedFalse = "ExpectedFalse";
+        public const string ExpectedKdlTokens = "ExpectedKdlTokens";
+        public const string ExpectedNextDigitEValueNotFound = "ExpectedNextDigitEValueNotFound";
+        public const string ExpectedNull = "ExpectedNull";
+        public const string ExpectedOneCompleteToken = "ExpectedOneCompleteToken";
+        public const string ExpectedSeparatorAfterPropertyNameNotFound = "ExpectedSeparatorAfterPropertyNameNotFound";
+        public const string ExpectedStartOfPropertyNotFound = "ExpectedStartOfPropertyNotFound";
+        public const string ExpectedStartOfPropertyOrValueAfterComment = "ExpectedStartOfPropertyOrValueAfterComment";
+        public const string ExpectedStartOfPropertyOrValueNotFound = "ExpectedStartOfPropertyOrValueNotFound";
+        public const string ExpectedStartOfValueNotFound = "ExpectedStartOfValueNotFound";
+        public const string ExpectedTrue = "ExpectedTrue";
+        public const string ExpectedValueAfterPropertyNameNotFound = "ExpectedValueAfterPropertyNameNotFound";
+        public const string FailedToGetLargerSpan = "FailedToGetLargerSpan";
+        public const string FormatByte = "FormatByte";
+        public const string FormatDecimal = "FormatDecimal";
+        public const string FormatDouble = "FormatDouble";
+        public const string FormatHalf = "FormatHalf";
+        public const string FormatInt128 = "FormatInt128";
+        public const string FormatInt16 = "FormatInt16";
+        public const string FormatInt32 = "FormatInt32";
+        public const string FormatInt64 = "FormatInt64";
+        public const string FormatSByte = "FormatSByte";
+        public const string FormatSingle = "FormatSingle";
+        public const string FormatUInt128 = "FormatUInt128";
+        public const string FormatUInt16 = "FormatUInt16";
+        public const string FormatUInt32 = "FormatUInt32";
+        public const string FormatUInt64 = "FormatUInt64";
+        public const string FoundInvalidCharacter = "FoundInvalidCharacter";
+        public const string InvalidCast = "InvalidCast";
+        public const string InvalidCharacterAfterEscapeWithinString = "InvalidCharacterAfterEscapeWithinString";
+        public const string InvalidCharacterAtStartOfComment = "InvalidCharacterAtStartOfComment";
+        public const string InvalidCharacterWithinString = "InvalidCharacterWithinString";
+        public const string InvalidComparison = "InvalidComparison";
+        public const string InvalidEndOfKdlNonPrimitive = "InvalidEndOfKdlNonPrimitive";
+        public const string InvalidHexCharacterWithinString = "InvalidHexCharacterWithinString";
+        public const string InvalidIndentCharacter = "InvalidIndentCharacter";
+        public const string InvalidIndentSize = "InvalidIndentSize";
+        public const string InvalidLeadingZeroInNumber = "InvalidLeadingZeroInNumber";
+        public const string InvalidNewLine = "InvalidNewLine";
+        public const string KdlElementDeepEqualsInsufficientExecutionStack = "KdlElementDeepEqualsInsufficientExecutionStack";
+        public const string KdlElementHasWrongType = "KdlElementHasWrongType";
+        public const string KdlNumberExponentTooLarge = "KdlNumberExponentTooLarge";
+        public const string MaxDepthMustBePositive = "MaxDepthMustBePositive";
+        public const string MismatchedObjectArray = "MismatchedObjectArray";
+        public const string NotEnoughData = "NotEnoughData";
+        public const string ObjectDepthTooLarge = "ObjectDepthTooLarge";
+        public const string PropertyNameTooLarge = "PropertyNameTooLarge";
+        public const string RequiredDigitNotFoundAfterDecimal = "RequiredDigitNotFoundAfterDecimal";
+        public const string RequiredDigitNotFoundAfterSign = "RequiredDigitNotFoundAfterSign";
+        public const string RequiredDigitNotFoundEndOfData = "RequiredDigitNotFoundEndOfData";
+        public const string SerializerConverterFactoryInvalidArgument = "SerializerConverterFactoryInvalidArgument";
+        public const string SpecialNumberValuesNotSupported = "SpecialNumberValuesNotSupported";
+        public const string TrailingCommaNotAllowedBeforeArrayEnd = "TrailingCommaNotAllowedBeforeArrayEnd";
+        public const string TrailingCommaNotAllowedBeforeObjectEnd = "TrailingCommaNotAllowedBeforeObjectEnd";
+        public const string UnexpectedEndOfDataWhileReadingComment = "UnexpectedEndOfDataWhileReadingComment";
+        public const string UnexpectedEndOfLineSeparator = "UnexpectedEndOfLineSeparator";
+        public const string UnsupportedFormat = "UnsupportedFormat";
+        public const string ValueTooLarge = "ValueTooLarge";
+        public const string ZeroDepthAtEnd = "ZeroDepthAtEnd";
+    }
+}
