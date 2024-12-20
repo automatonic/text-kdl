@@ -42,7 +42,7 @@ namespace System.Text.Kdl.Serialization.Metadata
 
             if (!propertyInfo.IsProperty && propertyInfo.IsVirtual)
             {
-                throw new InvalidOperationException(SR.Format(SR.FieldCannotBeVirtual, nameof(propertyInfo.IsProperty), nameof(propertyInfo.IsVirtual)));
+                throw new InvalidOperationException(string.Format(SR.FieldCannotBeVirtual, nameof(propertyInfo.IsProperty), nameof(propertyInfo.IsVirtual)));
             }
 
             return CreatePropertyInfoCore(propertyInfo, options);

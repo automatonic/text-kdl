@@ -28,7 +28,7 @@ namespace System.Text.Kdl
         ///
         /// The <see cref="KdlWriterOptions.Indented"/> and <see cref="KdlWriterOptions.Encoder"/> values for the writer instance are not applied when using this method.
         /// </remarks>
-        public void WriteRawValue([StringSyntax(StringSyntaxAttribute.Kdl)] string kdl, bool skipInputValidation = false)
+        public void WriteRawValue([StringSyntax(StringSyntaxAttribute.Json)] string kdl, bool skipInputValidation = false)
         {
             if (!_options.SkipValidation)
             {
@@ -64,7 +64,7 @@ namespace System.Text.Kdl
         ///
         /// The <see cref="KdlWriterOptions.Indented"/> and <see cref="KdlWriterOptions.Encoder"/> values for the writer instance are not applied when using this method.
         /// </remarks>
-        public void WriteRawValue([StringSyntax(StringSyntaxAttribute.Kdl)] ReadOnlySpan<char> kdl, bool skipInputValidation = false)
+        public void WriteRawValue([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, bool skipInputValidation = false)
         {
             if (!_options.SkipValidation)
             {

@@ -139,6 +139,7 @@ namespace System
         public const string NodeCycleDetected = "NodeCycleDetected";
         public const string NodeDuplicateKey = "NodeDuplicateKey";
         public const string NodeElementCannotBeObjectOrArray = "NodeElementCannotBeObjectOrArray";
+        public const string NodeElementWrongType = "NodeElementWrongType";
         public const string NodeKdlObjectCustomConverterNotAllowedOnExtensionProperty = "NodeKdlObjectCustomConverterNotAllowedOnExtensionProperty";
         public const string NodeParentWrongType = "NodeParentWrongType";
         public const string NodeUnableToConvert = "NodeUnableToConvert";

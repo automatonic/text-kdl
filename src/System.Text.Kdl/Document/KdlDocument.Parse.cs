@@ -260,7 +260,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlDocument Parse([StringSyntax(StringSyntaxAttribute.Kdl)] ReadOnlyMemory<char> kdl, KdlDocumentOptions options = default)
+        public static KdlDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlyMemory<char> kdl, KdlDocumentOptions options = default)
         {
             ReadOnlySpan<char> jsonChars = kdl.Span;
             int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(jsonChars);
@@ -324,7 +324,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlDocument Parse([StringSyntax(StringSyntaxAttribute.Kdl)] string kdl, KdlDocumentOptions options = default)
+        public static KdlDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlDocumentOptions options = default)
         {
             if (kdl is null)
             {

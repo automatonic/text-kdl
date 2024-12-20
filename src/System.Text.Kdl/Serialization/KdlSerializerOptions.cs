@@ -190,23 +190,6 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Binds current <see cref="KdlSerializerOptions"/> instance with a new instance of the specified <see cref="Serialization.KdlSerializerContext"/> type.
-        /// </summary>
-        /// <typeparam name="TContext">The generic definition of the specified context type.</typeparam>
-        /// <remarks>
-        /// When serializing and deserializing types using the options
-        /// instance, metadata for the types will be fetched from the context instance.
-        /// </remarks>
-        [Obsolete(Obsoletions.KdlSerializerOptionsAddContextMessage, DiagnosticId = Obsoletions.KdlSerializerOptionsAddContextDiagId, UrlFormat = Obsoletions.SharedUrlFormat)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void AddContext<TContext>() where TContext : KdlSerializerContext, new()
-        {
-            VerifyMutable();
-            TContext context = new();
-            context.AssociateWithOptions(this);
-        }
-
-        /// <summary>
         /// Gets or sets the <see cref="KdlTypeInfo"/> contract resolver used by this instance.
         /// </summary>
         /// <exception cref="InvalidOperationException">
@@ -364,35 +347,6 @@ namespace System.Text.Kdl
             {
                 VerifyMutable();
                 _dictionaryKeyPolicy = value;
-            }
-        }
-
-        /// <summary>
-        /// Determines whether null values are ignored during serialization and deserialization.
-        /// The default value is false.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if this property is set after serialization or deserialization has occurred.
-        /// or <see cref="DefaultIgnoreCondition"/> has been set to a non-default value. These properties cannot be used together.
-        /// </exception>
-        [Obsolete(Obsoletions.KdlSerializerOptionsIgnoreNullValuesMessage, DiagnosticId = Obsoletions.KdlSerializerOptionsIgnoreNullValuesDiagId, UrlFormat = Obsoletions.SharedUrlFormat)]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool IgnoreNullValues
-        {
-            get
-            {
-                return _ignoreNullValues;
-            }
-            set
-            {
-                VerifyMutable();
-
-                if (value && _defaultIgnoreCondition != KdlIgnoreCondition.Never)
-                {
-                    throw new InvalidOperationException(SR.DefaultIgnoreConditionAlreadySpecified);
-                }
-
-                _ignoreNullValues = value;
             }
         }
 

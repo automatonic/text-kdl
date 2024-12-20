@@ -330,7 +330,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             KdlConverter<T>? typedConverter = converter as KdlConverter<T>;
             if (typedConverter == null)
             {
-                throw new InvalidOperationException(SR.Format(SR.SerializationConverterNotCompatible, typedConverter, typeof(T)));
+                throw new InvalidOperationException(string.Format(SR.SerializationConverterNotCompatible, typedConverter, typeof(T)));
             }
 
             return typedConverter;

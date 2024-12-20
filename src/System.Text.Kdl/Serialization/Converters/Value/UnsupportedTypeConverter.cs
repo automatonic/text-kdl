@@ -9,7 +9,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
         public UnsupportedTypeConverter(string? errorMessage = null) => _errorMessage = errorMessage;
 
-        public string ErrorMessage => _errorMessage ?? SR.Format(SR.SerializeTypeInstanceNotSupported, typeof(T).FullName);
+        public string ErrorMessage => _errorMessage ?? string.Format(SR.SerializeTypeInstanceNotSupported, typeof(T).FullName);
 
         public override T Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options) =>
             throw new NotSupportedException(ErrorMessage);

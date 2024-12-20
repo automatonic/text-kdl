@@ -65,7 +65,7 @@ namespace System.Text.Kdl.Nodes
         ///   <paramref name="kdl"/> does not represent a valid single KDL value.
         /// </exception>
         public static KdlNode? Parse(
-            [StringSyntax(StringSyntaxAttribute.Kdl)] string kdl,
+            [StringSyntax(StringSyntaxAttribute.Json)] string kdl,
             KdlNodeOptions? nodeOptions = null,
             KdlDocumentOptions documentOptions = default(KdlDocumentOptions))
         {

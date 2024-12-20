@@ -41,7 +41,7 @@ namespace System.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Kdl)] string kdl, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlSerializerOptions? options = null)
         {
             if (kdl is null)
             {
@@ -78,7 +78,7 @@ namespace System.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Kdl)] ReadOnlySpan<char> kdl, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, KdlSerializerOptions? options = null)
         {
             KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
             return ReadFromSpan(kdl, jsonTypeInfo);
@@ -113,7 +113,7 @@ namespace System.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Kdl)] string kdl, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] string kdl, Type returnType, KdlSerializerOptions? options = null)
         {
             if (kdl is null)
             {
@@ -157,7 +157,7 @@ namespace System.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Kdl)] ReadOnlySpan<char> kdl, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, Type returnType, KdlSerializerOptions? options = null)
         {
             if (returnType is null)
             {
@@ -197,7 +197,7 @@ namespace System.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Kdl)] string kdl, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlTypeInfo<TValue> jsonTypeInfo)
         {
             if (kdl is null)
             {
@@ -239,7 +239,7 @@ namespace System.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Kdl)] ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> jsonTypeInfo)
         {
             if (jsonTypeInfo is null)
             {
@@ -272,7 +272,7 @@ namespace System.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Kdl)] string kdl, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlTypeInfo jsonTypeInfo)
         {
             if (kdl is null)
             {
@@ -305,7 +305,7 @@ namespace System.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Kdl)] ReadOnlySpan<char> kdl, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, KdlTypeInfo jsonTypeInfo)
         {
             if (jsonTypeInfo is null)
             {
@@ -351,7 +351,7 @@ namespace System.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Kdl)] string kdl, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] string kdl, Type returnType, KdlSerializerContext context)
         {
             if (kdl is null)
             {
@@ -405,7 +405,7 @@ namespace System.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Kdl)] ReadOnlySpan<char> kdl, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, Type returnType, KdlSerializerContext context)
         {
             if (returnType is null)
             {
