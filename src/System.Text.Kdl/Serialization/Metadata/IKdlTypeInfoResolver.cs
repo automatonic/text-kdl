@@ -1,7 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-namespace System.Text.Kdl.Serialization.Metadata
+﻿namespace System.Text.Kdl.Serialization.Metadata
 {
     /// <summary>
     /// Used to resolve the KDL serialization contract for requested types.

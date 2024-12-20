@@ -1,7 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-namespace System.Text.Kdl.Serialization
+﻿namespace System.Text.Kdl.Serialization
 {
     /// <summary>
     /// Specifies the property order that is present in the KDL when serializing. Lower values are serialized first.

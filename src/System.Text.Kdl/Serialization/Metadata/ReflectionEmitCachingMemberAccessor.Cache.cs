@@ -1,7 +1,4 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-#if NETFRAMEWORK || NET
+﻿#if NETFRAMEWORK || NET
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
