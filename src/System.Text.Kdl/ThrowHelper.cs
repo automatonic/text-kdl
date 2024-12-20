@@ -318,13 +318,13 @@ namespace System.Text.Kdl
             return GetInvalidOperationException(string.Format(SR.InvalidComparison, tokenType));
         }
 
-        // [DoesNotReturn]
-        // internal static void ThrowKdlElementWrongTypeException(
-        //     KdlTokenType expectedType,
-        //     KdlTokenType actualType)
-        // {
-        //     throw GetKdlElementWrongTypeException(expectedType.ToValueKind(), actualType.ToValueKind());
-        // }
+        [DoesNotReturn]
+        internal static void ThrowKdlElementWrongTypeException(
+            KdlTokenType expectedType,
+            KdlTokenType actualType)
+        {
+            throw GetKdlElementWrongTypeException(expectedType.ToValueKind(), actualType.ToValueKind());
+        }
 
         internal static InvalidOperationException GetKdlElementWrongTypeException(
             KdlValueKind expectedType,
@@ -717,17 +717,17 @@ namespace System.Text.Kdl
             throw GetInvalidOperationException("char", tokenType);
         }
 
-        // [DoesNotReturn]
-        // public static void ThrowObjectDisposedException_KdlWriter()
-        // {
-        //     throw new ObjectDisposedException(nameof(KdlWriter));
-        // }
+        [DoesNotReturn]
+        public static void ThrowObjectDisposedException_KdlWriter()
+        {
+            throw new ObjectDisposedException(nameof(KdlWriter));
+        }
 
-        // [DoesNotReturn]
-        // public static void ThrowObjectDisposedException_KdlDocument()
-        // {
-        //     throw new ObjectDisposedException(nameof(KdlDocument));
-        // }
+        [DoesNotReturn]
+        public static void ThrowObjectDisposedException_KdlDocument()
+        {
+            throw new ObjectDisposedException(nameof(KdlDocument));
+        }
 
         [DoesNotReturn]
         public static void ThrowInsufficientExecutionStackException_KdlElementDeepEqualsInsufficientExecutionStack()

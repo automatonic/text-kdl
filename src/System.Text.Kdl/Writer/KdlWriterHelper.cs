@@ -147,7 +147,7 @@ namespace System.Text.Kdl
 
         internal static void ValidateNumber(ReadOnlySpan<byte> utf8FormattedNumber)
         {
-            // This is a simplified version of the number reader from Utf8KdlReader.TryGetNumber,
+            // This is a simplified version of the number reader from KdlReader.TryGetNumber,
             // because it doesn't need to deal with "NeedsMoreData", or remembering the format.
             //
             // The Debug.Asserts in this method should change to validated ArgumentExceptions if/when

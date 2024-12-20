@@ -522,10 +522,10 @@ namespace System.Text.Kdl
                         destination[written++] = KdlConstants.FormFeed;
                         break;
                     default:
-                        Debug.Assert(source[idx] == 'u', "invalid escape sequences must have already been caught by Utf8KdlReader.Read()");
+                        Debug.Assert(source[idx] == 'u', "invalid escape sequences must have already been caught by KdlReader.Read()");
 
                         // The source is known to be valid KDL, and hence if we see a \u, it is guaranteed to have 4 hex digits following it
-                        // Otherwise, the Utf8KdlReader would have already thrown an exception.
+                        // Otherwise, the KdlReader would have already thrown an exception.
                         Debug.Assert(source.Length >= idx + 5);
 
                         bool result = Utf8Parser.TryParse(source.Slice(idx + 1, 4), out int scalar, out int bytesConsumed, 'x');
@@ -550,7 +550,7 @@ namespace System.Text.Kdl
                             }
 
                             // The source is known to be valid KDL, and hence if we see a \u, it is guaranteed to have 4 hex digits following it
-                            // Otherwise, the Utf8KdlReader would have already thrown an exception.
+                            // Otherwise, the KdlReader would have already thrown an exception.
                             result = Utf8Parser.TryParse(source.Slice(idx + 3, 4), out int lowSurrogate, out bytesConsumed, 'x');
                             Debug.Assert(result);
                             Debug.Assert(bytesConsumed == 4);
