@@ -88,6 +88,7 @@ namespace System
         public const string FormatUInt32 = "FormatUInt32";
         public const string FormatUInt64 = "FormatUInt64";
         public const string FoundInvalidCharacter = "FoundInvalidCharacter";
+        public const string FSharpDiscriminatedUnionsNotSupported = "FSharpDiscriminatedUnionsNotSupported";
         public const string IgnoreConditionOnValueTypeInvalid = "IgnoreConditionOnValueTypeInvalid";
         public const string InvalidCast = "InvalidCast";
         public const string InvalidCharacterAfterEscapeWithinString = "InvalidCharacterAfterEscapeWithinString";
@@ -146,6 +147,7 @@ namespace System
         public const string NodeUnableToConvertElement = "NodeUnableToConvertElement";
         public const string NodeValueNotAllowed = "NodeValueNotAllowed";
         public const string NodeWrongType = "NodeWrongType";
+        public const string FieldCannotBeVirtual = "FieldCannotBeVirtual";
         public const string NoMetadataForType = "NoMetadataForType";
         public const string NoMetadataForTypeProperties = "NoMetadataForTypeProperties";
         public const string NotEnoughData = "NotEnoughData";
@@ -190,6 +192,9 @@ namespace System
         public const string SerializationDataExtensionPropertyInvalid = "SerializationDataExtensionPropertyInvalid";
         public const string SerializationDuplicateAttribute = "SerializationDuplicateAttribute";
         public const string SerializationDuplicateTypeAttribute = "SerializationDuplicateTypeAttribute";
+        public const string SerializationInvalidBufferSize = "SerializationInvalidBufferSize";
+        public const string DefaultIgnoreConditionInvalid = "DefaultIgnoreConditionInvalid";
+        public const string DefaultIgnoreConditionAlreadySpecified = "DefaultIgnoreConditionAlreadySpecified";
         public const string SerializationNotSupportedParentType = "SerializationNotSupportedParentType";
         public const string SerializationNotSupportedType = "SerializationNotSupportedType";
         public const string SerializerContextOptionsReadOnly = "SerializerContextOptionsReadOnly";
@@ -201,6 +206,7 @@ namespace System
         public const string SerializerOptionsReadOnly = "SerializerOptionsReadOnly";
         public const string SerializerPropertyNameConflict = "SerializerPropertyNameConflict";
         public const string SerializerPropertyNameNull = "SerializerPropertyNameNull";
+        public const string SerializeTypeInstanceNotSupported = "SerializeTypeInstanceNotSupported";
         public const string SerializeUnableToSerialize = "SerializeUnableToSerialize";
         public const string SpecialNumberValuesNotSupported = "SpecialNumberValuesNotSupported";
         public const string StreamNotWritable = "StreamNotWritable";

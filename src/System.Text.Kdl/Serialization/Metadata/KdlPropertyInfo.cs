@@ -496,9 +496,7 @@ namespace System.Text.Kdl.Serialization.Metadata
                 return;
             }
 
-#pragma warning disable SYSLIB0020 // KdlSerializerOptions.IgnoreNullValues is obsolete
-            if (Options.IgnoreNullValues)
-#pragma warning restore SYSLIB0020
+            if (Options.DefaultIgnoreCondition == KdlIgnoreCondition.Never)
             {
                 Debug.Assert(Options.DefaultIgnoreCondition == KdlIgnoreCondition.Never);
                 if (PropertyTypeCanBeNull)

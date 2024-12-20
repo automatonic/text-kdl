@@ -61,9 +61,6 @@ namespace System.Text.Kdl.Serialization
                 // AllowReadingFromString and Strict are fine since there's no action to take when writing.
                 !KdlHelpers.RequiresSpecialNumberHandlingOnWrite(options.NumberHandling) &&
                 options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Unspecified &&
-#pragma warning disable SYSLIB0020
-                !options.IgnoreNullValues && // This property is obsolete.
-#pragma warning restore SYSLIB0020
 
                 // Ensure options values are consistent with expected defaults.
                 options.DefaultIgnoreCondition == generatedSerializerOptions.DefaultIgnoreCondition &&
