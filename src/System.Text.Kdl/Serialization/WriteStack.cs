@@ -1,13 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Pipelines;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Text.Kdl.Serialization;
 using System.Text.Kdl.Serialization.Metadata;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Text.Kdl
 {
@@ -272,7 +269,7 @@ namespace System.Text.Kdl
         }
 
         public void AddCompletedAsyncDisposable(IAsyncDisposable asyncDisposable)
-            => (CompletedAsyncDisposables ??= new List<IAsyncDisposable>()).Add(asyncDisposable);
+            => (CompletedAsyncDisposables ??= []).Add(asyncDisposable);
 
         // Asynchronously dispose of any AsyncDisposables that have been scheduled for disposal
         public readonly async ValueTask DisposeCompletedAsyncDisposables()

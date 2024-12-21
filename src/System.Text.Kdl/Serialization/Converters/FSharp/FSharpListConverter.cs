@@ -1,21 +1,15 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Kdl.Serialization.Metadata;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
     // Converter for F# lists: https://fsharp.github.io/fsharp-core-docs/reference/fsharp-collections-list-1.html
-    internal sealed class FSharpListConverter<TList, TElement> : IEnumerableDefaultConverter<TList, TElement>
+    [method: RequiresUnreferencedCode(FSharpCoreReflectionProxy.FSharpCoreUnreferencedCodeMessage)]
+    [method: RequiresDynamicCode(FSharpCoreReflectionProxy.FSharpCoreUnreferencedCodeMessage)]    // Converter for F# lists: https://fsharp.github.io/fsharp-core-docs/reference/fsharp-collections-list-1.html
+    internal sealed class FSharpListConverter<TList, TElement>() : IEnumerableDefaultConverter<TList, TElement>
         where TList : IEnumerable<TElement>
     {
-        private readonly Func<IEnumerable<TElement>, TList> _listConstructor;
-
-        [RequiresUnreferencedCode(FSharpCoreReflectionProxy.FSharpCoreUnreferencedCodeMessage)]
-        [RequiresDynamicCode(FSharpCoreReflectionProxy.FSharpCoreUnreferencedCodeMessage)]
-        public FSharpListConverter()
-        {
-            _listConstructor = FSharpCoreReflectionProxy.Instance.CreateFSharpListConstructor<TList, TElement>();
-        }
+        private readonly Func<IEnumerable<TElement>, TList> _listConstructor = FSharpCoreReflectionProxy.Instance.CreateFSharpListConstructor<TList, TElement>();
 
         protected override void Add(in TElement value, ref ReadStack state)
         {

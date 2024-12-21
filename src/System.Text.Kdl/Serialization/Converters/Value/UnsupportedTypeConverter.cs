@@ -1,13 +1,10 @@
 using System.Text.Kdl.Schema;
-using System.Text.Kdl.Nodes;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
-    internal sealed class UnsupportedTypeConverter<T> : KdlConverter<T>
+    internal sealed class UnsupportedTypeConverter<T>(string? errorMessage = null) : KdlConverter<T>
     {
-        private readonly string? _errorMessage;
-
-        public UnsupportedTypeConverter(string? errorMessage = null) => _errorMessage = errorMessage;
+        private readonly string? _errorMessage = errorMessage;
 
         public string ErrorMessage => _errorMessage ?? string.Format(SR.SerializeTypeInstanceNotSupported, typeof(T).FullName);
 
@@ -18,6 +15,7 @@ namespace System.Text.Kdl.Serialization.Converters
             throw new NotSupportedException(ErrorMessage);
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
-            new KdlSchema { Comment = "Unsupported .NET type", Not = KdlSchema.CreateTrueSchema() };
+            new()
+            { Comment = "Unsupported .NET type", Not = KdlSchema.CreateTrueSchema() };
     }
 }

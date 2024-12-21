@@ -9,10 +9,7 @@ namespace System.Text.Kdl.Serialization.Converters
     {
         private protected override ConverterStrategy GetDefaultConverterStrategy() => ConverterStrategy.Object;
 
-        public ObjectConverter()
-        {
-            CanBePolymorphic = true;
-        }
+        public ObjectConverter() => CanBePolymorphic = true;
 
         public sealed override object ReadAsPropertyName(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {
@@ -66,14 +63,11 @@ namespace System.Text.Kdl.Serialization.Converters
     /// This is done to avoid rooting dependencies to KdlNode/KdlElement necessary to drive object deserialization.
     /// Source generator users need to explicitly declare support for object so that the derived converter gets used.
     /// </summary>
-    internal sealed class SlimObjectConverter : ObjectConverter
+    internal sealed class SlimObjectConverter(IKdlTypeInfoResolver originatingResolver) : ObjectConverter
     {
         // Keep track of the originating resolver so that the converter surfaces
         // an accurate error message whenever deserialization is attempted.
-        private readonly IKdlTypeInfoResolver _originatingResolver;
-
-        public SlimObjectConverter(IKdlTypeInfoResolver originatingResolver)
-            => _originatingResolver = originatingResolver;
+        private readonly IKdlTypeInfoResolver _originatingResolver = originatingResolver;
 
         public override object? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {
@@ -88,11 +82,9 @@ namespace System.Text.Kdl.Serialization.Converters
     /// </summary>
     internal sealed class DefaultObjectConverter : ObjectConverter
     {
-        public DefaultObjectConverter()
-        {
+        public DefaultObjectConverter() =>
             // KdlElement/KdlNode parsing does not support async; force read ahead for now.
             RequiresReadAhead = true;
-        }
 
         public override object? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {

@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Reflection.Metadata;
 using System.Text.Kdl;
 using System.Text.Kdl.Serialization.Metadata;

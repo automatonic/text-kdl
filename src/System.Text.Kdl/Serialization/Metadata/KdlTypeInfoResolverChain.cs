@@ -61,7 +61,9 @@
             }
 
             if (_list.Count > 0)
+            {
                 sb.Length -= 2;
+            }
 
             sb.Append(']');
             return sb.ToString();

@@ -1,7 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
-using System.Text.Kdl.Serialization.Metadata;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
@@ -56,24 +55,13 @@ namespace System.Text.Kdl.Serialization.Converters
 
         public static KdlNode? Create(KdlElement element, KdlNodeOptions? options)
         {
-            KdlNode? node;
-
-            switch (element.ValueKind)
+            KdlNode? node = element.ValueKind switch
             {
-                case KdlValueKind.Null:
-                    node = null;
-                    break;
-                case KdlValueKind.Object:
-                    node = new KdlObject(element, options);
-                    break;
-                case KdlValueKind.Array:
-                    node = new KdlArray(element, options);
-                    break;
-                default:
-                    node = new KdlValueOfElement(element, options);
-                    break;
-            }
-
+                KdlValueKind.Null => null,
+                KdlValueKind.Object => new KdlObject(element, options),
+                KdlValueKind.Array => new KdlArray(element, options),
+                _ => new KdlValueOfElement(element, options),
+            };
             return node;
         }
 

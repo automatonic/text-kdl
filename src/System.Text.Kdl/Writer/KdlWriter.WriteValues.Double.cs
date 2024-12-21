@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Buffers.Text;
 using System.Diagnostics;
-using System.Globalization;
 
 namespace System.Text.Kdl
 {
@@ -56,7 +55,7 @@ namespace System.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            bool result = TryFormatDouble(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = TryFormatDouble(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
         }
@@ -86,11 +85,11 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
-            bool result = TryFormatDouble(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = TryFormatDouble(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
         }
@@ -144,7 +143,7 @@ namespace System.Text.Kdl
             Span<byte> utf8Number = stackalloc byte[KdlConstants.MaximumFormatDoubleLength];
             bool result = TryFormatDouble(value, utf8Number, out int bytesWritten);
             Debug.Assert(result);
-            WriteNumberValueAsStringUnescaped(utf8Number.Slice(0, bytesWritten));
+            WriteNumberValueAsStringUnescaped(utf8Number[..bytesWritten]);
         }
 
         internal void WriteFloatingPointConstant(double value)

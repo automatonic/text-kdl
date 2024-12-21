@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -11,19 +10,17 @@ namespace System.Text.Kdl.Nodes
     /// It's safe to perform multiple concurrent read operations on a <see cref="KdlObject"/>,
     /// but issues can occur if the collection is modified while it's being read.
     /// </remarks>
+    /// <remarks>
+    ///   Initializes a new instance of the <see cref="KdlObject"/> class that is empty.
+    /// </remarks>
+    /// <param name="options">Options to control the behavior.</param>
     [DebuggerDisplay("KdlObject[{Count}]")]
     [DebuggerTypeProxy(typeof(DebugView))]
-    public sealed partial class KdlObject : KdlNode
+    public sealed partial class KdlObject(KdlNodeOptions? options = null) : KdlNode(options)
     {
         private KdlElement? _jsonElement;
 
         internal override KdlElement? UnderlyingElement => _jsonElement;
-
-        /// <summary>
-        ///   Initializes a new instance of the <see cref="KdlObject"/> class that is empty.
-        /// </summary>
-        /// <param name="options">Options to control the behavior.</param>
-        public KdlObject(KdlNodeOptions? options = null) : base(options) { }
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="KdlObject"/> class that contains the specified <paramref name="properties"/>.
@@ -295,21 +292,18 @@ namespace System.Text.Kdl.Nodes
         }
 
         [ExcludeFromCodeCoverage] // Justification = "Design-time"
-        private sealed class DebugView
+        private sealed class DebugView(KdlObject node)
         {
             [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-            private readonly KdlObject _node;
-
-            public DebugView(KdlObject node)
-            {
-                _node = node;
-            }
+            private readonly KdlObject _node = node;
 
             public string Kdl => _node.ToKdlString();
             public string Path => _node.GetPath();
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+#pragma warning disable IDE0051 // Remove unused private members
             private DebugViewProperty[] Items
+#pragma warning restore IDE0051 // Remove unused private members
             {
                 get
                 {
@@ -337,7 +331,7 @@ namespace System.Text.Kdl.Nodes
                 public string PropertyName;
 
                 [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-                public string Display
+                public readonly string Display
                 {
                     get
                     {

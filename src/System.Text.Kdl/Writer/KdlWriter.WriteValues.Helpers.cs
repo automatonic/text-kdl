@@ -15,7 +15,7 @@ namespace System.Text.Kdl
             {
                 if (_tokenType != KdlTokenType.PropertyName)
                 {
-                    Debug.Assert(_tokenType != KdlTokenType.None && _tokenType != KdlTokenType.StartArray);
+                    Debug.Assert(_tokenType is not KdlTokenType.None and not KdlTokenType.StartArray);
                     ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotWriteValueWithinObject, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
                 }
             }
@@ -34,7 +34,7 @@ namespace System.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void Base64EncodeAndWrite(ReadOnlySpan<byte> bytes, Span<byte> output)
         {
-            Span<byte> destination = output.Slice(BytesPending);
+            Span<byte> destination = output[BytesPending..];
             OperationStatus status = Base64.EncodeToUtf8(bytes, destination, out int consumed, out int written);
             Debug.Assert(status == OperationStatus.Done);
             Debug.Assert(consumed == bytes.Length);

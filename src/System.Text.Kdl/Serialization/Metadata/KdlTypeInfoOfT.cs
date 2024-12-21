@@ -14,10 +14,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         private Func<T>? _typedCreateObject;
 
         internal KdlTypeInfo(KdlConverter converter, KdlSerializerOptions options)
-            : base(typeof(T), converter, options)
-        {
-            EffectiveConverter = converter.CreateCastingConverter<T>();
-        }
+            : base(typeof(T), converter, options) => EffectiveConverter = converter.CreateCastingConverter<T>();
 
         /// <summary>
         /// A Converter whose declared type always matches that of the current KdlTypeInfo.
@@ -46,10 +43,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         public new Func<T>? CreateObject
         {
             get => _typedCreateObject;
-            set
-            {
-                SetCreateObject(value);
-            }
+            set => SetCreateObject(value);
         }
 
         private protected override void SetCreateObject(Delegate? createObject)
@@ -120,10 +114,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         [EditorBrowsable(EditorBrowsableState.Never)]
         public Action<KdlWriter, T>? SerializeHandler
         {
-            get
-            {
-                return _serialize;
-            }
+            get => _serialize;
             internal set
             {
                 Debug.Assert(!IsReadOnly, "We should not mutate read-only KdlTypeInfo");

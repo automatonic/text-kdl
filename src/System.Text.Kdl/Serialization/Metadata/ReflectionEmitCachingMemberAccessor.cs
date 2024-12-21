@@ -1,22 +1,15 @@
 #if NETFRAMEWORK || NET
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
-    internal sealed partial class ReflectionEmitCachingMemberAccessor : MemberAccessor
+    [method: RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
+    [method: RequiresUnreferencedCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
+    internal sealed partial class ReflectionEmitCachingMemberAccessor() : MemberAccessor
     {
-        private readonly ReflectionEmitMemberAccessor _sourceAccessor;
-        private readonly Cache<(string id, Type declaringType, MemberInfo? member)> _cache;
-
-        [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        [RequiresUnreferencedCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        public ReflectionEmitCachingMemberAccessor()
-        {
-            _sourceAccessor = new ReflectionEmitMemberAccessor();
-            _cache = new(slidingExpiration: TimeSpan.FromMilliseconds(1000), evictionInterval: TimeSpan.FromMilliseconds(200));
-        }
+        private readonly ReflectionEmitMemberAccessor _sourceAccessor = new ReflectionEmitMemberAccessor();
+        private readonly Cache<(string id, Type declaringType, MemberInfo? member)> _cache = new(slidingExpiration: TimeSpan.FromMilliseconds(1000), evictionInterval: TimeSpan.FromMilliseconds(200));
 
         public override void Clear() => _cache.Clear();
 

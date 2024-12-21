@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -12,16 +11,11 @@ namespace System.Text.Kdl.Serialization.Converters
     /// Converter factory for all object-based types (non-enumerable and non-primitive).
     /// </summary>
     [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-    internal sealed class ObjectConverterFactory : KdlConverterFactory
+    [method: RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
+    internal sealed class ObjectConverterFactory(bool useDefaultConstructorInUnannotatedStructs = true) : KdlConverterFactory
     {
         // Need to toggle this behavior when generating converters for F# struct records.
-        private readonly bool _useDefaultConstructorInUnannotatedStructs;
-
-        [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
-        public ObjectConverterFactory(bool useDefaultConstructorInUnannotatedStructs = true)
-        {
-            _useDefaultConstructorInUnannotatedStructs = useDefaultConstructorInUnannotatedStructs;
-        }
+        private readonly bool _useDefaultConstructorInUnannotatedStructs = useDefaultConstructorInUnannotatedStructs;
 
         public override bool CanConvert(Type typeToConvert)
         {

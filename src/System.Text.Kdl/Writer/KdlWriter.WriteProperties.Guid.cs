@@ -152,7 +152,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedPropertyName.Slice(0, written), value);
+            WriteStringByOptions(escapedPropertyName[..written], value);
 
             if (propertyArray != null)
             {
@@ -175,7 +175,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedPropertyName.Slice(0, written), value);
+            WriteStringByOptions(escapedPropertyName[..written], value);
 
             if (propertyArray != null)
             {
@@ -237,7 +237,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
 
@@ -264,7 +264,7 @@ namespace System.Text.Kdl
             }
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -272,7 +272,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
 
@@ -309,7 +309,7 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -322,7 +322,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
 
@@ -358,12 +358,12 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -372,7 +372,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
 
@@ -384,7 +384,7 @@ namespace System.Text.Kdl
             Span<byte> utf8PropertyName = stackalloc byte[KdlConstants.MaximumFormatGuidLength];
             bool result = Utf8Formatter.TryFormat(value, utf8PropertyName, out int bytesWritten);
             Debug.Assert(result);
-            WritePropertyNameUnescaped(utf8PropertyName.Slice(0, bytesWritten));
+            WritePropertyNameUnescaped(utf8PropertyName[..bytesWritten]);
         }
     }
 }

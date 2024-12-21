@@ -19,10 +19,7 @@ namespace System.Text.Kdl.Serialization
         /// Initializes a new instance of <see cref="KdlConverterAttribute"/> with the specified converter type.
         /// </summary>
         /// <param name="converterType">The type of the converter.</param>
-        public KdlConverterAttribute([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type converterType)
-        {
-            ConverterType = converterType;
-        }
+        public KdlConverterAttribute([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type converterType) => ConverterType = converterType;
 
         /// <summary>
         /// Initializes a new instance of <see cref="KdlConverterAttribute"/>.

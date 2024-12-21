@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace System.Text.Kdl.Serialization.Metadata
@@ -82,14 +81,9 @@ namespace System.Text.Kdl.Serialization.Metadata
 
         internal KdlTypeInfo? DeclaringTypeInfo { get; set; }
 
-        private sealed class DerivedTypeList : ConfigurationList<KdlDerivedType>
+        private sealed class DerivedTypeList(KdlPolymorphismOptions parent) : ConfigurationList<KdlDerivedType>
         {
-            private readonly KdlPolymorphismOptions _parent;
-
-            public DerivedTypeList(KdlPolymorphismOptions parent)
-            {
-                _parent = parent;
-            }
+            private readonly KdlPolymorphismOptions _parent = parent;
 
             public override bool IsReadOnly => _parent.DeclaringTypeInfo?.IsReadOnly == true;
             protected override void OnCollectionModifying() => _parent.DeclaringTypeInfo?.VerifyMutable();

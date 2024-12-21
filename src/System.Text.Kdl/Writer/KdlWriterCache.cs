@@ -67,7 +67,7 @@ namespace System.Text.Kdl
             bufferWriter.ClearAndReturnBuffers();
 
             int rentedWriters = --state.RentedWriters;
-            Debug.Assert((rentedWriters == 0) == (ReferenceEquals(state.BufferWriter, bufferWriter) && ReferenceEquals(state.Writer, writer)));
+            Debug.Assert(rentedWriters == 0 == (ReferenceEquals(state.BufferWriter, bufferWriter) && ReferenceEquals(state.Writer, writer)));
         }
 
         public static void ReturnWriter(KdlWriter writer)
@@ -78,7 +78,7 @@ namespace System.Text.Kdl
             writer.ResetAllStateForCacheReuse();
 
             int rentedWriters = --state.RentedWriters;
-            Debug.Assert((rentedWriters == 0) == ReferenceEquals(state.Writer, writer));
+            Debug.Assert(rentedWriters == 0 == ReferenceEquals(state.Writer, writer));
         }
 
         private sealed class ThreadLocalState

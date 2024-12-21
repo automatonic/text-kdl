@@ -1,8 +1,6 @@
 using System.Buffers;
 using System.Buffers.Text;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace System.Text.Kdl
 {
@@ -23,7 +21,7 @@ namespace System.Text.Kdl
             if (lastLineFeedIndex >= 0)
             {
                 newLines = 1;
-                data = data.Slice(0, lastLineFeedIndex);
+                data = data[..lastLineFeedIndex];
                 newLines += data.Count(KdlConstants.LineFeed);
             }
 
@@ -71,7 +69,7 @@ namespace System.Text.Kdl
             Unescape(source, sourceUnescaped, out int written);
             Debug.Assert(written > 0);
 
-            sourceUnescaped = sourceUnescaped.Slice(0, written);
+            sourceUnescaped = sourceUnescaped[..written];
             Debug.Assert(!sourceUnescaped.IsEmpty);
 
             if (KdlHelpers.IsValidUnescapedDateTimeOffsetParseLength(sourceUnescaped.Length)
@@ -93,7 +91,7 @@ namespace System.Text.Kdl
             Unescape(source, sourceUnescaped, out int written);
             Debug.Assert(written > 0);
 
-            sourceUnescaped = sourceUnescaped.Slice(0, written);
+            sourceUnescaped = sourceUnescaped[..written];
             Debug.Assert(!sourceUnescaped.IsEmpty);
 
             if (KdlHelpers.IsValidUnescapedDateTimeOffsetParseLength(sourceUnescaped.Length)
@@ -115,7 +113,7 @@ namespace System.Text.Kdl
             Unescape(source, utf8Unescaped, out int written);
             Debug.Assert(written > 0);
 
-            utf8Unescaped = utf8Unescaped.Slice(0, written);
+            utf8Unescaped = utf8Unescaped[..written];
             Debug.Assert(!utf8Unescaped.IsEmpty);
 
             if (utf8Unescaped.Length == KdlConstants.MaximumFormatGuidLength

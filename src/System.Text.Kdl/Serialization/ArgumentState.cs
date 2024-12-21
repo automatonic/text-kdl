@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Text.Kdl.Serialization.Metadata;
 
 using FoundProperties = System.ValueTuple<System.Text.Kdl.Serialization.Metadata.KdlPropertyInfo, System.Text.Kdl.KdlReaderState, long, byte[]?, string?>;

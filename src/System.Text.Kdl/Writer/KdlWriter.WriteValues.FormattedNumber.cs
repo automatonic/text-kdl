@@ -57,7 +57,7 @@ namespace System.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            utf8Value.CopyTo(output.Slice(BytesPending));
+            utf8Value.CopyTo(output[BytesPending..]);
             BytesPending += utf8Value.Length;
         }
 
@@ -88,11 +88,11 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
-            utf8Value.CopyTo(output.Slice(BytesPending));
+            utf8Value.CopyTo(output[BytesPending..]);
             BytesPending += utf8Value.Length;
         }
     }

@@ -1,9 +1,6 @@
 using System.Buffers;
 using System.Diagnostics;
-using System.IO;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 #if !NET
 using System.Runtime.InteropServices;
@@ -134,7 +131,9 @@ namespace System.Text.Kdl
             }
 
             if (!utf8Kdl.CanWrite)
+            {
                 throw new ArgumentException(SR.StreamNotWritable);
+            }
 
             _stream = utf8Kdl;
             SetOptions(options);
@@ -193,10 +192,12 @@ namespace System.Text.Kdl
         {
             CheckNotDisposed();
 
-            if (utf8Kdl == null)
-                throw new ArgumentNullException(nameof(utf8Kdl));
+            ArgumentNullException.ThrowIfNull(utf8Kdl, nameof(utf8Kdl));
+
             if (!utf8Kdl.CanWrite)
+            {
                 throw new ArgumentException(SR.StreamNotWritable);
+            }
 
             _stream = utf8Kdl;
             if (_arrayBufferWriter == null)
@@ -254,7 +255,7 @@ namespace System.Text.Kdl
             SetOptions(options);
         }
 
-        internal static KdlWriter CreateEmptyInstanceForCaching() => new KdlWriter();
+        internal static KdlWriter CreateEmptyInstanceForCaching() => new();
 
         private void ResetHelper()
         {
@@ -477,7 +478,9 @@ namespace System.Text.Kdl
         private void WriteStart(byte token)
         {
             if (CurrentDepth >= _options.MaxDepth)
+            {
                 ThrowHelper.ThrowInvalidOperationException(ExceptionResource.DepthTooLarge, _currentDepth, _options.MaxDepth, token: default, tokenType: default);
+            }
 
             if (_options.IndentedOrNotSkipValidation)
             {
@@ -535,7 +538,7 @@ namespace System.Text.Kdl
             {
                 if (_tokenType != KdlTokenType.PropertyName)
                 {
-                    Debug.Assert(_tokenType != KdlTokenType.None && _tokenType != KdlTokenType.StartArray);
+                    Debug.Assert(_tokenType is not KdlTokenType.None and not KdlTokenType.StartArray);
                     ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotStartObjectArrayWithoutProperty, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
                 }
             }
@@ -575,7 +578,7 @@ namespace System.Text.Kdl
             if (_tokenType is not KdlTokenType.PropertyName and not KdlTokenType.None || _commentAfterNoneOrPropertyName)
             {
                 WriteNewLine(output);
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
@@ -717,7 +720,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteStartByOptions(escapedPropertyName.Slice(0, written), token);
+            WriteStartByOptions(escapedPropertyName[..written], token);
 
             if (propertyArray != null)
             {
@@ -872,7 +875,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteStartByOptions(escapedPropertyName.Slice(0, written), token);
+            WriteStartByOptions(escapedPropertyName[..written], token);
 
             if (propertyArray != null)
             {
@@ -957,7 +960,9 @@ namespace System.Text.Kdl
         private void ValidateEnd(byte token)
         {
             if (_bitStack.CurrentDepth <= 0 || _tokenType == KdlTokenType.PropertyName)
+            {
                 ThrowHelper.ThrowInvalidOperationException(ExceptionResource.MismatchedObjectArray, currentDepth: default, maxDepth: _options.MaxDepth, token, _tokenType);
+            }
 
             if (token == KdlConstants.CloseBracket)
             {
@@ -983,7 +988,7 @@ namespace System.Text.Kdl
         private void WriteEndIndented(byte token)
         {
             // Do not format/indent empty KDL object/array.
-            if (_tokenType == KdlTokenType.StartObject || _tokenType == KdlTokenType.StartArray)
+            if (_tokenType is KdlTokenType.StartObject or KdlTokenType.StartArray)
             {
                 WriteEndMinimized(token);
             }
@@ -1013,7 +1018,7 @@ namespace System.Text.Kdl
 
                 WriteNewLine(output);
 
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
 
                 output[BytesPending++] = token;

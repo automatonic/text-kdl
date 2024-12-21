@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
-using System.Threading;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
@@ -747,7 +745,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         {
             get
             {
-                Debug.Assert(MemberType == MemberTypes.Property || MemberType == MemberTypes.Field || MemberType == default);
+                Debug.Assert(MemberType is MemberTypes.Property or MemberTypes.Field or default(MemberTypes));
                 return MemberType switch
                 {
                     MemberTypes.Property => Options.IgnoreReadOnlyProperties,
@@ -937,7 +935,9 @@ namespace System.Text.Kdl.Serialization.Metadata
         internal bool TryGetPrePopulatedValue(scoped ref ReadStack state)
         {
             if (EffectiveObjectCreationHandling != KdlObjectCreationHandling.Populate)
+            {
                 return false;
+            }
 
             Debug.Assert(EffectiveConverter.CanPopulate, "Property is marked with Populate but converter cannot populate. This should have been validated in Configure");
             Debug.Assert(state.Parent.ReturnValue != null, "Parent object is null");
@@ -961,10 +961,7 @@ namespace System.Text.Kdl.Serialization.Metadata
                 jsonTypeInfo.EnsureConfigured();
                 return jsonTypeInfo;
             }
-            set
-            {
-                _jsonTypeInfo = value;
-            }
+            set => _jsonTypeInfo = value;
         }
 
         private KdlTypeInfo? _jsonTypeInfo;

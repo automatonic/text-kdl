@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
@@ -119,7 +116,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 moveNextTask = enumerator.MoveNextAsync();
             } while (moveNextTask.IsCompleted);
 
-        SuspendDueToPendingTask:
+            SuspendDueToPendingTask:
             // we have a pending MoveNextAsync() call;
             // wrap inside a regular task so that it can be awaited multiple times;
             // mark the current stackframe as pending completion.
@@ -131,7 +128,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
         private sealed class BufferedAsyncEnumerable : IAsyncEnumerable<TElement>
         {
-            public readonly List<TElement> _buffer = new();
+            public readonly List<TElement> _buffer = [];
 
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
             public async IAsyncEnumerator<TElement> GetAsyncEnumerator(CancellationToken _)

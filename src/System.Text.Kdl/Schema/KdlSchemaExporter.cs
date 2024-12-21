@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Runtime.InteropServices;
@@ -96,7 +95,7 @@ namespace System.Text.Kdl.Schema
                 // This is the base type of a polymorphic type hierarchy. The schema for this type
                 // will include an "anyOf" property with the schemas for all derived types.
                 string typeDiscriminatorKey = polyOptions.TypeDiscriminatorPropertyName;
-                List<KdlDerivedType> derivedTypes = new(polyOptions.DerivedTypes);
+                List<KdlDerivedType> derivedTypes = [.. polyOptions.DerivedTypes];
 
                 if (!typeInfo.Type.IsAbstract && !IsPolymorphicTypeThatSpecifiesItselfAsDerivedType(typeInfo))
                 {
@@ -405,7 +404,7 @@ namespace System.Text.Kdl.Schema
         private readonly ref struct GenerationState(KdlSerializerOptions options, KdlSchemaExporterOptions exporterOptions)
         {
             private readonly List<string> _currentPath = [];
-            private readonly Dictionary<(KdlTypeInfo, KdlPropertyInfo?), string[]> _generated = new();
+            private readonly Dictionary<(KdlTypeInfo, KdlPropertyInfo?), string[]> _generated = [];
 
             public int CurrentDepth => _currentPath.Count;
             public KdlSerializerOptions Options { get; } = options;
@@ -482,7 +481,7 @@ namespace System.Text.Kdl.Schema
                             break;
                         }
 
-                        sb.Append(span.Slice(0, pos));
+                        sb.Append(span[..pos]);
 
                         if (span[pos] == '~')
                         {
@@ -494,7 +493,7 @@ namespace System.Text.Kdl.Schema
                             sb.Append("~1");
                         }
 
-                        span = span.Slice(pos + 1);
+                        span = span[(pos + 1)..];
                     }
                     while (!span.IsEmpty);
                 }

@@ -35,10 +35,7 @@ namespace System.Text.Kdl
                 ValidateWritingValue();
             }
 
-            if (kdl == null)
-            {
-                throw new ArgumentNullException(nameof(kdl));
-            }
+            ArgumentNullException.ThrowIfNull(kdl, nameof(kdl));
 
             TranscodeAndWriteRawValue(kdl.AsSpan(), skipInputValidation);
         }
@@ -161,7 +158,11 @@ namespace System.Text.Kdl
             {
                 // Utilize reader validation.
                 KdlReader reader = new(utf8Kdl);
-                while (reader.Read());
+                while (reader.Read())
+                {
+                    ;
+                }
+
                 _tokenType = reader.TokenType;
             }
 
@@ -184,7 +185,7 @@ namespace System.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            utf8Kdl.CopyTo(output.Slice(BytesPending));
+            utf8Kdl.CopyTo(output[BytesPending..]);
             BytesPending += len;
 
             SetFlagToAddListSeparatorBeforeNextItem();
@@ -212,7 +213,7 @@ namespace System.Text.Kdl
             try
             {
                 int actualByteCount = KdlReaderHelper.GetUtf8FromText(kdl, utf8Kdl);
-                utf8Kdl = utf8Kdl.Slice(0, actualByteCount);
+                utf8Kdl = utf8Kdl[..actualByteCount];
                 WriteRawValueCore(utf8Kdl, skipInputValidation);
             }
             finally
@@ -252,7 +253,11 @@ namespace System.Text.Kdl
             {
                 // Utilize reader validation.
                 KdlReader reader = new(utf8Kdl);
-                while (reader.Read());
+                while (reader.Read())
+                {
+                    ;
+                }
+
                 _tokenType = reader.TokenType;
             }
 
@@ -272,7 +277,7 @@ namespace System.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            utf8Kdl.CopyTo(output.Slice(BytesPending));
+            utf8Kdl.CopyTo(output[BytesPending..]);
             BytesPending += len;
 
             SetFlagToAddListSeparatorBeforeNextItem();

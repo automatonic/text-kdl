@@ -130,11 +130,11 @@ namespace System.Text.Kdl
                 }
             }
 
-            string result = destination.Slice(0, charsWritten).ToString();
+            string result = destination[..charsWritten].ToString();
 
             if (rentedBuffer is not null)
             {
-                destination.Slice(0, charsWritten).Clear();
+                destination[..charsWritten].Clear();
                 ArrayPool<char>.Shared.Return(rentedBuffer);
             }
 
@@ -159,7 +159,7 @@ namespace System.Text.Kdl
 
                 if (rentedBuffer is not null)
                 {
-                    destination.Slice(0, charsWritten).Clear();
+                    destination[..charsWritten].Clear();
                     ArrayPool<char>.Shared.Return(rentedBuffer);
                 }
 

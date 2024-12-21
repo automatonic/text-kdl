@@ -1,27 +1,17 @@
 ﻿#if NETFRAMEWORK || NET
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Threading;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
     internal sealed partial class ReflectionEmitCachingMemberAccessor
     {
-        private sealed class Cache<TKey> where TKey : notnull
+        private sealed class Cache<TKey>(TimeSpan slidingExpiration, TimeSpan evictionInterval) where TKey : notnull
         {
             private int _evictLock;
-            private long _lastEvictedTicks; // timestamp of latest eviction operation.
-            private readonly long _evictionIntervalTicks; // min timespan needed to trigger a new evict operation.
-            private readonly long _slidingExpirationTicks; // max timespan allowed for cache entries to remain inactive.
+            private long _lastEvictedTicks = DateTime.UtcNow.Ticks; // timestamp of latest eviction operation.
+            private readonly long _evictionIntervalTicks = evictionInterval.Ticks; // min timespan needed to trigger a new evict operation.
+            private readonly long _slidingExpirationTicks = slidingExpiration.Ticks; // max timespan allowed for cache entries to remain inactive.
             private readonly ConcurrentDictionary<TKey, CacheEntry> _cache = new();
-
-            public Cache(TimeSpan slidingExpiration, TimeSpan evictionInterval)
-            {
-                _slidingExpirationTicks = slidingExpiration.Ticks;
-                _evictionIntervalTicks = evictionInterval.Ticks;
-                _lastEvictedTicks = DateTime.UtcNow.Ticks;
-            }
 
             public TValue GetOrAdd<TValue>(TKey key, Func<TKey, TValue> valueFactory) where TValue : class?
             {
@@ -70,15 +60,10 @@ namespace System.Text.Kdl.Serialization.Metadata
                 }
             }
 
-            private sealed class CacheEntry
+            private sealed class CacheEntry(object? value)
             {
-                public readonly object? Value;
+                public readonly object? Value = value;
                 public long LastUsedTicks;
-
-                public CacheEntry(object? value)
-                {
-                    Value = value;
-                }
             }
         }
     }

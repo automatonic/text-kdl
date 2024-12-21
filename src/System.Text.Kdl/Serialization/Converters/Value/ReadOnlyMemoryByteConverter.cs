@@ -1,4 +1,3 @@
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters

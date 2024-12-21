@@ -1,5 +1,4 @@
 using System.Buffers;
-using System.Buffers.Text;
 using System.Diagnostics;
 
 
@@ -55,7 +54,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output.Slice(BytesPending), value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -87,13 +86,13 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output.Slice(BytesPending), value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;

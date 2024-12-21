@@ -12,7 +12,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
         protected sealed override void Add(in object? value, ref ReadStack state)
         {
-            var addMethodDelegate = ((Action<TCollection, object?>?)state.Current.KdlTypeInfo.AddMethodDelegate);
+            var addMethodDelegate = (Action<TCollection, object?>?)state.Current.KdlTypeInfo.AddMethodDelegate;
             Debug.Assert(addMethodDelegate != null);
             addMethodDelegate((TCollection)state.Current.ReturnValue!, value);
         }

@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -13,14 +12,12 @@ namespace System.Text.Kdl.Serialization.Converters
     /// Converter factory for all IEnumerable types.
     /// </summary>
     [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-    internal sealed class IEnumerableConverterFactory : KdlConverterFactory
+    [method: RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
+    internal sealed class IEnumerableConverterFactory() : KdlConverterFactory
     {
-        private static readonly IDictionaryConverter<IDictionary> s_converterForIDictionary = new IDictionaryConverter<IDictionary>();
-        private static readonly IEnumerableConverter<IEnumerable> s_converterForIEnumerable = new IEnumerableConverter<IEnumerable>();
-        private static readonly IListConverter<IList> s_converterForIList = new IListConverter<IList>();
-
-        [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
-        public IEnumerableConverterFactory() { }
+        private static readonly IDictionaryConverter<IDictionary> s_converterForIDictionary = new();
+        private static readonly IEnumerableConverter<IEnumerable> s_converterForIEnumerable = new();
+        private static readonly IListConverter<IList> s_converterForIList = new();
 
         public override bool CanConvert(Type typeToConvert)
         {

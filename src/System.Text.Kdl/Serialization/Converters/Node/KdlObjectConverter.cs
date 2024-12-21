@@ -24,11 +24,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
             Debug.Assert(obj is KdlObject);
             KdlObject jObject = (KdlObject)obj;
-
-            Debug.Assert(value == null || value is KdlNode);
-            KdlNode? jNodeValue = value;
-
-            jObject[propertyName] = jNodeValue;
+            jObject[propertyName] = value;
         }
 
         public override void Write(KdlWriter writer, KdlObject? value, KdlSerializerOptions options)

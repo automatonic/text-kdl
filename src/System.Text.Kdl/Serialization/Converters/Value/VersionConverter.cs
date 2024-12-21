@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
@@ -41,7 +40,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
             Span<char> charBuffer = stackalloc char[MaximumEscapedVersionLength];
             int bytesWritten = reader.CopyString(charBuffer);
-            ReadOnlySpan<char> source = charBuffer.Slice(0, bytesWritten);
+            ReadOnlySpan<char> source = charBuffer[..bytesWritten];
 
             if (!char.IsDigit(source[0]) || !char.IsDigit(source[^1]))
             {
@@ -91,7 +90,7 @@ namespace System.Text.Kdl.Serialization.Converters
 #endif
             bool formattedSuccessfully = value.TryFormat(span, out int charsWritten);
             Debug.Assert(formattedSuccessfully && charsWritten >= MinimumVersionLength);
-            writer.WriteStringValue(span.Slice(0, charsWritten));
+            writer.WriteStringValue(span[..charsWritten]);
 #else
             writer.WriteStringValue(value.ToString());
 #endif
@@ -117,7 +116,7 @@ namespace System.Text.Kdl.Serialization.Converters
 #endif
             bool formattedSuccessfully = value.TryFormat(span, out int charsWritten);
             Debug.Assert(formattedSuccessfully && charsWritten >= MinimumVersionLength);
-            writer.WritePropertyName(span.Slice(0, charsWritten));
+            writer.WritePropertyName(span[..charsWritten]);
 #else
             writer.WritePropertyName(value.ToString());
 #endif

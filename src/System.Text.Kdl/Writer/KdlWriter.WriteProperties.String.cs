@@ -21,7 +21,7 @@ namespace System.Text.Kdl
             if (_options.Indented)
             {
                 ReadOnlySpan<byte> escapedPropertyName =
-                    escapedPropertyNameSection.Slice(1, escapedPropertyNameSection.Length - 3);
+                    escapedPropertyNameSection[1..^2];
 
                 WritePropertyNameHelper(escapedPropertyName);
             }
@@ -129,7 +129,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
-                propertyName = escapedPropertyName.Slice(0, written);
+                propertyName = escapedPropertyName[..written];
             }
 
             WriteStringByOptionsPropertyName(propertyName);
@@ -210,7 +210,7 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -288,7 +288,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
-                utf8PropertyName = escapedPropertyName.Slice(0, written);
+                utf8PropertyName = escapedPropertyName[..written];
             }
 
             WriteStringByOptionsPropertyName(utf8PropertyName);
@@ -335,7 +335,7 @@ namespace System.Text.Kdl
             }
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -363,7 +363,7 @@ namespace System.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            escapedPropertyNameSection.CopyTo(output.Slice(BytesPending));
+            escapedPropertyNameSection.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyNameSection.Length;
         }
 
@@ -399,12 +399,12 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -918,7 +918,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndex, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedPropertyName, escapedValue.Slice(0, written));
+            WriteStringByOptions(escapedPropertyName, escapedValue[..written]);
 
             if (valueArray != null)
             {
@@ -941,7 +941,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(value, escapedValue, firstEscapeIndex, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedPropertyName, escapedValue.Slice(0, written));
+            WriteStringByOptions(escapedPropertyName, escapedValue[..written]);
 
             if (valueArray != null)
             {
@@ -964,7 +964,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndex, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedPropertyName.Slice(0, written), escapedValue);
+            WriteStringByOptions(escapedPropertyName[..written], escapedValue);
 
             if (propertyArray != null)
             {
@@ -987,7 +987,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndex, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedPropertyName.Slice(0, written), escapedValue);
+            WriteStringByOptions(escapedPropertyName[..written], escapedValue);
 
             if (propertyArray != null)
             {
@@ -1095,7 +1095,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
-                value = escapedValue.Slice(0, written);
+                value = escapedValue[..written];
             }
 
             scoped Span<char> escapedPropertyName;
@@ -1115,7 +1115,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
-                propertyName = escapedPropertyName.Slice(0, written);
+                propertyName = escapedPropertyName[..written];
             }
 
             WriteStringByOptions(propertyName, value);
@@ -1155,7 +1155,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
-                utf8Value = escapedValue.Slice(0, written);
+                utf8Value = escapedValue[..written];
             }
 
             scoped Span<byte> escapedPropertyName;
@@ -1175,7 +1175,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
-                utf8PropertyName = escapedPropertyName.Slice(0, written);
+                utf8PropertyName = escapedPropertyName[..written];
             }
 
             WriteStringByOptions(utf8PropertyName, utf8Value);
@@ -1215,7 +1215,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
-                utf8Value = escapedValue.Slice(0, written);
+                utf8Value = escapedValue[..written];
             }
 
             scoped Span<char> escapedPropertyName;
@@ -1235,7 +1235,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
-                propertyName = escapedPropertyName.Slice(0, written);
+                propertyName = escapedPropertyName[..written];
             }
 
             WriteStringByOptions(propertyName, utf8Value);
@@ -1275,7 +1275,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
-                value = escapedValue.Slice(0, written);
+                value = escapedValue[..written];
             }
 
             scoped Span<byte> escapedPropertyName;
@@ -1295,7 +1295,7 @@ namespace System.Text.Kdl
                 }
 
                 KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
-                utf8PropertyName = escapedPropertyName.Slice(0, written);
+                utf8PropertyName = escapedPropertyName[..written];
             }
 
             WriteStringByOptions(utf8PropertyName, value);
@@ -1420,7 +1420,7 @@ namespace System.Text.Kdl
             }
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1428,7 +1428,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedValue.CopyTo(output.Slice(BytesPending));
+            escapedValue.CopyTo(output[BytesPending..]);
             BytesPending += escapedValue.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1464,7 +1464,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedValue.CopyTo(output.Slice(BytesPending));
+            escapedValue.CopyTo(output[BytesPending..]);
             BytesPending += escapedValue.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1493,7 +1493,7 @@ namespace System.Text.Kdl
             }
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1538,7 +1538,7 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1587,12 +1587,12 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1601,7 +1601,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedValue.CopyTo(output.Slice(BytesPending));
+            escapedValue.CopyTo(output[BytesPending..]);
             BytesPending += escapedValue.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1639,7 +1639,7 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1652,7 +1652,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedValue.CopyTo(output.Slice(BytesPending));
+            escapedValue.CopyTo(output[BytesPending..]);
             BytesPending += escapedValue.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -1690,12 +1690,12 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;

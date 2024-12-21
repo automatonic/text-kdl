@@ -1,15 +1,11 @@
 using System.Diagnostics;
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
     internal sealed class Int32Converter : KdlPrimitiveConverter<int>
     {
-        public Int32Converter()
-        {
-            IsInternalConverterForNumberType = true;
-        }
+        public Int32Converter() => IsInternalConverterForNumberType = true;
 
         public override int Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {

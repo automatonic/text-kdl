@@ -26,6 +26,6 @@ namespace System.Text.Kdl.Serialization.Converters
             writer.WritePropertyName(value);
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new KdlSchema { Type = KdlSchemaType.String, Format = "date-time" };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.String, Format = "date-time" };
     }
 }

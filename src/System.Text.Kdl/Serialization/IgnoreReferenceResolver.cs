@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace System.Text.Kdl.Serialization
 {

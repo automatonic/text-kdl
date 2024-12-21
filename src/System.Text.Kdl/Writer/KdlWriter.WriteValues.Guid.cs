@@ -54,7 +54,7 @@ namespace System.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
 
@@ -87,13 +87,13 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
 

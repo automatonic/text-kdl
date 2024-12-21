@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using System.Runtime.Serialization;
-
 namespace System.Text.Kdl
 {
     /// <summary>
@@ -55,19 +52,13 @@ namespace System.Text.Kdl
         /// </summary>
         /// <param name="message">The context specific error message.</param>
         /// <param name="innerException">The exception that caused the current exception.</param>
-        public KdlException(string? message, Exception? innerException) : base(message, innerException)
-        {
-            _message = message;
-        }
+        public KdlException(string? message, Exception? innerException) : base(message, innerException) => _message = message;
 
         /// <summary>
         /// Creates a new exception object to relay error information to the user.
         /// </summary>
         /// <param name="message">The context specific error message.</param>
-        public KdlException(string? message) : base(message)
-        {
-            _message = message;
-        }
+        public KdlException(string? message) : base(message) => _message = message;
 
         /// <summary>
         /// Creates a new exception object to relay error information to the user.
@@ -97,13 +88,7 @@ namespace System.Text.Kdl
         /// <summary>
         /// Gets a message that describes the current exception.
         /// </summary>
-        public override string Message
-        {
-            get
-            {
-                return _message ?? base.Message;
-            }
-        }
+        public override string Message => _message ?? base.Message;
 
         internal void SetMessage(string? message)
         {

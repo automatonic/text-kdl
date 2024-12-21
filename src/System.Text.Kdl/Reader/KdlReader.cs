@@ -180,8 +180,7 @@ namespace System.Text.Kdl
         /// across async/await boundaries and hence this type is required to provide support for reading
         /// in more data asynchronously before continuing with a new instance of the <see cref="KdlReader"/>.
         /// </summary>
-        public readonly KdlReaderState CurrentState => new KdlReaderState
-        (
+        public readonly KdlReaderState CurrentState => new(
             lineNumber: _lineNumber,
             bytePositionInLine: _bytePositionInLine,
             inObject: _inObject,
@@ -234,7 +233,7 @@ namespace System.Text.Kdl
             _isLastSegment = _isFinalBlock;
             _isMultiSegment = false;
 
-            ValueSpan = ReadOnlySpan<byte>.Empty;
+            ValueSpan = [];
 
             _currentPosition = default;
             _nextPosition = default;
@@ -555,12 +554,12 @@ namespace System.Text.Kdl
             else
             {
                 Debug.Assert(status == OperationStatus.Done);
-                result = TextEqualsHelper(otherUtf8Text.Slice(0, written));
+                result = TextEqualsHelper(otherUtf8Text[..written]);
             }
 
             if (otherUtf8TextArray != null)
             {
-                otherUtf8Text.Slice(0, written).Clear();
+                otherUtf8Text[..written].Clear();
                 ArrayPool<byte>.Shared.Return(otherUtf8TextArray);
             }
 
@@ -591,7 +590,7 @@ namespace System.Text.Kdl
             {
                 ReadOnlySpan<byte> span = memory.Span;
 
-                if (other.Slice(matchedSoFar).StartsWith(span))
+                if (other[matchedSoFar..].StartsWith(span))
                 {
                     matchedSoFar += span.Length;
                 }
@@ -616,12 +615,12 @@ namespace System.Text.Kdl
             int idx = localSpan.IndexOf(KdlConstants.BackSlash);
             Debug.Assert(idx != -1);
 
-            if (!other.StartsWith(localSpan.Slice(0, idx)))
+            if (!other.StartsWith(localSpan[..idx]))
             {
                 return false;
             }
 
-            return KdlReaderHelper.UnescapeAndCompare(localSpan.Slice(idx), other.Slice(idx));
+            return KdlReaderHelper.UnescapeAndCompare(localSpan[idx..], other[idx..]);
         }
 
         private readonly bool UnescapeSequenceAndCompare(ReadOnlySpan<byte> other)
@@ -651,13 +650,13 @@ namespace System.Text.Kdl
 
                 if (idx != -1)
                 {
-                    if (!other.Slice(matchedSoFar).StartsWith(span.Slice(0, idx)))
+                    if (!other[matchedSoFar..].StartsWith(span[..idx]))
                     {
                         break;
                     }
                     matchedSoFar += idx;
 
-                    other = other.Slice(matchedSoFar);
+                    other = other[matchedSoFar..];
                     localSequence = localSequence.Slice(matchedSoFar);
 
                     if (localSequence.IsSingleSegment)
@@ -671,7 +670,7 @@ namespace System.Text.Kdl
                     break;
                 }
 
-                if (!other.Slice(matchedSoFar).StartsWith(span))
+                if (!other[matchedSoFar..].StartsWith(span))
                 {
                     break;
                 }
@@ -685,7 +684,7 @@ namespace System.Text.Kdl
         // Otherwise, return false.
         private static bool IsTokenTypeString(KdlTokenType tokenType)
         {
-            return tokenType == KdlTokenType.PropertyName || tokenType == KdlTokenType.String;
+            return tokenType is KdlTokenType.PropertyName or KdlTokenType.String;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -735,7 +734,9 @@ namespace System.Text.Kdl
         private void StartObject()
         {
             if (_bitStack.CurrentDepth >= _readerOptions.MaxDepth)
+            {
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ObjectDepthTooLarge);
+            }
 
             _bitStack.PushTrue();
 
@@ -749,7 +750,9 @@ namespace System.Text.Kdl
         private void EndObject()
         {
             if (!_inObject || _bitStack.CurrentDepth <= 0)
+            {
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.MismatchedObjectArray, KdlConstants.CloseBrace);
+            }
 
             if (_trailingCommaBeforeComment)
             {
@@ -769,7 +772,9 @@ namespace System.Text.Kdl
         private void StartArray()
         {
             if (_bitStack.CurrentDepth >= _readerOptions.MaxDepth)
+            {
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ArrayDepthTooLarge);
+            }
 
             _bitStack.PushFalse();
 
@@ -783,7 +788,9 @@ namespace System.Text.Kdl
         private void EndArray()
         {
             if (_inObject || _bitStack.CurrentDepth <= 0)
+            {
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.MismatchedObjectArray, KdlConstants.CloseBracket);
+            }
 
             if (_trailingCommaBeforeComment)
             {
@@ -901,10 +908,10 @@ namespace System.Text.Kdl
 
             retVal = true;
 
-        Done:
+            Done:
             return retVal;
 
-        ReadFirstToken:
+            ReadFirstToken:
             retVal = ReadFirstToken(first);
             goto Done;
         }
@@ -981,7 +988,7 @@ namespace System.Text.Kdl
 
                 if (KdlHelpers.IsDigit(first) || first == '-')
                 {
-                    if (!TryGetNumber(localBuffer.Slice(_consumed), out int numberOfBytes))
+                    if (!TryGetNumber(localBuffer[_consumed..], out int numberOfBytes))
                     {
                         return false;
                     }
@@ -1128,16 +1135,16 @@ namespace System.Text.Kdl
         // Consumes 'null', or 'true', or 'false'
         private bool ConsumeLiteral(ReadOnlySpan<byte> literal, KdlTokenType tokenType)
         {
-            ReadOnlySpan<byte> span = _buffer.Slice(_consumed);
+            ReadOnlySpan<byte> span = _buffer[_consumed..];
             Debug.Assert(span.Length > 0);
-            Debug.Assert(span[0] == 'n' || span[0] == 't' || span[0] == 'f');
+            Debug.Assert(span[0] is (byte)'n' or (byte)'t' or (byte)'f');
 
             if (!span.StartsWith(literal))
             {
                 return CheckLiteral(span, literal);
             }
 
-            ValueSpan = span.Slice(0, literal.Length);
+            ValueSpan = span[..literal.Length];
             _tokenType = tokenType;
             _consumed += literal.Length;
             _bytePositionInLine += literal.Length;
@@ -1200,7 +1207,7 @@ namespace System.Text.Kdl
 
         private bool ConsumeNumber()
         {
-            if (!TryGetNumber(_buffer.Slice(_consumed), out int consumed))
+            if (!TryGetNumber(_buffer[_consumed..], out int consumed))
             {
                 return false;
             }
@@ -1278,7 +1285,7 @@ namespace System.Text.Kdl
             Debug.Assert(_buffer[_consumed] == KdlConstants.Quote);
 
             // Create local copy to avoid bounds checks.
-            ReadOnlySpan<byte> localBuffer = _buffer.Slice(_consumed + 1);
+            ReadOnlySpan<byte> localBuffer = _buffer[(_consumed + 1)..];
 
             // Vectorized search for either quote, backslash, or any control character.
             // If the first found byte is a quote, we have reached an end of string, and
@@ -1292,7 +1299,7 @@ namespace System.Text.Kdl
                 if (foundByte == KdlConstants.Quote)
                 {
                     _bytePositionInLine += idx + 2; // Add 2 for the start and end quotes.
-                    ValueSpan = localBuffer.Slice(0, idx);
+                    ValueSpan = localBuffer[..idx];
                     ValueIsEscaped = false;
                     _tokenType = KdlTokenType.String;
                     _consumed += idx + 2;
@@ -1321,7 +1328,7 @@ namespace System.Text.Kdl
         {
             Debug.Assert(idx >= 0 && idx < data.Length);
             Debug.Assert(data[idx] != KdlConstants.Quote);
-            Debug.Assert(data[idx] == KdlConstants.BackSlash || data[idx] < KdlConstants.Space);
+            Debug.Assert(data[idx] is KdlConstants.BackSlash or < KdlConstants.Space);
 
             long prevLineBytePosition = _bytePositionInLine;
             long prevLineNumber = _lineNumber;
@@ -1389,9 +1396,9 @@ namespace System.Text.Kdl
                 return false;
             }
 
-        Done:
+            Done:
             _bytePositionInLine++;  // Add 1 for the end quote
-            ValueSpan = data.Slice(0, idx);
+            ValueSpan = data[..idx];
             ValueIsEscaped = true;
             _tokenType = KdlTokenType.String;
             _consumed += idx + 2;
@@ -1435,7 +1442,7 @@ namespace System.Text.Kdl
             Debug.Assert(signResult == ConsumeNumberResult.OperationIncomplete);
 
             byte nextByte = data[i];
-            Debug.Assert(nextByte >= '0' && nextByte <= '9');
+            Debug.Assert(nextByte is >= (byte)'0' and <= (byte)'9');
 
             if (nextByte == '0')
             {
@@ -1467,14 +1474,14 @@ namespace System.Text.Kdl
 
                 Debug.Assert(result == ConsumeNumberResult.OperationIncomplete);
                 nextByte = data[i];
-                if (nextByte != '.' && nextByte != 'E' && nextByte != 'e')
+                if (nextByte is not (byte)'.' and not (byte)'E' and not (byte)'e')
                 {
                     _bytePositionInLine += i;
                     ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndOfDigitNotFound, nextByte);
                 }
             }
 
-            Debug.Assert(nextByte == '.' || nextByte == 'E' || nextByte == 'e');
+            Debug.Assert(nextByte is (byte)'.' or (byte)'E' or (byte)'e');
 
             if (nextByte == '.')
             {
@@ -1491,14 +1498,14 @@ namespace System.Text.Kdl
 
                 Debug.Assert(result == ConsumeNumberResult.OperationIncomplete);
                 nextByte = data[i];
-                if (nextByte != 'E' && nextByte != 'e')
+                if (nextByte is not (byte)'E' and not (byte)'e')
                 {
                     _bytePositionInLine += i;
                     ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedNextDigitEValueNotFound, nextByte);
                 }
             }
 
-            Debug.Assert(nextByte == 'E' || nextByte == 'e');
+            Debug.Assert(nextByte is (byte)'E' or (byte)'e');
             i++;
 
             signResult = ConsumeSign(ref data, ref i);
@@ -1525,8 +1532,8 @@ namespace System.Text.Kdl
             _bytePositionInLine += i;
             ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndOfDigitNotFound, data[i]);
 
-        Done:
-            ValueSpan = data.Slice(0, i);
+            Done:
+            ValueSpan = data[..i];
             consumed = i;
             return true;
         }
@@ -1586,7 +1593,7 @@ namespace System.Text.Kdl
                 }
             }
             nextByte = data[i];
-            if (nextByte != '.' && nextByte != 'E' && nextByte != 'e')
+            if (nextByte is not (byte)'.' and not (byte)'E' and not (byte)'e')
             {
                 _bytePositionInLine += i;
                 ThrowHelper.ThrowKdlReaderException(ref this,
@@ -1597,7 +1604,7 @@ namespace System.Text.Kdl
             return ConsumeNumberResult.OperationIncomplete;
         }
 
-        private ConsumeNumberResult ConsumeIntegerDigits(ref ReadOnlySpan<byte> data, scoped ref int i)
+        private readonly ConsumeNumberResult ConsumeIntegerDigits(ref ReadOnlySpan<byte> data, scoped ref int i)
         {
             byte nextByte = default;
             for (; i < data.Length; i++)
@@ -1665,7 +1672,7 @@ namespace System.Text.Kdl
             }
 
             byte nextByte = data[i];
-            if (nextByte == '+' || nextByte == '-')
+            if (nextByte is (byte)'+' or (byte)'-')
             {
                 i++;
                 if (i >= data.Length)
@@ -2069,10 +2076,10 @@ namespace System.Text.Kdl
                 }
             }
 
-        Done:
+            Done:
             return ConsumeTokenResult.Success;
 
-        RollBack:
+            RollBack:
             return ConsumeTokenResult.NotEnoughDataRollBackState;
         }
 
@@ -2107,7 +2114,7 @@ namespace System.Text.Kdl
             }
             return true;
 
-        IncompleteNoRollback:
+            IncompleteNoRollback:
             return false;
         }
 
@@ -2144,7 +2151,7 @@ namespace System.Text.Kdl
             }
             return true;
 
-        IncompleteRollback:
+            IncompleteRollback:
             return false;
         }
 
@@ -2299,29 +2306,29 @@ namespace System.Text.Kdl
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.FoundInvalidCharacter, marker);
             }
 
-        Done:
+            Done:
             return ConsumeTokenResult.Success;
-        IncompleteNoRollback:
+            IncompleteNoRollback:
             return ConsumeTokenResult.IncompleteNoRollBackNecessary;
-        IncompleteRollback:
+            IncompleteRollback:
             return ConsumeTokenResult.NotEnoughDataRollBackState;
         }
 
         private bool SkipComment()
         {
             // Create local copy to avoid bounds checks.
-            ReadOnlySpan<byte> localBuffer = _buffer.Slice(_consumed + 1);
+            ReadOnlySpan<byte> localBuffer = _buffer[(_consumed + 1)..];
 
             if (localBuffer.Length > 0)
             {
                 byte marker = localBuffer[0];
                 if (marker == KdlConstants.Slash)
                 {
-                    return SkipSingleLineComment(localBuffer.Slice(1), out _);
+                    return SkipSingleLineComment(localBuffer[1..], out _);
                 }
                 else if (marker == KdlConstants.Asterisk)
                 {
-                    return SkipMultiLineComment(localBuffer.Slice(1), out _);
+                    return SkipMultiLineComment(localBuffer[1..], out _);
                 }
                 else
                 {
@@ -2385,12 +2392,12 @@ namespace System.Text.Kdl
                 return false;
             }
 
-        EndOfComment:
+            EndOfComment:
             toConsume++;
             _bytePositionInLine = 0;
             _lineNumber++;
 
-        Done:
+            Done:
             _consumed += 2 + toConsume;
             return true;
         }
@@ -2415,7 +2422,7 @@ namespace System.Text.Kdl
                 }
 
                 totalIdx++;
-                localBuffer = localBuffer.Slice(idx + 1);
+                localBuffer = localBuffer[(idx + 1)..];
 
                 ThrowOnDangerousLineSeparator(localBuffer);
             }
@@ -2445,7 +2452,7 @@ namespace System.Text.Kdl
             idx = 0;
             while (true)
             {
-                int foundIdx = localBuffer.Slice(idx).IndexOf(KdlConstants.Slash);
+                int foundIdx = localBuffer[idx..].IndexOf(KdlConstants.Slash);
                 if (foundIdx == -1)
                 {
                     if (IsLastSpan)
@@ -2469,7 +2476,7 @@ namespace System.Text.Kdl
             // by 4 to exclude the start/end-of-comment delimiters.
             _consumed += 4 + idx;
 
-            (int newLines, int newLineIndex) = KdlReaderHelper.CountNewLines(localBuffer.Slice(0, idx));
+            (int newLines, int newLineIndex) = KdlReaderHelper.CountNewLines(localBuffer[..idx]);
             _lineNumber += newLines;
             if (newLineIndex != -1)
             {
@@ -2487,18 +2494,18 @@ namespace System.Text.Kdl
         private bool ConsumeComment()
         {
             // Create local copy to avoid bounds checks.
-            ReadOnlySpan<byte> localBuffer = _buffer.Slice(_consumed + 1);
+            ReadOnlySpan<byte> localBuffer = _buffer[(_consumed + 1)..];
 
             if (localBuffer.Length > 0)
             {
                 byte marker = localBuffer[0];
                 if (marker == KdlConstants.Slash)
                 {
-                    return ConsumeSingleLineComment(localBuffer.Slice(1), _consumed);
+                    return ConsumeSingleLineComment(localBuffer[1..], _consumed);
                 }
                 else if (marker == KdlConstants.Asterisk)
                 {
-                    return ConsumeMultiLineComment(localBuffer.Slice(1), _consumed);
+                    return ConsumeMultiLineComment(localBuffer[1..], _consumed);
                 }
                 else
                 {
@@ -2550,12 +2557,12 @@ namespace System.Text.Kdl
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"TokenType = {DebugTokenType}, TokenStartIndex = {TokenStartIndex}, Consumed = {BytesConsumed}";
+        private readonly string DebuggerDisplay => $"TokenType = {DebugTokenType}, TokenStartIndex = {TokenStartIndex}, Consumed = {BytesConsumed}";
 
         // Using TokenType.ToString() (or {TokenType}) fails to render in the debug window. The
         // message "The runtime refused to evaluate the expression at this time." is shown. This
         // is a workaround until we root cause and fix the issue.
-        private string DebugTokenType
+        private readonly string DebugTokenType
             => TokenType switch
             {
                 KdlTokenType.Comment => nameof(KdlTokenType.Comment),
@@ -2573,7 +2580,7 @@ namespace System.Text.Kdl
                 _ => ((byte)TokenType).ToString()
             };
 
-        private ReadOnlySpan<byte> GetUnescapedSpan()
+        private readonly ReadOnlySpan<byte> GetUnescapedSpan()
         {
             ReadOnlySpan<byte> span = HasValueSequence ? ValueSequence.ToArray() : ValueSpan;
             if (ValueIsEscaped)

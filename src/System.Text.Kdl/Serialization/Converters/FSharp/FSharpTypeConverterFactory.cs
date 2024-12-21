@@ -6,11 +6,9 @@ using FSharpKind = System.Text.Kdl.Serialization.Metadata.FSharpCoreReflectionPr
 namespace System.Text.Kdl.Serialization.Converters
 {
     [RequiresDynamicCode(FSharpCoreReflectionProxy.FSharpCoreUnreferencedCodeMessage)]
-    internal sealed class FSharpTypeConverterFactory : KdlConverterFactory
+    [method: RequiresUnreferencedCode(FSharpCoreReflectionProxy.FSharpCoreUnreferencedCodeMessage)]
+    internal sealed class FSharpTypeConverterFactory() : KdlConverterFactory
     {
-        [RequiresUnreferencedCode(FSharpCoreReflectionProxy.FSharpCoreUnreferencedCodeMessage)]
-        public FSharpTypeConverterFactory() { }
-
         private ObjectConverterFactory? _recordConverterFactory;
 
         [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2026:RequiresUnreferencedCode",
@@ -36,12 +34,12 @@ namespace System.Text.Kdl.Serialization.Converters
                 case FSharpKind.Option:
                     elementType = typeToConvert.GetGenericArguments()[0];
                     converterFactoryType = typeof(FSharpOptionConverter<,>).MakeGenericType(typeToConvert, elementType);
-                    constructorArguments = new object[] { options.GetConverterInternal(elementType) };
+                    constructorArguments = [options.GetConverterInternal(elementType)];
                     break;
                 case FSharpKind.ValueOption:
                     elementType = typeToConvert.GetGenericArguments()[0];
                     converterFactoryType = typeof(FSharpValueOptionConverter<,>).MakeGenericType(typeToConvert, elementType);
-                    constructorArguments = new object[] { options.GetConverterInternal(elementType) };
+                    constructorArguments = [options.GetConverterInternal(elementType)];
                     break;
                 case FSharpKind.List:
                     elementType = typeToConvert.GetGenericArguments()[0];

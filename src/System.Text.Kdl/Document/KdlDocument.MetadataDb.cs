@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
-using System.Threading;
 
 // We need to target netstandard2.0, so keep using ref for MemoryMarshal.Write
 // CS9191: The 'ref' modifier for argument 2 corresponding to 'in' parameter is equivalent to 'in'. Consider using 'in' instead.
@@ -127,7 +126,7 @@ namespace System.Text.Kdl
                 // were more frequent anyways.
                 const int OneMegabyte = 1024 * 1024;
 
-                if (initialSize > OneMegabyte && initialSize <= 4 * OneMegabyte)
+                if (initialSize is > OneMegabyte and <= (4 * OneMegabyte))
                 {
                     initialSize = OneMegabyte;
                 }
@@ -244,12 +243,18 @@ namespace System.Text.Kdl
                 int newCapacity = toReturn.Length * 2;
 
                 // Note that this check works even when newCapacity overflowed thanks to the (uint) cast
-                if ((uint)newCapacity > MaxArrayLength) newCapacity = MaxArrayLength;
+                if ((uint)newCapacity > MaxArrayLength)
+                {
+                    newCapacity = MaxArrayLength;
+                }
 
                 // If the maximum capacity has already been reached,
                 // then set the new capacity to be larger than what is possible
                 // so that ArrayPool.Rent throws an OutOfMemoryException for us.
-                if (newCapacity == toReturn.Length) newCapacity = int.MaxValue;
+                if (newCapacity == toReturn.Length)
+                {
+                    newCapacity = int.MaxValue;
+                }
 
                 _data = ArrayPool<byte>.Shared.Rent(newCapacity);
                 Buffer.BlockCopy(toReturn, 0, _data, 0, toReturn.Length);
@@ -279,7 +284,7 @@ namespace System.Text.Kdl
             internal void SetNumberOfRows(int index, int numberOfRows)
             {
                 AssertValidIndex(index);
-                Debug.Assert(numberOfRows >= 1 && numberOfRows <= 0x0FFFFFFF);
+                Debug.Assert(numberOfRows is >= 1 and <= 0x0FFFFFFF);
 
                 Span<byte> dataPos = _data.AsSpan(index + NumberOfRowsOffset);
                 int current = MemoryMarshal.Read<int>(dataPos);
@@ -301,19 +306,19 @@ namespace System.Text.Kdl
                 MemoryMarshal.Write(dataPos, ref value);
             }
 
-            internal int FindIndexOfFirstUnsetSizeOrLength(KdlTokenType lookupType)
+            internal readonly int FindIndexOfFirstUnsetSizeOrLength(KdlTokenType lookupType)
             {
-                Debug.Assert(lookupType == KdlTokenType.StartObject || lookupType == KdlTokenType.StartArray);
+                Debug.Assert(lookupType is KdlTokenType.StartObject or KdlTokenType.StartArray);
                 return FindOpenElement(lookupType);
             }
 
-            private int FindOpenElement(KdlTokenType lookupType)
+            private readonly int FindOpenElement(KdlTokenType lookupType)
             {
                 Span<byte> data = _data.AsSpan(0, Length);
 
                 for (int i = Length - DbRow.Size; i >= 0; i -= DbRow.Size)
                 {
-                    DbRow row = MemoryMarshal.Read<DbRow>(data.Slice(i));
+                    DbRow row = MemoryMarshal.Read<DbRow>(data[i..]);
 
                     if (row.IsUnknownSize && row.TokenType == lookupType)
                     {

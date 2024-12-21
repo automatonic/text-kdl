@@ -5,7 +5,7 @@ namespace System.Text.Kdl
 {
     public sealed partial class KdlWriter
     {
-        private static readonly char[] s_singleLineCommentDelimiter = new char[2] { '*', '/' };
+        private static readonly char[] s_singleLineCommentDelimiter = ['*', '/'];
         private static ReadOnlySpan<byte> SingleLineCommentDelimiterUtf8 => "*/"u8;
 
         /// <summary>
@@ -86,7 +86,7 @@ namespace System.Text.Kdl
             output[BytesPending++] = KdlConstants.Slash;
             output[BytesPending++] = KdlConstants.Asterisk;
 
-            OperationStatus status = KdlWriterHelper.ToUtf8(value, output.Slice(BytesPending), out int written);
+            OperationStatus status = KdlWriterHelper.ToUtf8(value, output[BytesPending..], out int written);
             Debug.Assert(status != OperationStatus.DestinationTooSmall);
             if (status == OperationStatus.InvalidData)
             {
@@ -120,14 +120,14 @@ namespace System.Text.Kdl
             if (_tokenType != KdlTokenType.None || _commentAfterNoneOrPropertyName)
             {
                 WriteNewLine(output);
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
             output[BytesPending++] = KdlConstants.Slash;
             output[BytesPending++] = KdlConstants.Asterisk;
 
-            OperationStatus status = KdlWriterHelper.ToUtf8(value, output.Slice(BytesPending), out int written);
+            OperationStatus status = KdlWriterHelper.ToUtf8(value, output[BytesPending..], out int written);
             Debug.Assert(status != OperationStatus.DestinationTooSmall);
             if (status == OperationStatus.InvalidData)
             {
@@ -199,7 +199,7 @@ namespace System.Text.Kdl
             output[BytesPending++] = KdlConstants.Slash;
             output[BytesPending++] = KdlConstants.Asterisk;
 
-            utf8Value.CopyTo(output.Slice(BytesPending));
+            utf8Value.CopyTo(output[BytesPending..]);
             BytesPending += utf8Value.Length;
 
             output[BytesPending++] = KdlConstants.Asterisk;
@@ -227,14 +227,14 @@ namespace System.Text.Kdl
             {
                 WriteNewLine(output);
 
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
             output[BytesPending++] = KdlConstants.Slash;
             output[BytesPending++] = KdlConstants.Asterisk;
 
-            utf8Value.CopyTo(output.Slice(BytesPending));
+            utf8Value.CopyTo(output[BytesPending..]);
             BytesPending += utf8Value.Length;
 
             output[BytesPending++] = KdlConstants.Asterisk;

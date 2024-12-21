@@ -31,7 +31,7 @@ namespace System.Text.Kdl
                     break;
                 }
 
-                bool hasNext = (i + 1 < chars.Length);
+                bool hasNext = i + 1 < chars.Length;
 
                 // Stop when next char is already lowercase.
                 if (i > 0 && hasNext && !char.IsUpper(chars[i + 1]))

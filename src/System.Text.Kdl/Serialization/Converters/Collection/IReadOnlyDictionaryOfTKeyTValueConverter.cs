@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Text.Kdl.Serialization.Metadata;
-
 namespace System.Text.Kdl.Serialization.Converters
 {
     internal sealed class IReadOnlyDictionaryOfTKeyTValueConverter<TDictionary, TKey, TValue>

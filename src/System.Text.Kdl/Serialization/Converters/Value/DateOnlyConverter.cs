@@ -41,7 +41,7 @@ namespace System.Text.Kdl.Serialization.Converters
             {
                 Span<byte> stackSpan = stackalloc byte[MaxEscapedFormatLength];
                 int bytesWritten = reader.CopyString(stackSpan);
-                source = stackSpan.Slice(0, bytesWritten);
+                source = stackSpan[..bytesWritten];
             }
 
             if (!KdlHelpers.TryParseAsIso(source, out DateOnly value))

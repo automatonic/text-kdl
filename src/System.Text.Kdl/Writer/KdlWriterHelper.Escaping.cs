@@ -43,7 +43,7 @@ namespace System.Text.Kdl
         private const string HexFormatString = "X4";
 #endif
 
-        private static readonly StandardFormat s_hexStandardFormat = new StandardFormat('X', 4);
+        private static readonly StandardFormat s_hexStandardFormat = new('X', 4);
 
         private static bool NeedsEscaping(byte value) => AllowList[value] == 0;
 
@@ -73,7 +73,7 @@ namespace System.Text.Kdl
         {
             Debug.Assert(textLength > 0);
             Debug.Assert(firstIndexToEscape >= 0 && firstIndexToEscape < textLength);
-            return firstIndexToEscape + KdlConstants.MaxExpansionFactorWhileEscaping * (textLength - firstIndexToEscape);
+            return firstIndexToEscape + (KdlConstants.MaxExpansionFactorWhileEscaping * (textLength - firstIndexToEscape));
         }
 
         private static void EscapeString(ReadOnlySpan<byte> value, Span<byte> destination, JavaScriptEncoder encoder, ref int written)
@@ -87,7 +87,7 @@ namespace System.Text.Kdl
 
             if (result != OperationStatus.Done)
             {
-                ThrowHelper.ThrowArgumentException_InvalidUTF8(value.Slice(encoderBytesWritten));
+                ThrowHelper.ThrowArgumentException_InvalidUTF8(value[encoderBytesWritten..]);
             }
 
             Debug.Assert(encoderBytesConsumed == value.Length);
@@ -99,13 +99,13 @@ namespace System.Text.Kdl
         {
             Debug.Assert(indexOfFirstByteToEscape >= 0 && indexOfFirstByteToEscape < value.Length);
 
-            value.Slice(0, indexOfFirstByteToEscape).CopyTo(destination);
+            value[..indexOfFirstByteToEscape].CopyTo(destination);
             written = indexOfFirstByteToEscape;
 
             if (encoder != null)
             {
-                destination = destination.Slice(indexOfFirstByteToEscape);
-                value = value.Slice(indexOfFirstByteToEscape);
+                destination = destination[indexOfFirstByteToEscape..];
+                value = value[indexOfFirstByteToEscape..];
                 EscapeString(value, destination, encoder, ref written);
             }
             else
@@ -132,8 +132,8 @@ namespace System.Text.Kdl
                     else
                     {
                         // Fall back to default encoder.
-                        destination = destination.Slice(written);
-                        value = value.Slice(indexOfFirstByteToEscape);
+                        destination = destination[written..];
+                        value = value[indexOfFirstByteToEscape..];
                         EscapeString(value, destination, JavaScriptEncoder.Default, ref written);
                         break;
                     }
@@ -175,7 +175,7 @@ namespace System.Text.Kdl
                 default:
                     destination[written++] = (byte)'u';
 
-                    bool result = Utf8Formatter.TryFormat(value, destination.Slice(written), out int bytesWritten, format: s_hexStandardFormat);
+                    bool result = Utf8Formatter.TryFormat(value, destination[written..], out int bytesWritten, format: s_hexStandardFormat);
                     Debug.Assert(result);
                     Debug.Assert(bytesWritten == 4);
                     written += bytesWritten;
@@ -210,13 +210,13 @@ namespace System.Text.Kdl
         {
             Debug.Assert(indexOfFirstByteToEscape >= 0 && indexOfFirstByteToEscape < value.Length);
 
-            value.Slice(0, indexOfFirstByteToEscape).CopyTo(destination);
+            value[..indexOfFirstByteToEscape].CopyTo(destination);
             written = indexOfFirstByteToEscape;
 
             if (encoder != null)
             {
-                destination = destination.Slice(indexOfFirstByteToEscape);
-                value = value.Slice(indexOfFirstByteToEscape);
+                destination = destination[indexOfFirstByteToEscape..];
+                value = value[indexOfFirstByteToEscape..];
                 EscapeString(value, destination, encoder, ref written);
             }
             else
@@ -243,8 +243,8 @@ namespace System.Text.Kdl
                     else
                     {
                         // Fall back to default encoder.
-                        destination = destination.Slice(written);
-                        value = value.Slice(indexOfFirstByteToEscape);
+                        destination = destination[written..];
+                        value = value[indexOfFirstByteToEscape..];
                         EscapeString(value, destination, JavaScriptEncoder.Default, ref written);
                         break;
                     }
@@ -289,7 +289,7 @@ namespace System.Text.Kdl
                     destination[written++] = 'u';
 #if NET
                     int intChar = value;
-                    intChar.TryFormat(destination.Slice(written), out int charsWritten, HexFormatString);
+                    intChar.TryFormat(destination[written..], out int charsWritten, HexFormatString);
                     Debug.Assert(charsWritten == 4);
                     written += charsWritten;
 #else

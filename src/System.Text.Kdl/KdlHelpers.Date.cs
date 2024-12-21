@@ -19,7 +19,7 @@ namespace System.Text.Kdl
             public int Fraction; // This value should never be greater than 9_999_999.
             public int OffsetHours;
             public int OffsetMinutes;
-            public bool OffsetNegative => OffsetToken == KdlConstants.Hyphen;
+            public readonly bool OffsetNegative => OffsetToken == KdlConstants.Hyphen;
             public byte OffsetToken;
         }
 
@@ -53,7 +53,7 @@ namespace System.Text.Kdl
             {
                 return TryCreateDateTime(parseData, DateTimeKind.Utc, out value);
             }
-            else if (parseData.OffsetToken == KdlConstants.Plus || parseData.OffsetToken == KdlConstants.Hyphen)
+            else if (parseData.OffsetToken is KdlConstants.Plus or KdlConstants.Hyphen)
             {
                 if (!TryCreateDateTimeOffset(ref parseData, out DateTimeOffset dateTimeOffset))
                 {
@@ -82,8 +82,8 @@ namespace System.Text.Kdl
                 return false;
             }
 
-            if (parseData.OffsetToken == KdlConstants.UtcOffsetToken || // Same as specifying an offset of "+00:00", except that DateTime's Kind gets set to UTC rather than Local
-                parseData.OffsetToken == KdlConstants.Plus || parseData.OffsetToken == KdlConstants.Hyphen)
+            if (parseData.OffsetToken is KdlConstants.UtcOffsetToken or // Same as specifying an offset of "+00:00", except that DateTime's Kind gets set to UTC rather than Local
+                KdlConstants.Plus or KdlConstants.Hyphen)
             {
                 return TryCreateDateTimeOffset(ref parseData, out value);
             }
@@ -165,7 +165,7 @@ namespace System.Text.Kdl
                     return false;
                 }
 
-                parseData.Year = (int)(digit1 * 1000 + digit2 * 100 + digit3 * 10 + digit4);
+                parseData.Year = (int)((digit1 * 1000) + (digit2 * 100) + (digit3 * 10) + digit4);
             }
 
             if (source[4] != KdlConstants.Hyphen
@@ -252,7 +252,7 @@ namespace System.Text.Kdl
                 case KdlConstants.Plus:
                 case KdlConstants.Hyphen:
                     parseData.OffsetToken = curByte;
-                    return ParseOffset(ref parseData, source.Slice(sourceIndex));
+                    return ParseOffset(ref parseData, source[sourceIndex..]);
                 case KdlConstants.Colon:
                     break;
                 default:
@@ -285,7 +285,7 @@ namespace System.Text.Kdl
                 case KdlConstants.Plus:
                 case KdlConstants.Hyphen:
                     parseData.OffsetToken = curByte;
-                    return ParseOffset(ref parseData, source.Slice(sourceIndex));
+                    return ParseOffset(ref parseData, source[sourceIndex..]);
                 case KdlConstants.Period:
                     break;
                 default:
@@ -343,7 +343,7 @@ namespace System.Text.Kdl
                 case KdlConstants.Plus:
                 case KdlConstants.Hyphen:
                     parseData.OffsetToken = curByte;
-                    return ParseOffset(ref parseData, source.Slice(sourceIndex));
+                    return ParseOffset(ref parseData, source[sourceIndex..]);
                 default:
                     return false;
             }
@@ -352,7 +352,7 @@ namespace System.Text.Kdl
             {
                 // Parse the hours for the offset
                 if (offsetData.Length < 2
-                    || !TryGetNextTwoDigits(offsetData.Slice(0, 2), ref parseData.OffsetHours))
+                    || !TryGetNextTwoDigits(offsetData[..2], ref parseData.OffsetHours))
                 {
                     return false;
                 }
@@ -368,7 +368,7 @@ namespace System.Text.Kdl
                 // Ensure we have enough for ":mm"
                 if (offsetData.Length != 5
                     || offsetData[2] != KdlConstants.Colon
-                    || !TryGetNextTwoDigits(offsetData.Slice(3), ref parseData.OffsetMinutes))
+                    || !TryGetNextTwoDigits(offsetData[3..], ref parseData.OffsetMinutes))
                 {
                     return false;
                 }
@@ -391,7 +391,7 @@ namespace System.Text.Kdl
                 return false;
             }
 
-            value = (int)(digit1 * 10 + digit2);
+            value = (int)((digit1 * 10) + digit2);
             return true;
         }
 
@@ -420,7 +420,7 @@ namespace System.Text.Kdl
                 return false;
             }
 
-            long offsetTicks = (((long)parseData.OffsetHours) * 3600 + ((long)parseData.OffsetMinutes) * 60) * TimeSpan.TicksPerSecond;
+            long offsetTicks = ((((long)parseData.OffsetHours) * 3600) + (((long)parseData.OffsetMinutes) * 60)) * TimeSpan.TicksPerSecond;
             if (parseData.OffsetNegative)
             {
                 offsetTicks = -offsetTicks;
@@ -533,7 +533,7 @@ namespace System.Text.Kdl
                 return false;
             }
 
-            Debug.Assert(parseData.Fraction >= 0 && parseData.Fraction <= KdlConstants.MaxDateTimeFraction); // All of our callers to date parse the fraction from fixed 7-digit fields so this value is trusted.
+            Debug.Assert(parseData.Fraction is >= 0 and <= KdlConstants.MaxDateTimeFraction); // All of our callers to date parse the fraction from fixed 7-digit fields so this value is trusted.
 
             ReadOnlySpan<int> days = DateTime.IsLeapYear(parseData.Year) ? DaysToMonth366 : DaysToMonth365;
             int yearMinusOne = parseData.Year - 1;

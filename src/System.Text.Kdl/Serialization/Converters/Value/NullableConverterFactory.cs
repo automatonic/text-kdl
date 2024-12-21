@@ -36,7 +36,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 GetNullableConverterType(valueTypeToConvert),
                 BindingFlags.Instance | BindingFlags.Public,
                 binder: null,
-                args: new object[] { valueConverter },
+                args: [valueConverter],
                 culture: null)!;
         }
 

@@ -1,6 +1,4 @@
-﻿using System.Threading;
-
-namespace System.Text.Kdl.Nodes
+﻿namespace System.Text.Kdl.Nodes
 {
     public abstract partial class KdlNode
     {

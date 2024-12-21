@@ -1,12 +1,10 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Text.Kdl.Serialization;
 using System.Text.Kdl.Serialization.Metadata;
-using System.Threading;
 
 namespace System.Text.Kdl
 {
@@ -436,7 +434,7 @@ namespace System.Text.Kdl
                         }
                         else
                         {
-                            Debug.Assert(weakRef.TryGetTarget(out _) is false);
+                            Debug.Assert(!weakRef.TryGetTarget(out _));
                             weakRef.SetTarget(ctx);
                         }
                     }
@@ -522,10 +520,14 @@ namespace System.Text.Kdl
                 {
                     // equates null with empty lists
                     if (left is null)
+                    {
                         return right is null || right.Count == 0;
+                    }
 
                     if (right is null)
+                    {
                         return left.Count == 0;
+                    }
 
                     int n;
                     if ((n = left.Count) != right.Count)
@@ -583,7 +585,9 @@ namespace System.Text.Kdl
                 {
                     // equates null with empty lists
                     if (list is null)
+                    {
                         return;
+                    }
 
                     int n = list.Count;
                     for (int i = 0; i < n; i++)

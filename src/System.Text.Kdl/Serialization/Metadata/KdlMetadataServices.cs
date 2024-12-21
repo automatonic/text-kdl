@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Globalization;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
@@ -28,21 +29,13 @@ namespace System.Text.Kdl.Serialization.Metadata
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyInfo));
             }
 
-            Type? declaringType = propertyInfo.DeclaringType;
-            if (declaringType == null)
-            {
-                throw new ArgumentException(nameof(propertyInfo.DeclaringType));
-            }
+            Type? declaringType = propertyInfo.DeclaringType ?? throw new ArgumentException(nameof(propertyInfo.DeclaringType));
 
-            string? propertyName = propertyInfo.PropertyName;
-            if (propertyName == null)
-            {
-                throw new ArgumentException(nameof(propertyInfo.PropertyName));
-            }
+            string? propertyName = propertyInfo.PropertyName ?? throw new ArgumentException(nameof(propertyInfo.PropertyName));
 
             if (!propertyInfo.IsProperty && propertyInfo.IsVirtual)
             {
-                throw new InvalidOperationException(string.Format(SR.FieldCannotBeVirtual, nameof(propertyInfo.IsProperty), nameof(propertyInfo.IsVirtual)));
+                throw new InvalidOperationException(string.Format(provider: CultureInfo.InvariantCulture, format: SR.FieldCannotBeVirtual, nameof(propertyInfo.IsProperty), nameof(propertyInfo.IsVirtual)));
             }
 
             return CreatePropertyInfoCore(propertyInfo, options);

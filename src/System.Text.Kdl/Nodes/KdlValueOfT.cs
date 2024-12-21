@@ -123,15 +123,10 @@ namespace System.Text.Kdl.Nodes
 
         [ExcludeFromCodeCoverage] // Justification = "Design-time"
         [DebuggerDisplay("{Kdl,nq}")]
-        private sealed class DebugView
+        private sealed class DebugView(KdlValue<TValue> node)
         {
             [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-            public KdlValue<TValue> _node;
-
-            public DebugView(KdlValue<TValue> node)
-            {
-                _node = node;
-            }
+            public KdlValue<TValue> _node = node;
 
             public string Kdl => _node.ToKdlString();
             public string Path => _node.GetPath();

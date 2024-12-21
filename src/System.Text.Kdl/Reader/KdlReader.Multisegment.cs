@@ -44,7 +44,7 @@ namespace System.Text.Kdl
             TokenStartIndex = 0;
             _totalConsumed = 0;
 
-            ValueSpan = ReadOnlySpan<byte>.Empty;
+            ValueSpan = [];
 
             _sequence = jsonData;
             HasValueSequence = false;
@@ -213,10 +213,10 @@ namespace System.Text.Kdl
 
             retVal = true;
 
-        Done:
+            Done:
             return retVal;
 
-        ReadFirstToken:
+            ReadFirstToken:
             retVal = ReadFirstTokenMultiSegment(first);
             goto Done;
         }
@@ -235,7 +235,7 @@ namespace System.Text.Kdl
                 return false;
             }
 
-            if (_tokenType != KdlTokenType.EndArray && _tokenType != KdlTokenType.EndObject)
+            if (_tokenType is not KdlTokenType.EndArray and not KdlTokenType.EndObject)
             {
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidEndOfKdlNonPrimitive);
             }
@@ -354,7 +354,7 @@ namespace System.Text.Kdl
             {
                 if (KdlHelpers.IsDigit(first) || first == '-')
                 {
-                    if (!TryGetNumberMultiSegment(_buffer.Slice(_consumed), out int numberOfBytes))
+                    if (!TryGetNumberMultiSegment(_buffer[_consumed..], out int numberOfBytes))
                     {
                         return false;
                     }
@@ -506,9 +506,9 @@ namespace System.Text.Kdl
         // Consumes 'null', or 'true', or 'false'
         private bool ConsumeLiteralMultiSegment(ReadOnlySpan<byte> literal, KdlTokenType tokenType)
         {
-            ReadOnlySpan<byte> span = _buffer.Slice(_consumed);
+            ReadOnlySpan<byte> span = _buffer[_consumed..];
             Debug.Assert(span.Length > 0);
-            Debug.Assert(span[0] == 'n' || span[0] == 't' || span[0] == 'f');
+            Debug.Assert(span[0] is (byte)'n' or (byte)'t' or (byte)'f');
 
             int consumed = literal.Length;
 
@@ -523,9 +523,9 @@ namespace System.Text.Kdl
                 return false;
             }
 
-            ValueSpan = span.Slice(0, literal.Length);
+            ValueSpan = span[..literal.Length];
             HasValueSequence = false;
-        Done:
+            Done:
             _tokenType = tokenType;
             _consumed += consumed;
             _bytePositionInLine += consumed;
@@ -546,7 +546,7 @@ namespace System.Text.Kdl
                 _bytePositionInLine += FindMismatch(span, literal);
 
                 int amountToWrite = Math.Min(span.Length, (int)_bytePositionInLine + 1);
-                span.Slice(0, amountToWrite).CopyTo(readSoFar);
+                span[..amountToWrite].CopyTo(readSoFar);
                 written += amountToWrite;
                 goto Throw;
             }
@@ -556,12 +556,12 @@ namespace System.Text.Kdl
                 {
                     _bytePositionInLine += FindMismatch(span, literal);
                     int amountToWrite = Math.Min(span.Length, (int)_bytePositionInLine + 1);
-                    span.Slice(0, amountToWrite).CopyTo(readSoFar);
+                    span[..amountToWrite].CopyTo(readSoFar);
                     written += amountToWrite;
                     goto Throw;
                 }
 
-                ReadOnlySpan<byte> leftToMatch = literal.Slice(span.Length);
+                ReadOnlySpan<byte> leftToMatch = literal[span.Length..];
 
                 SequencePosition startPosition = _currentPosition;
                 int startConsumed = _consumed;
@@ -583,7 +583,7 @@ namespace System.Text.Kdl
                     }
 
                     int amountToWrite = Math.Min(span.Length, readSoFar.Length - written);
-                    span.Slice(0, amountToWrite).CopyTo(readSoFar.Slice(written));
+                    span[..amountToWrite].CopyTo(readSoFar[written..]);
                     written += amountToWrite;
 
                     span = _buffer;
@@ -603,21 +603,21 @@ namespace System.Text.Kdl
                         _bytePositionInLine += FindMismatch(span, leftToMatch);
 
                         amountToWrite = Math.Min(span.Length, (int)_bytePositionInLine + 1);
-                        span.Slice(0, amountToWrite).CopyTo(readSoFar.Slice(written));
+                        span[..amountToWrite].CopyTo(readSoFar[written..]);
                         written += amountToWrite;
 
                         goto Throw;
                     }
 
-                    leftToMatch = leftToMatch.Slice(span.Length);
+                    leftToMatch = leftToMatch[span.Length..];
                     alreadyMatched = span.Length;
                 }
             }
-        Throw:
+            Throw:
             _totalConsumed = prevTotalConsumed;
             consumed = default;
             _currentPosition = copy;
-            throw GetInvalidLiteralMultiSegment(readSoFar.Slice(0, written).ToArray());
+            throw GetInvalidLiteralMultiSegment(readSoFar[..written].ToArray());
         }
 
         private static int FindMismatch(ReadOnlySpan<byte> span, ReadOnlySpan<byte> literal)
@@ -667,7 +667,7 @@ namespace System.Text.Kdl
 
         private bool ConsumeNumberMultiSegment()
         {
-            if (!TryGetNumberMultiSegment(_buffer.Slice(_consumed), out int consumed))
+            if (!TryGetNumberMultiSegment(_buffer[_consumed..], out int consumed))
             {
                 return false;
             }
@@ -744,7 +744,7 @@ namespace System.Text.Kdl
             Debug.Assert(_buffer[_consumed] == KdlConstants.Quote);
 
             // Create local copy to avoid bounds checks.
-            ReadOnlySpan<byte> localBuffer = _buffer.Slice(_consumed + 1);
+            ReadOnlySpan<byte> localBuffer = _buffer[(_consumed + 1)..];
 
             // Vectorized search for either quote, backslash, or any control character.
             // If the first found byte is a quote, we have reached an end of string, and
@@ -758,7 +758,7 @@ namespace System.Text.Kdl
                 if (foundByte == KdlConstants.Quote)
                 {
                     _bytePositionInLine += idx + 2; // Add 2 for the start and end quotes.
-                    ValueSpan = localBuffer.Slice(0, idx);
+                    ValueSpan = localBuffer[..idx];
                     HasValueSequence = false;
                     ValueIsEscaped = false;
                     _tokenType = KdlTokenType.String;
@@ -827,7 +827,7 @@ namespace System.Text.Kdl
                         bool nextCharEscaped = false;
                         while (true)
                         {
-                        StartOfLoop:
+                            StartOfLoop:
                             for (; idx < localBuffer.Length; idx++)
                             {
                                 byte currentByte = localBuffer[idx];
@@ -925,7 +925,7 @@ namespace System.Text.Kdl
                             idx = 0;
                         }
 
-                    Done:
+                        Done:
                         _bytePositionInLine++;  // Add 1 for the end quote of the string.
                         _consumed = idx + 1;    // Add 1 for the end quote of the string.
                         _totalConsumed += leftOver;
@@ -951,7 +951,7 @@ namespace System.Text.Kdl
         {
             Debug.Assert(idx >= 0 && idx < data.Length);
             Debug.Assert(data[idx] != KdlConstants.Quote);
-            Debug.Assert(data[idx] == KdlConstants.BackSlash || data[idx] < KdlConstants.Space);
+            Debug.Assert(data[idx] is KdlConstants.BackSlash or < KdlConstants.Space);
 
             PartialStateForRollback rollBackState = CaptureState();
 
@@ -964,7 +964,7 @@ namespace System.Text.Kdl
             bool nextCharEscaped = false;
             while (true)
             {
-            StartOfLoop:
+                StartOfLoop:
                 for (; idx < data.Length; idx++)
                 {
                     byte currentByte = data[idx];
@@ -1073,7 +1073,7 @@ namespace System.Text.Kdl
                 HasValueSequence = true;
             }
 
-        Done:
+            Done:
             if (HasValueSequence)
             {
                 _bytePositionInLine++;  // Add 1 for the end quote of the string.
@@ -1087,7 +1087,7 @@ namespace System.Text.Kdl
             {
                 _bytePositionInLine++;  // Add 1 for the end quote
                 _consumed += idx + 2;
-                ValueSpan = data.Slice(0, idx);
+                ValueSpan = data[..idx];
             }
 
             ValueIsEscaped = true;
@@ -1131,7 +1131,7 @@ namespace System.Text.Kdl
             Debug.Assert(signResult == ConsumeNumberResult.OperationIncomplete);
 
             byte nextByte = data[i];
-            Debug.Assert(nextByte >= '0' && nextByte <= '9');
+            Debug.Assert(nextByte is >= (byte)'0' and <= (byte)'9');
 
             if (nextByte == '0')
             {
@@ -1164,14 +1164,14 @@ namespace System.Text.Kdl
 
                 Debug.Assert(result == ConsumeNumberResult.OperationIncomplete);
                 nextByte = data[i];
-                if (nextByte != '.' && nextByte != 'E' && nextByte != 'e')
+                if (nextByte is not (byte)'.' and not (byte)'E' and not (byte)'e')
                 {
                     RollBackState(rollBackState, isError: true);
                     ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndOfDigitNotFound, nextByte);
                 }
             }
 
-            Debug.Assert(nextByte == '.' || nextByte == 'E' || nextByte == 'e');
+            Debug.Assert(nextByte is (byte)'.' or (byte)'E' or (byte)'e');
 
             if (nextByte == '.')
             {
@@ -1190,14 +1190,14 @@ namespace System.Text.Kdl
 
                 Debug.Assert(result == ConsumeNumberResult.OperationIncomplete);
                 nextByte = data[i];
-                if (nextByte != 'E' && nextByte != 'e')
+                if (nextByte is not (byte)'E' and not (byte)'e')
                 {
                     RollBackState(rollBackState, isError: true);
                     ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedNextDigitEValueNotFound, nextByte);
                 }
             }
 
-            Debug.Assert(nextByte == 'E' || nextByte == 'e');
+            Debug.Assert(nextByte is (byte)'E' or (byte)'e');
             i++;
             _bytePositionInLine++;
 
@@ -1228,7 +1228,7 @@ namespace System.Text.Kdl
             RollBackState(rollBackState, isError: true);
             ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndOfDigitNotFound, data[i]);
 
-        Done:
+            Done:
             if (HasValueSequence)
             {
                 SequencePosition start = rollBackState.GetStartPosition();
@@ -1238,7 +1238,7 @@ namespace System.Text.Kdl
             }
             else
             {
-                ValueSpan = data.Slice(0, i);
+                ValueSpan = data[..i];
                 consumed = i;
             }
             return true;
@@ -1289,7 +1289,7 @@ namespace System.Text.Kdl
         private ConsumeNumberResult ConsumeZeroMultiSegment(ref ReadOnlySpan<byte> data, scoped ref int i, scoped in PartialStateForRollback rollBackState)
         {
             Debug.Assert(data[i] == (byte)'0');
-            Debug.Assert(i == 0 || i == 1);
+            Debug.Assert(i is 0 or 1);
             i++;
             _bytePositionInLine++;
             byte nextByte;
@@ -1331,7 +1331,7 @@ namespace System.Text.Kdl
                 }
             }
             nextByte = data[i];
-            if (nextByte != '.' && nextByte != 'E' && nextByte != 'e')
+            if (nextByte is not (byte)'.' and not (byte)'E' and not (byte)'e')
             {
                 RollBackState(rollBackState, isError: true);
                 ThrowHelper.ThrowKdlReaderException(ref this,
@@ -1480,7 +1480,7 @@ namespace System.Text.Kdl
             }
 
             byte nextByte = data[i];
-            if (nextByte == '+' || nextByte == '-')
+            if (nextByte is (byte)'+' or (byte)'-')
             {
                 i++;
                 _bytePositionInLine++;
@@ -1889,7 +1889,7 @@ namespace System.Text.Kdl
             }
             else
             {
-                Debug.Assert(_tokenType == KdlTokenType.EndArray || _tokenType == KdlTokenType.EndObject);
+                Debug.Assert(_tokenType is KdlTokenType.EndArray or KdlTokenType.EndObject);
                 if (_inObject)
                 {
                     Debug.Assert(first != KdlConstants.CloseBrace);
@@ -1922,10 +1922,10 @@ namespace System.Text.Kdl
                 }
             }
 
-        Done:
+            Done:
             return ConsumeTokenResult.Success;
 
-        RollBack:
+            RollBack:
             return ConsumeTokenResult.NotEnoughDataRollBackState;
         }
 
@@ -1960,7 +1960,7 @@ namespace System.Text.Kdl
             }
             return true;
 
-        IncompleteNoRollback:
+            IncompleteNoRollback:
             return false;
         }
 
@@ -1997,7 +1997,7 @@ namespace System.Text.Kdl
             }
             return true;
 
-        IncompleteRollback:
+            IncompleteRollback:
             return false;
         }
 
@@ -2164,11 +2164,11 @@ namespace System.Text.Kdl
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.FoundInvalidCharacter, marker);
             }
 
-        Done:
+            Done:
             return ConsumeTokenResult.Success;
-        IncompleteNoRollback:
+            IncompleteNoRollback:
             return ConsumeTokenResult.IncompleteNoRollBackNecessary;
-        IncompleteRollback:
+            IncompleteRollback:
             return ConsumeTokenResult.NotEnoughDataRollBackState;
         }
 
@@ -2181,8 +2181,8 @@ namespace System.Text.Kdl
             if (skipSucceeded)
             {
                 Debug.Assert(
-                    _readerOptions.CommentHandling == KdlCommentHandling.Allow ||
-                    _readerOptions.CommentHandling == KdlCommentHandling.Skip);
+                    _readerOptions.CommentHandling is KdlCommentHandling.Allow or
+                    KdlCommentHandling.Skip);
 
                 if (_readerOptions.CommentHandling == KdlCommentHandling.Allow)
                 {
@@ -2230,7 +2230,7 @@ namespace System.Text.Kdl
             _consumed++;
             _bytePositionInLine++;
             // Create local copy to avoid bounds checks.
-            ReadOnlySpan<byte> localBuffer = _buffer.Slice(_consumed);
+            ReadOnlySpan<byte> localBuffer = _buffer[_consumed..];
 
             if (localBuffer.Length == 0)
             {
@@ -2254,7 +2254,7 @@ namespace System.Text.Kdl
             }
 
             byte marker = localBuffer[0];
-            if (marker != KdlConstants.Slash && marker != KdlConstants.Asterisk)
+            if (marker is not KdlConstants.Slash and not KdlConstants.Asterisk)
             {
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidCharacterAtStartOfComment, marker);
             }
@@ -2263,7 +2263,7 @@ namespace System.Text.Kdl
 
             _consumed++;
             _bytePositionInLine++;
-            localBuffer = localBuffer.Slice(1);
+            localBuffer = localBuffer[1..];
 
             if (localBuffer.Length == 0)
             {
@@ -2330,7 +2330,7 @@ namespace System.Text.Kdl
                 }
 
                 int idx = FindLineSeparatorMultiSegment(localBuffer, ref dangerousLineSeparatorBytesConsumed);
-                Debug.Assert(dangerousLineSeparatorBytesConsumed >= 0 && dangerousLineSeparatorBytesConsumed <= 2);
+                Debug.Assert(dangerousLineSeparatorBytesConsumed is >= 0 and <= 2);
 
                 if (idx != -1)
                 {
@@ -2404,7 +2404,7 @@ namespace System.Text.Kdl
 
         private int FindLineSeparatorMultiSegment(ReadOnlySpan<byte> localBuffer, scoped ref int dangerousLineSeparatorBytesConsumed)
         {
-            Debug.Assert(dangerousLineSeparatorBytesConsumed >= 0 && dangerousLineSeparatorBytesConsumed <= 2);
+            Debug.Assert(dangerousLineSeparatorBytesConsumed is >= 0 and <= 2);
 
             if (dangerousLineSeparatorBytesConsumed != 0)
             {
@@ -2436,7 +2436,7 @@ namespace System.Text.Kdl
                 }
 
                 int p = idx + 1;
-                localBuffer = localBuffer.Slice(p);
+                localBuffer = localBuffer[p..];
                 totalIdx += p;
 
                 dangerousLineSeparatorBytesConsumed++;
@@ -2454,7 +2454,7 @@ namespace System.Text.Kdl
         // assumes first byte (KdlConstants.UnexpectedEndOfLineSeparator) is already read
         private void ThrowOnDangerousLineSeparatorMultiSegment(ReadOnlySpan<byte> localBuffer, scoped ref int dangerousLineSeparatorBytesConsumed)
         {
-            Debug.Assert(dangerousLineSeparatorBytesConsumed == 1 || dangerousLineSeparatorBytesConsumed == 2);
+            Debug.Assert(dangerousLineSeparatorBytesConsumed is 1 or 2);
 
             // \u2028 and \u2029 are considered respectively line and paragraph separators
             // UTF-8 representation for them is E2, 80, A8/A9
@@ -2469,7 +2469,7 @@ namespace System.Text.Kdl
             {
                 if (localBuffer[0] == 0x80)
                 {
-                    localBuffer = localBuffer.Slice(1);
+                    localBuffer = localBuffer[1..];
                     dangerousLineSeparatorBytesConsumed++;
 
                     if (localBuffer.IsEmpty)
@@ -2488,7 +2488,7 @@ namespace System.Text.Kdl
             if (dangerousLineSeparatorBytesConsumed == 2)
             {
                 byte lastByte = localBuffer[0];
-                if (lastByte == 0xA8 || lastByte == 0xA9)
+                if (lastByte is 0xA8 or 0xA9)
                 {
                     ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfLineSeparator);
                 }
@@ -2527,7 +2527,7 @@ namespace System.Text.Kdl
                     if (localBuffer[0] == KdlConstants.LineFeed)
                     {
                         _consumed++;
-                        localBuffer = localBuffer.Slice(1);
+                        localBuffer = localBuffer[1..];
                     }
 
                     ignoreNextLfForLineTracking = false;
@@ -2539,7 +2539,7 @@ namespace System.Text.Kdl
                 {
                     int nextIdx = idx + 1;
                     byte marker = localBuffer[idx];
-                    localBuffer = localBuffer.Slice(nextIdx);
+                    localBuffer = localBuffer[nextIdx..];
 
                     _consumed += nextIdx;
 
@@ -2565,7 +2565,7 @@ namespace System.Text.Kdl
                 {
                     _consumed += localBuffer.Length;
                     _bytePositionInLine += localBuffer.Length;
-                    localBuffer = ReadOnlySpan<byte>.Empty;
+                    localBuffer = [];
                 }
 
                 if (localBuffer.IsEmpty)
@@ -2593,25 +2593,17 @@ namespace System.Text.Kdl
             }
         }
 
-        private PartialStateForRollback CaptureState()
+        private readonly PartialStateForRollback CaptureState()
         {
             return new PartialStateForRollback(_totalConsumed, _bytePositionInLine, _consumed, _currentPosition);
         }
 
-        private readonly struct PartialStateForRollback
+        private readonly struct PartialStateForRollback(long totalConsumed, long bytePositionInLine, int consumed, SequencePosition currentPosition)
         {
-            public readonly long _prevTotalConsumed;
-            public readonly long _prevBytePositionInLine;
-            public readonly int _prevConsumed;
-            public readonly SequencePosition _prevCurrentPosition;
-
-            public PartialStateForRollback(long totalConsumed, long bytePositionInLine, int consumed, SequencePosition currentPosition)
-            {
-                _prevTotalConsumed = totalConsumed;
-                _prevBytePositionInLine = bytePositionInLine;
-                _prevConsumed = consumed;
-                _prevCurrentPosition = currentPosition;
-            }
+            public readonly long _prevTotalConsumed = totalConsumed;
+            public readonly long _prevBytePositionInLine = bytePositionInLine;
+            public readonly int _prevConsumed = consumed;
+            public readonly SequencePosition _prevCurrentPosition = currentPosition;
 
             public SequencePosition GetStartPosition(int offset = 0)
             {

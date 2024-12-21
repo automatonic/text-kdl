@@ -1,9 +1,6 @@
 using System.Buffers;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Text.Kdl
 {
@@ -503,8 +500,8 @@ namespace System.Text.Kdl
                         }
 
                         Debug.Assert(
-                            reader.TokenType == KdlTokenType.EndObject ||
-                            reader.TokenType == KdlTokenType.EndArray);
+                            reader.TokenType is KdlTokenType.EndObject or
+                            KdlTokenType.EndArray);
 
                         break;
                     }
@@ -724,14 +721,14 @@ namespace System.Text.Kdl
         {
             // These tokens should already have been processed.
             Debug.Assert(
-                tokenType != KdlTokenType.Null &&
-                tokenType != KdlTokenType.False &&
-                tokenType != KdlTokenType.True);
+                tokenType is not KdlTokenType.Null and
+                not KdlTokenType.False and
+                not KdlTokenType.True);
 
             ReadOnlySpan<byte> utf8KdlSpan = utf8Kdl.Span;
             MetadataDb database;
 
-            if (tokenType == KdlTokenType.String || tokenType == KdlTokenType.Number)
+            if (tokenType is KdlTokenType.String or KdlTokenType.Number)
             {
                 // For primitive types, we can avoid renting MetadataDb and creating StackRowStack.
                 database = MetadataDb.CreateLocked(utf8Kdl.Length);

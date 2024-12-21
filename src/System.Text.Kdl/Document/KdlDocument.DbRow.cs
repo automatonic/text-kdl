@@ -49,15 +49,12 @@ namespace System.Text.Kdl
             internal const int UnknownSize = -1;
 
 #if DEBUG
-            static unsafe DbRow()
-            {
-                Debug.Assert(sizeof(DbRow) == Size);
-            }
+            static unsafe DbRow() => Debug.Assert(sizeof(DbRow) == Size);
 #endif
 
             internal DbRow(KdlTokenType jsonTokenType, int location, int sizeOrLength)
             {
-                Debug.Assert(jsonTokenType > KdlTokenType.None && jsonTokenType <= KdlTokenType.Null);
+                Debug.Assert(jsonTokenType is > KdlTokenType.None and <= KdlTokenType.Null);
                 Debug.Assert((byte)jsonTokenType < 1 << 4);
                 Debug.Assert(location >= 0);
                 Debug.Assert(sizeOrLength >= UnknownSize);

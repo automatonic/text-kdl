@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -8,7 +6,6 @@ using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Serialization;
 using System.Text.Kdl.Serialization.Converters;
 using System.Text.Kdl.Serialization.Metadata;
-using System.Threading;
 
 namespace System.Text.Kdl
 {
@@ -36,10 +33,7 @@ namespace System.Text.Kdl
         {
             [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
             [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-            get
-            {
-                return s_defaultOptions ?? GetOrCreateSingleton(ref s_defaultOptions, KdlSerializerDefaults.General);
-            }
+            get => s_defaultOptions ?? GetOrCreateSingleton(ref s_defaultOptions, KdlSerializerDefaults.General);
         }
 
         private static KdlSerializerOptions? s_defaultOptions;
@@ -56,10 +50,7 @@ namespace System.Text.Kdl
         {
             [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
             [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-            get
-            {
-                return s_webOptions ?? GetOrCreateSingleton(ref s_webOptions, KdlSerializerDefaults.Web);
-            }
+            get => s_webOptions ?? GetOrCreateSingleton(ref s_webOptions, KdlSerializerDefaults.Web);
         }
 
         private static KdlSerializerOptions? s_webOptions;
@@ -85,7 +76,7 @@ namespace System.Text.Kdl
         private bool _allowTrailingCommas;
         private bool _respectNullableAnnotations = AppContextSwitchHelper.RespectNullableAnnotationsDefault;
         private bool _respectRequiredConstructorParameters = AppContextSwitchHelper.RespectRequiredConstructorParametersDefault;
-        private bool _ignoreNullValues;
+        private readonly bool _ignoreNullValues;
         private bool _ignoreReadOnlyProperties;
         private bool _ignoreReadonlyFields;
         private bool _includeFields;
@@ -98,10 +89,7 @@ namespace System.Text.Kdl
         /// <summary>
         /// Constructs a new <see cref="KdlSerializerOptions"/> instance.
         /// </summary>
-        public KdlSerializerOptions()
-        {
-            TrackOptionsInstance(this);
-        }
+        public KdlSerializerOptions() => TrackOptionsInstance(this);
 
         /// <summary>
         /// Copies the options from a <see cref="KdlSerializerOptions"/> instance to a new instance.
@@ -186,7 +174,7 @@ namespace System.Text.Kdl
             public static ConditionalWeakTable<KdlSerializerOptions, object?> All { get; } =
                 // TODO https://github.com/dotnet/runtime/issues/51159:
                 // Look into linking this away / disabling it when hot reload isn't in use.
-                new ConditionalWeakTable<KdlSerializerOptions, object?>();
+                [];
         }
 
         /// <summary>
@@ -204,10 +192,7 @@ namespace System.Text.Kdl
         /// </remarks>
         public IKdlTypeInfoResolver? TypeInfoResolver
         {
-            get
-            {
-                return _typeInfoResolver;
-            }
+            get => _typeInfoResolver;
             set
             {
                 VerifyMutable();
@@ -252,10 +237,7 @@ namespace System.Text.Kdl
         /// </remarks>
         public bool AllowOutOfOrderMetadataProperties
         {
-            get
-            {
-                return _allowOutOfOrderMetadataProperties;
-            }
+            get => _allowOutOfOrderMetadataProperties;
             set
             {
                 VerifyMutable();
@@ -275,10 +257,7 @@ namespace System.Text.Kdl
         /// </remarks>
         public bool AllowTrailingCommas
         {
-            get
-            {
-                return _allowTrailingCommas;
-            }
+            get => _allowTrailingCommas;
             set
             {
                 VerifyMutable();
@@ -296,10 +275,7 @@ namespace System.Text.Kdl
         /// </exception>
         public int DefaultBufferSize
         {
-            get
-            {
-                return _defaultBufferSize;
-            }
+            get => _defaultBufferSize;
             set
             {
                 VerifyMutable();
@@ -318,10 +294,7 @@ namespace System.Text.Kdl
         /// </summary>
         public JavaScriptEncoder? Encoder
         {
-            get
-            {
-                return _encoder;
-            }
+            get => _encoder;
             set
             {
                 VerifyMutable();
@@ -339,10 +312,7 @@ namespace System.Text.Kdl
         /// </remarks>
         public KdlNamingPolicy? DictionaryKeyPolicy
         {
-            get
-            {
-                return _dictionaryKeyPolicy;
-            }
+            get => _dictionaryKeyPolicy;
             set
             {
                 VerifyMutable();
@@ -363,10 +333,7 @@ namespace System.Text.Kdl
         /// </exception>
         public KdlIgnoreCondition DefaultIgnoreCondition
         {
-            get
-            {
-                return _defaultIgnoreCondition;
-            }
+            get => _defaultIgnoreCondition;
             set
             {
                 VerifyMutable();
@@ -446,10 +413,7 @@ namespace System.Text.Kdl
         /// </exception>
         public bool IgnoreReadOnlyProperties
         {
-            get
-            {
-                return _ignoreReadOnlyProperties;
-            }
+            get => _ignoreReadOnlyProperties;
             set
             {
                 VerifyMutable();
@@ -470,10 +434,7 @@ namespace System.Text.Kdl
         /// </exception>
         public bool IgnoreReadOnlyFields
         {
-            get
-            {
-                return _ignoreReadonlyFields;
-            }
+            get => _ignoreReadonlyFields;
             set
             {
                 VerifyMutable();
@@ -490,10 +451,7 @@ namespace System.Text.Kdl
         /// </exception>
         public bool IncludeFields
         {
-            get
-            {
-                return _includeFields;
-            }
+            get => _includeFields;
             set
             {
                 VerifyMutable();
@@ -526,7 +484,7 @@ namespace System.Text.Kdl
                 }
 
                 _maxDepth = value;
-                EffectiveMaxDepth = (value == 0 ? DefaultMaxDepth : value);
+                EffectiveMaxDepth = value == 0 ? DefaultMaxDepth : value;
             }
         }
 
@@ -543,10 +501,7 @@ namespace System.Text.Kdl
         /// </remarks>
         public KdlNamingPolicy? PropertyNamingPolicy
         {
-            get
-            {
-                return _jsonPropertyNamingPolicy;
-            }
+            get => _jsonPropertyNamingPolicy;
             set
             {
                 VerifyMutable();
@@ -561,10 +516,7 @@ namespace System.Text.Kdl
         /// <remarks>There is a performance cost associated when the value is true.</remarks>
         public bool PropertyNameCaseInsensitive
         {
-            get
-            {
-                return _propertyNameCaseInsensitive;
-            }
+            get => _propertyNameCaseInsensitive;
             set
             {
                 VerifyMutable();
@@ -586,17 +538,16 @@ namespace System.Text.Kdl
         /// </remarks>
         public KdlCommentHandling ReadCommentHandling
         {
-            get
-            {
-                return _readCommentHandling;
-            }
+            get => _readCommentHandling;
             set
             {
                 VerifyMutable();
 
                 Debug.Assert(value >= 0);
                 if (value > KdlCommentHandling.Skip)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), SR.KdlSerializerDoesNotSupportComments);
+                }
 
                 _readCommentHandling = value;
             }
@@ -639,10 +590,7 @@ namespace System.Text.Kdl
         /// </exception>
         public bool WriteIndented
         {
-            get
-            {
-                return _writeIndented;
-            }
+            get => _writeIndented;
             set
             {
                 VerifyMutable();
@@ -660,10 +608,7 @@ namespace System.Text.Kdl
         /// </exception>
         public char IndentCharacter
         {
-            get
-            {
-                return _indentCharacter;
-            }
+            get => _indentCharacter;
             set
             {
                 KdlWriterHelper.ValidateIndentCharacter(value);
@@ -682,10 +627,7 @@ namespace System.Text.Kdl
         /// </exception>
         public int IndentSize
         {
-            get
-            {
-                return _indentSize;
-            }
+            get => _indentSize;
             set
             {
                 KdlWriterHelper.ValidateIndentSize(value);
@@ -723,10 +665,7 @@ namespace System.Text.Kdl
         /// </exception>
         public string NewLine
         {
-            get
-            {
-                return _newLine ??= Environment.NewLine;
-            }
+            get => _newLine ??= Environment.NewLine;
             set
             {
                 KdlWriterHelper.ValidateNewLine(value);
@@ -1022,15 +961,9 @@ namespace System.Text.Kdl
             }
         }
 
-        private sealed class ConverterList : ConfigurationList<KdlConverter>
+        private sealed class ConverterList(KdlSerializerOptions options, IList<KdlConverter>? source = null) : ConfigurationList<KdlConverter>(source)
         {
-            private readonly KdlSerializerOptions _options;
-
-            public ConverterList(KdlSerializerOptions options, IList<KdlConverter>? source = null)
-                : base(source)
-            {
-                _options = options;
-            }
+            private readonly KdlSerializerOptions _options = options;
 
             public override bool IsReadOnly => _options.IsReadOnly;
             protected override void OnCollectionModifying() => _options.VerifyMutable();
@@ -1093,6 +1026,6 @@ namespace System.Text.Kdl
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"TypeInfoResolver = {(TypeInfoResolver?.ToString() ?? "<null>")}, IsReadOnly = {IsReadOnly}";
+        private string DebuggerDisplay => $"TypeInfoResolver = {TypeInfoResolver?.ToString() ?? "<null>"}, IsReadOnly = {IsReadOnly}";
     }
 }

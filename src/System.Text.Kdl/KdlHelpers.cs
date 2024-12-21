@@ -1,7 +1,5 @@
 using System.Buffers;
 using System.Buffers.Text;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -346,7 +344,7 @@ namespace System.Text.Kdl
             int nDigits;
             if (leftIsNegative != rightIsNegative ||
                 leftExponent != rightExponent ||
-                (nDigits = (leftIntegral.Length + leftFractional.Length)) !=
+                (nDigits = leftIntegral.Length + leftFractional.Length) !=
                             rightIntegral.Length + rightFractional.Length)
             {
                 return false;
@@ -367,11 +365,11 @@ namespace System.Text.Kdl
             {
                 case < 0:
                     leftFirst = leftIntegral;
-                    leftMiddle = leftFractional.Slice(0, -diff);
-                    leftLast = leftFractional.Slice(-diff);
+                    leftMiddle = leftFractional[..-diff];
+                    leftLast = leftFractional[-diff..];
                     int rightOffset = rightIntegral.Length + diff;
-                    rightFirst = rightIntegral.Slice(0, rightOffset);
-                    rightMiddle = rightIntegral.Slice(rightOffset);
+                    rightFirst = rightIntegral[..rightOffset];
+                    rightMiddle = rightIntegral[rightOffset..];
                     rightLast = rightFractional;
                     break;
 
@@ -386,12 +384,12 @@ namespace System.Text.Kdl
 
                 case > 0:
                     int leftOffset = leftIntegral.Length - diff;
-                    leftFirst = leftIntegral.Slice(0, leftOffset);
-                    leftMiddle = leftIntegral.Slice(leftOffset);
+                    leftFirst = leftIntegral[..leftOffset];
+                    leftMiddle = leftIntegral[leftOffset..];
                     leftLast = leftFractional;
                     rightFirst = rightIntegral;
-                    rightMiddle = rightFractional.Slice(0, diff);
-                    rightLast = rightFractional.Slice(diff);
+                    rightMiddle = rightFractional[..diff];
+                    rightLast = rightFractional[diff..];
                     break;
             }
 
@@ -429,7 +427,7 @@ namespace System.Text.Kdl
                 if (span[0] == '-')
                 {
                     neg = true;
-                    span = span.Slice(1);
+                    span = span[1..];
                 }
                 else
                 {
@@ -446,11 +444,11 @@ namespace System.Text.Kdl
                     goto Normalize;
                 }
 
-                intg = span.Slice(0, i);
+                intg = span[..i];
 
                 if (span[i] == '.')
                 {
-                    span = span.Slice(i + 1);
+                    span = span[(i + 1)..];
                     i = span.IndexOfAny((byte)'e', (byte)'E');
                     if (i < 0)
                     {
@@ -459,7 +457,7 @@ namespace System.Text.Kdl
                         goto Normalize;
                     }
 
-                    frac = span.Slice(0, i);
+                    frac = span[..i];
                 }
                 else
                 {
@@ -467,19 +465,19 @@ namespace System.Text.Kdl
                 }
 
                 Debug.Assert(span[i] is (byte)'e' or (byte)'E');
-                if (!Utf8Parser.TryParse(span.Slice(i + 1), out exp, out _))
+                if (!Utf8Parser.TryParse(span[(i + 1)..], out exp, out _))
                 {
                     Debug.Assert(span.Length >= 10);
                     ThrowHelper.ThrowArgumentOutOfRangeException_KdlNumberExponentTooLarge(nameof(exponent));
                 }
 
-            Normalize: // Calculates the normal form of the number.
+                Normalize: // Calculates the normal form of the number.
 
                 if (IndexOfFirstTrailingZero(frac) is >= 0 and int iz)
                 {
                     // Trim trailing zeros from the fractional part.
                     // e.g. 3.1400 -> 3.14
-                    frac = frac.Slice(0, iz);
+                    frac = frac[..iz];
                 }
 
                 if (intg[0] == '0')
@@ -491,7 +489,7 @@ namespace System.Text.Kdl
                         // Trim leading zeros from the fractional part
                         // and update the exponent accordingly.
                         // e.g. 0.000123 -> 0.123e-3
-                        frac = frac.Slice(lz + 1);
+                        frac = frac[(lz + 1)..];
                         exp -= lz + 1;
                     }
 
@@ -505,7 +503,7 @@ namespace System.Text.Kdl
                     // the integral part and increase the exponent accordingly.
                     // e.g. 1000 -> 1e3
                     exp += intg.Length - fz;
-                    intg = intg.Slice(0, fz);
+                    intg = intg[..fz];
                 }
 
                 // Normalize the exponent by subtracting the length of the fractional part.

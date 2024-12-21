@@ -1,6 +1,5 @@
 using System.Buffers;
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -16,7 +15,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowArgumentException_DeserializeWrongType(Type type, object value)
         {
-            throw new ArgumentException(string.Format(SR.DeserializeWrongType, type, value.GetType()));
+            throw new ArgumentException(Format(SR.DeserializeWrongType, type, value.GetType()));
         }
 
         [DoesNotReturn]
@@ -28,85 +27,85 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowNotSupportedException_SerializationNotSupported(Type propertyType)
         {
-            throw new NotSupportedException(string.Format(SR.SerializationNotSupportedType, propertyType));
+            throw new NotSupportedException(Format(SR.SerializationNotSupportedType, propertyType));
         }
 
         [DoesNotReturn]
         public static void ThrowNotSupportedException_TypeRequiresAsyncSerialization(Type propertyType)
         {
-            throw new NotSupportedException(string.Format(SR.TypeRequiresAsyncSerialization, propertyType));
+            throw new NotSupportedException(Format(SR.TypeRequiresAsyncSerialization, propertyType));
         }
 
         [DoesNotReturn]
         public static void ThrowNotSupportedException_DictionaryKeyTypeNotSupported(Type keyType, KdlConverter converter)
         {
-            throw new NotSupportedException(string.Format(SR.DictionaryKeyTypeNotSupported, keyType, converter.GetType()));
+            throw new NotSupportedException(Format(SR.DictionaryKeyTypeNotSupported, keyType, converter.GetType()));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_DeserializeUnableToConvertValue(Type propertyType)
         {
-            throw new KdlException(string.Format(SR.DeserializeUnableToConvertValue, propertyType)) { AppendPathInformation = true };
+            throw new KdlException(Format(SR.DeserializeUnableToConvertValue, propertyType)) { AppendPathInformation = true };
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidCastException_DeserializeUnableToAssignValue(Type typeOfValue, Type declaredType)
         {
-            throw new InvalidCastException(string.Format(SR.DeserializeUnableToAssignValue, typeOfValue, declaredType));
+            throw new InvalidCastException(Format(SR.DeserializeUnableToAssignValue, typeOfValue, declaredType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_DeserializeUnableToAssignNull(Type declaredType)
         {
-            throw new InvalidOperationException(string.Format(SR.DeserializeUnableToAssignNull, declaredType));
+            throw new InvalidOperationException(Format(SR.DeserializeUnableToAssignNull, declaredType));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_PropertyGetterDisallowNull(string propertyName, Type declaringType)
         {
-            throw new KdlException(string.Format(SR.PropertyGetterDisallowNull, propertyName, declaringType)) { AppendPathInformation = true };
+            throw new KdlException(Format(SR.PropertyGetterDisallowNull, propertyName, declaringType)) { AppendPathInformation = true };
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_PropertySetterDisallowNull(string propertyName, Type declaringType)
         {
-            throw new KdlException(string.Format(SR.PropertySetterDisallowNull, propertyName, declaringType)) { AppendPathInformation = true };
+            throw new KdlException(Format(SR.PropertySetterDisallowNull, propertyName, declaringType)) { AppendPathInformation = true };
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_ConstructorParameterDisallowNull(string parameterName, Type declaringType)
         {
-            throw new KdlException(string.Format(SR.ConstructorParameterDisallowNull, parameterName, declaringType)) { AppendPathInformation = true };
+            throw new KdlException(Format(SR.ConstructorParameterDisallowNull, parameterName, declaringType)) { AppendPathInformation = true };
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ObjectCreationHandlingPopulateNotSupportedByConverter(KdlPropertyInfo propertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.ObjectCreationHandlingPopulateNotSupportedByConverter, propertyInfo.Name, propertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.ObjectCreationHandlingPopulateNotSupportedByConverter, propertyInfo.Name, propertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ObjectCreationHandlingPropertyMustHaveAGetter(KdlPropertyInfo propertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.ObjectCreationHandlingPropertyMustHaveAGetter, propertyInfo.Name, propertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.ObjectCreationHandlingPropertyMustHaveAGetter, propertyInfo.Name, propertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ObjectCreationHandlingPropertyValueTypeMustHaveASetter(KdlPropertyInfo propertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.ObjectCreationHandlingPropertyValueTypeMustHaveASetter, propertyInfo.Name, propertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.ObjectCreationHandlingPropertyValueTypeMustHaveASetter, propertyInfo.Name, propertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ObjectCreationHandlingPropertyCannotAllowPolymorphicDeserialization(KdlPropertyInfo propertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.ObjectCreationHandlingPropertyCannotAllowPolymorphicDeserialization, propertyInfo.Name, propertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.ObjectCreationHandlingPropertyCannotAllowPolymorphicDeserialization, propertyInfo.Name, propertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ObjectCreationHandlingPropertyCannotAllowReadOnlyMember(KdlPropertyInfo propertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.ObjectCreationHandlingPropertyCannotAllowReadOnlyMember, propertyInfo.Name, propertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.ObjectCreationHandlingPropertyCannotAllowReadOnlyMember, propertyInfo.Name, propertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
@@ -124,19 +123,19 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowKdlException_SerializationConverterRead(KdlConverter? converter)
         {
-            throw new KdlException(string.Format(SR.SerializationConverterRead, converter)) { AppendPathInformation = true };
+            throw new KdlException(Format(SR.SerializationConverterRead, converter)) { AppendPathInformation = true };
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_SerializationConverterWrite(KdlConverter? converter)
         {
-            throw new KdlException(string.Format(SR.SerializationConverterWrite, converter)) { AppendPathInformation = true };
+            throw new KdlException(Format(SR.SerializationConverterWrite, converter)) { AppendPathInformation = true };
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_SerializerCycleDetected(int maxDepth)
         {
-            throw new KdlException(string.Format(SR.SerializerCycleDetected, maxDepth)) { AppendPathInformation = true };
+            throw new KdlException(Format(SR.SerializerCycleDetected, maxDepth)) { AppendPathInformation = true };
         }
 
         [DoesNotReturn]
@@ -151,11 +150,11 @@ namespace System.Text.Kdl
             if (declaringType == null)
             {
                 Debug.Assert(propertyName == null);
-                throw new ArgumentException(string.Format(SR.CannotSerializeInvalidType, typeToConvert), paramName);
+                throw new ArgumentException(Format(SR.CannotSerializeInvalidType, typeToConvert), paramName);
             }
 
             Debug.Assert(propertyName != null);
-            throw new ArgumentException(string.Format(SR.CannotSerializeInvalidMember, typeToConvert, propertyName, declaringType), paramName);
+            throw new ArgumentException(Format(SR.CannotSerializeInvalidMember, typeToConvert, propertyName, declaringType), paramName);
         }
 
         [DoesNotReturn]
@@ -164,23 +163,23 @@ namespace System.Text.Kdl
             if (declaringType == null)
             {
                 Debug.Assert(memberInfo == null);
-                throw new InvalidOperationException(string.Format(SR.CannotSerializeInvalidType, typeToConvert));
+                throw new InvalidOperationException(Format(SR.CannotSerializeInvalidType, typeToConvert));
             }
 
             Debug.Assert(memberInfo != null);
-            throw new InvalidOperationException(string.Format(SR.CannotSerializeInvalidMember, typeToConvert, memberInfo.Name, declaringType));
+            throw new InvalidOperationException(Format(SR.CannotSerializeInvalidMember, typeToConvert, memberInfo.Name, declaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializationConverterNotCompatible(Type converterType, Type type)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializationConverterNotCompatible, converterType, type));
+            throw new InvalidOperationException(Format(SR.SerializationConverterNotCompatible, converterType, type));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ResolverTypeNotCompatible(Type requestedType, Type actualType)
         {
-            throw new InvalidOperationException(string.Format(SR.ResolverTypeNotCompatible, actualType, requestedType));
+            throw new InvalidOperationException(Format(SR.ResolverTypeNotCompatible, actualType, requestedType));
         }
 
         [DoesNotReturn]
@@ -210,7 +209,7 @@ namespace System.Text.Kdl
                 location += $".{memberInfo.Name}";
             }
 
-            throw new InvalidOperationException(string.Format(SR.SerializationConverterOnAttributeInvalid, location));
+            throw new InvalidOperationException(Format(SR.SerializationConverterOnAttributeInvalid, location));
         }
 
         [DoesNotReturn]
@@ -223,7 +222,7 @@ namespace System.Text.Kdl
                 location += $".{memberInfo.Name}";
             }
 
-            throw new InvalidOperationException(string.Format(SR.SerializationConverterOnAttributeNotCompatible, location, typeToConvert));
+            throw new InvalidOperationException(Format(SR.SerializationConverterOnAttributeNotCompatible, location, typeToConvert));
         }
 
         [DoesNotReturn]
@@ -263,25 +262,25 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializerPropertyNameConflict(Type type, string propertyName)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializerPropertyNameConflict, type, propertyName));
+            throw new InvalidOperationException(Format(SR.SerializerPropertyNameConflict, type, propertyName));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializerPropertyNameNull(KdlPropertyInfo jsonPropertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializerPropertyNameNull, jsonPropertyInfo.DeclaringType, jsonPropertyInfo.MemberName));
+            throw new InvalidOperationException(Format(SR.SerializerPropertyNameNull, jsonPropertyInfo.DeclaringType, jsonPropertyInfo.MemberName));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_KdlPropertyRequiredAndNotDeserializable(KdlPropertyInfo jsonPropertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.KdlPropertyRequiredAndNotDeserializable, jsonPropertyInfo.Name, jsonPropertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.KdlPropertyRequiredAndNotDeserializable, jsonPropertyInfo.Name, jsonPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_KdlPropertyRequiredAndExtensionData(KdlPropertyInfo jsonPropertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.KdlPropertyRequiredAndExtensionData, jsonPropertyInfo.Name, jsonPropertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.KdlPropertyRequiredAndExtensionData, jsonPropertyInfo.Name, jsonPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
@@ -317,25 +316,25 @@ namespace System.Text.Kdl
                 }
             }
 
-            throw new KdlException(string.Format(SR.KdlRequiredPropertiesMissing, parent.Type, listOfMissingPropertiesBuilder.ToString()));
+            throw new KdlException(Format(SR.KdlRequiredPropertiesMissing, parent.Type, listOfMissingPropertiesBuilder.ToString()));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_NamingPolicyReturnNull(KdlNamingPolicy namingPolicy)
         {
-            throw new InvalidOperationException(string.Format(SR.NamingPolicyReturnNull, namingPolicy));
+            throw new InvalidOperationException(Format(SR.NamingPolicyReturnNull, namingPolicy));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializerConverterFactoryReturnsNull(Type converterType)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializerConverterFactoryReturnsNull, converterType));
+            throw new InvalidOperationException(Format(SR.SerializerConverterFactoryReturnsNull, converterType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializerConverterFactoryReturnsKdlConverterFactorty(Type converterType)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializerConverterFactoryReturnsKdlConverterFactory, converterType));
+            throw new InvalidOperationException(Format(SR.SerializerConverterFactoryReturnsKdlConverterFactory, converterType));
         }
 
         [DoesNotReturn]
@@ -346,7 +345,7 @@ namespace System.Text.Kdl
             string secondMatchName)
         {
             throw new InvalidOperationException(
-                string.Format(
+                Format(
                     SR.MultipleMembersBindWithConstructorParameter,
                     firstMatchName,
                     secondMatchName,
@@ -357,38 +356,38 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ConstructorParameterIncompleteBinding(Type parentType)
         {
-            throw new InvalidOperationException(string.Format(SR.ConstructorParamIncompleteBinding, parentType));
+            throw new InvalidOperationException(Format(SR.ConstructorParamIncompleteBinding, parentType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ExtensionDataCannotBindToCtorParam(string propertyName, KdlPropertyInfo jsonPropertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.ExtensionDataCannotBindToCtorParam, propertyName, jsonPropertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.ExtensionDataCannotBindToCtorParam, propertyName, jsonPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_KdlIncludeOnInaccessibleProperty(string memberName, Type declaringType)
         {
-            throw new InvalidOperationException(string.Format(SR.KdlIncludeOnInaccessibleProperty, memberName, declaringType));
+            throw new InvalidOperationException(Format(SR.KdlIncludeOnInaccessibleProperty, memberName, declaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_IgnoreConditionOnValueTypeInvalid(string clrPropertyName, Type propertyDeclaringType)
         {
-            throw new InvalidOperationException(string.Format(SR.IgnoreConditionOnValueTypeInvalid, clrPropertyName, propertyDeclaringType));
+            throw new InvalidOperationException(Format(SR.IgnoreConditionOnValueTypeInvalid, clrPropertyName, propertyDeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_NumberHandlingOnPropertyInvalid(KdlPropertyInfo jsonPropertyInfo)
         {
             Debug.Assert(!jsonPropertyInfo.IsForTypeInfo);
-            throw new InvalidOperationException(string.Format(SR.NumberHandlingOnPropertyInvalid, jsonPropertyInfo.MemberName, jsonPropertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.NumberHandlingOnPropertyInvalid, jsonPropertyInfo.MemberName, jsonPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ConverterCanConvertMultipleTypes(Type runtimePropertyType, KdlConverter jsonConverter)
         {
-            throw new InvalidOperationException(string.Format(SR.ConverterCanConvertMultipleTypes, jsonConverter.GetType(), jsonConverter.Type, runtimePropertyType));
+            throw new InvalidOperationException(Format(SR.ConverterCanConvertMultipleTypes, jsonConverter.GetType(), jsonConverter.Type, runtimePropertyType));
         }
 
         [DoesNotReturn]
@@ -401,26 +400,26 @@ namespace System.Text.Kdl
             state.Current.KdlPropertyName = propertyName.ToArray();
 
             NotSupportedException ex = new NotSupportedException(
-                string.Format(SR.ObjectWithParameterizedCtorRefMetadataNotSupported, jsonTypeInfo.Type));
+                Format(SR.ObjectWithParameterizedCtorRefMetadataNotSupported, jsonTypeInfo.Type));
             ThrowNotSupportedException(ref state, reader, ex);
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(KdlTypeInfoKind kind)
         {
-            throw new InvalidOperationException(string.Format(SR.InvalidKdlTypeInfoOperationForKind, kind));
+            throw new InvalidOperationException(Format(SR.InvalidKdlTypeInfoOperationForKind, kind));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_KdlTypeInfoOnDeserializingCallbacksNotSupported(Type type)
         {
-            throw new InvalidOperationException(string.Format(SR.OnDeserializingCallbacksNotSupported, type));
+            throw new InvalidOperationException(Format(SR.OnDeserializingCallbacksNotSupported, type));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_CreateObjectConverterNotCompatible(Type type)
         {
-            throw new InvalidOperationException(string.Format(SR.CreateObjectConverterNotCompatible, type));
+            throw new InvalidOperationException(Format(SR.CreateObjectConverterNotCompatible, type));
         }
 
         [DoesNotReturn]
@@ -439,7 +438,7 @@ namespace System.Text.Kdl
 #endif
             if (iPos >= 0)
             {
-                message = $"{message.Substring(0, iPos)} Path: {path} |{message.Substring(iPos)}";
+                message = $"{message[..iPos]} Path: {path} |{message[iPos..]}";
             }
             else
             {
@@ -476,7 +475,7 @@ namespace System.Text.Kdl
             {
                 // Use a default message.
                 Type propertyType = state.Current.KdlPropertyInfo?.PropertyType ?? state.Current.KdlTypeInfo.Type;
-                message = string.Format(SR.DeserializeUnableToConvertValue, propertyType);
+                message = Format(SR.DeserializeUnableToConvertValue, propertyType);
                 ex.AppendPathInformation = true;
             }
 
@@ -506,7 +505,7 @@ namespace System.Text.Kdl
             if (string.IsNullOrEmpty(message))
             {
                 // Use a default message.
-                message = string.Format(SR.SerializeUnableToSerialize);
+                message = Format(SR.SerializeUnableToSerialize);
                 ex.AppendPathInformation = true;
             }
 
@@ -521,37 +520,37 @@ namespace System.Text.Kdl
         public static void ThrowInvalidOperationException_SerializationDuplicateAttribute(Type attribute, MemberInfo memberInfo)
         {
             string location = memberInfo is Type type ? type.ToString() : $"{memberInfo.DeclaringType}.{memberInfo.Name}";
-            throw new InvalidOperationException(string.Format(SR.SerializationDuplicateAttribute, attribute, location));
+            throw new InvalidOperationException(Format(SR.SerializationDuplicateAttribute, attribute, location));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializationDuplicateTypeAttribute(Type classType, Type attribute)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializationDuplicateTypeAttribute, classType, attribute));
+            throw new InvalidOperationException(Format(SR.SerializationDuplicateTypeAttribute, classType, attribute));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializationDuplicateTypeAttribute<TAttribute>(Type classType)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializationDuplicateTypeAttribute, classType, typeof(TAttribute)));
+            throw new InvalidOperationException(Format(SR.SerializationDuplicateTypeAttribute, classType, typeof(TAttribute)));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ExtensionDataConflictsWithUnmappedMemberHandling(Type classType, KdlPropertyInfo jsonPropertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.ExtensionDataConflictsWithUnmappedMemberHandling, classType, jsonPropertyInfo.MemberName));
+            throw new InvalidOperationException(Format(SR.ExtensionDataConflictsWithUnmappedMemberHandling, classType, jsonPropertyInfo.MemberName));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_SerializationDataExtensionPropertyInvalid(KdlPropertyInfo jsonPropertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.SerializationDataExtensionPropertyInvalid, jsonPropertyInfo.PropertyType, jsonPropertyInfo.MemberName));
+            throw new InvalidOperationException(Format(SR.SerializationDataExtensionPropertyInvalid, jsonPropertyInfo.PropertyType, jsonPropertyInfo.MemberName));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_PropertyTypeNotNullable(KdlPropertyInfo jsonPropertyInfo)
         {
-            throw new InvalidOperationException(string.Format(SR.PropertyTypeNotNullable, jsonPropertyInfo.PropertyType));
+            throw new InvalidOperationException(Format(SR.PropertyTypeNotNullable, jsonPropertyInfo.PropertyType));
         }
 
         [DoesNotReturn]
@@ -578,7 +577,7 @@ namespace System.Text.Kdl
                     message += " ";
                 }
 
-                message += string.Format(SR.SerializationNotSupportedParentType, propertyType);
+                message += Format(SR.SerializationNotSupportedParentType, propertyType);
             }
 
             long lineNumber = reader.CurrentState._lineNumber;
@@ -606,7 +605,7 @@ namespace System.Text.Kdl
                     message += " ";
                 }
 
-                message += string.Format(SR.SerializationNotSupportedParentType, propertyType);
+                message += Format(SR.SerializationNotSupportedParentType, propertyType);
             }
 
             message += $" Path: {state.PropertyPath()}.";
@@ -624,20 +623,20 @@ namespace System.Text.Kdl
             {
                 if (typeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators is true)
                 {
-                    message = string.Format(SR.DeserializationMustSpecifyTypeDiscriminator, type);
+                    message = Format(SR.DeserializationMustSpecifyTypeDiscriminator, type);
                 }
                 else if (typeInfo.Kind is KdlTypeInfoKind.Enumerable or KdlTypeInfoKind.Dictionary)
                 {
-                    message = string.Format(SR.CannotPopulateCollection, type);
+                    message = Format(SR.CannotPopulateCollection, type);
                 }
                 else
                 {
-                    message = string.Format(SR.DeserializeInterfaceOrAbstractType, type);
+                    message = Format(SR.DeserializeInterfaceOrAbstractType, type);
                 }
             }
             else
             {
-                message = string.Format(SR.DeserializeNoConstructor, nameof(KdlConstructorAttribute), type);
+                message = Format(SR.DeserializeNoConstructor, nameof(KdlConstructorAttribute), type);
             }
 
             ThrowNotSupportedException(ref state, reader, new NotSupportedException(message));
@@ -646,31 +645,31 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowNotSupportedException_CannotPopulateCollection(Type type, ref KdlReader reader, scoped ref ReadStack state)
         {
-            ThrowNotSupportedException(ref state, reader, new NotSupportedException(string.Format(SR.CannotPopulateCollection, type)));
+            ThrowNotSupportedException(ref state, reader, new NotSupportedException(Format(SR.CannotPopulateCollection, type)));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_MetadataValuesInvalidToken(KdlTokenType tokenType)
         {
-            ThrowKdlException(string.Format(SR.MetadataInvalidTokenAfterValues, tokenType));
+            ThrowKdlException(Format(SR.MetadataInvalidTokenAfterValues, tokenType));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_MetadataReferenceNotFound(string id)
         {
-            ThrowKdlException(string.Format(SR.MetadataReferenceNotFound, id));
+            ThrowKdlException(Format(SR.MetadataReferenceNotFound, id));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_MetadataValueWasNotString(KdlTokenType tokenType)
         {
-            ThrowKdlException(string.Format(SR.MetadataValueWasNotString, tokenType));
+            ThrowKdlException(Format(SR.MetadataValueWasNotString, tokenType));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_MetadataValueWasNotString(KdlValueKind valueKind)
         {
-            ThrowKdlException(string.Format(SR.MetadataValueWasNotString, valueKind));
+            ThrowKdlException(Format(SR.MetadataValueWasNotString, valueKind));
         }
 
         [DoesNotReturn]
@@ -684,13 +683,13 @@ namespace System.Text.Kdl
         public static void ThrowKdlException_MetadataUnexpectedProperty(ReadOnlySpan<byte> propertyName, scoped ref ReadStack state)
         {
             state.Current.KdlPropertyName = propertyName.ToArray();
-            ThrowKdlException(string.Format(SR.MetadataUnexpectedProperty));
+            ThrowKdlException(Format(SR.MetadataUnexpectedProperty));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_UnmappedKdlProperty(Type type, string unmappedPropertyName)
         {
-            throw new KdlException(string.Format(SR.UnmappedKdlProperty, unmappedPropertyName, type));
+            throw new KdlException(Format(SR.UnmappedKdlProperty, unmappedPropertyName, type));
         }
 
         [DoesNotReturn]
@@ -732,19 +731,19 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowKdlException_MetadataDuplicateIdFound(string id)
         {
-            ThrowKdlException(string.Format(SR.MetadataDuplicateIdFound, id));
+            ThrowKdlException(Format(SR.MetadataDuplicateIdFound, id));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_DuplicateMetadataProperty(ReadOnlySpan<byte> utf8PropertyName)
         {
-            ThrowKdlException(string.Format(SR.DuplicateMetadataProperty, KdlHelpers.Utf8GetString(utf8PropertyName)));
+            ThrowKdlException(Format(SR.DuplicateMetadataProperty, KdlHelpers.Utf8GetString(utf8PropertyName)));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_MetadataInvalidReferenceToValueType(Type propertyType)
         {
-            ThrowKdlException(string.Format(SR.MetadataInvalidReferenceToValueType, propertyType));
+            ThrowKdlException(Format(SR.MetadataInvalidReferenceToValueType, propertyType));
         }
 
         [DoesNotReturn]
@@ -753,9 +752,9 @@ namespace System.Text.Kdl
             state.Current.KdlPropertyName = reader.HasValueSequence ? reader.ValueSequence.ToArray() : reader.ValueSpan.ToArray();
             string propertyNameAsString = reader.GetString()!;
 
-            ThrowKdlException(string.Format(SR.MetadataPreservedArrayFailed,
-                string.Format(SR.MetadataInvalidPropertyInArrayMetadata, propertyNameAsString),
-                string.Format(SR.DeserializeUnableToConvertValue, propertyType)));
+            ThrowKdlException(Format(SR.MetadataPreservedArrayFailed,
+                Format(SR.MetadataInvalidPropertyInArrayMetadata, propertyNameAsString),
+                Format(SR.DeserializeUnableToConvertValue, propertyType)));
         }
 
         [DoesNotReturn]
@@ -764,28 +763,28 @@ namespace System.Text.Kdl
             // Missing $values, KDL path should point to the property's object.
             state.Current.KdlPropertyName = null;
 
-            ThrowKdlException(string.Format(SR.MetadataPreservedArrayFailed,
+            ThrowKdlException(Format(SR.MetadataPreservedArrayFailed,
                 SR.MetadataStandaloneValuesProperty,
-                string.Format(SR.DeserializeUnableToConvertValue, propertyType)));
+                Format(SR.DeserializeUnableToConvertValue, propertyType)));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_MetadataCannotParsePreservedObjectIntoImmutable(Type propertyType)
         {
-            ThrowKdlException(string.Format(SR.MetadataCannotParsePreservedObjectToImmutable, propertyType));
+            ThrowKdlException(Format(SR.MetadataCannotParsePreservedObjectToImmutable, propertyType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_MetadataReferenceOfTypeCannotBeAssignedToType(string referenceId, Type currentType, Type typeToConvert)
         {
-            throw new InvalidOperationException(string.Format(SR.MetadataReferenceOfTypeCannotBeAssignedToType, referenceId, currentType, typeToConvert));
+            throw new InvalidOperationException(Format(SR.MetadataReferenceOfTypeCannotBeAssignedToType, referenceId, currentType, typeToConvert));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_KdlPropertyInfoIsBoundToDifferentKdlTypeInfo(KdlPropertyInfo propertyInfo)
         {
             Debug.Assert(propertyInfo.DeclaringTypeInfo != null, "We should not throw this exception when ParentTypeInfo is null");
-            throw new InvalidOperationException(string.Format(SR.KdlPropertyInfoBoundToDifferentParent, propertyInfo.Name, propertyInfo.DeclaringTypeInfo.Type.FullName));
+            throw new InvalidOperationException(Format(SR.KdlPropertyInfoBoundToDifferentParent, propertyInfo.Name, propertyInfo.DeclaringTypeInfo.Type.FullName));
         }
 
         [DoesNotReturn]
@@ -809,29 +808,29 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowNotSupportedException_NoMetadataForType(Type type, IKdlTypeInfoResolver? resolver)
         {
-            throw new NotSupportedException(string.Format(SR.NoMetadataForType, type, resolver?.ToString() ?? "<null>"));
+            throw new NotSupportedException(Format(SR.NoMetadataForType, type, resolver?.ToString() ?? "<null>"));
         }
 
         public static NotSupportedException GetNotSupportedException_AmbiguousMetadataForType(Type type, Type match1, Type match2)
         {
-            return new NotSupportedException(string.Format(SR.AmbiguousMetadataForType, type, match1, match2));
+            return new NotSupportedException(Format(SR.AmbiguousMetadataForType, type, match1, match2));
         }
 
         [DoesNotReturn]
         public static void ThrowNotSupportedException_ConstructorContainsNullParameterNames(Type declaringType)
         {
-            throw new NotSupportedException(string.Format(SR.ConstructorContainsNullParameterNames, declaringType));
+            throw new NotSupportedException(Format(SR.ConstructorContainsNullParameterNames, declaringType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_NoMetadataForType(Type type, IKdlTypeInfoResolver? resolver)
         {
-            throw new InvalidOperationException(string.Format(SR.NoMetadataForType, type, resolver?.ToString() ?? "<null>"));
+            throw new InvalidOperationException(Format(SR.NoMetadataForType, type, resolver?.ToString() ?? "<null>"));
         }
 
         public static Exception GetInvalidOperationException_NoMetadataForTypeProperties(IKdlTypeInfoResolver? resolver, Type type)
         {
-            return new InvalidOperationException(string.Format(SR.NoMetadataForTypeProperties, resolver?.ToString() ?? "<null>", type));
+            return new InvalidOperationException(Format(SR.NoMetadataForTypeProperties, resolver?.ToString() ?? "<null>", type));
         }
 
         [DoesNotReturn]
@@ -843,55 +842,55 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowMissingMemberException_MissingFSharpCoreMember(string missingFsharpCoreMember)
         {
-            throw new MissingMemberException(string.Format(SR.MissingFSharpCoreMember, missingFsharpCoreMember));
+            throw new MissingMemberException(Format(SR.MissingFSharpCoreMember, missingFsharpCoreMember));
         }
 
         [DoesNotReturn]
         public static void ThrowNotSupportedException_BaseConverterDoesNotSupportMetadata(Type derivedType)
         {
-            throw new NotSupportedException(string.Format(SR.Polymorphism_DerivedConverterDoesNotSupportMetadata, derivedType));
+            throw new NotSupportedException(Format(SR.Polymorphism_DerivedConverterDoesNotSupportMetadata, derivedType));
         }
 
         [DoesNotReturn]
         public static void ThrowNotSupportedException_DerivedConverterDoesNotSupportMetadata(Type derivedType)
         {
-            throw new NotSupportedException(string.Format(SR.Polymorphism_DerivedConverterDoesNotSupportMetadata, derivedType));
+            throw new NotSupportedException(Format(SR.Polymorphism_DerivedConverterDoesNotSupportMetadata, derivedType));
         }
 
         [DoesNotReturn]
         public static void ThrowNotSupportedException_RuntimeTypeNotSupported(Type baseType, Type runtimeType)
         {
-            throw new NotSupportedException(string.Format(SR.Polymorphism_RuntimeTypeNotSupported, runtimeType, baseType));
+            throw new NotSupportedException(Format(SR.Polymorphism_RuntimeTypeNotSupported, runtimeType, baseType));
         }
 
         [DoesNotReturn]
         public static void ThrowNotSupportedException_RuntimeTypeDiamondAmbiguity(Type baseType, Type runtimeType, Type derivedType1, Type derivedType2)
         {
-            throw new NotSupportedException(string.Format(SR.Polymorphism_RuntimeTypeDiamondAmbiguity, runtimeType, derivedType1, derivedType2, baseType));
+            throw new NotSupportedException(Format(SR.Polymorphism_RuntimeTypeDiamondAmbiguity, runtimeType, derivedType1, derivedType2, baseType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_TypeDoesNotSupportPolymorphism(Type baseType)
         {
-            throw new InvalidOperationException(string.Format(SR.Polymorphism_TypeDoesNotSupportPolymorphism, baseType));
+            throw new InvalidOperationException(Format(SR.Polymorphism_TypeDoesNotSupportPolymorphism, baseType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_DerivedTypeNotSupported(Type baseType, Type derivedType)
         {
-            throw new InvalidOperationException(string.Format(SR.Polymorphism_DerivedTypeIsNotSupported, derivedType, baseType));
+            throw new InvalidOperationException(Format(SR.Polymorphism_DerivedTypeIsNotSupported, derivedType, baseType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_DerivedTypeIsAlreadySpecified(Type baseType, Type derivedType)
         {
-            throw new InvalidOperationException(string.Format(SR.Polymorphism_DerivedTypeIsAlreadySpecified, baseType, derivedType));
+            throw new InvalidOperationException(Format(SR.Polymorphism_DerivedTypeIsAlreadySpecified, baseType, derivedType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_TypeDicriminatorIdIsAlreadySpecified(Type baseType, object typeDiscriminator)
         {
-            throw new InvalidOperationException(string.Format(SR.Polymorphism_TypeDicriminatorIdIsAlreadySpecified, baseType, typeDiscriminator));
+            throw new InvalidOperationException(Format(SR.Polymorphism_TypeDicriminatorIdIsAlreadySpecified, baseType, typeDiscriminator));
         }
 
         [DoesNotReturn]
@@ -903,25 +902,25 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_PropertyConflictsWithMetadataPropertyName(Type type, string propertyName)
         {
-            throw new InvalidOperationException(string.Format(SR.Polymorphism_PropertyConflictsWithMetadataPropertyName, type, propertyName));
+            throw new InvalidOperationException(Format(SR.Polymorphism_PropertyConflictsWithMetadataPropertyName, type, propertyName));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_PolymorphicTypeConfigurationDoesNotSpecifyDerivedTypes(Type baseType)
         {
-            throw new InvalidOperationException(string.Format(SR.Polymorphism_ConfigurationDoesNotSpecifyDerivedTypes, baseType));
+            throw new InvalidOperationException(Format(SR.Polymorphism_ConfigurationDoesNotSpecifyDerivedTypes, baseType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_UnsupportedEnumIdentifier(Type enumType, string? enumName)
         {
-            throw new InvalidOperationException(string.Format(SR.UnsupportedEnumIdentifier, enumType.Name, enumName));
+            throw new InvalidOperationException(Format(SR.UnsupportedEnumIdentifier, enumType.Name, enumName));
         }
 
         [DoesNotReturn]
         public static void ThrowKdlException_UnrecognizedTypeDiscriminator(object typeDiscriminator)
         {
-            ThrowKdlException(string.Format(SR.Polymorphism_UnrecognizedTypeDiscriminator, typeDiscriminator));
+            ThrowKdlException(Format(SR.Polymorphism_UnrecognizedTypeDiscriminator, typeDiscriminator));
         }
 
         [DoesNotReturn]
@@ -939,7 +938,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_PipeWriterDoesNotImplementUnflushedBytes(PipeWriter pipeWriter)
         {
-            throw new InvalidOperationException(string.Format(SR.PipeWriter_DoesNotImplementUnflushedBytes, pipeWriter.GetType().Name));
+            throw new InvalidOperationException(Format(SR.PipeWriter_DoesNotImplementUnflushedBytes, pipeWriter.GetType().Name));
         }
 
         [DoesNotReturn]

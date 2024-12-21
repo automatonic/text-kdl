@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -55,7 +54,7 @@ namespace System.Text.Kdl
         public KdlTypeInfo? PolymorphicKdlTypeInfo;
 
         // Gets the initial KdlTypeInfo metadata used when deserializing the current value.
-        public KdlTypeInfo BaseKdlTypeInfo
+        public readonly KdlTypeInfo BaseKdlTypeInfo
             => PolymorphicSerializationState == PolymorphicSerializationState.PolymorphicReEntryStarted
                 ? PolymorphicKdlTypeInfo!
                 : KdlTypeInfo;
@@ -111,7 +110,7 @@ namespace System.Text.Kdl
         /// <summary>
         /// Is the current object a Dictionary.
         /// </summary>
-        public bool IsProcessingDictionary()
+        public readonly bool IsProcessingDictionary()
         {
             return KdlTypeInfo.Kind is KdlTypeInfoKind.Dictionary;
         }
@@ -119,13 +118,13 @@ namespace System.Text.Kdl
         /// <summary>
         /// Is the current object an Enumerable.
         /// </summary>
-        public bool IsProcessingEnumerable()
+        public readonly bool IsProcessingEnumerable()
         {
             return KdlTypeInfo.Kind is KdlTypeInfoKind.Enumerable;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public void MarkRequiredPropertyAsRead(KdlPropertyInfo propertyInfo)
+        public readonly void MarkRequiredPropertyAsRead(KdlPropertyInfo propertyInfo)
         {
             if (propertyInfo.IsRequired)
             {
@@ -146,7 +145,7 @@ namespace System.Text.Kdl
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal void ValidateAllRequiredPropertiesAreRead(KdlTypeInfo typeInfo)
+        internal readonly void ValidateAllRequiredPropertiesAreRead(KdlTypeInfo typeInfo)
         {
             if (typeInfo.NumberOfRequiredProperties > 0)
             {
@@ -160,6 +159,6 @@ namespace System.Text.Kdl
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"ConverterStrategy.{KdlTypeInfo?.Converter.ConverterStrategy}, {KdlTypeInfo?.Type.Name}";
+        private readonly string DebuggerDisplay => $"ConverterStrategy.{KdlTypeInfo?.Converter.ConverterStrategy}, {KdlTypeInfo?.Type.Name}";
     }
 }

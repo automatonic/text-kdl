@@ -67,7 +67,7 @@ namespace System.Text.Kdl
         {
             if (value.Length == 0)
             {
-                return new KdlEncodedText(Array.Empty<byte>());
+                return new KdlEncodedText([]);
             }
 
             return TranscodeAndEncode(value, encoder);
@@ -87,7 +87,7 @@ namespace System.Text.Kdl
             // Since GetUtf8ByteCount above already throws on invalid input, the transcoding
             // to UTF-8 is guaranteed to succeed here. Therefore, there's no need for a try-catch-finally block.
             int actualByteCount = KdlReaderHelper.GetUtf8FromText(value, utf8Bytes);
-            utf8Bytes = utf8Bytes.Slice(0, actualByteCount);
+            utf8Bytes = utf8Bytes[..actualByteCount];
             Debug.Assert(expectedByteCount == utf8Bytes.Length);
 
             KdlEncodedText encodedText = EncodeHelper(utf8Bytes, encoder);
@@ -114,7 +114,7 @@ namespace System.Text.Kdl
         {
             if (utf8Value.Length == 0)
             {
-                return new KdlEncodedText(Array.Empty<byte>());
+                return new KdlEncodedText([]);
             }
 
             KdlWriterHelper.ValidateValue(utf8Value);
@@ -149,7 +149,7 @@ namespace System.Text.Kdl
             }
             else
             {
-                return _value.Equals(other._value);
+                return _value.Equals(other._value, StringComparison.Ordinal);
             }
         }
 

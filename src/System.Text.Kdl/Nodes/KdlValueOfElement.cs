@@ -8,10 +8,7 @@ namespace System.Text.Kdl.Nodes
     /// </summary>
     internal sealed class KdlValueOfElement : KdlValue<KdlElement>
     {
-        public KdlValueOfElement(KdlElement value, KdlNodeOptions? options) : base(value, options)
-        {
-            Debug.Assert(value.ValueKind is KdlValueKind.False or KdlValueKind.True or KdlValueKind.Number or KdlValueKind.String);
-        }
+        public KdlValueOfElement(KdlElement value, KdlNodeOptions? options) : base(value, options) => Debug.Assert(value.ValueKind is KdlValueKind.False or KdlValueKind.True or KdlValueKind.Number or KdlValueKind.String);
 
         internal override KdlElement? UnderlyingElement => Value;
         internal override KdlNode DeepCloneCore() => new KdlValueOfElement(Value.Clone(), Options);

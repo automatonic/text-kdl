@@ -2,8 +2,6 @@
 using System.IO.Pipelines;
 using System.Text.Kdl.Serialization;
 using System.Text.Kdl.Serialization.Metadata;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Text.Kdl
 {

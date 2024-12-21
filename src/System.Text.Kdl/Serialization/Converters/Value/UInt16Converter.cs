@@ -1,15 +1,11 @@
 using System.Diagnostics;
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
     internal sealed class UInt16Converter : KdlPrimitiveConverter<ushort>
     {
-        public UInt16Converter()
-        {
-            IsInternalConverterForNumberType = true;
-        }
+        public UInt16Converter() => IsInternalConverterForNumberType = true;
 
         public override ushort Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {

@@ -288,9 +288,9 @@ namespace System.Text.Kdl
                     }
 
                     // For continuation scenarios only, before or after all elements are read, the exception is not within the array.
-                    if (frame.ObjectState == StackFrameObjectState.None ||
-                        frame.ObjectState == StackFrameObjectState.CreatedObject ||
-                        frame.ObjectState == StackFrameObjectState.ReadElements)
+                    if (frame.ObjectState is StackFrameObjectState.None or
+                        StackFrameObjectState.CreatedObject or
+                        StackFrameObjectState.ReadElements)
                     {
                         sb.Append('[');
                         sb.Append(GetCount(enumerable));
@@ -367,7 +367,7 @@ namespace System.Text.Kdl
 
         // Traverses the stack for the outermost object being deserialized using constructor parameters
         // Only called when calculating exception information.
-        public KdlTypeInfo GetTopKdlTypeInfoWithParameterizedConstructor()
+        public readonly KdlTypeInfo GetTopKdlTypeInfoWithParameterizedConstructor()
         {
             Debug.Assert(!IsContinuation);
 

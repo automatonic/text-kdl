@@ -438,7 +438,7 @@ namespace System.Text.Kdl
             try
             {
                 int actualByteCount = KdlReaderHelper.GetUtf8FromText(kdl, utf8);
-                utf8 = utf8.Slice(0, actualByteCount);
+                utf8 = utf8[..actualByteCount];
                 return ReadFromSpan(utf8, jsonTypeInfo, actualByteCount);
             }
             finally
@@ -469,7 +469,7 @@ namespace System.Text.Kdl
             try
             {
                 int actualByteCount = KdlReaderHelper.GetUtf8FromText(kdl, utf8);
-                utf8 = utf8.Slice(0, actualByteCount);
+                utf8 = utf8[..actualByteCount];
                 return ReadFromSpanAsObject(utf8, jsonTypeInfo, actualByteCount);
             }
             finally

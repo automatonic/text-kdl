@@ -10,10 +10,7 @@
         /// Initializes a new attribute with specified parameters.
         /// </summary>
         /// <param name="derivedType">A derived type that should be supported in polymorphic serialization of the declared based type.</param>
-        public KdlDerivedTypeAttribute(Type derivedType)
-        {
-            DerivedType = derivedType;
-        }
+        public KdlDerivedTypeAttribute(Type derivedType) => DerivedType = derivedType;
 
         /// <summary>
         /// Initializes a new attribute with specified parameters.

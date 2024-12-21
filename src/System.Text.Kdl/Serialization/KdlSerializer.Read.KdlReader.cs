@@ -348,13 +348,13 @@ namespace System.Text.Kdl
                     // Using a reader loop the caller has identified a property they wish to
                     // hydrate into a KdlDocument. Move to the value first.
                     case KdlTokenType.PropertyName:
+                    {
+                        if (!reader.Read())
                         {
-                            if (!reader.Read())
-                            {
-                                ThrowHelper.ThrowKdlReaderException(ref reader, ExceptionResource.ExpectedOneCompleteToken);
-                            }
-                            break;
+                            ThrowHelper.ThrowKdlReaderException(ref reader, ExceptionResource.ExpectedOneCompleteToken);
                         }
+                        break;
+                    }
                 }
 
                 switch (reader.TokenType)

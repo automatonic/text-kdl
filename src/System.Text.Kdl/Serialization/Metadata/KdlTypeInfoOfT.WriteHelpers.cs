@@ -1,9 +1,6 @@
 ﻿using System.Diagnostics;
-using System.IO;
 using System.IO.Pipelines;
 using System.Text.Kdl.Serialization.Converters;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
@@ -19,7 +16,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             object? rootValueBoxed = null)
         {
             Debug.Assert(IsConfigured);
-            Debug.Assert(rootValueBoxed is null || rootValueBoxed is T);
+            Debug.Assert(rootValueBoxed is null or T);
 
             if (CanUseSerializeHandler)
             {
@@ -86,7 +83,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             object? rootValueBoxed = null)
         {
             Debug.Assert(IsConfigured);
-            Debug.Assert(rootValueBoxed is null || rootValueBoxed is T);
+            Debug.Assert(rootValueBoxed is null or T);
 
             if (CanUseSerializeHandlerInStreaming)
             {
@@ -249,7 +246,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             object? rootValueBoxed = null)
         {
             Debug.Assert(IsConfigured);
-            Debug.Assert(rootValueBoxed is null || rootValueBoxed is T);
+            Debug.Assert(rootValueBoxed is null or T);
 
             if (CanUseSerializeHandlerInStreaming)
             {

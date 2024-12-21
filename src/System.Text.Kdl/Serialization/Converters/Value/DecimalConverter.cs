@@ -5,10 +5,7 @@ namespace System.Text.Kdl.Serialization.Converters
 {
     internal sealed class DecimalConverter : KdlPrimitiveConverter<decimal>
     {
-        public DecimalConverter()
-        {
-            IsInternalConverterForNumberType = true;
-        }
+        public DecimalConverter() => IsInternalConverterForNumberType = true;
 
         public override decimal Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {

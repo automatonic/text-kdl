@@ -1,10 +1,8 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Kdl.Reflection;
-using System.Threading;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
@@ -230,7 +228,9 @@ namespace System.Text.Kdl.Serialization.Metadata
             if (KdlTypeInfo.IsInvalidForSerialization(typeToConvert))
             {
                 if (ignoreCondition == KdlIgnoreCondition.Always)
+                {
                     return null;
+                }
 
                 ThrowHelper.ThrowInvalidOperationException_CannotSerializeInvalidType(typeToConvert, memberInfo.DeclaringType, memberInfo);
             }

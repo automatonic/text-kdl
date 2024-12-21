@@ -22,13 +22,13 @@ namespace System.Text.Kdl
 
             int maxBytes = KdlReaderHelper.s_utf8Encoding.GetMaxByteCount(propertyName.Length);
             int startIndex = index + DbRow.Size;
-            int endIndex = checked(row.NumberOfRows * DbRow.Size + index);
+            int endIndex = checked((row.NumberOfRows * DbRow.Size) + index);
 
             if (maxBytes < KdlConstants.StackallocByteThreshold)
             {
                 Span<byte> utf8Name = stackalloc byte[KdlConstants.StackallocByteThreshold];
                 int len = KdlReaderHelper.GetUtf8FromText(propertyName, utf8Name);
-                utf8Name = utf8Name.Slice(0, len);
+                utf8Name = utf8Name[..len];
 
                 return TryGetNamedPropertyValue(
                     startIndex,
@@ -120,7 +120,7 @@ namespace System.Text.Kdl
                 return false;
             }
 
-            int endIndex = checked(row.NumberOfRows * DbRow.Size + index);
+            int endIndex = checked((row.NumberOfRows * DbRow.Size) + index);
 
             return TryGetNamedPropertyValue(
                 index + DbRow.Size,
@@ -173,7 +173,7 @@ namespace System.Text.Kdl
 
                         // If everything up to where the property name has a backslash matches, keep going.
                         if (propertyName.Length > idx &&
-                            currentPropertyName.Slice(0, idx).SequenceEqual(propertyName.Slice(0, idx)))
+                            currentPropertyName[..idx].SequenceEqual(propertyName[..idx]))
                         {
                             int remaining = currentPropertyName.Length - idx;
                             int written = 0;
@@ -186,10 +186,10 @@ namespace System.Text.Kdl
                                     (rented = ArrayPool<byte>.Shared.Rent(remaining));
 
                                 // Only unescape the part we haven't processed.
-                                KdlReaderHelper.Unescape(currentPropertyName.Slice(idx), utf8Unescaped, 0, out written);
+                                KdlReaderHelper.Unescape(currentPropertyName[idx..], utf8Unescaped, 0, out written);
 
                                 // If the unescaped remainder matches the input remainder, it's a match.
-                                if (utf8Unescaped.Slice(0, written).SequenceEqual(propertyName.Slice(idx)))
+                                if (utf8Unescaped[..written].SequenceEqual(propertyName[idx..]))
                                 {
                                     // If the property name is a match, the answer is the next element.
                                     value = new KdlElement(this, index + DbRow.Size);

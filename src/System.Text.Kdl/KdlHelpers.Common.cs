@@ -1,9 +1,7 @@
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Text.Kdl.Serialization;
 
@@ -45,8 +43,7 @@ namespace System.Text.Kdl
         internal static bool RequiresSpecialNumberHandlingOnWrite(KdlNumberHandling? handling)
         {
             return handling != null
-                ? (handling.Value & (KdlNumberHandling.WriteAsString | KdlNumberHandling.AllowNamedFloatingPointLiterals)) != 0
-                : false;
+&& (handling.Value & (KdlNumberHandling.WriteAsString | KdlNumberHandling.AllowNamedFloatingPointLiterals)) != 0;
         }
 
         /// <summary>
@@ -62,7 +59,7 @@ namespace System.Text.Kdl
             // using the actual key as the first element and index as the second element.
             const int StackallocThreshold = 32;
             Span<(TKey, int)> keys = span.Length <= StackallocThreshold
-                ? (stackalloc (TKey, int)[StackallocThreshold]).Slice(0, span.Length)
+                ? (stackalloc (TKey, int)[StackallocThreshold])[..span.Length]
                 : new (TKey, int)[span.Length];
 
             for (int i = 0; i < keys.Length; i++)

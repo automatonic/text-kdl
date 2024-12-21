@@ -1,7 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.CompilerServices;
 
 namespace System.Text.Kdl
 {
@@ -16,7 +14,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowArgumentException_DuplicateKey(string paramName, object? propertyName)
         {
-            throw new ArgumentException(string.Format(SR.NodeDuplicateKey, propertyName), paramName);
+            throw new ArgumentException(Format(SR.NodeDuplicateKey, propertyName), paramName);
         }
 
         [DoesNotReturn]
@@ -54,13 +52,13 @@ namespace System.Text.Kdl
         {
             Debug.Assert(supportedTypeNames.Length > 0);
             string concatenatedNames = supportedTypeNames.Length == 1 ? supportedTypeNames[0] : string.Join(", ", supportedTypeNames.ToArray());
-            throw new InvalidOperationException(string.Format(SR.NodeWrongType, concatenatedNames));
+            throw new InvalidOperationException(Format(SR.NodeWrongType, concatenatedNames));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_NodeParentWrongType(string typeName)
         {
-            throw new InvalidOperationException(string.Format(SR.NodeParentWrongType, typeName));
+            throw new InvalidOperationException(Format(SR.NodeParentWrongType, typeName));
         }
 
         public static NotSupportedException GetNotSupportedException_CollectionIsReadOnly()
@@ -71,13 +69,13 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_NodeUnableToConvert(Type sourceType, Type destinationType)
         {
-            throw new InvalidOperationException(string.Format(SR.NodeUnableToConvert, sourceType, destinationType));
+            throw new InvalidOperationException(Format(SR.NodeUnableToConvert, sourceType, destinationType));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_NodeUnableToConvertElement(KdlValueKind valueKind, Type destinationType)
         {
-            throw new InvalidOperationException(string.Format(SR.NodeUnableToConvertElement, valueKind, destinationType));
+            throw new InvalidOperationException(Format(SR.NodeUnableToConvertElement, valueKind, destinationType));
         }
     }
 }

@@ -1,5 +1,4 @@
 #if NETFRAMEWORK || NET
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -82,7 +81,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             var dynamicMethod = new DynamicMethod(
                 ConstructorInfo.ConstructorName,
                 type,
-                new[] { typeof(object[]) },
+                [typeof(object[])],
                 typeof(ReflectionEmitMemberAccessor).Module,
                 skipVisibility: true);
 
@@ -123,7 +122,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             var dynamicMethod = new DynamicMethod(
                 ConstructorInfo.ConstructorName,
                 type,
-                new[] { parameterType1, parameterType2, parameterType3, parameterType4 },
+                [parameterType1, parameterType2, parameterType3, parameterType4],
                 typeof(ReflectionEmitMemberAccessor).Module,
                 skipVisibility: true);
 
@@ -162,7 +161,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             var dynamicMethod = new DynamicMethod(
                 realMethod.Name,
                 typeof(void),
-                new[] { collectionType, KdlTypeInfo.ObjectType },
+                [collectionType, KdlTypeInfo.ObjectType],
                 typeof(ReflectionEmitMemberAccessor).Module,
                 skipVisibility: true);
 
@@ -187,7 +186,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             var dynamicMethod = new DynamicMethod(
                 realMethod.Name,
                 collectionType,
-                new[] { enumerableType },
+                [enumerableType],
                 typeof(ReflectionEmitMemberAccessor).Module,
                 skipVisibility: true);
 
@@ -211,7 +210,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             var dynamicMethod = new DynamicMethod(
                 realMethod.Name,
                 collectionType,
-                new[] { enumerableType },
+                [enumerableType],
                 typeof(ReflectionEmitMemberAccessor).Module,
                 skipVisibility: true);
 
@@ -374,18 +373,18 @@ namespace System.Text.Kdl.Serialization.Metadata
         }
 
         private static DynamicMethod CreateGetterMethod(string memberName, Type memberType) =>
-            new DynamicMethod(
+            new(
                 memberName + "Getter",
                 memberType,
-                new[] { KdlTypeInfo.ObjectType },
+                [KdlTypeInfo.ObjectType],
                 typeof(ReflectionEmitMemberAccessor).Module,
                 skipVisibility: true);
 
         private static DynamicMethod CreateSetterMethod(string memberName, Type memberType) =>
-            new DynamicMethod(
+            new(
                 memberName + "Setter",
                 typeof(void),
-                new[] { KdlTypeInfo.ObjectType, memberType },
+                [KdlTypeInfo.ObjectType, memberType],
                 typeof(ReflectionEmitMemberAccessor).Module,
                 skipVisibility: true);
 

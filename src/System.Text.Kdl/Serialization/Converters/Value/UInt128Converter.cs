@@ -1,7 +1,6 @@
 ﻿using System.Buffers;
 using System.Diagnostics;
 using System.Globalization;
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
@@ -10,10 +9,7 @@ namespace System.Text.Kdl.Serialization.Converters
     {
         private const int MaxFormatLength = 39;
 
-        public UInt128Converter()
-        {
-            IsInternalConverterForNumberType = true;
-        }
+        public UInt128Converter() => IsInternalConverterForNumberType = true;
 
         public override UInt128 Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {
@@ -40,7 +36,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 : (rentedBuffer = ArrayPool<byte>.Shared.Rent(bufferLength));
 
             int written = reader.CopyValue(buffer);
-            if (!UInt128.TryParse(buffer.Slice(0, written), CultureInfo.InvariantCulture, out UInt128 result))
+            if (!UInt128.TryParse(buffer[..written], CultureInfo.InvariantCulture, out UInt128 result))
             {
                 ThrowHelper.ThrowFormatException(NumericType.UInt128);
             }
@@ -57,7 +53,7 @@ namespace System.Text.Kdl.Serialization.Converters
         {
             Span<byte> buffer = stackalloc byte[MaxFormatLength];
             Format(buffer, value, out int written);
-            writer.WriteRawValue(buffer.Slice(0, written));
+            writer.WriteRawValue(buffer[..written]);
         }
 
         internal override UInt128 ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
@@ -91,11 +87,11 @@ namespace System.Text.Kdl.Serialization.Converters
                 const byte Quote = KdlConstants.Quote;
                 Span<byte> buffer = stackalloc byte[MaxFormatLength + 2];
                 buffer[0] = Quote;
-                Format(buffer.Slice(1), value, out int written);
+                Format(buffer[1..], value, out int written);
 
                 int length = written + 2;
                 buffer[length - 1] = Quote;
-                writer.WriteRawValue(buffer.Slice(0, length));
+                writer.WriteRawValue(buffer[..length]);
             }
             else
             {

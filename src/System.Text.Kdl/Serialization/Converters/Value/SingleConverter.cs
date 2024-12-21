@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
@@ -7,10 +6,7 @@ namespace System.Text.Kdl.Serialization.Converters
     internal sealed class SingleConverter : KdlPrimitiveConverter<float>
     {
 
-        public SingleConverter()
-        {
-            IsInternalConverterForNumberType = true;
-        }
+        public SingleConverter() => IsInternalConverterForNumberType = true;
 
         public override float Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {

@@ -24,7 +24,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowArgumentOutOfRangeException_IndentSize(string parameterName, int minimumSize, int maximumSize)
         {
-            throw GetArgumentOutOfRangeException(parameterName, string.Format(SR.InvalidIndentSize, minimumSize, maximumSize));
+            throw GetArgumentOutOfRangeException(parameterName, Format(SR.InvalidIndentSize, minimumSize, maximumSize));
         }
 
         [DoesNotReturn]
@@ -59,7 +59,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(Type typeToConvert)
         {
-            throw new ArgumentOutOfRangeException(nameof(typeToConvert), string.Format(SR.SerializerConverterFactoryInvalidArgument, typeToConvert.FullName));
+            throw new ArgumentOutOfRangeException(nameof(typeToConvert), Format(SR.SerializerConverterFactoryInvalidArgument, typeToConvert.FullName));
         }
 
         [DoesNotReturn]
@@ -93,7 +93,7 @@ namespace System.Text.Kdl
 
         public static InvalidOperationException GetInvalidOperationException_CallFlushFirst(int _buffered)
         {
-            return GetInvalidOperationException(string.Format(SR.CallFlushToAvoidDataLoss, _buffered));
+            return GetInvalidOperationException(Format(SR.CallFlushToAvoidDataLoss, _buffered));
         }
 
         [DoesNotReturn]
@@ -105,13 +105,13 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowArgumentException_PropertyNameTooLarge(int tokenLength)
         {
-            throw GetArgumentException(string.Format(SR.PropertyNameTooLarge, tokenLength));
+            throw GetArgumentException(Format(SR.PropertyNameTooLarge, tokenLength));
         }
 
         [DoesNotReturn]
         public static void ThrowArgumentException_ValueTooLarge(long tokenLength)
         {
-            throw GetArgumentException(string.Format(SR.ValueTooLarge, tokenLength));
+            throw GetArgumentException(Format(SR.ValueTooLarge, tokenLength));
         }
 
         [DoesNotReturn]
@@ -129,7 +129,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowPropertyNameTooLargeArgumentException(int length)
         {
-            throw GetArgumentException(string.Format(SR.PropertyNameTooLarge, length));
+            throw GetArgumentException(Format(SR.PropertyNameTooLarge, length));
         }
 
         [DoesNotReturn]
@@ -137,12 +137,12 @@ namespace System.Text.Kdl
         {
             if (propertyName.Length > KdlConstants.MaxUnescapedTokenSize)
             {
-                ThrowArgumentException(string.Format(SR.PropertyNameTooLarge, propertyName.Length));
+                ThrowArgumentException(Format(SR.PropertyNameTooLarge, propertyName.Length));
             }
             else
             {
                 Debug.Assert(value.Length > KdlConstants.MaxUnescapedTokenSize);
-                ThrowArgumentException(string.Format(SR.ValueTooLarge, value.Length));
+                ThrowArgumentException(Format(SR.ValueTooLarge, value.Length));
             }
         }
 
@@ -151,12 +151,12 @@ namespace System.Text.Kdl
         {
             if (propertyName.Length > KdlConstants.MaxUnescapedTokenSize)
             {
-                ThrowArgumentException(string.Format(SR.PropertyNameTooLarge, propertyName.Length));
+                ThrowArgumentException(Format(SR.PropertyNameTooLarge, propertyName.Length));
             }
             else
             {
                 Debug.Assert(value.Length > KdlConstants.MaxCharacterTokenSize);
-                ThrowArgumentException(string.Format(SR.ValueTooLarge, value.Length));
+                ThrowArgumentException(Format(SR.ValueTooLarge, value.Length));
             }
         }
 
@@ -165,12 +165,12 @@ namespace System.Text.Kdl
         {
             if (propertyName.Length > KdlConstants.MaxCharacterTokenSize)
             {
-                ThrowArgumentException(string.Format(SR.PropertyNameTooLarge, propertyName.Length));
+                ThrowArgumentException(Format(SR.PropertyNameTooLarge, propertyName.Length));
             }
             else
             {
                 Debug.Assert(value.Length > KdlConstants.MaxUnescapedTokenSize);
-                ThrowArgumentException(string.Format(SR.ValueTooLarge, value.Length));
+                ThrowArgumentException(Format(SR.ValueTooLarge, value.Length));
             }
         }
 
@@ -179,12 +179,12 @@ namespace System.Text.Kdl
         {
             if (propertyName.Length > KdlConstants.MaxCharacterTokenSize)
             {
-                ThrowArgumentException(string.Format(SR.PropertyNameTooLarge, propertyName.Length));
+                ThrowArgumentException(Format(SR.PropertyNameTooLarge, propertyName.Length));
             }
             else
             {
                 Debug.Assert(value.Length > KdlConstants.MaxCharacterTokenSize);
-                ThrowArgumentException(string.Format(SR.ValueTooLarge, value.Length));
+                ThrowArgumentException(Format(SR.ValueTooLarge, value.Length));
             }
         }
 
@@ -194,12 +194,12 @@ namespace System.Text.Kdl
             currentDepth &= KdlConstants.RemoveFlagsBitMask;
             if (currentDepth >= maxDepth)
             {
-                ThrowInvalidOperationException(string.Format(SR.DepthTooLarge, currentDepth, maxDepth));
+                ThrowInvalidOperationException(Format(SR.DepthTooLarge, currentDepth, maxDepth));
             }
             else
             {
                 Debug.Assert(propertyName.Length > KdlConstants.MaxCharacterTokenSize);
-                ThrowArgumentException(string.Format(SR.PropertyNameTooLarge, propertyName.Length));
+                ThrowArgumentException(Format(SR.PropertyNameTooLarge, propertyName.Length));
             }
         }
 
@@ -208,7 +208,7 @@ namespace System.Text.Kdl
         {
             currentDepth &= KdlConstants.RemoveFlagsBitMask;
             Debug.Assert(currentDepth >= maxDepth);
-            ThrowInvalidOperationException(string.Format(SR.DepthTooLarge, currentDepth, maxDepth));
+            ThrowInvalidOperationException(Format(SR.DepthTooLarge, currentDepth, maxDepth));
         }
 
         [DoesNotReturn]
@@ -233,7 +233,7 @@ namespace System.Text.Kdl
             currentDepth &= KdlConstants.RemoveFlagsBitMask;
             if (currentDepth != 0)
             {
-                return GetInvalidOperationException(string.Format(SR.ZeroDepthAtEnd, currentDepth));
+                return GetInvalidOperationException(Format(SR.ZeroDepthAtEnd, currentDepth));
             }
             else
             {
@@ -247,12 +247,12 @@ namespace System.Text.Kdl
             currentDepth &= KdlConstants.RemoveFlagsBitMask;
             if (currentDepth >= maxDepth)
             {
-                ThrowInvalidOperationException(string.Format(SR.DepthTooLarge, currentDepth, maxDepth));
+                ThrowInvalidOperationException(Format(SR.DepthTooLarge, currentDepth, maxDepth));
             }
             else
             {
                 Debug.Assert(propertyName.Length > KdlConstants.MaxCharacterTokenSize);
-                ThrowArgumentException(string.Format(SR.PropertyNameTooLarge, propertyName.Length));
+                ThrowArgumentException(Format(SR.PropertyNameTooLarge, propertyName.Length));
             }
         }
 
@@ -310,12 +310,12 @@ namespace System.Text.Kdl
 
         private static InvalidOperationException GetInvalidOperationException(string message, KdlTokenType tokenType)
         {
-            return GetInvalidOperationException(string.Format(SR.InvalidCast, tokenType, message));
+            return GetInvalidOperationException(Format(SR.InvalidCast, tokenType, message));
         }
 
         private static InvalidOperationException GetInvalidOperationException(KdlTokenType tokenType)
         {
-            return GetInvalidOperationException(string.Format(SR.InvalidComparison, tokenType));
+            return GetInvalidOperationException(Format(SR.InvalidComparison, tokenType));
         }
 
         [DoesNotReturn]
@@ -331,7 +331,7 @@ namespace System.Text.Kdl
             KdlValueKind actualType)
         {
             return GetInvalidOperationException(
-                string.Format(SR.KdlElementHasWrongType, expectedType, actualType));
+                Format(SR.KdlElementHasWrongType, expectedType, actualType));
         }
 
         internal static InvalidOperationException GetKdlElementWrongTypeException(
@@ -339,7 +339,7 @@ namespace System.Text.Kdl
             KdlValueKind actualType)
         {
             return GetInvalidOperationException(
-                string.Format(SR.KdlElementHasWrongType, expectedTypeName, actualType));
+                Format(SR.KdlElementHasWrongType, expectedTypeName, actualType));
         }
 
         [DoesNotReturn]
@@ -360,7 +360,7 @@ namespace System.Text.Kdl
             return new KdlReaderException(message, lineNumber, bytePositionInLine);
         }
 
-        private static bool IsPrintable(byte value) => value >= 0x20 && value < 0x7F;
+        private static bool IsPrintable(byte value) => value is >= 0x20 and < 0x7F;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static string GetPrintableString(byte value)
@@ -378,10 +378,10 @@ namespace System.Text.Kdl
             switch (resource)
             {
                 case ExceptionResource.ArrayDepthTooLarge:
-                    message = string.Format(SR.ArrayDepthTooLarge, kdl.CurrentState.Options.MaxDepth);
+                    message = Format(SR.ArrayDepthTooLarge, kdl.CurrentState.Options.MaxDepth);
                     break;
                 case ExceptionResource.MismatchedObjectArray:
-                    message = string.Format(SR.MismatchedObjectArray, character);
+                    message = Format(SR.MismatchedObjectArray, character);
                     break;
                 case ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd:
                     message = SR.TrailingCommaNotAllowedBeforeArrayEnd;
@@ -393,73 +393,73 @@ namespace System.Text.Kdl
                     message = SR.EndOfStringNotFound;
                     break;
                 case ExceptionResource.RequiredDigitNotFoundAfterSign:
-                    message = string.Format(SR.RequiredDigitNotFoundAfterSign, character);
+                    message = Format(SR.RequiredDigitNotFoundAfterSign, character);
                     break;
                 case ExceptionResource.RequiredDigitNotFoundAfterDecimal:
-                    message = string.Format(SR.RequiredDigitNotFoundAfterDecimal, character);
+                    message = Format(SR.RequiredDigitNotFoundAfterDecimal, character);
                     break;
                 case ExceptionResource.RequiredDigitNotFoundEndOfData:
                     message = SR.RequiredDigitNotFoundEndOfData;
                     break;
                 case ExceptionResource.ExpectedEndAfterSingleKdl:
-                    message = string.Format(SR.ExpectedEndAfterSingleKdl, character);
+                    message = Format(SR.ExpectedEndAfterSingleKdl, character);
                     break;
                 case ExceptionResource.ExpectedEndOfDigitNotFound:
-                    message = string.Format(SR.ExpectedEndOfDigitNotFound, character);
+                    message = Format(SR.ExpectedEndOfDigitNotFound, character);
                     break;
                 case ExceptionResource.ExpectedNextDigitEValueNotFound:
-                    message = string.Format(SR.ExpectedNextDigitEValueNotFound, character);
+                    message = Format(SR.ExpectedNextDigitEValueNotFound, character);
                     break;
                 case ExceptionResource.ExpectedSeparatorAfterPropertyNameNotFound:
-                    message = string.Format(SR.ExpectedSeparatorAfterPropertyNameNotFound, character);
+                    message = Format(SR.ExpectedSeparatorAfterPropertyNameNotFound, character);
                     break;
                 case ExceptionResource.ExpectedStartOfPropertyNotFound:
-                    message = string.Format(SR.ExpectedStartOfPropertyNotFound, character);
+                    message = Format(SR.ExpectedStartOfPropertyNotFound, character);
                     break;
                 case ExceptionResource.ExpectedStartOfPropertyOrValueNotFound:
                     message = SR.ExpectedStartOfPropertyOrValueNotFound;
                     break;
                 case ExceptionResource.ExpectedStartOfPropertyOrValueAfterComment:
-                    message = string.Format(SR.ExpectedStartOfPropertyOrValueAfterComment, character);
+                    message = Format(SR.ExpectedStartOfPropertyOrValueAfterComment, character);
                     break;
                 case ExceptionResource.ExpectedStartOfValueNotFound:
-                    message = string.Format(SR.ExpectedStartOfValueNotFound, character);
+                    message = Format(SR.ExpectedStartOfValueNotFound, character);
                     break;
                 case ExceptionResource.ExpectedValueAfterPropertyNameNotFound:
                     message = SR.ExpectedValueAfterPropertyNameNotFound;
                     break;
                 case ExceptionResource.FoundInvalidCharacter:
-                    message = string.Format(SR.FoundInvalidCharacter, character);
+                    message = Format(SR.FoundInvalidCharacter, character);
                     break;
                 case ExceptionResource.InvalidEndOfKdlNonPrimitive:
-                    message = string.Format(SR.InvalidEndOfKdlNonPrimitive, kdl.TokenType);
+                    message = Format(SR.InvalidEndOfKdlNonPrimitive, kdl.TokenType);
                     break;
                 case ExceptionResource.ObjectDepthTooLarge:
-                    message = string.Format(SR.ObjectDepthTooLarge, kdl.CurrentState.Options.MaxDepth);
+                    message = Format(SR.ObjectDepthTooLarge, kdl.CurrentState.Options.MaxDepth);
                     break;
                 case ExceptionResource.ExpectedFalse:
-                    message = string.Format(SR.ExpectedFalse, characters);
+                    message = Format(SR.ExpectedFalse, characters);
                     break;
                 case ExceptionResource.ExpectedNull:
-                    message = string.Format(SR.ExpectedNull, characters);
+                    message = Format(SR.ExpectedNull, characters);
                     break;
                 case ExceptionResource.ExpectedTrue:
-                    message = string.Format(SR.ExpectedTrue, characters);
+                    message = Format(SR.ExpectedTrue, characters);
                     break;
                 case ExceptionResource.InvalidCharacterWithinString:
-                    message = string.Format(SR.InvalidCharacterWithinString, character);
+                    message = Format(SR.InvalidCharacterWithinString, character);
                     break;
                 case ExceptionResource.InvalidCharacterAfterEscapeWithinString:
-                    message = string.Format(SR.InvalidCharacterAfterEscapeWithinString, character);
+                    message = Format(SR.InvalidCharacterAfterEscapeWithinString, character);
                     break;
                 case ExceptionResource.InvalidHexCharacterWithinString:
-                    message = string.Format(SR.InvalidHexCharacterWithinString, character);
+                    message = Format(SR.InvalidHexCharacterWithinString, character);
                     break;
                 case ExceptionResource.EndOfCommentNotFound:
                     message = SR.EndOfCommentNotFound;
                     break;
                 case ExceptionResource.ZeroDepthAtEnd:
-                    message = string.Format(SR.ZeroDepthAtEnd);
+                    message = Format(SR.ZeroDepthAtEnd);
                     break;
                 case ExceptionResource.ExpectedKdlTokens:
                     message = SR.ExpectedKdlTokens;
@@ -471,16 +471,16 @@ namespace System.Text.Kdl
                     message = SR.ExpectedOneCompleteToken;
                     break;
                 case ExceptionResource.InvalidCharacterAtStartOfComment:
-                    message = string.Format(SR.InvalidCharacterAtStartOfComment, character);
+                    message = Format(SR.InvalidCharacterAtStartOfComment, character);
                     break;
                 case ExceptionResource.UnexpectedEndOfDataWhileReadingComment:
-                    message = string.Format(SR.UnexpectedEndOfDataWhileReadingComment);
+                    message = Format(SR.UnexpectedEndOfDataWhileReadingComment);
                     break;
                 case ExceptionResource.UnexpectedEndOfLineSeparator:
-                    message = string.Format(SR.UnexpectedEndOfLineSeparator);
+                    message = Format(SR.UnexpectedEndOfLineSeparator);
                     break;
                 case ExceptionResource.InvalidLeadingZeroInNumber:
-                    message = string.Format(SR.InvalidLeadingZeroInNumber, character);
+                    message = Format(SR.InvalidLeadingZeroInNumber, character);
                     break;
                 default:
                     Debug.Fail($"The ExceptionResource enum value: {resource} is not part of the switch. Add the appropriate case and exception message.");
@@ -527,19 +527,19 @@ namespace System.Text.Kdl
                 builder.Append("...");
             }
 
-            throw new ArgumentException(string.Format(SR.CannotEncodeInvalidUTF8, builder));
+            throw new ArgumentException(Format(SR.CannotEncodeInvalidUTF8, builder));
         }
 
         [DoesNotReturn]
         public static void ThrowArgumentException_InvalidUTF16(int charAsInt)
         {
-            throw new ArgumentException(string.Format(SR.CannotEncodeInvalidUTF16, $"0x{charAsInt:X2}"));
+            throw new ArgumentException(Format(SR.CannotEncodeInvalidUTF16, $"0x{charAsInt:X2}"));
         }
 
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ReadInvalidUTF16(int charAsInt)
         {
-            throw GetInvalidOperationException(string.Format(SR.CannotReadInvalidUTF16, $"0x{charAsInt:X2}"));
+            throw GetInvalidOperationException(Format(SR.CannotReadInvalidUTF16, $"0x{charAsInt:X2}"));
         }
 
         [DoesNotReturn]
@@ -560,8 +560,10 @@ namespace System.Text.Kdl
 
         public static InvalidOperationException GetInvalidOperationException(string message, Exception? innerException)
         {
-            InvalidOperationException ex = new InvalidOperationException(message, innerException);
-            ex.Source = ExceptionSourceValueToRethrowAsKdlException;
+            InvalidOperationException ex = new InvalidOperationException(message, innerException)
+            {
+                Source = ExceptionSourceValueToRethrowAsKdlException
+            };
             return ex;
         }
 
@@ -577,7 +579,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowOutOfMemoryException(uint capacity)
         {
-            throw new OutOfMemoryException(string.Format(SR.BufferMaximumSizeExceeded, capacity));
+            throw new OutOfMemoryException(Format(SR.BufferMaximumSizeExceeded, capacity));
         }
 
         // This function will convert an ExceptionResource enum value to the resource string.
@@ -588,30 +590,30 @@ namespace System.Text.Kdl
             switch (resource)
             {
                 case ExceptionResource.MismatchedObjectArray:
-                    Debug.Assert(token == KdlConstants.CloseBracket || token == KdlConstants.CloseBrace);
+                    Debug.Assert(token is KdlConstants.CloseBracket or KdlConstants.CloseBrace);
                     message = (tokenType == KdlTokenType.PropertyName) ?
-                        string.Format(SR.CannotWriteEndAfterProperty, (char)token) :
-                        string.Format(SR.MismatchedObjectArray, (char)token);
+                        Format(SR.CannotWriteEndAfterProperty, (char)token) :
+                        Format(SR.MismatchedObjectArray, (char)token);
                     break;
                 case ExceptionResource.DepthTooLarge:
-                    message = string.Format(SR.DepthTooLarge, currentDepth & KdlConstants.RemoveFlagsBitMask, maxDepth);
+                    message = Format(SR.DepthTooLarge, currentDepth & KdlConstants.RemoveFlagsBitMask, maxDepth);
                     break;
                 case ExceptionResource.CannotStartObjectArrayWithoutProperty:
-                    message = string.Format(SR.CannotStartObjectArrayWithoutProperty, tokenType);
+                    message = Format(SR.CannotStartObjectArrayWithoutProperty, tokenType);
                     break;
                 case ExceptionResource.CannotStartObjectArrayAfterPrimitiveOrClose:
-                    message = string.Format(SR.CannotStartObjectArrayAfterPrimitiveOrClose, tokenType);
+                    message = Format(SR.CannotStartObjectArrayAfterPrimitiveOrClose, tokenType);
                     break;
                 case ExceptionResource.CannotWriteValueWithinObject:
-                    message = string.Format(SR.CannotWriteValueWithinObject, tokenType);
+                    message = Format(SR.CannotWriteValueWithinObject, tokenType);
                     break;
                 case ExceptionResource.CannotWritePropertyWithinArray:
                     message = (tokenType == KdlTokenType.PropertyName) ?
-                        string.Format(SR.CannotWritePropertyAfterProperty) :
-                        string.Format(SR.CannotWritePropertyWithinArray, tokenType);
+                        Format(SR.CannotWritePropertyAfterProperty) :
+                        Format(SR.CannotWritePropertyWithinArray, tokenType);
                     break;
                 case ExceptionResource.CannotWriteValueAfterPrimitiveOrClose:
-                    message = string.Format(SR.CannotWriteValueAfterPrimitiveOrClose, tokenType);
+                    message = Format(SR.CannotWriteValueAfterPrimitiveOrClose, tokenType);
                     break;
                 default:
                     Debug.Fail($"The ExceptionResource enum value: {resource} is not part of the switch. Add the appropriate case and exception message.");
@@ -698,7 +700,7 @@ namespace System.Text.Kdl
                 case DataType.TimeSpan:
                 case DataType.Guid:
                 case DataType.Version:
-                    message = string.Format(SR.UnsupportedFormat, dataType);
+                    message = Format(SR.UnsupportedFormat, dataType);
                     break;
                 case DataType.Base64String:
                     message = SR.CannotDecodeInvalidBase64;

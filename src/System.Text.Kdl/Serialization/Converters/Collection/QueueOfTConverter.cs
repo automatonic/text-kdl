@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace System.Text.Kdl.Serialization.Converters
 {
     internal sealed class QueueOfTConverter<TCollection, TElement>

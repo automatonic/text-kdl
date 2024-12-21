@@ -40,7 +40,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, encoder, out int written);
 
-            byte[] escapedString = escapedValue.Slice(0, written).ToArray();
+            byte[] escapedString = escapedValue[..written].ToArray();
 
             if (valueArray != null)
             {
@@ -68,7 +68,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, encoder, out int written);
 
-            byte[] propertySection = GetPropertyNameSection(escapedValue.Slice(0, written));
+            byte[] propertySection = GetPropertyNameSection(escapedValue[..written]);
 
             if (valueArray != null)
             {

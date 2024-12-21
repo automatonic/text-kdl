@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
@@ -14,7 +13,9 @@ namespace System.Text.Kdl.Serialization.Metadata
     {
         private readonly ConcurrentDictionary<Type, DerivedKdlTypeInfo?> _typeToDiscriminatorId = new();
         private readonly Dictionary<object, DerivedKdlTypeInfo>? _discriminatorIdtoType;
+#pragma warning disable IDE0052 // Remove unread private members
         private readonly KdlSerializerOptions _options;
+#pragma warning restore IDE0052 // Remove unread private members
 
         public PolymorphicTypeResolver(KdlSerializerOptions options, KdlPolymorphismOptions polymorphismOptions, Type baseType, bool converterCanHaveMetadata)
         {
@@ -49,7 +50,7 @@ namespace System.Text.Kdl.Serialization.Metadata
 
                 if (typeDiscriminator is not null)
                 {
-                    if (!(_discriminatorIdtoType ??= new()).TryAdd(typeDiscriminator, derivedTypeInfoHolder))
+                    if (!(_discriminatorIdtoType ??= []).TryAdd(typeDiscriminator, derivedTypeInfoHolder))
                     {
                         ThrowHelper.ThrowInvalidOperationException_TypeDicriminatorIdIsAlreadySpecified(BaseType, typeDiscriminator);
                     }

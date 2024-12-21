@@ -1,6 +1,5 @@
 using System.Buffers;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -110,14 +109,22 @@ namespace System.Text.Kdl.Serialization.Converters
                 case KdlTokenType.Number when (_converterOptions & EnumConverterOptions.AllowNumbers) != 0:
                     switch (s_enumTypeCode)
                     {
-                        case TypeCode.Int32 when reader.TryGetInt32(out int int32): return Unsafe.As<int, T>(ref int32);
-                        case TypeCode.UInt32 when reader.TryGetUInt32(out uint uint32): return Unsafe.As<uint, T>(ref uint32);
-                        case TypeCode.Int64 when reader.TryGetInt64(out long int64): return Unsafe.As<long, T>(ref int64);
-                        case TypeCode.UInt64 when reader.TryGetUInt64(out ulong uint64): return Unsafe.As<ulong, T>(ref uint64);
-                        case TypeCode.Byte when reader.TryGetByte(out byte ubyte8): return Unsafe.As<byte, T>(ref ubyte8);
-                        case TypeCode.SByte when reader.TryGetSByte(out sbyte byte8): return Unsafe.As<sbyte, T>(ref byte8);
-                        case TypeCode.Int16 when reader.TryGetInt16(out short int16): return Unsafe.As<short, T>(ref int16);
-                        case TypeCode.UInt16 when reader.TryGetUInt16(out ushort uint16): return Unsafe.As<ushort, T>(ref uint16);
+                        case TypeCode.Int32 when reader.TryGetInt32(out int int32):
+                            return Unsafe.As<int, T>(ref int32);
+                        case TypeCode.UInt32 when reader.TryGetUInt32(out uint uint32):
+                            return Unsafe.As<uint, T>(ref uint32);
+                        case TypeCode.Int64 when reader.TryGetInt64(out long int64):
+                            return Unsafe.As<long, T>(ref int64);
+                        case TypeCode.UInt64 when reader.TryGetUInt64(out ulong uint64):
+                            return Unsafe.As<ulong, T>(ref uint64);
+                        case TypeCode.Byte when reader.TryGetByte(out byte ubyte8):
+                            return Unsafe.As<byte, T>(ref ubyte8);
+                        case TypeCode.SByte when reader.TryGetSByte(out sbyte byte8):
+                            return Unsafe.As<sbyte, T>(ref byte8);
+                        case TypeCode.Int16 when reader.TryGetInt16(out short int16):
+                            return Unsafe.As<short, T>(ref int16);
+                        case TypeCode.UInt16 when reader.TryGetUInt16(out ushort uint16):
+                            return Unsafe.As<ushort, T>(ref uint16);
                     }
                     break;
             }
@@ -243,7 +250,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 : (rentedBuffer = ArrayPool<char>.Shared.Rent(bufferLength));
 
             int charsWritten = reader.CopyString(charBuffer);
-            charBuffer = charBuffer.Slice(0, charsWritten);
+            charBuffer = charBuffer[..charsWritten];
 #if NET9_0_OR_GREATER
             ReadOnlySpan<char> source = charBuffer.Trim();
             ConcurrentDictionary<string, ulong>.AlternateLookup<ReadOnlySpan<char>> lookup = _nameCacheForReading.GetAlternateLookup<ReadOnlySpan<char>>();
@@ -281,7 +288,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 lookup.TryAdd(source, ConvertToUInt64(result));
             }
 
-        End:
+            End:
             if (rentedBuffer != null)
             {
                 charBuffer.Clear();
@@ -319,8 +326,8 @@ namespace System.Text.Kdl.Serialization.Converters
                 }
                 else
                 {
-                    next = rest.Slice(0, i).TrimEnd();
-                    rest = rest.Slice(i + 1).TrimStart();
+                    next = rest[..i].TrimEnd();
+                    rest = rest[(i + 1)..].TrimStart();
                 }
 
                 if (lookup.TryGetValue(
@@ -349,9 +356,12 @@ namespace System.Text.Kdl.Serialization.Converters
         {
             switch (s_enumTypeCode)
             {
-                case TypeCode.Int32 or TypeCode.UInt32: return Unsafe.As<T, uint>(ref value);
-                case TypeCode.Int64 or TypeCode.UInt64: return Unsafe.As<T, ulong>(ref value);
-                case TypeCode.Int16 or TypeCode.UInt16: return Unsafe.As<T, ushort>(ref value);
+                case TypeCode.Int32 or TypeCode.UInt32:
+                    return Unsafe.As<T, uint>(ref value);
+                case TypeCode.Int64 or TypeCode.UInt64:
+                    return Unsafe.As<T, ulong>(ref value);
+                case TypeCode.Int16 or TypeCode.UInt16:
+                    return Unsafe.As<T, ushort>(ref value);
                 default:
                     Debug.Assert(s_enumTypeCode is TypeCode.SByte or TypeCode.Byte);
                     return Unsafe.As<T, byte>(ref value);
@@ -363,9 +373,12 @@ namespace System.Text.Kdl.Serialization.Converters
             Debug.Assert(s_isSignedEnum);
             switch (s_enumTypeCode)
             {
-                case TypeCode.Int32: return Unsafe.As<T, int>(ref value);
-                case TypeCode.Int64: return Unsafe.As<T, long>(ref value);
-                case TypeCode.Int16: return Unsafe.As<T, short>(ref value);
+                case TypeCode.Int32:
+                    return Unsafe.As<T, int>(ref value);
+                case TypeCode.Int64:
+                    return Unsafe.As<T, long>(ref value);
+                case TypeCode.Int16:
+                    return Unsafe.As<T, short>(ref value);
                 default:
                     Debug.Assert(s_enumTypeCode is TypeCode.SByte);
                     return Unsafe.As<T, sbyte>(ref value);
@@ -570,7 +583,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 name = namingPolicy.ConvertName(name);
             }
 
-            if (string.IsNullOrEmpty(name) || char.IsWhiteSpace(name[0]) || char.IsWhiteSpace(name[name.Length - 1]) ||
+            if (string.IsNullOrEmpty(name) || char.IsWhiteSpace(name[0]) || char.IsWhiteSpace(name[^1]) ||
                 (s_isFlagsEnum && name.AsSpan().IndexOf(',') >= 0))
             {
                 // Reject null or empty strings or strings with leading or trailing whitespace.

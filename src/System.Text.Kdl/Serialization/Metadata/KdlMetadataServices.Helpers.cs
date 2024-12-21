@@ -81,10 +81,11 @@ namespace System.Text.Kdl.Serialization.Metadata
                 ? new KdlMetadataServicesConverter<T>(converter)
                 : converter;
 
-            KdlTypeInfo<T> typeInfo = new KdlTypeInfo<T>(converter, options);
-
-            typeInfo.KeyTypeInfo = collectionInfo.KeyInfo;
-            typeInfo.ElementTypeInfo = collectionInfo.ElementInfo;
+            KdlTypeInfo<T> typeInfo = new KdlTypeInfo<T>(converter, options)
+            {
+                KeyTypeInfo = collectionInfo.KeyInfo,
+                ElementTypeInfo = collectionInfo.ElementInfo
+            };
             Debug.Assert(typeInfo.Kind != KdlTypeInfoKind.None);
             typeInfo.NumberHandling = collectionInfo.NumberHandling;
             typeInfo.SerializeHandler = collectionInfo.SerializeHandler;

@@ -19,7 +19,7 @@ namespace System.Text.Kdl
             Unescape(utf8Source, utf8Unescaped, out int written);
             Debug.Assert(written > 0);
 
-            utf8Unescaped = utf8Unescaped.Slice(0, written);
+            utf8Unescaped = utf8Unescaped[..written];
             Debug.Assert(!utf8Unescaped.IsEmpty);
 
             bool result = TryDecodeBase64InPlace(utf8Unescaped, out bytes!);
@@ -33,7 +33,7 @@ namespace System.Text.Kdl
         }
 
         // Reject any invalid UTF-8 data rather than silently replacing.
-        public static readonly UTF8Encoding s_utf8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+        public static readonly UTF8Encoding s_utf8Encoding = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
 
         // TODO: Similar to escaping, replace the unescaping logic with publicly shipping APIs from https://github.com/dotnet/runtime/issues/27919
         public static string GetUnescapedString(ReadOnlySpan<byte> utf8Source)
@@ -49,7 +49,7 @@ namespace System.Text.Kdl
             Unescape(utf8Source, utf8Unescaped, out int written);
             Debug.Assert(written > 0);
 
-            utf8Unescaped = utf8Unescaped.Slice(0, written);
+            utf8Unescaped = utf8Unescaped[..written];
             Debug.Assert(!utf8Unescaped.IsEmpty);
 
             string utf8String = TranscodeHelper(utf8Unescaped);
@@ -76,7 +76,7 @@ namespace System.Text.Kdl
             Unescape(utf8Source, utf8Unescaped, out int written);
             Debug.Assert(written > 0);
 
-            ReadOnlySpan<byte> propertyName = utf8Unescaped.Slice(0, written).ToArray();
+            ReadOnlySpan<byte> propertyName = utf8Unescaped[..written].ToArray();
             Debug.Assert(!propertyName.IsEmpty);
 
             if (pooledName != null)
@@ -101,7 +101,7 @@ namespace System.Text.Kdl
             Unescape(utf8Source, utf8Unescaped, 0, out int written);
             Debug.Assert(written > 0);
 
-            utf8Unescaped = utf8Unescaped.Slice(0, written);
+            utf8Unescaped = utf8Unescaped[..written];
             Debug.Assert(!utf8Unescaped.IsEmpty);
 
             bool result = other.SequenceEqual(utf8Unescaped);
@@ -134,12 +134,12 @@ namespace System.Text.Kdl
                 (escapedArray = ArrayPool<byte>.Shared.Rent(length));
 
             utf8Source.CopyTo(utf8Escaped);
-            utf8Escaped = utf8Escaped.Slice(0, length);
+            utf8Escaped = utf8Escaped[..length];
 
             Unescape(utf8Escaped, utf8Unescaped, 0, out int written);
             Debug.Assert(written > 0);
 
-            utf8Unescaped = utf8Unescaped.Slice(0, written);
+            utf8Unescaped = utf8Unescaped[..written];
             Debug.Assert(!utf8Unescaped.IsEmpty);
 
             bool result = other.SequenceEqual(utf8Unescaped);
@@ -176,11 +176,11 @@ namespace System.Text.Kdl
                 (unescapedArray2 = ArrayPool<byte>.Shared.Rent(utf8Source2.Length));
 
             Unescape(utf8Source1, utf8Unescaped1, index1, out int written);
-            utf8Unescaped1 = utf8Unescaped1.Slice(0, written);
+            utf8Unescaped1 = utf8Unescaped1[..written];
             Debug.Assert(!utf8Unescaped1.IsEmpty);
 
             Unescape(utf8Source2, utf8Unescaped2, index2, out written);
-            utf8Unescaped2 = utf8Unescaped2.Slice(0, written);
+            utf8Unescaped2 = utf8Unescaped2[..written];
             Debug.Assert(!utf8Unescaped2.IsEmpty);
 
             bool result = utf8Unescaped1.SequenceEqual(utf8Unescaped2);
@@ -208,7 +208,7 @@ namespace System.Text.Kdl
                 bytes = null;
                 return false;
             }
-            bytes = utf8Unescaped.Slice(0, bytesWritten).ToArray();
+            bytes = utf8Unescaped[..bytesWritten].ToArray();
             return true;
         }
 
@@ -236,7 +236,7 @@ namespace System.Text.Kdl
             }
             Debug.Assert(bytesConsumed == utf8Unescaped.Length);
 
-            bytes = byteSpan.Slice(0, bytesWritten).ToArray();
+            bytes = byteSpan[..bytesWritten].ToArray();
 
             if (pooledArray != null)
             {
@@ -478,7 +478,7 @@ namespace System.Text.Kdl
             Debug.Assert(idx >= 0 && idx < source.Length);
             Debug.Assert(source[idx] == KdlConstants.BackSlash);
 
-            if (!source.Slice(0, idx).TryCopyTo(destination))
+            if (!source[..idx].TryCopyTo(destination))
             {
                 written = 0;
                 goto DestinationTooShort;
@@ -571,7 +571,7 @@ namespace System.Text.Kdl
 
 #if NET
                         var rune = new Rune(scalar);
-                        bool success = rune.TryEncodeToUtf8(destination.Slice(written), out int bytesWritten);
+                        bool success = rune.TryEncodeToUtf8(destination[written..], out int bytesWritten);
 #else
                         bool success = TryEncodeToUtf8Bytes((uint)scalar, destination.Slice(written), out int bytesWritten);
 #endif
@@ -592,7 +592,7 @@ namespace System.Text.Kdl
 
                 if (source[idx] != KdlConstants.BackSlash)
                 {
-                    ReadOnlySpan<byte> remaining = source.Slice(idx);
+                    ReadOnlySpan<byte> remaining = source[idx..];
                     int nextUnescapedSegmentLength = remaining.IndexOf(KdlConstants.BackSlash);
                     if (nextUnescapedSegmentLength < 0)
                     {
@@ -620,7 +620,7 @@ namespace System.Text.Kdl
                             destination[written++] = source[idx++];
                             break;
                         default:
-                            remaining.Slice(0, nextUnescapedSegmentLength).CopyTo(destination.Slice(written));
+                            remaining[..nextUnescapedSegmentLength].CopyTo(destination[written..]);
                             written += nextUnescapedSegmentLength;
                             idx += nextUnescapedSegmentLength;
                             break;
@@ -635,10 +635,10 @@ namespace System.Text.Kdl
                 }
             }
 
-        Success:
+            Success:
             return true;
 
-        DestinationTooShort:
+            DestinationTooShort:
             return false;
         }
 

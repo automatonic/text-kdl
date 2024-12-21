@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics;
 
 namespace System.Text.Kdl
@@ -15,10 +14,7 @@ namespace System.Text.Kdl
         public KdlElement Value { get; }
         private string? _name { get; }
 
-        internal KdlProperty(KdlElement value)
-        {
-            Value = value;
-        }
+        internal KdlProperty(KdlElement value) => Value = value;
 
         /// <summary>
         ///   The name of this property.

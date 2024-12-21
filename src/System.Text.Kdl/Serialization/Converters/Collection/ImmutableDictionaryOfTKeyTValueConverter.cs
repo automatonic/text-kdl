@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text.Kdl.Serialization.Metadata;
 
 namespace System.Text.Kdl.Serialization.Converters
 {

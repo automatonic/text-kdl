@@ -2,8 +2,6 @@ using System.Buffers;
 using System.Buffers.Text;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Runtime.InteropServices;
-using System.Threading;
 
 namespace System.Text.Kdl
 {
@@ -29,7 +27,7 @@ namespace System.Text.Kdl
         /// <summary>
         ///   The <see cref="KdlElement"/> representing the value of the document.
         /// </summary>
-        public KdlElement RootElement => new KdlElement(this, 0);
+        public KdlElement RootElement => new(this, 0);
 
         private KdlDocument(
             ReadOnlyMemory<byte> utf8Kdl,
@@ -207,7 +205,7 @@ namespace System.Text.Kdl
                 return index + DbRow.Size;
             }
 
-            int endIndex = index + DbRow.Size * row.NumberOfRows;
+            int endIndex = index + (DbRow.Size * row.NumberOfRows);
 
             if (includeEndElement)
             {
@@ -270,13 +268,13 @@ namespace System.Text.Kdl
                     end++;
                 }
 
-                return _utf8Kdl.Slice(start, end - start);
+                return _utf8Kdl[start..end];
             }
 
             int endElementIdx = GetEndIndex(valueIndex, includeEndElement: false);
             row = _parsedData.Get(endElementIdx);
             end = row.Location + row.SizeOrLength;
-            return _utf8Kdl.Slice(start, end - start);
+            return _utf8Kdl[start..end];
         }
 
         internal string? GetString(int index, KdlTokenType expectedType)
@@ -323,12 +321,12 @@ namespace System.Text.Kdl
             else
             {
                 Debug.Assert(status == OperationStatus.Done);
-                result = TextEquals(index, otherUtf8Text.Slice(0, written), isPropertyName, shouldUnescape: true);
+                result = TextEquals(index, otherUtf8Text[..written], isPropertyName, shouldUnescape: true);
             }
 
             if (otherUtf8TextArray != null)
             {
-                otherUtf8Text.Slice(0, written).Clear();
+                otherUtf8Text[..written].Clear();
                 ArrayPool<byte>.Shared.Return(otherUtf8TextArray);
             }
 
@@ -365,12 +363,12 @@ namespace System.Text.Kdl
                 int idx = segment.IndexOf(KdlConstants.BackSlash);
                 Debug.Assert(idx != -1);
 
-                if (!otherUtf8Text.StartsWith(segment.Slice(0, idx)))
+                if (!otherUtf8Text.StartsWith(segment[..idx]))
                 {
                     return false;
                 }
 
-                return KdlReaderHelper.UnescapeAndCompare(segment.Slice(idx), otherUtf8Text.Slice(idx));
+                return KdlReaderHelper.UnescapeAndCompare(segment[idx..], otherUtf8Text[idx..]);
             }
 
             return segment.SequenceEqual(otherUtf8Text);
@@ -877,7 +875,7 @@ namespace System.Text.Kdl
 
         private ReadOnlySpan<byte> UnescapeString(in DbRow row, out ArraySegment<byte> rented)
         {
-            Debug.Assert(row.TokenType == KdlTokenType.String || row.TokenType == KdlTokenType.PropertyName);
+            Debug.Assert(row.TokenType is KdlTokenType.String or KdlTokenType.PropertyName);
             int loc = row.Location;
             int length = row.SizeOrLength;
             ReadOnlySpan<byte> text = _utf8Kdl.Slice(loc, length).Span;
@@ -1062,7 +1060,7 @@ namespace System.Text.Kdl
                 }
                 else
                 {
-                    Debug.Assert(tokenType >= KdlTokenType.String && tokenType <= KdlTokenType.Null);
+                    Debug.Assert(tokenType is >= KdlTokenType.String and <= KdlTokenType.Null);
                     numberOfRowsForValues++;
                     numberOfRowsForMembers++;
 
@@ -1117,7 +1115,7 @@ namespace System.Text.Kdl
             string paramName)
         {
             // Since these are coming from a valid instance of KdlReader, the KdlReaderOptions must already be valid
-            Debug.Assert(readerOptions.CommentHandling >= 0 && readerOptions.CommentHandling <= KdlCommentHandling.Allow);
+            Debug.Assert(readerOptions.CommentHandling is >= 0 and <= KdlCommentHandling.Allow);
 
             if (readerOptions.CommentHandling == KdlCommentHandling.Allow)
             {

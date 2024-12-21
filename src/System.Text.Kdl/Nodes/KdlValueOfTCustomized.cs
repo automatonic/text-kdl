@@ -14,7 +14,7 @@ namespace System.Text.Kdl.Nodes
         private readonly KdlTypeInfo<TValue> _jsonTypeInfo;
         private KdlValueKind? _valueKind;
 
-        public KdlValueCustomized(TValue value, KdlTypeInfo<TValue> jsonTypeInfo, KdlNodeOptions? options = null): base(value, options)
+        public KdlValueCustomized(TValue value, KdlTypeInfo<TValue> jsonTypeInfo, KdlNodeOptions? options = null) : base(value, options)
         {
             Debug.Assert(jsonTypeInfo.IsConfigured);
             _jsonTypeInfo = jsonTypeInfo;

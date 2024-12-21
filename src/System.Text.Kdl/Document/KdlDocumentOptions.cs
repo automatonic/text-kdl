@@ -28,7 +28,9 @@ namespace System.Text.Kdl
             {
                 Debug.Assert(value >= 0);
                 if (value > KdlCommentHandling.Skip)
+                {
                     throw new ArgumentOutOfRangeException(nameof(value), SR.KdlDocumentDoesNotSupportComments);
+                }
 
                 _commentHandling = value;
             }

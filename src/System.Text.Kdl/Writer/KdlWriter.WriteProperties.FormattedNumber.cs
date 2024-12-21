@@ -123,7 +123,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteNumberByOptions(escapedPropertyName.Slice(0, written), value);
+            WriteNumberByOptions(escapedPropertyName[..written], value);
 
             if (propertyArray != null)
             {
@@ -146,7 +146,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteNumberByOptions(escapedPropertyName.Slice(0, written), value);
+            WriteNumberByOptions(escapedPropertyName[..written], value);
 
             if (propertyArray != null)
             {

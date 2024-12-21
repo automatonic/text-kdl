@@ -1,15 +1,11 @@
 using System.Diagnostics;
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
     internal sealed class UInt64Converter : KdlPrimitiveConverter<ulong>
     {
-        public UInt64Converter()
-        {
-            IsInternalConverterForNumberType = true;
-        }
+        public UInt64Converter() => IsInternalConverterForNumberType = true;
 
         public override ulong Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {

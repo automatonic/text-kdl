@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-
-namespace System.Text.Kdl.Nodes
+﻿namespace System.Text.Kdl.Nodes
 {
     public partial class KdlObject : IList<KeyValuePair<string, KdlNode?>>
     {

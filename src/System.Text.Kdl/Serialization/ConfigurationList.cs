@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace System.Text.Kdl.Serialization
@@ -9,14 +8,9 @@ namespace System.Text.Kdl.Serialization
     /// </summary>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(ConfigurationList<>.ConfigurationListDebugView))]
-    internal abstract class ConfigurationList<TItem> : IList<TItem>
+    internal abstract class ConfigurationList<TItem>(IEnumerable<TItem>? source = null) : IList<TItem>
     {
-        protected readonly List<TItem> _list;
-
-        public ConfigurationList(IEnumerable<TItem>? source = null)
-        {
-            _list = source is null ? new List<TItem>() : new List<TItem>(source);
-        }
+        protected readonly List<TItem> _list = source is null ? [] : [.. source];
 
         public abstract bool IsReadOnly { get; }
         protected abstract void OnCollectionModifying();
@@ -25,10 +19,7 @@ namespace System.Text.Kdl.Serialization
 
         public TItem this[int index]
         {
-            get
-            {
-                return _list[index];
-            }
+            get => _list[index];
             set
             {
                 if (value is null)
@@ -133,7 +124,7 @@ namespace System.Text.Kdl.Serialization
         private sealed class ConfigurationListDebugView(ConfigurationList<TItem> collection)
         {
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-            public TItem[] Items => collection._list.ToArray();
+            public TItem[] Items => [.. collection._list];
         }
     }
 }

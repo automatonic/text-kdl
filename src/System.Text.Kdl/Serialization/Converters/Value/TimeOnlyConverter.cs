@@ -1,6 +1,5 @@
 ﻿using System.Buffers.Text;
 using System.Diagnostics;
-using System.Text.Kdl.Nodes;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
@@ -45,7 +44,7 @@ namespace System.Text.Kdl.Serialization.Converters
             {
                 Span<byte> stackSpan = stackalloc byte[MaximumEscapedTimeOnlyFormatLength];
                 int bytesWritten = reader.CopyString(stackSpan);
-                source = stackSpan.Slice(0, bytesWritten);
+                source = stackSpan[..bytesWritten];
             }
 
             byte firstChar = source[0];
@@ -80,7 +79,7 @@ namespace System.Text.Kdl.Serialization.Converters
             bool result = Utf8Formatter.TryFormat(value.ToTimeSpan(), output, out int bytesWritten, 'c');
             Debug.Assert(result);
 
-            writer.WriteStringValue(output.Slice(0, bytesWritten));
+            writer.WriteStringValue(output[..bytesWritten]);
         }
 
         internal override void WriteAsPropertyNameCore(KdlWriter writer, TimeOnly value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
@@ -90,7 +89,7 @@ namespace System.Text.Kdl.Serialization.Converters
             bool result = Utf8Formatter.TryFormat(value.ToTimeSpan(), output, out int bytesWritten, 'c');
             Debug.Assert(result);
 
-            writer.WritePropertyName(output.Slice(0, bytesWritten));
+            writer.WritePropertyName(output[..bytesWritten]);
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.String, Format = "time" };

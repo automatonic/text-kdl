@@ -92,7 +92,7 @@ namespace System.Text.Kdl
             // also need the indentation + 2 quotes, and optionally a list separate and 1-2 bytes for a new line.
             // Validate the encoded bytes length won't overflow with all of the length.
             int extraSpaceRequired = indent + 3 + _newLineLength;
-            int maxLengthAllowed = int.MaxValue / 4 * 3 - extraSpaceRequired;
+            int maxLengthAllowed = (int.MaxValue / 4 * 3) - extraSpaceRequired;
             if (bytes.Length > maxLengthAllowed)
             {
                 ThrowHelper.ThrowArgumentException_ValueTooLarge(bytes.Length);
@@ -121,7 +121,7 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 

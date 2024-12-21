@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Kdl.Serialization.Converters;
-using System.Threading;
 
 namespace System.Text.Kdl.Nodes
 {
@@ -33,38 +31,26 @@ namespace System.Text.Kdl.Nodes
         /// </summary>
         /// <param name="options">Options to control the behavior.</param>
         /// <param name="items">The items to add to the new <see cref="KdlArray"/>.</param>
-        public KdlArray(KdlNodeOptions options, params KdlNode?[] items) : base(options)
-        {
-            InitializeFromArray(items);
-        }
+        public KdlArray(KdlNodeOptions options, params KdlNode?[] items) : base(options) => InitializeFromArray(items);
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="KdlArray"/> class that contains items from the specified params span.
         /// </summary>
         /// <param name="options">Options to control the behavior.</param>
         /// <param name="items">The items to add to the new <see cref="KdlArray"/>.</param>
-        public KdlArray(KdlNodeOptions options, params ReadOnlySpan<KdlNode?> items) : base(options)
-        {
-            InitializeFromSpan(items);
-        }
+        public KdlArray(KdlNodeOptions options, params ReadOnlySpan<KdlNode?> items) : base(options) => InitializeFromSpan(items);
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="KdlArray"/> class that contains items from the specified array.
         /// </summary>
         /// <param name="items">The items to add to the new <see cref="KdlArray"/>.</param>
-        public KdlArray(params KdlNode?[] items) : base()
-        {
-            InitializeFromArray(items);
-        }
+        public KdlArray(params KdlNode?[] items) : base() => InitializeFromArray(items);
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="KdlArray"/> class that contains items from the specified span.
         /// </summary>
         /// <param name="items">The items to add to the new <see cref="KdlArray"/>.</param>
-        public KdlArray(params ReadOnlySpan<KdlNode?> items) : base()
-        {
-            InitializeFromSpan(items);
-        }
+        public KdlArray(params ReadOnlySpan<KdlNode?> items) : base() => InitializeFromSpan(items);
 
         private protected override KdlValueKind GetValueKindCore() => KdlValueKind.Array;
 
@@ -249,7 +235,7 @@ namespace System.Text.Kdl.Nodes
                 Span<char> chars = stackalloc char[KdlConstants.MaximumFormatUInt32Length];
                 bool formatted = ((uint)index).TryFormat(chars, out int charsWritten);
                 Debug.Assert(formatted);
-                path.Append(chars.Slice(0, charsWritten));
+                path.Append(chars[..charsWritten]);
 #else
                 path.Append(index.ToString());
 #endif
@@ -313,7 +299,7 @@ namespace System.Text.Kdl.Nodes
                 }
                 else
                 {
-                    list = new();
+                    list = [];
                 }
 
                 // Ensure _jsonElement is written to after _list
@@ -340,21 +326,18 @@ namespace System.Text.Kdl.Nodes
         }
 
         [ExcludeFromCodeCoverage] // Justification = "Design-time"
-        private sealed class DebugView
+        private sealed class DebugView(KdlArray node)
         {
             [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-            private readonly KdlArray _node;
-
-            public DebugView(KdlArray node)
-            {
-                _node = node;
-            }
+            private readonly KdlArray _node = node;
 
             public string Kdl => _node.ToKdlString();
             public string Path => _node.GetPath();
 
             [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+#pragma warning disable IDE0051 // Remove unused private members
             private DebugViewItem[] Items
+#pragma warning restore IDE0051 // Remove unused private members
             {
                 get
                 {
@@ -376,7 +359,7 @@ namespace System.Text.Kdl.Nodes
                 public KdlNode? Value;
 
                 [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-                public string Display
+                public readonly string Display
                 {
                     get
                     {

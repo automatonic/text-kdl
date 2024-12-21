@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace System.Text.Kdl
@@ -27,7 +26,7 @@ namespace System.Text.Kdl
             }
 
             /// <inheritdoc />
-            public KdlElement Current
+            public readonly KdlElement Current
             {
                 get
                 {
@@ -47,7 +46,7 @@ namespace System.Text.Kdl
             ///   An <see cref="ArrayEnumerator"/> value that can be used to iterate
             ///   through the array.
             /// </returns>
-            public ArrayEnumerator GetEnumerator()
+            public readonly ArrayEnumerator GetEnumerator()
             {
                 ArrayEnumerator ator = this;
                 ator._curIdx = -1;
@@ -55,10 +54,10 @@ namespace System.Text.Kdl
             }
 
             /// <inheritdoc />
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
-            IEnumerator<KdlElement> IEnumerable<KdlElement>.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator<KdlElement> IEnumerable<KdlElement>.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
             public void Dispose()
@@ -73,7 +72,7 @@ namespace System.Text.Kdl
             }
 
             /// <inheritdoc />
-            object IEnumerator.Current => Current;
+            readonly object IEnumerator.Current => Current;
 
             /// <inheritdoc />
             public bool MoveNext()

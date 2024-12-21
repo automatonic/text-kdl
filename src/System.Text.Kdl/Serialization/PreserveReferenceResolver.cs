@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace System.Text.Kdl.Serialization
 {
@@ -21,7 +20,7 @@ namespace System.Text.Kdl.Serialization
             }
             else
             {
-                _referenceIdToObjectMap = new Dictionary<string, object>();
+                _referenceIdToObjectMap = [];
             }
         }
 

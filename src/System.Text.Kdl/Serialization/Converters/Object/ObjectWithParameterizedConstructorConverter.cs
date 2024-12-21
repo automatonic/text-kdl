@@ -1,5 +1,4 @@
 using System.Buffers;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -80,7 +79,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
                         tempReader = originalSequence.IsEmpty
                             ? new KdlReader(
-                                originalSpan.Slice(checked((int)resumptionByteIndex)),
+                                originalSpan[checked((int)resumptionByteIndex)..],
                                 isFinalBlock: true,
                                 state: properties[i].Item2)
                             : new KdlReader(

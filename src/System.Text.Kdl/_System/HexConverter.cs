@@ -69,8 +69,8 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ToBytesBuffer(byte value, Span<byte> buffer, int startingIndex = 0, Casing casing = Casing.Upper)
         {
-            uint difference = (((uint)value & 0xF0U) << 4) + ((uint)value & 0x0FU) - 0x8989U;
-            uint packedResult = ((((uint)(-(int)difference) & 0x7070U) >> 4) + difference + 0xB9B9U) | (uint)casing;
+            uint difference = ((value & 0xF0U) << 4) + (value & 0x0FU) - 0x8989U;
+            uint packedResult = ((((uint)-(int)difference & 0x7070U) >> 4) + difference + 0xB9B9U) | (uint)casing;
 
             buffer[startingIndex + 1] = (byte)packedResult;
             buffer[startingIndex] = (byte)(packedResult >> 8);
@@ -79,8 +79,8 @@ namespace System
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ToCharsBuffer(byte value, Span<char> buffer, int startingIndex = 0, Casing casing = Casing.Upper)
         {
-            uint difference = (((uint)value & 0xF0U) << 4) + ((uint)value & 0x0FU) - 0x8989U;
-            uint packedResult = ((((uint)(-(int)difference) & 0x7070U) >> 4) + difference + 0xB9B9U) | (uint)casing;
+            uint difference = ((value & 0xF0U) << 4) + (value & 0x0FU) - 0x8989U;
+            uint packedResult = ((((uint)-(int)difference & 0x7070U) >> 4) + difference + 0xB9B9U) | (uint)casing;
 
             buffer[startingIndex + 1] = (char)(packedResult & 0xFF);
             buffer[startingIndex] = (char)(packedResult >> 8);
@@ -203,7 +203,7 @@ namespace System
 
             if (value > '9')
             {
-                value += ('A' - ('9' + 1));
+                value += 'A' - ('9' + 1);
             }
 
             return (char)value;
@@ -217,7 +217,7 @@ namespace System
 
             if (value > '9')
             {
-                value += ('a' - ('9' + 1));
+                value += 'a' - ('9' + 1);
             }
 
             return (char)value;
@@ -346,14 +346,18 @@ namespace System
                 // byteHi hasn't been shifted to the high half yet, so the only way the bitwise or produces this pattern
                 // is if either byteHi or byteLo was not a hex character.
                 if ((byteLo | byteHi) == 0xFF)
+                {
                     break;
+                }
 
                 bytes[j++] = (byte)((byteHi << 4) | byteLo);
                 i += 2;
             }
 
             if (byteLo == 0xFF)
+            {
                 i++;
+            }
 
             charsProcessed = i;
             return (byteLo | byteHi) != 0xFF;
@@ -375,10 +379,14 @@ namespace System
         public static int FromLowerChar(int c)
         {
             if ((uint)(c - '0') <= '9' - '0')
+            {
                 return c - '0';
+            }
 
             if ((uint)(c - 'a') <= 'f' - 'a')
+            {
                 return c - 'a' + 10;
+            }
 
             return 0xFF;
         }
@@ -408,7 +416,7 @@ namespace System
                 ulong shift = 18428868213665201664UL << (int)i;
                 ulong mask = i - 64;
 
-                return (long)(shift & mask) < 0 ? true : false;
+                return (long)(shift & mask) < 0;
             }
 
             return FromChar(c) != 0xFF;

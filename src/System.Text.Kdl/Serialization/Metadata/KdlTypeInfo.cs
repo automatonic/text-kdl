@@ -1,16 +1,12 @@
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.IO.Pipelines;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Text.Kdl.Reflection;
 using System.Text.Kdl.Serialization.Converters;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
@@ -88,10 +84,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         public Func<object>? CreateObject
         {
             get => _createObject;
-            set
-            {
-                SetCreateObject(value);
-            }
+            set => SetCreateObject(value);
         }
 
         private protected abstract void SetCreateObject(Delegate? createObject);
@@ -695,7 +688,9 @@ namespace System.Text.Kdl.Serialization.Metadata
         internal void EnsureConfigured()
         {
             if (!IsConfigured)
+            {
                 ConfigureSynchronized();
+            }
 
             void ConfigureSynchronized()
             {
@@ -970,7 +965,7 @@ namespace System.Text.Kdl.Serialization.Metadata
                 Type jsonTypeInfoType = typeof(KdlTypeInfo<>).MakeGenericType(type);
                 jsonTypeInfo = (KdlTypeInfo)jsonTypeInfoType.CreateInstanceNoWrapExceptions(
                     parameterTypes: [typeof(KdlConverter), typeof(KdlSerializerOptions)],
-                    parameters: new object[] { converter, options })!;
+                    parameters: [converter, options])!;
             }
 
             Debug.Assert(jsonTypeInfo.Type == type);
@@ -1032,7 +1027,7 @@ namespace System.Text.Kdl.Serialization.Metadata
                 Type propertyInfoType = typeof(KdlPropertyInfo<>).MakeGenericType(propertyType);
                 jsonPropertyInfo = (KdlPropertyInfo)propertyInfoType.CreateInstanceNoWrapExceptions(
                     parameterTypes: [typeof(Type), typeof(KdlTypeInfo), typeof(KdlSerializerOptions)],
-                    parameters: new object[] { declaringType ?? Type, this, Options })!;
+                    parameters: [declaringType ?? Type, this, Options])!;
             }
 
             Debug.Assert(jsonPropertyInfo.PropertyType == propertyType);
@@ -1140,7 +1135,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             }
 
             NumberOfRequiredProperties = numberOfRequiredProperties;
-            _propertyCache = propertyCache.ToArray();
+            _propertyCache = [.. propertyCache];
             _propertyIndex = propertyIndex;
 
             // Override global UnmappedMemberHandling configuration
@@ -1227,7 +1222,7 @@ namespace System.Text.Kdl.Serialization.Metadata
                 ThrowHelper.ThrowInvalidOperationException_ExtensionDataCannotBindToCtorParam(ExtensionDataProperty.MemberName, ExtensionDataProperty);
             }
 
-            _parameterCache = parameterCache.ToArray();
+            _parameterCache = [.. parameterCache];
             _parameterInfoValuesIndex = null;
         }
 
@@ -1349,10 +1344,14 @@ namespace System.Text.Kdl.Serialization.Metadata
 
             switch (converter.ConverterStrategy)
             {
-                case ConverterStrategy.Value: return KdlTypeInfoKind.None;
-                case ConverterStrategy.Object: return KdlTypeInfoKind.Object;
-                case ConverterStrategy.Enumerable: return KdlTypeInfoKind.Enumerable;
-                case ConverterStrategy.Dictionary: return KdlTypeInfoKind.Dictionary;
+                case ConverterStrategy.Value:
+                    return KdlTypeInfoKind.None;
+                case ConverterStrategy.Object:
+                    return KdlTypeInfoKind.Object;
+                case ConverterStrategy.Enumerable:
+                    return KdlTypeInfoKind.Enumerable;
+                case ConverterStrategy.Dictionary:
+                    return KdlTypeInfoKind.Dictionary;
                 case ConverterStrategy.None:
                     Debug.Assert(converter is KdlConverterFactory);
                     ThrowHelper.ThrowNotSupportedException_SerializationNotSupported(type);
@@ -1363,16 +1362,11 @@ namespace System.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal sealed class KdlPropertyInfoList : ConfigurationList<KdlPropertyInfo>
+        internal sealed class KdlPropertyInfoList(KdlTypeInfo jsonTypeInfo) : ConfigurationList<KdlPropertyInfo>
         {
-            private readonly KdlTypeInfo _jsonTypeInfo;
+            private readonly KdlTypeInfo _jsonTypeInfo = jsonTypeInfo;
 
-            public KdlPropertyInfoList(KdlTypeInfo jsonTypeInfo)
-            {
-                _jsonTypeInfo = jsonTypeInfo;
-            }
-
-            public override bool IsReadOnly => _jsonTypeInfo._properties == this && _jsonTypeInfo.IsReadOnly || _jsonTypeInfo.Kind != KdlTypeInfoKind.Object;
+            public override bool IsReadOnly => (_jsonTypeInfo._properties == this && _jsonTypeInfo.IsReadOnly) || _jsonTypeInfo.Kind != KdlTypeInfoKind.Object;
             protected override void OnCollectionModifying()
             {
                 if (_jsonTypeInfo._properties == this)
@@ -1445,7 +1439,7 @@ namespace System.Text.Kdl.Serialization.Metadata
 
                 if (jsonPropertyInfo.IsIgnored)
                 {
-                    (state.IgnoredProperties ??= new())[memberName] = jsonPropertyInfo;
+                    (state.IgnoredProperties ??= [])[memberName] = jsonPropertyInfo;
                 }
             }
         }

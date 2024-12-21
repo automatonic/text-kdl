@@ -39,7 +39,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 typeof(UnsupportedTypeConverter<>).MakeGenericType(type),
                 BindingFlags.Instance | BindingFlags.Public,
                 binder: null,
-                args: new object?[] { errorMessage },
+                args: [errorMessage],
                 culture: null)!;
 
             return converter;

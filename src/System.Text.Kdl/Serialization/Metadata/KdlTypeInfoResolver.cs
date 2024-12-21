@@ -78,7 +78,7 @@
 
             return resolver is KdlTypeInfoResolverWithAddedModifiers resolverWithModifiers
                 ? resolverWithModifiers.WithAddedModifier(modifier)
-                : new KdlTypeInfoResolverWithAddedModifiers(resolver, new[] { modifier });
+                : new KdlTypeInfoResolverWithAddedModifiers(resolver, [modifier]);
         }
 
         /// <summary>

@@ -67,7 +67,7 @@ namespace System.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
         }
@@ -97,11 +97,11 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
-            bool result = Utf8Formatter.TryFormat(value, output.Slice(BytesPending), out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
             Debug.Assert(result);
             BytesPending += bytesWritten;
         }
@@ -111,7 +111,7 @@ namespace System.Text.Kdl
             Span<byte> utf8Number = stackalloc byte[KdlConstants.MaximumFormatUInt64Length];
             bool result = Utf8Formatter.TryFormat(value, utf8Number, out int bytesWritten);
             Debug.Assert(result);
-            WriteNumberValueAsStringUnescaped(utf8Number.Slice(0, bytesWritten));
+            WriteNumberValueAsStringUnescaped(utf8Number[..bytesWritten]);
         }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Text.Kdl.Nodes;
 
 namespace System.Text.Kdl.Schema
@@ -27,7 +26,7 @@ namespace System.Text.Kdl.Schema
         public static KdlSchema CreateTrueSchema() => new(true);
 
         public KdlSchema() { }
-        private KdlSchema(bool trueOrFalse) { _trueOrFalse = trueOrFalse; }
+        private KdlSchema(bool trueOrFalse) => _trueOrFalse = trueOrFalse;
 
         public bool IsTrue => _trueOrFalse is true;
         public bool IsFalse => _trueOrFalse is false;
@@ -124,10 +123,7 @@ namespace System.Text.Kdl.Schema
 
                 return count;
 
-                void Count(bool isKeywordSpecified)
-                {
-                    count += isKeywordSpecified ? 1 : 0;
-                }
+                void Count(bool isKeywordSpecified) => count += isKeywordSpecified ? 1 : 0;
             }
         }
 
@@ -329,20 +325,17 @@ namespace System.Text.Kdl.Schema
 
             return array;
 
-            static string? ToIdentifier(KdlSchemaType schemaType)
+            static string? ToIdentifier(KdlSchemaType schemaType) => schemaType switch
             {
-                return schemaType switch
-                {
-                    KdlSchemaType.Null => "null",
-                    KdlSchemaType.Boolean => "boolean",
-                    KdlSchemaType.Integer => "integer",
-                    KdlSchemaType.Number => "number",
-                    KdlSchemaType.String => "string",
-                    KdlSchemaType.Array => "array",
-                    KdlSchemaType.Object => "object",
-                    _ => null,
-                };
-            }
+                KdlSchemaType.Null => "null",
+                KdlSchemaType.Boolean => "boolean",
+                KdlSchemaType.Integer => "integer",
+                KdlSchemaType.Number => "number",
+                KdlSchemaType.String => "string",
+                KdlSchemaType.Array => "array",
+                KdlSchemaType.Object => "object",
+                _ => null,
+            };
         }
     }
 }

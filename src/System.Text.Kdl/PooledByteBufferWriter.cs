@@ -1,11 +1,8 @@
 using System.Buffers;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.IO.Pipelines;
 using System.Runtime.CompilerServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Text.Kdl
 {
@@ -24,13 +21,12 @@ namespace System.Text.Kdl
         // Value copied from Array.MaxLength in System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Array.cs.
         public const int MaximumBufferSize = 0X7FFFFFC7;
 
-        private PooledByteBufferWriter()
-        {
+        private PooledByteBufferWriter() =>
 #if NET
             // Ensure we are in sync with the Array.MaxLength implementation.
             Debug.Assert(MaximumBufferSize == Array.MaxLength);
 #endif
-        }
+
 
         public PooledByteBufferWriter(int initialCapacity) : this()
         {
@@ -40,10 +36,7 @@ namespace System.Text.Kdl
             _index = 0;
         }
 
-        public PooledByteBufferWriter(int initialCapacity, Stream stream) : this(initialCapacity)
-        {
-            _stream = stream;
-        }
+        public PooledByteBufferWriter(int initialCapacity, Stream stream) : this(initialCapacity) => _stream = stream;
 
         public ReadOnlyMemory<byte> WrittenMemory
         {
@@ -129,7 +122,7 @@ namespace System.Text.Kdl
             _index = 0;
         }
 
-        public static PooledByteBufferWriter CreateEmptyInstanceForCaching() => new PooledByteBufferWriter();
+        public static PooledByteBufferWriter CreateEmptyInstanceForCaching() => new();
 
         public override void Advance(int count)
         {

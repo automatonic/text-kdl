@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Threading;
+﻿using System.Diagnostics.CodeAnalysis;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
@@ -25,10 +23,7 @@ namespace System.Text.Kdl.Serialization.Metadata
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private DefaultKdlTypeInfoResolver(bool mutable)
-        {
-            _mutable = mutable;
-        }
+        private DefaultKdlTypeInfoResolver(bool mutable) => _mutable = mutable;
 
         /// <summary>
         /// Resolves a KDL contract for a given <paramref name="type"/> and <paramref name="options"/> configuration.
@@ -97,14 +92,9 @@ namespace System.Text.Kdl.Serialization.Metadata
         public IList<Action<KdlTypeInfo>> Modifiers => _modifiers ??= new ModifierCollection(this);
         private ModifierCollection? _modifiers;
 
-        private sealed class ModifierCollection : ConfigurationList<Action<KdlTypeInfo>>
+        private sealed class ModifierCollection(DefaultKdlTypeInfoResolver resolver) : ConfigurationList<Action<KdlTypeInfo>>
         {
-            private readonly DefaultKdlTypeInfoResolver _resolver;
-
-            public ModifierCollection(DefaultKdlTypeInfoResolver resolver)
-            {
-                _resolver = resolver;
-            }
+            private readonly DefaultKdlTypeInfoResolver _resolver = resolver;
 
             public override bool IsReadOnly => !_resolver._mutable;
             protected override void OnCollectionModifying()

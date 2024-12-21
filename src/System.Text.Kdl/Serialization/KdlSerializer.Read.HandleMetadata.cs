@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Kdl.Nodes;
@@ -291,7 +290,7 @@ namespace System.Text.Kdl
                 state.Current.KdlPropertyName = null;
             }
 
-        Done:
+            Done:
             if (state.Current.MetadataPropertyNames is MetadataPropertyName.Values)
             {
                 // Cannot have a $values property unless there are other metadata properties.

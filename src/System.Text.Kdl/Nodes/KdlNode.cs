@@ -41,10 +41,7 @@ namespace System.Text.Kdl.Nodes
             }
         }
 
-        internal KdlNode(KdlNodeOptions? options = null)
-        {
-            _options = options;
-        }
+        internal KdlNode(KdlNodeOptions? options = null) => _options = options;
 
         /// <summary>
         ///   Casts to the derived <see cref="KdlArray"/> type.
@@ -116,14 +113,8 @@ namespace System.Text.Kdl.Nodes
         /// </summary>
         public KdlNode? Parent
         {
-            get
-            {
-                return _parent;
-            }
-            internal set
-            {
-                _parent = value;
-            }
+            get => _parent;
+            internal set => _parent = value;
         }
 
         /// <summary>
@@ -232,14 +223,8 @@ namespace System.Text.Kdl.Nodes
         /// </exception>
         public KdlNode? this[string propertyName]
         {
-            get
-            {
-                return AsObject().GetItem(propertyName);
-            }
-            set
-            {
-                AsObject().SetItem(propertyName, value);
-            }
+            get => AsObject().GetItem(propertyName);
+            set => AsObject().SetItem(propertyName, value);
         }
 
         /// <summary>

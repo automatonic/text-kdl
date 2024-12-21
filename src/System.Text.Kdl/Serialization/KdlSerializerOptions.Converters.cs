@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Kdl.Reflection;
 using System.Text.Kdl.Serialization;

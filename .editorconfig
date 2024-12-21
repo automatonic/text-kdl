@@ -91,10 +91,10 @@ dotnet_analyzer_diagnostic.severity = warning
 # https://docs.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/language-rules#net-style-rules
 [*.{cs,csx,cake,vb,vbx}]
 # "this." and "Me." qualifiers
-dotnet_style_qualification_for_field = true:warning
-dotnet_style_qualification_for_property = true:warning
-dotnet_style_qualification_for_method = true:warning
-dotnet_style_qualification_for_event = true:warning
+dotnet_style_qualification_for_field = false:suggestion
+dotnet_style_qualification_for_property = false:suggestion
+dotnet_style_qualification_for_method = false:suggestion
+dotnet_style_qualification_for_event = false:suggestion
 # Language keywords instead of framework type names for type references
 dotnet_style_predefined_type_for_locals_parameters_members = true:warning
 dotnet_style_predefined_type_for_member_access = true:warning
@@ -114,7 +114,7 @@ dotnet_style_collection_initializer = true:warning
 dotnet_style_explicit_tuple_names = true:warning
 dotnet_style_prefer_inferred_tuple_names = true:warning
 dotnet_style_prefer_inferred_anonymous_type_member_names = true:warning
-dotnet_style_prefer_auto_properties = true:warning
+dotnet_style_prefer_auto_properties = true:suggestion
 dotnet_style_prefer_conditional_expression_over_assignment = false:suggestion
 dotnet_diagnostic.IDE0045.severity = suggestion
 dotnet_style_prefer_conditional_expression_over_return = false:suggestion
@@ -143,7 +143,7 @@ csharp_style_var_when_type_is_apparent = true:warning
 csharp_style_var_elsewhere = true:warning
 # Expression-bodied members
 csharp_style_expression_bodied_methods = true:warning
-csharp_style_expression_bodied_constructors = true:warning
+csharp_style_expression_bodied_constructors = true:suggestion
 csharp_style_expression_bodied_operators = true:warning
 csharp_style_expression_bodied_properties = true:warning
 csharp_style_expression_bodied_indexers = true:warning
@@ -157,7 +157,7 @@ csharp_style_prefer_switch_expression = true:warning
 csharp_style_prefer_pattern_matching = true:warning
 csharp_style_prefer_not_pattern = true:warning
 # Expression-level preferences
-csharp_style_inlined_variable_declaration = true:warning
+csharp_style_inlined_variable_declaration = true:suggestion
 csharp_prefer_simple_default_expression = true:warning
 csharp_style_pattern_local_over_anonymous_function = true:warning
 csharp_style_deconstructed_variable_declaration = true:warning
@@ -458,3 +458,33 @@ dotnet_naming_rule.parameters_rule.severity             = warning
 # FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 # OTHER DEALINGS IN THE SOFTWARE.
 ##########################################
+
+# IDE0072: Add missing cases
+dotnet_diagnostic.IDE0072.severity = suggestion
+
+# CA1863: Use 'CompositeFormat'
+dotnet_diagnostic.CA1863.severity = suggestion
+
+# IDE0010: Add missing cases
+dotnet_diagnostic.IDE0010.severity = suggestion
+
+# IDE0010: Add missing cases
+dotnet_diagnostic.IDE0010.severity = suggestion
+
+# CA2263: Prefer generic overload when type is known
+dotnet_diagnostic.CA2263.severity = suggestion
+
+# IDE0001: Simplify Names
+dotnet_diagnostic.IDE0001.severity = suggestion
+
+# IDE0018: Inline variable declaration
+dotnet_diagnostic.IDE0018.severity = suggestion
+
+# IDE0032: Use auto property
+dotnet_diagnostic.IDE0032.severity = suggestion
+
+# IDE0021: Use expression body for constructor
+dotnet_diagnostic.IDE0021.severity = suggestion
+
+# IDE0064: Make readonly fields writable
+dotnet_diagnostic.IDE0064.severity = suggestion

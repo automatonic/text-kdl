@@ -8,6 +8,10 @@ namespace System.Text.Kdl.Serialization
     /// Instructs the System.Text.Kdl source generator to generate source code to help optimize performance
     /// when serializing and deserializing instances of the specified type and types in its object graph.
     /// </summary>
+    /// <remarks>
+    /// Initializes a new instance of <see cref="KdlSerializableAttribute"/> with the specified type.
+    /// </remarks>
+    /// <param name="type">The type to generate source code for.</param>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
 
 #if BUILDING_SOURCE_GENERATOR
@@ -15,15 +19,10 @@ namespace System.Text.Kdl.Serialization
 #else
     public
 #endif
-    sealed class KdlSerializableAttribute : KdlAttribute
+#pragma warning disable CS9113 // Parameter is unread.
+    sealed class KdlSerializableAttribute(Type type) : KdlAttribute
+#pragma warning restore CS9113 // Parameter is unread.
     {
-#pragma warning disable IDE0060
-        /// <summary>
-        /// Initializes a new instance of <see cref="KdlSerializableAttribute"/> with the specified type.
-        /// </summary>
-        /// <param name="type">The type to generate source code for.</param>
-        public KdlSerializableAttribute(Type type) { }
-#pragma warning restore IDE0060
 
         /// <summary>
         /// The name of the property for the generated <see cref="KdlTypeInfo{T}"/> for

@@ -146,7 +146,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteBase64ByOptions(escapedPropertyName.Slice(0, written), bytes);
+            WriteBase64ByOptions(escapedPropertyName[..written], bytes);
 
             if (propertyArray != null)
             {
@@ -169,7 +169,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
 
-            WriteBase64ByOptions(escapedPropertyName.Slice(0, written), bytes);
+            WriteBase64ByOptions(escapedPropertyName[..written], bytes);
 
             if (propertyArray != null)
             {
@@ -261,7 +261,7 @@ namespace System.Text.Kdl
             }
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -306,7 +306,7 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -356,12 +356,12 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;

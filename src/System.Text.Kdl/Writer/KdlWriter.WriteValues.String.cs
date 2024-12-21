@@ -166,7 +166,7 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
@@ -192,7 +192,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedValue.Slice(0, written));
+            WriteStringByOptions(escapedValue[..written]);
 
             if (valueArray != null)
             {
@@ -277,7 +277,7 @@ namespace System.Text.Kdl
             }
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedValue.CopyTo(output.Slice(BytesPending));
+            escapedValue.CopyTo(output[BytesPending..]);
             BytesPending += escapedValue.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -312,13 +312,13 @@ namespace System.Text.Kdl
                 {
                     WriteNewLine(output);
                 }
-                WriteIndentation(output.Slice(BytesPending), indent);
+                WriteIndentation(output[BytesPending..], indent);
                 BytesPending += indent;
             }
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedValue.CopyTo(output.Slice(BytesPending));
+            escapedValue.CopyTo(output[BytesPending..]);
             BytesPending += escapedValue.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -339,7 +339,7 @@ namespace System.Text.Kdl
 
             KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
 
-            WriteStringByOptions(escapedValue.Slice(0, written));
+            WriteStringByOptions(escapedValue[..written]);
 
             if (valueArray != null)
             {

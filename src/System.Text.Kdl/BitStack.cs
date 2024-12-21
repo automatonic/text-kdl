@@ -23,7 +23,7 @@ namespace System.Text.Kdl
 
         private int _currentDepth;
 
-        public int CurrentDepth => _currentDepth;
+        public readonly int CurrentDepth => _currentDepth;
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public void PushTrue()
@@ -64,7 +64,7 @@ namespace System.Text.Kdl
             Debug.Assert(index >= 0, $"Set - Negative - index: {index}, arrayLength: {_array.Length}");
 
             // Maximum possible array length if bitLength was int.MaxValue (i.e. 67_108_864)
-            Debug.Assert(_array.Length <= int.MaxValue / 32 + 1, $"index: {index}, arrayLength: {_array.Length}");
+            Debug.Assert(_array.Length <= (int.MaxValue / 32) + 1, $"index: {index}, arrayLength: {_array.Length}");
 
             int elementIndex = Div32Rem(index, out int extraBits);
 
@@ -73,7 +73,7 @@ namespace System.Text.Kdl
             if (elementIndex >= _array.Length)
             {
                 // This multiplication can overflow, so cast to uint first.
-                Debug.Assert(index >= 0 && index > (int)((uint)_array.Length * 32 - 1), $"Only grow when necessary - index: {index}, arrayLength: {_array.Length}");
+                Debug.Assert(index >= 0 && index > (int)(((uint)_array.Length * 32) - 1), $"Only grow when necessary - index: {index}, arrayLength: {_array.Length}");
                 DoubleArray(elementIndex);
             }
 

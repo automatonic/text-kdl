@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -119,7 +118,7 @@ namespace System.Text.Kdl.Serialization.Metadata
 
             return delegate (TCollection collection, object? element)
             {
-                addMethod.Invoke(collection, new object[] { element! });
+                addMethod.Invoke(collection, [element!]);
             };
         }
 
@@ -153,7 +152,7 @@ namespace System.Text.Kdl.Serialization.Metadata
 
             return delegate (object obj, TProperty value)
             {
-                setMethodInfo.Invoke(obj, new object[] { value! });
+                setMethodInfo.Invoke(obj, [value!]);
             };
         }
 

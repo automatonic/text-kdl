@@ -21,14 +21,14 @@ namespace System.Text.Kdl
         /// <seealso cref="TokenType" />
         /// It will also throw when the KDL string contains invalid UTF-8 bytes, or invalid UTF-16 surrogates.
         /// </exception>
-        public string? GetString()
+        public readonly string? GetString()
         {
             if (TokenType == KdlTokenType.Null)
             {
                 return null;
             }
 
-            if (TokenType != KdlTokenType.String && TokenType != KdlTokenType.PropertyName)
+            if (TokenType is not KdlTokenType.String and not KdlTokenType.PropertyName)
             {
                 ThrowHelper.ThrowInvalidOperationException_ExpectedString(TokenType);
             }
@@ -84,7 +84,7 @@ namespace System.Text.Kdl
             {
                 if (!TryCopyEscapedString(utf8Destination, out bytesWritten))
                 {
-                    utf8Destination.Slice(0, bytesWritten).Clear();
+                    utf8Destination[..bytesWritten].Clear();
                     ThrowHelper.ThrowArgumentException_DestinationTooShort();
                 }
             }
@@ -104,7 +104,7 @@ namespace System.Text.Kdl
                 }
             }
 
-            KdlReaderHelper.ValidateUtf8(utf8Destination.Slice(0, bytesWritten));
+            KdlReaderHelper.ValidateUtf8(utf8Destination[..bytesWritten]);
             return bytesWritten;
         }
 
@@ -156,7 +156,7 @@ namespace System.Text.Kdl
 
                 bool success = TryCopyEscapedString(unescapedBuffer, out int bytesWritten);
                 Debug.Assert(success);
-                unescapedSource = unescapedBuffer.Slice(0, bytesWritten);
+                unescapedSource = unescapedBuffer[..bytesWritten];
             }
             else
             {
@@ -170,7 +170,7 @@ namespace System.Text.Kdl
                         (rentedBuffer = ArrayPool<byte>.Shared.Rent(valueLength));
 
                     valueSequence.CopyTo(intermediate);
-                    unescapedSource = intermediate.Slice(0, valueLength);
+                    unescapedSource = intermediate[..valueLength];
                 }
                 else
                 {
@@ -207,7 +207,7 @@ namespace System.Text.Kdl
                     (rentedBuffer = ArrayPool<byte>.Shared.Rent(sequenceLength));
 
                 valueSequence.CopyTo(intermediate);
-                source = intermediate.Slice(0, sequenceLength);
+                source = intermediate[..sequenceLength];
             }
             else
             {
@@ -233,7 +233,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of the KDL token that is not a comment.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public string GetComment()
+        public readonly string GetComment()
         {
             if (TokenType != KdlTokenType.Comment)
             {
@@ -251,7 +251,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a boolean (i.e. <see cref="KdlTokenType.True"/> or <see cref="KdlTokenType.False"/>).
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool GetBoolean()
+        public readonly bool GetBoolean()
         {
             KdlTokenType type = TokenType;
             if (type == KdlTokenType.True)
@@ -280,7 +280,7 @@ namespace System.Text.Kdl
         /// The KDL string contains data outside of the expected Base64 range, or if it contains invalid/more than two padding characters,
         /// or is incomplete (i.e. the KDL string length is not a multiple of 4).
         /// </exception>
-        public byte[] GetBytesFromBase64()
+        public readonly byte[] GetBytesFromBase64()
         {
             if (!TryGetBytesFromBase64(out byte[]? value))
             {
@@ -304,7 +304,7 @@ namespace System.Text.Kdl
         /// is written in scientific notation) or, it represents a number less than <see cref="byte.MinValue"/> or greater
         /// than <see cref="byte.MaxValue"/>.
         /// </exception>
-        public byte GetByte()
+        public readonly byte GetByte()
         {
             if (!TryGetByte(out byte value))
             {
@@ -313,7 +313,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal byte GetByteWithQuotes()
+        internal readonly byte GetByteWithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetByteCore(out byte value, span))
@@ -338,8 +338,8 @@ namespace System.Text.Kdl
         /// is written in scientific notation) or, it represents a number less than <see cref="sbyte.MinValue"/> or greater
         /// than <see cref="sbyte.MaxValue"/>.
         /// </exception>
-        [System.CLSCompliantAttribute(false)]
-        public sbyte GetSByte()
+        [CLSCompliant(false)]
+        public readonly sbyte GetSByte()
         {
             if (!TryGetSByte(out sbyte value))
             {
@@ -348,7 +348,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal sbyte GetSByteWithQuotes()
+        internal readonly sbyte GetSByteWithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetSByteCore(out sbyte value, span))
@@ -373,7 +373,7 @@ namespace System.Text.Kdl
         /// is written in scientific notation) or, it represents a number less than <see cref="short.MinValue"/> or greater
         /// than <see cref="short.MaxValue"/>.
         /// </exception>
-        public short GetInt16()
+        public readonly short GetInt16()
         {
             if (!TryGetInt16(out short value))
             {
@@ -382,7 +382,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal short GetInt16WithQuotes()
+        internal readonly short GetInt16WithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetInt16Core(out short value, span))
@@ -407,7 +407,7 @@ namespace System.Text.Kdl
         /// is written in scientific notation) or, it represents a number less than <see cref="int.MinValue"/> or greater
         /// than <see cref="int.MaxValue"/>.
         /// </exception>
-        public int GetInt32()
+        public readonly int GetInt32()
         {
             if (!TryGetInt32(out int value))
             {
@@ -416,7 +416,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal int GetInt32WithQuotes()
+        internal readonly int GetInt32WithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetInt32Core(out int value, span))
@@ -441,7 +441,7 @@ namespace System.Text.Kdl
         /// is written in scientific notation) or, it represents a number less than <see cref="long.MinValue"/> or greater
         /// than <see cref="long.MaxValue"/>.
         /// </exception>
-        public long GetInt64()
+        public readonly long GetInt64()
         {
             if (!TryGetInt64(out long value))
             {
@@ -450,7 +450,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal long GetInt64WithQuotes()
+        internal readonly long GetInt64WithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetInt64Core(out long value, span))
@@ -476,7 +476,7 @@ namespace System.Text.Kdl
         /// than <see cref="ushort.MaxValue"/>.
         /// </exception>
         [System.CLSCompliantAttribute(false)]
-        public ushort GetUInt16()
+        public readonly ushort GetUInt16()
         {
             if (!TryGetUInt16(out ushort value))
             {
@@ -485,7 +485,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal ushort GetUInt16WithQuotes()
+        internal readonly ushort GetUInt16WithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetUInt16Core(out ushort value, span))
@@ -511,7 +511,7 @@ namespace System.Text.Kdl
         /// than <see cref="uint.MaxValue"/>.
         /// </exception>
         [System.CLSCompliantAttribute(false)]
-        public uint GetUInt32()
+        public readonly uint GetUInt32()
         {
             if (!TryGetUInt32(out uint value))
             {
@@ -520,7 +520,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal uint GetUInt32WithQuotes()
+        internal readonly uint GetUInt32WithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetUInt32Core(out uint value, span))
@@ -546,7 +546,7 @@ namespace System.Text.Kdl
         /// than <see cref="ulong.MaxValue"/>.
         /// </exception>
         [System.CLSCompliantAttribute(false)]
-        public ulong GetUInt64()
+        public readonly ulong GetUInt64()
         {
             if (!TryGetUInt64(out ulong value))
             {
@@ -555,7 +555,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal ulong GetUInt64WithQuotes()
+        internal readonly ulong GetUInt64WithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetUInt64Core(out ulong value, span))
@@ -579,7 +579,7 @@ namespace System.Text.Kdl
         /// On any framework that is not .NET Core 3.0 or higher, thrown if the KDL token value represents a number less than <see cref="float.MinValue"/> or greater
         /// than <see cref="float.MaxValue"/>.
         /// </exception>
-        public float GetSingle()
+        public readonly float GetSingle()
         {
             if (!TryGetSingle(out float value))
             {
@@ -588,7 +588,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal float GetSingleWithQuotes()
+        internal readonly float GetSingleWithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
 
@@ -610,7 +610,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal float GetSingleFloatingPointConstant()
+        internal readonly float GetSingleFloatingPointConstant()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
 
@@ -636,7 +636,7 @@ namespace System.Text.Kdl
         /// On any framework that is not .NET Core 3.0 or higher, thrown if the KDL token value represents a number less than <see cref="double.MinValue"/> or greater
         /// than <see cref="double.MaxValue"/>.
         /// </exception>
-        public double GetDouble()
+        public readonly double GetDouble()
         {
             if (!TryGetDouble(out double value))
             {
@@ -645,7 +645,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal double GetDoubleWithQuotes()
+        internal readonly double GetDoubleWithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
 
@@ -667,7 +667,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal double GetDoubleFloatingPointConstant()
+        internal readonly double GetDoubleFloatingPointConstant()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
 
@@ -693,7 +693,7 @@ namespace System.Text.Kdl
         /// Thrown if the KDL token value represents a number less than <see cref="decimal.MinValue"/> or greater
         /// than <see cref="decimal.MaxValue"/>.
         /// </exception>
-        public decimal GetDecimal()
+        public readonly decimal GetDecimal()
         {
             if (!TryGetDecimal(out decimal value))
             {
@@ -702,7 +702,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal decimal GetDecimalWithQuotes()
+        internal readonly decimal GetDecimalWithQuotes()
         {
             ReadOnlySpan<byte> span = GetUnescapedSpan();
             if (!TryGetDecimalCore(out decimal value, span))
@@ -725,7 +725,7 @@ namespace System.Text.Kdl
         /// <exception cref="FormatException">
         /// Thrown if the KDL token value is of an unsupported format. Only a subset of ISO 8601 formats are supported.
         /// </exception>
-        public DateTime GetDateTime()
+        public readonly DateTime GetDateTime()
         {
             if (!TryGetDateTime(out DateTime value))
             {
@@ -735,7 +735,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal DateTime GetDateTimeNoValidation()
+        internal readonly DateTime GetDateTimeNoValidation()
         {
             if (!TryGetDateTimeCore(out DateTime value))
             {
@@ -758,7 +758,7 @@ namespace System.Text.Kdl
         /// <exception cref="FormatException">
         /// Thrown if the KDL token value is of an unsupported format. Only a subset of ISO 8601 formats are supported.
         /// </exception>
-        public DateTimeOffset GetDateTimeOffset()
+        public readonly DateTimeOffset GetDateTimeOffset()
         {
             if (!TryGetDateTimeOffset(out DateTimeOffset value))
             {
@@ -768,7 +768,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal DateTimeOffset GetDateTimeOffsetNoValidation()
+        internal readonly DateTimeOffset GetDateTimeOffsetNoValidation()
         {
             if (!TryGetDateTimeOffsetCore(out DateTimeOffset value))
             {
@@ -791,7 +791,7 @@ namespace System.Text.Kdl
         /// <exception cref="FormatException">
         /// Thrown if the KDL token value is of an unsupported format for a Guid.
         /// </exception>
-        public Guid GetGuid()
+        public readonly Guid GetGuid()
         {
             if (!TryGetGuid(out Guid value))
             {
@@ -801,7 +801,7 @@ namespace System.Text.Kdl
             return value;
         }
 
-        internal Guid GetGuidNoValidation()
+        internal readonly Guid GetGuidNoValidation()
         {
             if (!TryGetGuidCore(out Guid value))
             {
@@ -821,7 +821,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.String"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetBytesFromBase64([NotNullWhen(true)] out byte[]? value)
+        public readonly bool TryGetBytesFromBase64([NotNullWhen(true)] out byte[]? value)
         {
             if (TokenType != KdlTokenType.String)
             {
@@ -849,7 +849,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.Number"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetByte(out byte value)
+        public readonly bool TryGetByte(out byte value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -885,7 +885,7 @@ namespace System.Text.Kdl
         /// <seealso cref="TokenType" />
         /// </exception>
         [System.CLSCompliantAttribute(false)]
-        public bool TryGetSByte(out sbyte value)
+        public readonly bool TryGetSByte(out sbyte value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -920,7 +920,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.Number"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetInt16(out short value)
+        public readonly bool TryGetInt16(out short value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -955,7 +955,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.Number"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetInt32(out int value)
+        public readonly bool TryGetInt32(out int value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -990,7 +990,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.Number"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetInt64(out long value)
+        public readonly bool TryGetInt64(out long value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -1026,7 +1026,7 @@ namespace System.Text.Kdl
         /// <seealso cref="TokenType" />
         /// </exception>
         [System.CLSCompliantAttribute(false)]
-        public bool TryGetUInt16(out ushort value)
+        public readonly bool TryGetUInt16(out ushort value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -1062,7 +1062,7 @@ namespace System.Text.Kdl
         /// <seealso cref="TokenType" />
         /// </exception>
         [System.CLSCompliantAttribute(false)]
-        public bool TryGetUInt32(out uint value)
+        public readonly bool TryGetUInt32(out uint value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -1098,7 +1098,7 @@ namespace System.Text.Kdl
         /// <seealso cref="TokenType" />
         /// </exception>
         [System.CLSCompliantAttribute(false)]
-        public bool TryGetUInt64(out ulong value)
+        public readonly bool TryGetUInt64(out ulong value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -1133,7 +1133,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.Number"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetSingle(out float value)
+        public readonly bool TryGetSingle(out float value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -1163,7 +1163,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.Number"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetDouble(out double value)
+        public readonly bool TryGetDouble(out double value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -1193,7 +1193,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.Number"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetDecimal(out decimal value)
+        public readonly bool TryGetDecimal(out decimal value)
         {
             if (TokenType != KdlTokenType.Number)
             {
@@ -1228,7 +1228,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.String"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetDateTime(out DateTime value)
+        public readonly bool TryGetDateTime(out DateTime value)
         {
             if (TokenType != KdlTokenType.String)
             {
@@ -1238,7 +1238,7 @@ namespace System.Text.Kdl
             return TryGetDateTimeCore(out value);
         }
 
-        internal bool TryGetDateTimeCore(out DateTime value)
+        internal readonly bool TryGetDateTimeCore(out DateTime value)
         {
             scoped ReadOnlySpan<byte> span;
 
@@ -1253,7 +1253,7 @@ namespace System.Text.Kdl
 
                 Span<byte> stackSpan = stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
                 ValueSequence.CopyTo(stackSpan);
-                span = stackSpan.Slice(0, (int)sequenceLength);
+                span = stackSpan[..(int)sequenceLength];
             }
             else
             {
@@ -1293,7 +1293,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.String"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetDateTimeOffset(out DateTimeOffset value)
+        public readonly bool TryGetDateTimeOffset(out DateTimeOffset value)
         {
             if (TokenType != KdlTokenType.String)
             {
@@ -1303,7 +1303,7 @@ namespace System.Text.Kdl
             return TryGetDateTimeOffsetCore(out value);
         }
 
-        internal bool TryGetDateTimeOffsetCore(out DateTimeOffset value)
+        internal readonly bool TryGetDateTimeOffsetCore(out DateTimeOffset value)
         {
             scoped ReadOnlySpan<byte> span;
 
@@ -1318,7 +1318,7 @@ namespace System.Text.Kdl
 
                 Span<byte> stackSpan = stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
                 ValueSequence.CopyTo(stackSpan);
-                span = stackSpan.Slice(0, (int)sequenceLength);
+                span = stackSpan[..(int)sequenceLength];
             }
             else
             {
@@ -1359,7 +1359,7 @@ namespace System.Text.Kdl
         /// Thrown if trying to get the value of a KDL token that is not a <see cref="KdlTokenType.String"/>.
         /// <seealso cref="TokenType" />
         /// </exception>
-        public bool TryGetGuid(out Guid value)
+        public readonly bool TryGetGuid(out Guid value)
         {
             if (TokenType != KdlTokenType.String)
             {
@@ -1369,7 +1369,7 @@ namespace System.Text.Kdl
             return TryGetGuidCore(out value);
         }
 
-        internal bool TryGetGuidCore(out Guid value)
+        internal readonly bool TryGetGuidCore(out Guid value)
         {
             scoped ReadOnlySpan<byte> span;
 
@@ -1384,7 +1384,7 @@ namespace System.Text.Kdl
 
                 Span<byte> stackSpan = stackalloc byte[KdlConstants.MaximumEscapedGuidLength];
                 ValueSequence.CopyTo(stackSpan);
-                span = stackSpan.Slice(0, (int)sequenceLength);
+                span = stackSpan[..(int)sequenceLength];
             }
             else
             {

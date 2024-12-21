@@ -91,8 +91,8 @@ namespace System.Text.Kdl
         public const int DateTimeNumFractionDigits = 7;  // TimeSpan and DateTime formats allow exactly up to many digits for specifying the fraction after the seconds.
         public const int MaxDateTimeFraction = 9_999_999;  // The largest fraction expressible by TimeSpan and DateTime formats
         public const int DateTimeParseNumFractionDigits = 16; // The maximum number of fraction digits the Kdl DateTime parser allows
-        public const int MaximumDateTimeOffsetParseLength = (MaximumFormatDateTimeOffsetLength +
-            (DateTimeParseNumFractionDigits - DateTimeNumFractionDigits)); // Like StandardFormat 'O' for DateTimeOffset, but allowing 9 additional (up to 16) fraction digits.
+        public const int MaximumDateTimeOffsetParseLength = MaximumFormatDateTimeOffsetLength +
+            (DateTimeParseNumFractionDigits - DateTimeNumFractionDigits); // Like StandardFormat 'O' for DateTimeOffset, but allowing 9 additional (up to 16) fraction digits.
         public const int MinimumDateTimeParseLength = 10; // YYYY-MM-DD
         public const int MaximumEscapedDateTimeOffsetParseLength = MaxExpansionFactorWhileEscaping * MaximumDateTimeOffsetParseLength;
 

@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace System.Text.Kdl
@@ -26,7 +25,7 @@ namespace System.Text.Kdl
             }
 
             /// <inheritdoc />
-            public KdlProperty Current
+            public readonly KdlProperty Current
             {
                 get
                 {
@@ -52,7 +51,7 @@ namespace System.Text.Kdl
             ///   property they will all individually be returned (each in the order
             ///   they appear in the content).
             /// </remarks>
-            public ObjectEnumerator GetEnumerator()
+            public readonly ObjectEnumerator GetEnumerator()
             {
                 ObjectEnumerator ator = this;
                 ator._curIdx = -1;
@@ -60,10 +59,10 @@ namespace System.Text.Kdl
             }
 
             /// <inheritdoc />
-            IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
-            IEnumerator<KdlProperty> IEnumerable<KdlProperty>.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator<KdlProperty> IEnumerable<KdlProperty>.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
             public void Dispose()
@@ -78,7 +77,7 @@ namespace System.Text.Kdl
             }
 
             /// <inheritdoc />
-            object IEnumerator.Current => Current;
+            readonly object IEnumerator.Current => Current;
 
             /// <inheritdoc />
             public bool MoveNext()

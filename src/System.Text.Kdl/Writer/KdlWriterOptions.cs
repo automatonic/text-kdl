@@ -29,16 +29,17 @@ namespace System.Text.Kdl
         /// </summary>
         public bool Indented
         {
-            get
-            {
-                return (_optionsMask & IndentBit) != 0;
-            }
+            readonly get => (_optionsMask & IndentBit) != 0;
             set
             {
                 if (value)
+                {
                     _optionsMask |= IndentBit;
+                }
                 else
+                {
                     _optionsMask &= ~IndentBit;
+                }
             }
         }
 
@@ -54,9 +55,13 @@ namespace System.Text.Kdl
             {
                 KdlWriterHelper.ValidateIndentCharacter(value);
                 if (value is not KdlConstants.DefaultIndentCharacter)
+                {
                     _optionsMask |= IndentCharacterBit;
+                }
                 else
+                {
                     _optionsMask &= ~IndentCharacterBit;
+                }
             }
         }
 
@@ -121,16 +126,17 @@ namespace System.Text.Kdl
         /// </remarks>
         public bool SkipValidation
         {
-            get
-            {
-                return (_optionsMask & SkipValidationBit) != 0;
-            }
+            readonly get => (_optionsMask & SkipValidationBit) != 0;
             set
             {
                 if (value)
+                {
                     _optionsMask |= SkipValidationBit;
+                }
                 else
+                {
                     _optionsMask &= ~SkipValidationBit;
+                }
             }
         }
 
@@ -146,18 +152,22 @@ namespace System.Text.Kdl
         /// </exception>
         public string NewLine
         {
-            get => (_optionsMask & NewLineBit) != 0 ? s_alternateNewLine : Environment.NewLine;
+            readonly get => (_optionsMask & NewLineBit) != 0 ? s_alternateNewLine : Environment.NewLine;
             set
             {
                 KdlWriterHelper.ValidateNewLine(value);
                 if (value != Environment.NewLine)
+                {
                     _optionsMask |= NewLineBit;
+                }
                 else
+                {
                     _optionsMask &= ~NewLineBit;
+                }
             }
         }
 
-        internal bool IndentedOrNotSkipValidation => (_optionsMask & (IndentBit | SkipValidationBit)) != SkipValidationBit;  // Equivalent to: Indented || !SkipValidation;
+        internal readonly bool IndentedOrNotSkipValidation => (_optionsMask & (IndentBit | SkipValidationBit)) != SkipValidationBit;  // Equivalent to: Indented || !SkipValidation;
 
         private const int OptionsBitCount = 4;
         private const int IndentBit = 1;

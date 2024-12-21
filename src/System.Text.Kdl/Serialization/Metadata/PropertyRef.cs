@@ -55,22 +55,38 @@ namespace System.Text.Kdl.Serialization.Metadata
 
             switch (length)
             {
-                case 0: goto ComputedKey;
-                case 1: goto OddLength;
-                case 2: key |= Unsafe.ReadUnaligned<ushort>(ref reference); goto ComputedKey;
-                case 3: key |= Unsafe.ReadUnaligned<ushort>(ref reference); goto OddLength;
-                case 4: key |= Unsafe.ReadUnaligned<uint>(ref reference); goto ComputedKey;
-                case 5: key |= Unsafe.ReadUnaligned<uint>(ref reference); goto OddLength;
-                case 6: key |= Unsafe.ReadUnaligned<uint>(ref reference) | (ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4)) << 32; goto ComputedKey;
-                case 7: key |= Unsafe.ReadUnaligned<uint>(ref reference) | (ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4)) << 32; goto OddLength;
-                default: key |= Unsafe.ReadUnaligned<ulong>(ref reference) & 0x00ffffffffffffffL; goto ComputedKey;
+                case 0:
+                    goto ComputedKey;
+                case 1:
+                    goto OddLength;
+                case 2:
+                    key |= Unsafe.ReadUnaligned<ushort>(ref reference);
+                    goto ComputedKey;
+                case 3:
+                    key |= Unsafe.ReadUnaligned<ushort>(ref reference);
+                    goto OddLength;
+                case 4:
+                    key |= Unsafe.ReadUnaligned<uint>(ref reference);
+                    goto ComputedKey;
+                case 5:
+                    key |= Unsafe.ReadUnaligned<uint>(ref reference);
+                    goto OddLength;
+                case 6:
+                    key |= Unsafe.ReadUnaligned<uint>(ref reference) | ((ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4)) << 32);
+                    goto ComputedKey;
+                case 7:
+                    key |= Unsafe.ReadUnaligned<uint>(ref reference) | ((ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4)) << 32);
+                    goto OddLength;
+                default:
+                    key |= Unsafe.ReadUnaligned<ulong>(ref reference) & 0x00ffffffffffffffL;
+                    goto ComputedKey;
             }
 
-        OddLength:
+            OddLength:
             int offset = length - 1;
             key |= (ulong)Unsafe.Add(ref reference, offset) << (offset * 8);
 
-        ComputedKey:
+            ComputedKey:
 #if DEBUG
             // Verify key contains the embedded bytes as expected.
             // Note: the expected properties do not hold true on big-endian platforms
@@ -79,15 +95,15 @@ namespace System.Text.Kdl.Serialization.Metadata
                 const int BitsInByte = 8;
                 Debug.Assert(
                     // Verify embedded property name.
-                    (name.Length < 1 || name[0] == ((key & ((ulong)0xFF << BitsInByte * 0)) >> BitsInByte * 0)) &&
-                    (name.Length < 2 || name[1] == ((key & ((ulong)0xFF << BitsInByte * 1)) >> BitsInByte * 1)) &&
-                    (name.Length < 3 || name[2] == ((key & ((ulong)0xFF << BitsInByte * 2)) >> BitsInByte * 2)) &&
-                    (name.Length < 4 || name[3] == ((key & ((ulong)0xFF << BitsInByte * 3)) >> BitsInByte * 3)) &&
-                    (name.Length < 5 || name[4] == ((key & ((ulong)0xFF << BitsInByte * 4)) >> BitsInByte * 4)) &&
-                    (name.Length < 6 || name[5] == ((key & ((ulong)0xFF << BitsInByte * 5)) >> BitsInByte * 5)) &&
-                    (name.Length < 7 || name[6] == ((key & ((ulong)0xFF << BitsInByte * 6)) >> BitsInByte * 6)) &&
+                    (name.Length < 1 || name[0] == ((key & ((ulong)0xFF << (BitsInByte * 0))) >> (BitsInByte * 0))) &&
+                    (name.Length < 2 || name[1] == ((key & ((ulong)0xFF << (BitsInByte * 1))) >> (BitsInByte * 1))) &&
+                    (name.Length < 3 || name[2] == ((key & ((ulong)0xFF << (BitsInByte * 2))) >> (BitsInByte * 2))) &&
+                    (name.Length < 4 || name[3] == ((key & ((ulong)0xFF << (BitsInByte * 3))) >> (BitsInByte * 3))) &&
+                    (name.Length < 5 || name[4] == ((key & ((ulong)0xFF << (BitsInByte * 4))) >> (BitsInByte * 4))) &&
+                    (name.Length < 6 || name[5] == ((key & ((ulong)0xFF << (BitsInByte * 5))) >> (BitsInByte * 5))) &&
+                    (name.Length < 7 || name[6] == ((key & ((ulong)0xFF << (BitsInByte * 6))) >> (BitsInByte * 6))) &&
                     // Verify embedded length.
-                    (key & ((ulong)0xFF << BitsInByte * 7)) >> BitsInByte * 7 == (byte)name.Length,
+                    (key & ((ulong)0xFF << (BitsInByte * 7))) >> (BitsInByte * 7) == (byte)name.Length,
                     "Embedded bytes not as expected");
             }
 #endif

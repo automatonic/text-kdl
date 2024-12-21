@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
 
 namespace System.Text.Kdl
 {
@@ -11,21 +10,27 @@ namespace System.Text.Kdl
         private void ValidatePropertyNameAndDepth(ReadOnlySpan<char> propertyName)
         {
             if (propertyName.Length > KdlConstants.MaxCharacterTokenSize || CurrentDepth >= _options.MaxDepth)
+            {
                 ThrowHelper.ThrowInvalidOperationOrArgumentException(propertyName, _currentDepth, _options.MaxDepth);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ValidatePropertyNameAndDepth(ReadOnlySpan<byte> utf8PropertyName)
         {
             if (utf8PropertyName.Length > KdlConstants.MaxUnescapedTokenSize || CurrentDepth >= _options.MaxDepth)
+            {
                 ThrowHelper.ThrowInvalidOperationOrArgumentException(utf8PropertyName, _currentDepth, _options.MaxDepth);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ValidateDepth()
         {
             if (CurrentDepth >= _options.MaxDepth)
+            {
                 ThrowHelper.ThrowInvalidOperationException(_currentDepth, _options.MaxDepth);
+            }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -75,7 +80,7 @@ namespace System.Text.Kdl
             }
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -112,12 +117,12 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            escapedPropertyName.CopyTo(output.Slice(BytesPending));
+            escapedPropertyName.CopyTo(output[BytesPending..]);
             BytesPending += escapedPropertyName.Length;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -185,7 +190,7 @@ namespace System.Text.Kdl
                 WriteNewLine(output);
             }
 
-            WriteIndentation(output.Slice(BytesPending), indent);
+            WriteIndentation(output[BytesPending..], indent);
             BytesPending += indent;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -202,7 +207,7 @@ namespace System.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void TranscodeAndWrite(ReadOnlySpan<char> escapedPropertyName, Span<byte> output)
         {
-            OperationStatus status = KdlWriterHelper.ToUtf8(escapedPropertyName, output.Slice(BytesPending), out int written);
+            OperationStatus status = KdlWriterHelper.ToUtf8(escapedPropertyName, output[BytesPending..], out int written);
             Debug.Assert(status == OperationStatus.Done);
             BytesPending += written;
         }

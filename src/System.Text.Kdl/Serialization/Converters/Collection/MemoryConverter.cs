@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-
 namespace System.Text.Kdl.Serialization.Converters
 {
     internal sealed class MemoryConverter<T> : KdlCollectionConverter<Memory<T>, T>

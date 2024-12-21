@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Reflection;
-using System.Collections.Generic;
 #if !BUILDING_SOURCE_GENERATOR
 using System.Diagnostics.CodeAnalysis;
 #endif
@@ -118,15 +117,11 @@ namespace System.Text.Kdl.Reflection
                 return false;
             }
 
-            switch (GetBaseNameFromGenericType(type))
+            return GetBaseNameFromGenericType(type) switch
             {
-                case ImmutableDictionaryGenericTypeName:
-                case ImmutableDictionaryGenericInterfaceTypeName:
-                case ImmutableSortedDictionaryGenericTypeName:
-                    return true;
-                default:
-                    return false;
-            }
+                ImmutableDictionaryGenericTypeName or ImmutableDictionaryGenericInterfaceTypeName or ImmutableSortedDictionaryGenericTypeName => true,
+                _ => false,
+            };
         }
 
         public static bool IsImmutableEnumerableType(this Type type)
@@ -136,22 +131,11 @@ namespace System.Text.Kdl.Reflection
                 return false;
             }
 
-            switch (GetBaseNameFromGenericType(type))
+            return GetBaseNameFromGenericType(type) switch
             {
-                case ImmutableArrayGenericTypeName:
-                case ImmutableListGenericTypeName:
-                case ImmutableListGenericInterfaceTypeName:
-                case ImmutableStackGenericTypeName:
-                case ImmutableStackGenericInterfaceTypeName:
-                case ImmutableQueueGenericTypeName:
-                case ImmutableQueueGenericInterfaceTypeName:
-                case ImmutableSortedSetGenericTypeName:
-                case ImmutableHashSetGenericTypeName:
-                case ImmutableSetGenericInterfaceTypeName:
-                    return true;
-                default:
-                    return false;
-            }
+                ImmutableArrayGenericTypeName or ImmutableListGenericTypeName or ImmutableListGenericInterfaceTypeName or ImmutableStackGenericTypeName or ImmutableStackGenericInterfaceTypeName or ImmutableQueueGenericTypeName or ImmutableQueueGenericInterfaceTypeName or ImmutableSortedSetGenericTypeName or ImmutableHashSetGenericTypeName or ImmutableSetGenericInterfaceTypeName => true,
+                _ => false,
+            };
         }
 
         public static string? GetImmutableDictionaryConstructingTypeName(this Type type)
@@ -161,18 +145,13 @@ namespace System.Text.Kdl.Reflection
             // Use the generic type definition of the immutable collection to determine
             // an appropriate constructing type, i.e. a type that we can invoke the
             // `CreateRange<T>` method on, which returns the desired immutable collection.
-            switch (GetBaseNameFromGenericType(type))
+            return GetBaseNameFromGenericType(type) switch
             {
-                case ImmutableDictionaryGenericTypeName:
-                case ImmutableDictionaryGenericInterfaceTypeName:
-                    return ImmutableDictionaryTypeName;
-                case ImmutableSortedDictionaryGenericTypeName:
-                    return ImmutableSortedDictionaryTypeName;
-                default:
-                    // We verified that the type is an immutable collection, so the
-                    // generic definition is one of the above.
-                    return null;
-            }
+                ImmutableDictionaryGenericTypeName or ImmutableDictionaryGenericInterfaceTypeName => ImmutableDictionaryTypeName,
+                ImmutableSortedDictionaryGenericTypeName => ImmutableSortedDictionaryTypeName,
+                _ => null,// We verified that the type is an immutable collection, so the
+                          // generic definition is one of the above.
+            };
         }
 
         public static string? GetImmutableEnumerableConstructingTypeName(this Type type)
@@ -182,29 +161,17 @@ namespace System.Text.Kdl.Reflection
             // Use the generic type definition of the immutable collection to determine
             // an appropriate constructing type, i.e. a type that we can invoke the
             // `CreateRange<T>` method on, which returns the desired immutable collection.
-            switch (GetBaseNameFromGenericType(type))
+            return GetBaseNameFromGenericType(type) switch
             {
-                case ImmutableArrayGenericTypeName:
-                    return ImmutableArrayTypeName;
-                case ImmutableListGenericTypeName:
-                case ImmutableListGenericInterfaceTypeName:
-                    return ImmutableListTypeName;
-                case ImmutableStackGenericTypeName:
-                case ImmutableStackGenericInterfaceTypeName:
-                    return ImmutableStackTypeName;
-                case ImmutableQueueGenericTypeName:
-                case ImmutableQueueGenericInterfaceTypeName:
-                    return ImmutableQueueTypeName;
-                case ImmutableSortedSetGenericTypeName:
-                    return ImmutableSortedSetTypeName;
-                case ImmutableHashSetGenericTypeName:
-                case ImmutableSetGenericInterfaceTypeName:
-                    return ImmutableHashSetTypeName;
-                default:
-                    // We verified that the type is an immutable collection, so the
-                    // generic definition is one of the above.
-                    return null;
-            }
+                ImmutableArrayGenericTypeName => ImmutableArrayTypeName,
+                ImmutableListGenericTypeName or ImmutableListGenericInterfaceTypeName => ImmutableListTypeName,
+                ImmutableStackGenericTypeName or ImmutableStackGenericInterfaceTypeName => ImmutableStackTypeName,
+                ImmutableQueueGenericTypeName or ImmutableQueueGenericInterfaceTypeName => ImmutableQueueTypeName,
+                ImmutableSortedSetGenericTypeName => ImmutableSortedSetTypeName,
+                ImmutableHashSetGenericTypeName or ImmutableSetGenericInterfaceTypeName => ImmutableHashSetTypeName,
+                _ => null,// We verified that the type is an immutable collection, so the
+                          // generic definition is one of the above.
+            };
         }
 
         private static string GetBaseNameFromGenericType(Type genericType)
@@ -330,7 +297,7 @@ namespace System.Text.Kdl.Reflection
                     results.Add(current);
                 }
 
-                return results.ToArray();
+                return [.. results];
             }
             else
             {

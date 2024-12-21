@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -48,7 +47,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             else
             {
                 Func<object, object?> untypedGet = (Func<object, object?>)getter;
-                _typedGet = (obj => (T)untypedGet(obj)!);
+                _typedGet = obj => (T)untypedGet(obj)!;
                 _untypedGet = untypedGet;
             }
         }
@@ -71,7 +70,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             else
             {
                 Action<object, object?> untypedSet = (Action<object, object?>)setter;
-                _typedSet = ((obj, value) => untypedSet(obj, value));
+                _typedSet = (obj, value) => untypedSet(obj, value);
                 _untypedSet = untypedSet;
             }
         }
@@ -441,10 +440,7 @@ namespace System.Text.Kdl.Serialization.Metadata
 
             static bool ShouldSerializeIgnoreConditionNever(object _, T? value) => true;
             static bool ShouldSerializeIgnoreConditionAlways(object _, T? value) => false;
-            static bool ShouldSerializeIgnoreWhenWritingDefault(object _, T? value)
-            {
-                return default(T) is null ? value is not null : !EqualityComparer<T>.Default.Equals(default, value);
-            }
+            static bool ShouldSerializeIgnoreWhenWritingDefault(object _, T? value) => default(T) is null ? value is not null : !EqualityComparer<T>.Default.Equals(default, value);
         }
 
         private static bool IsDefaultValue(T? value)

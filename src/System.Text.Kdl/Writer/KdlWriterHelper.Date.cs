@@ -1,21 +1,20 @@
 using System.Buffers;
 using System.Buffers.Text;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
 namespace System.Text.Kdl
 {
     internal static partial class KdlWriterHelper
     {
-        private static readonly StandardFormat s_dateTimeStandardFormat = new StandardFormat('O');
+        private static readonly StandardFormat s_dateTimeStandardFormat = new('O');
 
         public static void WriteDateTimeTrimmed(Span<byte> buffer, DateTime value, out int bytesWritten)
         {
             Span<byte> tempSpan = stackalloc byte[KdlConstants.MaximumFormatDateTimeOffsetLength];
             bool result = Utf8Formatter.TryFormat(value, tempSpan, out bytesWritten, s_dateTimeStandardFormat);
             Debug.Assert(result);
-            TrimDateTimeOffset(tempSpan.Slice(0, bytesWritten), out bytesWritten);
-            tempSpan.Slice(0, bytesWritten).CopyTo(buffer);
+            TrimDateTimeOffset(tempSpan[..bytesWritten], out bytesWritten);
+            tempSpan[..bytesWritten].CopyTo(buffer);
         }
 
         public static void WriteDateTimeOffsetTrimmed(Span<byte> buffer, DateTimeOffset value, out int bytesWritten)
@@ -23,8 +22,8 @@ namespace System.Text.Kdl
             Span<byte> tempSpan = stackalloc byte[KdlConstants.MaximumFormatDateTimeOffsetLength];
             bool result = Utf8Formatter.TryFormat(value, tempSpan, out bytesWritten, s_dateTimeStandardFormat);
             Debug.Assert(result);
-            TrimDateTimeOffset(tempSpan.Slice(0, bytesWritten), out bytesWritten);
-            tempSpan.Slice(0, bytesWritten).CopyTo(buffer);
+            TrimDateTimeOffset(tempSpan[..bytesWritten], out bytesWritten);
+            tempSpan[..bytesWritten].CopyTo(buffer);
         }
 
         //
@@ -45,29 +44,47 @@ namespace System.Text.Kdl
             // YYYY-MM-DDThh:mm:ss.fffffff (KdlConstants.MaximumFormatDateTimeLength)
             // YYYY-MM-DDThh:mm:ss.fffffffZ (KdlConstants.MaximumFormatDateTimeLength + 1)
             // YYYY-MM-DDThh:mm:ss.fffffff(+|-)hh:mm (KdlConstants.MaximumFormatDateTimeOffsetLength)
-            Debug.Assert(buffer.Length == maxDateTimeLength ||
-                buffer.Length == maxDateTimeLength + 1 ||
-                buffer.Length == KdlConstants.MaximumFormatDateTimeOffsetLength);
+            Debug.Assert(buffer.Length is maxDateTimeLength or
+                (maxDateTimeLength + 1) or
+                KdlConstants.MaximumFormatDateTimeOffsetLength);
 
             // Find the last significant digit.
             int curIndex;
             if (buffer[maxDateTimeLength - 1] == '0')
+            {
                 if (buffer[maxDateTimeLength - 2] == '0')
+                {
                     if (buffer[maxDateTimeLength - 3] == '0')
+                    {
                         if (buffer[maxDateTimeLength - 4] == '0')
+                        {
                             if (buffer[maxDateTimeLength - 5] == '0')
+                            {
                                 if (buffer[maxDateTimeLength - 6] == '0')
+                                {
                                     if (buffer[maxDateTimeLength - 7] == '0')
                                     {
                                         // All decimal places are 0 so we can delete the decimal point too.
                                         curIndex = maxDateTimeLength - 7 - 1;
                                     }
-                                    else { curIndex = maxDateTimeLength - 6; }
-                                else { curIndex = maxDateTimeLength - 5; }
-                            else { curIndex = maxDateTimeLength - 4; }
-                        else { curIndex = maxDateTimeLength - 3; }
-                    else { curIndex = maxDateTimeLength - 2; }
-                else { curIndex = maxDateTimeLength - 1; }
+                                    else
+                                    { curIndex = maxDateTimeLength - 6; }
+                                }
+                                else
+                                { curIndex = maxDateTimeLength - 5; }
+                            }
+                            else
+                            { curIndex = maxDateTimeLength - 4; }
+                        }
+                        else
+                        { curIndex = maxDateTimeLength - 3; }
+                    }
+                    else
+                    { curIndex = maxDateTimeLength - 2; }
+                }
+                else
+                { curIndex = maxDateTimeLength - 1; }
+            }
             else
             {
                 // There is nothing to trim.

@@ -1,13 +1,9 @@
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text.Kdl.Serialization;
 using System.Text.Kdl.Serialization.Converters;
 using System.Text.Kdl.Serialization.Metadata;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace System.Text.Kdl
 {
@@ -596,7 +592,7 @@ namespace System.Text.Kdl
                 var converter = new ListOfTConverter<List<T>, T>();
                 var listTypeInfo = new KdlTypeInfo<List<T?>>(converter, elementTypeInfo.Options)
                 {
-                    CreateObject = static () => new List<T?>(),
+                    CreateObject = static () => [],
                     ElementTypeInfo = elementTypeInfo,
                 };
 

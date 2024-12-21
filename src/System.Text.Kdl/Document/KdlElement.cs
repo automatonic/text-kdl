@@ -1,5 +1,3 @@
-using System.Buffers.Text;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -28,13 +26,7 @@ namespace System.Text.Kdl
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private KdlTokenType TokenType
-        {
-            get
-            {
-                return _parent?.GetKdlTokenType(_idx) ?? KdlTokenType.None;
-            }
-        }
+        private KdlTokenType TokenType => _parent?.GetKdlTokenType(_idx) ?? KdlTokenType.None;
         /// <summary>
         ///   The <see cref="KdlValueKind"/> that the value is.
         /// </summary>
@@ -352,14 +344,9 @@ namespace System.Text.Kdl
             KdlTokenType type = TokenType;
 
             return
-                type == KdlTokenType.True ? true :
-                type == KdlTokenType.False ? false :
-                ThrowKdlElementWrongTypeException(type);
+                type == KdlTokenType.True || (type != KdlTokenType.False && ThrowKdlElementWrongTypeException(type));
 
-            static bool ThrowKdlElementWrongTypeException(KdlTokenType actualType)
-            {
-                throw ThrowHelper.GetKdlElementWrongTypeException(nameof(Boolean), actualType.ToValueKind());
-            }
+            static bool ThrowKdlElementWrongTypeException(KdlTokenType actualType) => throw ThrowHelper.GetKdlElementWrongTypeException(nameof(Boolean), actualType.ToValueKind());
         }
 
         /// <summary>
@@ -1660,11 +1647,11 @@ namespace System.Text.Kdl
                 case KdlTokenType.Number:
                 case KdlTokenType.StartArray:
                 case KdlTokenType.StartObject:
-                    {
-                        // null parent should have hit the None case
-                        Debug.Assert(_parent != null);
-                        return _parent.GetRawValueAsString(_idx);
-                    }
+                {
+                    // null parent should have hit the None case
+                    Debug.Assert(_parent != null);
+                    return _parent.GetRawValueAsString(_idx);
+                }
                 case KdlTokenType.String:
                     return GetString()!;
                 case KdlTokenType.Comment:
