@@ -14,7 +14,7 @@ public class KdlSerializerShould
     {
         WeatherForecast weatherForecast = new()
         {
-            Date = DateTime.Parse("2019-08-01"),
+            Date = new DateTimeOffset(2000, 11, 22, 0, 0, 0, TimeSpan.Zero),
             TemperatureCelsius = 25,
             Summary = "Hot"
         };
