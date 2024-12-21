@@ -1,0 +1,56 @@
+document ::= bom? nodes
+bom ::= '\u{FEFF}'
+nodes ::= (line-space* node)* line-space*
+node ::= base-node node-terminator
+final-node ::= base-node node-terminator?
+base-node ::= slashdash? type? node-space* string
+      (node-space+ slashdash? node-prop-or-arg)*
+      // slashdashed node-children must always be after props and args.
+      (node-space+ slashdash node-children)*
+      (node-space+ node-children)?
+      (node-space+ slashdash node-children)*
+      node-space*
+node-prop-or-arg ::= prop | value
+node-children ::= '{' nodes final-node? '}'
+node-terminator ::= single-line-comment | newline | ';' | eof
+prop ::= string node-space* '=' node-space* value
+value ::= type? node-space* (string | number | keyword)
+type ::= '(' node-space* string node-space* ')'
+string ::= identifier-string | quoted-string | raw-string
+identifier-string ::= unambiguous-ident | signed-ident | dotted-ident
+quoted-string ::= '"' single-line-string-body '"' | '"""' newline multi-line-string-body newline unicode-space* '"""'
+single-line-string-body ::= (string-character-minus-newline)*
+multi-line-string-body ::= (('"' | '""')? string-character)*
+string-character ::= '\' escape | neither-quote-nor-disallowed-literal-code-points
+escape ::= ["\\bfnrts] | 
+    'u{' hex-digit '}' | 
+    'u{' hex-digit hex-digit '}' | 
+    'u{' hex-digit hex-digit hex-digit '}' | 
+    'u{' hex-digit hex-digit hex-digit hex-digit '}' |    
+    'u{' hex-digit hex-digit hex-digit hex-digit hex-digit '}' | 
+    'u{' hex-digit hex-digit hex-digit hex-digit hex-digit hex-digit '}' | 
+    (unicode-space | newline)+
+hex-digit ::= [0-9a-fA-F]
+raw-string ::= '#' raw-string-quotes '#' | '#' raw-string '#'
+raw-string-quotes ::= '"' single-line-raw-string-body '"' | '"""' newline multi-line-raw-string-body '"""'
+single-line-raw-string-body ::= '' | (single-line-raw-string-char-minus-double-quote) single-line-raw-string-char*? | '"' (single-line-raw-string-char-minus-double-quote) single-line-raw-string-char*?
+number ::= keyword-number | hex | octal | binary | decimal
+decimal ::= sign? integer ('.' integer)? exponent?
+exponent ::= ('e' | 'E') sign? integer
+integer ::= digit (digit | '_')*
+digit ::= [0-9]
+sign ::= '+' | '-'
+hex ::= sign? '0x' hex-digit (hex-digit | '_')*
+octal ::= sign? '0o' [0-7] [0-7_]*
+binary ::= sign? '0b' ('0' | '1') ('0' | '1' | '_')*
+keyword ::= boolean | '#null'
+keyword-number ::= '#inf' | '#-inf' | '#nan'
+boolean ::= '#true' | '#false'
+single-line-comment ::= '//' anything-but-newline* (newline | eof)
+multi-line-comment ::= '/*' commented-block
+commented-block ::= '*/' | (multi-line-comment | '*' | '/' | not-block-end+) commented-block
+slashdash ::= '/-' (node-space | line-space)*
+ws ::= unicode-space | multi-line-comment
+escline ::= '\\' ws* (single-line-comment | newline | eof)
+line-space ::= newline | ws | single-line-comment
+node-space ::= ws* escline ws* | ws+
