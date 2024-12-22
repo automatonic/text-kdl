@@ -1,6 +1,6 @@
 **document:**
 
-![document](diagram/document.svg)
+![document](document.svg)
 
 ```
 document ::= '\u{FEFF}'? nodes
@@ -8,7 +8,7 @@ document ::= '\u{FEFF}'? nodes
 
 **nodes:**
 
-![nodes](diagram/nodes.svg)
+![nodes](nodes.svg)
 
 ```
 nodes    ::= line-space* ( node line-space* )*
@@ -21,7 +21,7 @@ referenced by:
 
 **node:**
 
-![node](diagram/node.svg)
+![node](node.svg)
 
 ```
 node     ::= base-node node-terminator
@@ -33,7 +33,7 @@ referenced by:
 
 **final-node:**
 
-![final-node](diagram/final-node.svg)
+![final-node](final-node.svg)
 
 ```
 final-node
@@ -46,7 +46,7 @@ referenced by:
 
 **base-node:**
 
-![base-node](diagram/base-node.svg)
+![base-node](base-node.svg)
 
 ```
 base-node
@@ -60,7 +60,7 @@ referenced by:
 
 **node-prop-or-arg:**
 
-![node-prop-or-arg](diagram/node-prop-or-arg.svg)
+![node-prop-or-arg](node-prop-or-arg.svg)
 
 ```
 node-prop-or-arg
@@ -74,7 +74,7 @@ referenced by:
 
 **node-children:**
 
-![node-children](diagram/node-children.svg)
+![node-children](node-children.svg)
 
 ```
 node-children
@@ -87,7 +87,7 @@ referenced by:
 
 **node-terminator:**
 
-![node-terminator](diagram/node-terminator.svg)
+![node-terminator](node-terminator.svg)
 
 ```
 node-terminator
@@ -104,7 +104,7 @@ referenced by:
 
 **prop:**
 
-![prop](diagram/prop.svg)
+![prop](prop.svg)
 
 ```
 prop     ::= string node-space* '=' node-space* value
@@ -116,7 +116,7 @@ referenced by:
 
 **value:**
 
-![value](diagram/value.svg)
+![value](value.svg)
 
 ```
 value    ::= type? node-space* ( string | number | keyword )
@@ -129,7 +129,7 @@ referenced by:
 
 **type:**
 
-![type](diagram/type.svg)
+![type](type.svg)
 
 ```
 type     ::= '(' node-space* string node-space* ')'
@@ -142,7 +142,7 @@ referenced by:
 
 **string:**
 
-![string](diagram/string.svg)
+![string](string.svg)
 
 ```
 string   ::= identifier-string
@@ -159,7 +159,7 @@ referenced by:
 
 **identifier-string:**
 
-![identifier-string](diagram/identifier-string.svg)
+![identifier-string](identifier-string.svg)
 
 ```
 identifier-string
@@ -174,7 +174,7 @@ referenced by:
 
 **quoted-string:**
 
-![quoted-string](diagram/quoted-string.svg)
+![quoted-string](quoted-string.svg)
 
 ```
 quoted-string
@@ -188,7 +188,7 @@ referenced by:
 
 **single-line-string-body:**
 
-![single-line-string-body](diagram/single-line-string-body.svg)
+![single-line-string-body](single-line-string-body.svg)
 
 ```
 single-line-string-body
@@ -201,7 +201,7 @@ referenced by:
 
 **multi-line-string-body:**
 
-![multi-line-string-body](diagram/multi-line-string-body.svg)
+![multi-line-string-body](multi-line-string-body.svg)
 
 ```
 multi-line-string-body
@@ -214,7 +214,7 @@ referenced by:
 
 **string-character:**
 
-![string-character](diagram/string-character.svg)
+![string-character](string-character.svg)
 
 ```
 string-character
@@ -228,7 +228,7 @@ referenced by:
 
 **escape:**
 
-![escape](diagram/escape.svg)
+![escape](escape.svg)
 
 ```
 escape   ::= ["\bfnrts]
@@ -242,7 +242,7 @@ referenced by:
 
 **hex-digit:**
 
-![hex-digit](diagram/hex-digit.svg)
+![hex-digit](hex-digit.svg)
 
 ```
 hex-digit
@@ -256,7 +256,7 @@ referenced by:
 
 **raw-string:**
 
-![raw-string](diagram/raw-string.svg)
+![raw-string](raw-string.svg)
 
 ```
 raw-string
@@ -270,7 +270,7 @@ referenced by:
 
 **raw-string-quotes:**
 
-![raw-string-quotes](diagram/raw-string-quotes.svg)
+![raw-string-quotes](raw-string-quotes.svg)
 
 ```
 raw-string-quotes
@@ -284,7 +284,7 @@ referenced by:
 
 **single-line-raw-string-body:**
 
-![single-line-raw-string-body](diagram/single-line-raw-string-body.svg)
+![single-line-raw-string-body](single-line-raw-string-body.svg)
 
 ```
 single-line-raw-string-body
@@ -298,7 +298,7 @@ referenced by:
 
 **number:**
 
-![number](diagram/number.svg)
+![number](number.svg)
 
 ```
 number   ::= keyword-number
@@ -314,7 +314,7 @@ referenced by:
 
 **decimal:**
 
-![decimal](diagram/decimal.svg)
+![decimal](decimal.svg)
 
 ```
 decimal  ::= sign? integer ( '.' integer )? exponent?
@@ -326,7 +326,7 @@ referenced by:
 
 **exponent:**
 
-![exponent](diagram/exponent.svg)
+![exponent](exponent.svg)
 
 ```
 exponent ::= ( 'e' | 'E' ) sign? integer
@@ -338,7 +338,7 @@ referenced by:
 
 **integer:**
 
-![integer](diagram/integer.svg)
+![integer](integer.svg)
 
 ```
 integer  ::= digit ( digit | '_' )*
@@ -351,7 +351,7 @@ referenced by:
 
 **digit:**
 
-![digit](diagram/digit.svg)
+![digit](digit.svg)
 
 ```
 digit    ::= [0-9]
@@ -363,7 +363,7 @@ referenced by:
 
 **sign:**
 
-![sign](diagram/sign.svg)
+![sign](sign.svg)
 
 ```
 sign     ::= '+'
@@ -380,7 +380,7 @@ referenced by:
 
 **hex:**
 
-![hex](diagram/hex.svg)
+![hex](hex.svg)
 
 ```
 hex      ::= sign? '0x' hex-digit ( hex-digit | '_' )*
@@ -392,7 +392,7 @@ referenced by:
 
 **octal:**
 
-![octal](diagram/octal.svg)
+![octal](octal.svg)
 
 ```
 octal    ::= sign? '0o' [0-7] [0-7_]*
@@ -404,7 +404,7 @@ referenced by:
 
 **binary:**
 
-![binary](diagram/binary.svg)
+![binary](binary.svg)
 
 ```
 binary   ::= sign? '0b' ( '0' | '1' ) ( '0' | '1' | '_' )*
@@ -416,7 +416,7 @@ referenced by:
 
 **keyword:**
 
-![keyword](diagram/keyword.svg)
+![keyword](keyword.svg)
 
 ```
 keyword  ::= boolean
@@ -429,7 +429,7 @@ referenced by:
 
 **keyword-number:**
 
-![keyword-number](diagram/keyword-number.svg)
+![keyword-number](keyword-number.svg)
 
 ```
 keyword-number
@@ -444,7 +444,7 @@ referenced by:
 
 **boolean:**
 
-![boolean](diagram/boolean.svg)
+![boolean](boolean.svg)
 
 ```
 boolean  ::= '#true'
@@ -457,7 +457,7 @@ referenced by:
 
 **single-line-comment:**
 
-![single-line-comment](diagram/single-line-comment.svg)
+![single-line-comment](single-line-comment.svg)
 
 ```
 single-line-comment
@@ -472,7 +472,7 @@ referenced by:
 
 **multi-line-comment:**
 
-![multi-line-comment](diagram/multi-line-comment.svg)
+![multi-line-comment](multi-line-comment.svg)
 
 ```
 multi-line-comment
@@ -486,7 +486,7 @@ referenced by:
 
 **slashdash:**
 
-![slashdash](diagram/slashdash.svg)
+![slashdash](slashdash.svg)
 
 ```
 slashdash
@@ -499,7 +499,7 @@ referenced by:
 
 **ws:**
 
-![ws](diagram/ws.svg)
+![ws](ws.svg)
 
 ```
 ws       ::= unicode-space
@@ -514,7 +514,7 @@ referenced by:
 
 **escline:**
 
-![escline](diagram/escline.svg)
+![escline](escline.svg)
 
 ```
 escline  ::= '\\' ws* ( single-line-comment | newline | eof )
@@ -526,7 +526,7 @@ referenced by:
 
 **line-space:**
 
-![line-space](diagram/line-space.svg)
+![line-space](line-space.svg)
 
 ```
 line-space
@@ -542,7 +542,7 @@ referenced by:
 
 **node-space:**
 
-![node-space](diagram/node-space.svg)
+![node-space](node-space.svg)
 
 ```
 node-space
@@ -558,6 +558,6 @@ referenced by:
 * value
 
 ## 
-![rr-2.1](diagram/rr-2.1.svg) <sup>generated by [RR - Railroad Diagram Generator][RR]</sup>
+![rr-2.1](rr-2.1.svg) <sup>generated by [RR - Railroad Diagram Generator][RR]</sup>
 
 [RR]: https://www.bottlecaps.de/rr/ui
