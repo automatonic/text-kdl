@@ -57,7 +57,7 @@ namespace System.Text.Kdl.Serialization.Converters
                     AnyOf =
                     [
                         new KdlSchema { Type = schemaType, Pattern = pattern },
-                        new KdlSchema { Enum = [(KdlNode)"NaN", (KdlNode)"Infinity", (KdlNode)"-Infinity"] },
+                        new KdlSchema { Enum = [(KdlVertex)"NaN", (KdlVertex)"Infinity", (KdlVertex)"-Infinity"] },
                     ]
                 };
             }

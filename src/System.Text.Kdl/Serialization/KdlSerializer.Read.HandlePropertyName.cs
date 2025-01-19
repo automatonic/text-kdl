@@ -119,7 +119,7 @@ namespace System.Text.Kdl
                 Debug.Assert(
                     genericArgs[1].UnderlyingSystemType == KdlTypeInfo.ObjectType ||
                     genericArgs[1].UnderlyingSystemType == typeof(KdlElement) ||
-                    genericArgs[1].UnderlyingSystemType == typeof(Nodes.KdlNode));
+                    genericArgs[1].UnderlyingSystemType == typeof(Nodes.KdlVertex));
 #endif
 
                 Func<object>? createObjectForExtensionDataProp = jsonPropertyInfo.KdlTypeInfo.CreateObject
@@ -127,7 +127,7 @@ namespace System.Text.Kdl
 
                 if (createObjectForExtensionDataProp == null)
                 {
-                    // Avoid a reference to the KdlNode type for trimming
+                    // Avoid a reference to the KdlVertex type for trimming
                     if (jsonPropertyInfo.PropertyType.FullName == KdlTypeInfo.KdlObjectTypeName)
                     {
                         ThrowHelper.ThrowInvalidOperationException_NodeKdlObjectCustomConverterNotAllowedOnExtensionProperty();

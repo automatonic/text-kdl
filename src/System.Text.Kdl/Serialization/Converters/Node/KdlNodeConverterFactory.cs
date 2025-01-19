@@ -12,20 +12,20 @@ namespace System.Text.Kdl.Serialization.Converters
                 return KdlNodeConverter.ValueConverter;
             }
 
-            if (typeof(KdlObject) == typeToConvert)
+            if (typeof(KdlNode) == typeToConvert)
             {
                 return KdlNodeConverter.ObjectConverter;
             }
 
-            if (typeof(KdlArray) == typeToConvert)
+            if (typeof(KdlNode) == typeToConvert)
             {
                 return KdlNodeConverter.ArrayConverter;
             }
 
-            Debug.Assert(typeof(KdlNode) == typeToConvert);
+            Debug.Assert(typeof(KdlVertex) == typeToConvert);
             return KdlNodeConverter.Instance;
         }
 
-        public override bool CanConvert(Type typeToConvert) => typeof(KdlNode).IsAssignableFrom(typeToConvert);
+        public override bool CanConvert(Type typeToConvert) => typeof(KdlVertex).IsAssignableFrom(typeToConvert);
     }
 }

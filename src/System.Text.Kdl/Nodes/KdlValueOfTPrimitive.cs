@@ -21,9 +21,9 @@ namespace System.Text.Kdl.Nodes
         }
 
         private protected override KdlValueKind GetValueKindCore() => _valueKind;
-        internal override KdlNode DeepCloneCore() => new KdlValuePrimitive<TValue>(Value, _converter, Options);
+        internal override KdlVertex DeepCloneCore() => new KdlValuePrimitive<TValue>(Value, _converter, Options);
 
-        internal override bool DeepEqualsCore(KdlNode otherNode)
+        internal override bool DeepEqualsCore(KdlVertex otherNode)
         {
             if (otherNode is KdlValue otherValue && otherValue.TryGetValue(out TValue? v))
             {

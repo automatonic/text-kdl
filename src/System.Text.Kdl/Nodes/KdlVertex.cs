@@ -8,13 +8,13 @@ namespace System.Text.Kdl.Nodes
     ///   The base class that represents a single node within a mutable KDL document.
     /// </summary>
     /// <seealso cref="KdlSerializerOptions.UnknownTypeHandling"/> to specify that a type
-    /// declared as an <see cref="object"/> should be deserialized as a <see cref="KdlNode"/>.
-    public abstract partial class KdlNode
+    /// declared as an <see cref="object"/> should be deserialized as a <see cref="KdlVertex"/>.
+    public abstract partial class KdlVertex
     {
-        // Default options instance used when calling built-in KdlNode converters.
+        // Default options instance used when calling built-in KdlVertex converters.
         private protected static readonly KdlSerializerOptions s_defaultOptions = new();
 
-        private KdlNode? _parent;
+        private KdlVertex? _parent;
         private KdlNodeOptions? _options;
 
         /// <summary>
@@ -33,7 +33,7 @@ namespace System.Text.Kdl.Nodes
                 {
                     // Remember the parent options; if node is re-parented later we still want to keep the
                     // original options since they may have affected the way the node was created as is the case
-                    // with KdlObject's case-insensitive dictionary.
+                    // with KdlNode's case-insensitive dictionary.
                     _options = Parent.Options;
                 }
 
@@ -41,45 +41,45 @@ namespace System.Text.Kdl.Nodes
             }
         }
 
-        internal KdlNode(KdlNodeOptions? options = null) => _options = options;
+        internal KdlVertex(KdlNodeOptions? options = null) => _options = options;
 
         /// <summary>
-        ///   Casts to the derived <see cref="KdlArray"/> type.
+        ///   Casts to the derived <see cref="KdlNode"/> type.
         /// </summary>
         /// <returns>
-        ///   A <see cref="KdlArray"/>.
+        ///   A <see cref="KdlNode"/>.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///   The node is not a <see cref="KdlArray"/>.
+        ///   The node is not a <see cref="KdlNode"/>.
         /// </exception>
-        public KdlArray AsArray()
+        public KdlNode AsArray()
         {
-            KdlArray? jArray = this as KdlArray;
+            KdlNode? jArray = this as KdlNode;
 
             if (jArray is null)
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlArray));
+                ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode));
             }
 
             return jArray;
         }
 
         /// <summary>
-        ///   Casts to the derived <see cref="KdlObject"/> type.
+        ///   Casts to the derived <see cref="KdlNode"/> type.
         /// </summary>
         /// <returns>
-        ///   A <see cref="KdlObject"/>.
+        ///   A <see cref="KdlNode"/>.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///   The node is not a <see cref="KdlObject"/>.
+        ///   The node is not a <see cref="KdlNode"/>.
         /// </exception>
-        public KdlObject AsObject()
+        public KdlNode AsObject()
         {
-            KdlObject? jObject = this as KdlObject;
+            KdlNode? jObject = this as KdlNode;
 
             if (jObject is null)
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlObject));
+                ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode));
             }
 
             return jObject;
@@ -107,11 +107,11 @@ namespace System.Text.Kdl.Nodes
         }
 
         /// <summary>
-        ///   Gets the parent <see cref="KdlNode"/>.
+        ///   Gets the parent <see cref="KdlVertex"/>.
         ///   If there is no parent, <see langword="null"/> is returned.
-        ///   A parent can either be a <see cref="KdlObject"/> or a <see cref="KdlArray"/>.
+        ///   A parent can either be a <see cref="KdlNode"/> or a <see cref="KdlNode"/>.
         /// </summary>
-        public KdlNode? Parent
+        public KdlVertex? Parent
         {
             get => _parent;
             internal set => _parent = value;
@@ -134,19 +134,19 @@ namespace System.Text.Kdl.Nodes
             return path.ToString();
         }
 
-        internal abstract void GetPath(ref ValueStringBuilder path, KdlNode? child);
+        internal abstract void GetPath(ref ValueStringBuilder path, KdlVertex? child);
 
         /// <summary>
-        ///   Gets the root <see cref="KdlNode"/>.
+        ///   Gets the root <see cref="KdlVertex"/>.
         /// </summary>
         /// <remarks>
         ///   The current node is returned if it is a root.
         /// </remarks>
-        public KdlNode Root
+        public KdlVertex Root
         {
             get
             {
-                KdlNode? parent = Parent;
+                KdlVertex? parent = Parent;
                 if (parent == null)
                 {
                     return this;
@@ -176,10 +176,10 @@ namespace System.Text.Kdl.Nodes
         /// </remarks>
         /// <seealso cref="System.Text.Kdl.Nodes.KdlValue.TryGetValue"></seealso>
         /// <exception cref="FormatException">
-        ///   The current <see cref="KdlNode"/> cannot be represented as a {T}.
+        ///   The current <see cref="KdlVertex"/> cannot be represented as a {T}.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        ///   The current <see cref="KdlNode"/> is not a <see cref="KdlValue"/> or
+        ///   The current <see cref="KdlVertex"/> is not a <see cref="KdlValue"/> or
         ///   is not compatible with {T}.
         /// </exception>
         public virtual T GetValue<T>() =>
@@ -193,22 +193,22 @@ namespace System.Text.Kdl.Nodes
         ///   <paramref name="index"/> is less than 0 or <paramref name="index"/> is greater than the number of properties.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        ///   The current <see cref="KdlNode"/> is not a <see cref="KdlArray"/> or <see cref="KdlObject"/>.
+        ///   The current <see cref="KdlVertex"/> is not a <see cref="KdlNode"/> or <see cref="KdlNode"/>.
         /// </exception>
-        public KdlNode? this[int index]
+        public KdlVertex? this[int index]
         {
             get => GetItem(index);
             set => SetItem(index, value);
         }
 
-        private protected virtual KdlNode? GetItem(int index)
+        private protected virtual KdlVertex? GetItem(int index)
         {
-            ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlArray), nameof(KdlObject));
+            ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode), nameof(KdlNode));
             return null;
         }
 
-        private protected virtual void SetItem(int index, KdlNode? node) =>
-            ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlArray), nameof(KdlObject));
+        private protected virtual void SetItem(int index, KdlVertex? node) =>
+            ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode), nameof(KdlNode));
 
         /// <summary>
         ///   Gets or sets the element with the specified property name.
@@ -219,21 +219,21 @@ namespace System.Text.Kdl.Nodes
         ///   <paramref name="propertyName"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        ///   The current <see cref="KdlNode"/> is not a <see cref="KdlObject"/>.
+        ///   The current <see cref="KdlVertex"/> is not a <see cref="KdlNode"/>.
         /// </exception>
-        public KdlNode? this[string propertyName]
+        public KdlVertex? this[string propertyName]
         {
             get => AsObject().GetItem(propertyName);
             set => AsObject().SetItem(propertyName, value);
         }
 
         /// <summary>
-        /// Creates a new instance of the <see cref="KdlNode"/>. All children nodes are recursively cloned.
+        /// Creates a new instance of the <see cref="KdlVertex"/>. All children nodes are recursively cloned.
         /// </summary>
         /// <returns>A new cloned instance of the current node.</returns>
-        public KdlNode DeepClone() => DeepCloneCore();
+        public KdlVertex DeepClone() => DeepCloneCore();
 
-        internal abstract KdlNode DeepCloneCore();
+        internal abstract KdlVertex DeepCloneCore();
 
         /// <summary>
         /// Returns <see cref="KdlValueKind"/> of current instance.
@@ -246,33 +246,33 @@ namespace System.Text.Kdl.Nodes
         /// Returns property name of the current node from the parent object.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// The current parent is not a <see cref="KdlObject"/>.
+        /// The current parent is not a <see cref="KdlNode"/>.
         /// </exception>
         public string GetPropertyName()
         {
-            KdlObject? parentObject = _parent as KdlObject;
+            KdlNode? parentObject = _parent as KdlNode;
 
             if (parentObject is null)
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeParentWrongType(nameof(KdlObject));
+                ThrowHelper.ThrowInvalidOperationException_NodeParentWrongType(nameof(KdlNode));
             }
 
             return parentObject.GetPropertyName(this);
         }
 
         /// <summary>
-        /// Returns index of the current node from the parent <see cref="KdlArray" />.
+        /// Returns index of the current node from the parent <see cref="KdlNode" />.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// The current parent is not a <see cref="KdlArray"/>.
+        /// The current parent is not a <see cref="KdlNode"/>.
         /// </exception>
         public int GetElementIndex()
         {
-            KdlArray? parentArray = _parent as KdlArray;
+            KdlNode? parentArray = _parent as KdlNode;
 
             if (parentArray is null)
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeParentWrongType(nameof(KdlArray));
+                ThrowHelper.ThrowInvalidOperationException_NodeParentWrongType(nameof(KdlNode));
             }
 
             return parentArray.GetElementIndex(this);
@@ -281,10 +281,10 @@ namespace System.Text.Kdl.Nodes
         /// <summary>
         /// Compares the values of two nodes, including the values of all descendant nodes.
         /// </summary>
-        /// <param name="node1">The <see cref="KdlNode"/> to compare.</param>
-        /// <param name="node2">The <see cref="KdlNode"/> to compare.</param>
+        /// <param name="node1">The <see cref="KdlVertex"/> to compare.</param>
+        /// <param name="node2">The <see cref="KdlVertex"/> to compare.</param>
         /// <returns><c>true</c> if the tokens are equal; otherwise <c>false</c>.</returns>
-        public static bool DeepEquals(KdlNode? node1, KdlNode? node2)
+        public static bool DeepEquals(KdlVertex? node1, KdlVertex? node2)
         {
             if (node1 is null)
             {
@@ -298,7 +298,7 @@ namespace System.Text.Kdl.Nodes
             return node1.DeepEqualsCore(node2);
         }
 
-        internal abstract bool DeepEqualsCore(KdlNode node);
+        internal abstract bool DeepEqualsCore(KdlVertex vertext);
 
         /// <summary>
         /// Replaces this node with a new value.
@@ -309,28 +309,29 @@ namespace System.Text.Kdl.Nodes
         [RequiresDynamicCode(KdlValue.CreateDynamicCodeMessage)]
         public void ReplaceWith<T>(T value)
         {
-            KdlNode? node;
-            switch (_parent)
-            {
-                case KdlObject jsonObject:
-                    node = ConvertFromValue(value);
-                    jsonObject.SetItem(GetPropertyName(), node);
-                    return;
-                case KdlArray jsonArray:
-                    node = ConvertFromValue(value);
-                    jsonArray.SetItem(GetElementIndex(), node);
-                    return;
-            }
+            //TECHDEBT: Disabled. We have to know if we are already a prop or indexed, can we just look at GetPropertyName? What will be fastest?
+            // KdlVertex? node;
+            // switch (_parent)
+            // {
+            //     case KdlNode kdlNode:
+            //         node = ConvertFromValue(value);
+            //         kdlNode.SetItem(GetPropertyName(), node);
+            //         return;
+            //     case KdlNode kdlNode:
+            //         node = ConvertFromValue(value);
+            //         kdlNode.SetItem(GetElementIndex(), node);
+            //         return;
+            // }
         }
 
-        internal void AssignParent(KdlNode parent)
+        internal void AssignParent(KdlVertex parent)
         {
             if (Parent != null)
             {
                 ThrowHelper.ThrowInvalidOperationException_NodeAlreadyHasParent();
             }
 
-            KdlNode? p = parent;
+            KdlVertex? p = parent;
             while (p != null)
             {
                 if (p == this)
@@ -346,21 +347,21 @@ namespace System.Text.Kdl.Nodes
 
         /// <summary>
         /// Adaptation of the equivalent KdlValue.Create factory method extended
-        /// to support arbitrary <see cref="KdlElement"/> and <see cref="KdlNode"/> values.
+        /// to support arbitrary <see cref="KdlElement"/> and <see cref="KdlVertex"/> values.
         /// TODO consider making public cf. https://github.com/dotnet/runtime/issues/70427
         /// </summary>
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal static KdlNode? ConvertFromValue<T>(T? value, KdlNodeOptions? options = null)
+        internal static KdlVertex? ConvertFromValue<T>(T? value, KdlNodeOptions? options = null)
         {
             if (value is null)
             {
                 return null;
             }
 
-            if (value is KdlNode node)
+            if (value is KdlVertex vertex)
             {
-                return node;
+                return vertex;
             }
 
             if (value is KdlElement element)

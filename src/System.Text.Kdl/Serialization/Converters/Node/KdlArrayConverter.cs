@@ -4,9 +4,9 @@ using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
-    internal sealed class KdlArrayConverter : KdlConverter<KdlArray?>
+    internal sealed class KdlArrayConverter : KdlConverter<KdlNode?>
     {
-        public override void Write(KdlWriter writer, KdlArray? value, KdlSerializerOptions options)
+        public override void Write(KdlWriter writer, KdlNode? value, KdlSerializerOptions options)
         {
             if (value is null)
             {
@@ -17,7 +17,7 @@ namespace System.Text.Kdl.Serialization.Converters
             value.WriteTo(writer, options);
         }
 
-        public override KdlArray? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlNode? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {
             switch (reader.TokenType)
             {
@@ -31,10 +31,10 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public static KdlArray ReadList(ref KdlReader reader, KdlNodeOptions? options = null)
+        public static KdlNode ReadList(ref KdlReader reader, KdlNodeOptions? options = null)
         {
             KdlElement jElement = KdlElement.ParseValue(ref reader);
-            return new KdlArray(jElement, options);
+            return new KdlNode(jElement, options);
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.Array };

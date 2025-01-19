@@ -5,10 +5,10 @@ using System.Text.Kdl.Schema;
 namespace System.Text.Kdl.Serialization.Converters
 {
     /// <summary>
-    /// Converter for KdlNode-derived types. The {T} value must be Object and not KdlNode
-    /// since we allow Object-declared members\variables to deserialize as {KdlNode}.
+    /// Converter for KdlVertex-derived types. The {T} value must be Object and not KdlVertex
+    /// since we allow Object-declared members\variables to deserialize as {KdlVertex}.
     /// </summary>
-    internal sealed class KdlNodeConverter : KdlConverter<KdlNode?>
+    internal sealed class KdlNodeConverter : KdlConverter<KdlVertex?>
     {
         private static KdlNodeConverter? s_nodeConverter;
         private static KdlArrayConverter? s_arrayConverter;
@@ -20,7 +20,7 @@ namespace System.Text.Kdl.Serialization.Converters
         public static KdlObjectConverter ObjectConverter => s_objectConverter ??= new KdlObjectConverter();
         public static KdlValueConverter ValueConverter => s_valueConverter ??= new KdlValueConverter();
 
-        public override void Write(KdlWriter writer, KdlNode? value, KdlSerializerOptions options)
+        public override void Write(KdlWriter writer, KdlVertex? value, KdlSerializerOptions options)
         {
             if (value is null)
             {
@@ -32,7 +32,7 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public override KdlNode? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlVertex? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {
             switch (reader.TokenType)
             {
@@ -53,13 +53,12 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public static KdlNode? Create(KdlElement element, KdlNodeOptions? options)
+        public static KdlVertex? Create(KdlElement element, KdlNodeOptions? options)
         {
-            KdlNode? node = element.ValueKind switch
+            KdlVertex? node = element.ValueKind switch
             {
                 KdlValueKind.Null => null,
-                KdlValueKind.Object => new KdlObject(element, options),
-                KdlValueKind.Array => new KdlArray(element, options),
+                KdlValueKind.Node => new KdlNode(element, options),
                 _ => new KdlValueOfElement(element, options),
             };
             return node;

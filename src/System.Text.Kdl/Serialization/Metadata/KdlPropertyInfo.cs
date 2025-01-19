@@ -867,8 +867,8 @@ namespace System.Text.Kdl.Serialization.Metadata
             }
             else
             {
-                // Avoid a type reference to KdlObject and its converter to support trimming.
-                Debug.Assert(propValue is Nodes.KdlObject);
+                // Avoid a type reference to KdlNode and its converter to support trimming.
+                Debug.Assert(propValue is Nodes.KdlNode);
                 EffectiveConverter.ReadElementAndSetProperty(propValue, state.Current.KdlPropertyNameAsString!, ref reader, Options, ref state);
             }
 
@@ -903,14 +903,14 @@ namespace System.Text.Kdl.Serialization.Metadata
             }
 
             KdlConverter<KdlElement> converter = (KdlConverter<KdlElement>)Options.GetConverterInternal(typeof(KdlElement));
-            if (!converter.TryRead(ref reader, typeof(KdlElement), Options, ref state, out KdlElement jsonElement, out _))
+            if (!converter.TryRead(ref reader, typeof(KdlElement), Options, ref state, out KdlElement kdlElement, out _))
             {
                 // KdlElement is a struct that must be read in full.
                 value = null;
                 return false;
             }
 
-            value = jsonElement;
+            value = kdlElement;
             return true;
         }
 

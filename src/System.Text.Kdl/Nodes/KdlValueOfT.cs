@@ -13,7 +13,7 @@ namespace System.Text.Kdl.Nodes
         {
             Debug.Assert(value != null);
             Debug.Assert(value is not KdlElement or KdlElement { ValueKind: not KdlValueKind.Null });
-            Debug.Assert(value is not KdlNode);
+            Debug.Assert(value is not KdlVertex);
             Value = value;
         }
 
@@ -82,7 +82,7 @@ namespace System.Text.Kdl.Nodes
 
             if (Nullable.GetUnderlyingType(type) is Type underlyingType)
             {
-                // Because KdlNode excludes null values, we can identify with the value kind of the underlying type.
+                // Because KdlVertex excludes null values, we can identify with the value kind of the underlying type.
                 return DetermineValueKindForType(underlyingType);
             }
 

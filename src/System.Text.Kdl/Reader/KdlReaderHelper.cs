@@ -35,9 +35,9 @@ namespace System.Text.Kdl
                 case KdlTokenType.None:
                     return KdlValueKind.Undefined;
                 case KdlTokenType.StartArray:
-                    return KdlValueKind.Array;
+                    return KdlValueKind.Node;
                 case KdlTokenType.StartObject:
-                    return KdlValueKind.Object;
+                    return KdlValueKind.Node;
                 case KdlTokenType.String:
                 case KdlTokenType.Number:
                 case KdlTokenType.True:

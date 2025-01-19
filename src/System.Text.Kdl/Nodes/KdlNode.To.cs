@@ -1,6 +1,6 @@
 ﻿namespace System.Text.Kdl.Nodes
 {
-    public abstract partial class KdlNode
+    public abstract partial class KdlVertex
     {
         /// <summary>
         ///   Converts the current instance to string in KDL format.
@@ -44,9 +44,9 @@
                     return jsonString.Value;
                 }
 
-                if (this is KdlValueOfElement { Value.ValueKind: KdlValueKind.String } jsonElement)
+                if (this is KdlValueOfElement { Value.ValueKind: KdlValueKind.String } kdlElement)
                 {
-                    return jsonElement.Value.GetString()!;
+                    return kdlElement.Value.GetString()!;
                 }
             }
 
@@ -64,7 +64,7 @@
         }
 
         /// <summary>
-        ///   Write the <see cref="KdlNode"/> into the provided <see cref="KdlWriter"/> as KDL.
+        ///   Write the <see cref="KdlVertex"/> into the provided <see cref="KdlWriter"/> as KDL.
         /// </summary>
         /// <param name="writer">The <see cref="KdlWriter"/>.</param>
         /// <exception cref="ArgumentNullException">

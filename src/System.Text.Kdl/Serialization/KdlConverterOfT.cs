@@ -453,9 +453,9 @@ namespace System.Text.Kdl.Serialization
 
             if (dictionaryConverter == null)
             {
-                // If not KdlDictionaryConverter<T> then we are KdlObject.
-                // Avoid a type reference to KdlObject and its converter to support trimming.
-                Debug.Assert(Type == typeof(Nodes.KdlObject));
+                // If not KdlDictionaryConverter<T> then we are KdlNode.
+                // Avoid a type reference to KdlNode and its converter to support trimming.
+                Debug.Assert(Type == typeof(Nodes.KdlNode));
                 return TryWrite(writer, value, options, ref state);
             }
 

@@ -11,14 +11,9 @@ namespace System.Text.Kdl
         Undefined,
 
         /// <summary>
-        ///   Indicates that a value is a KDL object.
+        ///   Indicates that a value is a KDL node.
         /// </summary>
-        Object,
-
-        /// <summary>
-        ///   Indicates that a value is a KDL array.
-        /// </summary>
-        Array,
+        Node,
 
         /// <summary>
         ///   Indicates that a value is a KDL string.

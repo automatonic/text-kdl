@@ -60,7 +60,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
     /// <summary>
     /// Defines an object converter that only supports (polymorphic) serialization but not deserialization.
-    /// This is done to avoid rooting dependencies to KdlNode/KdlElement necessary to drive object deserialization.
+    /// This is done to avoid rooting dependencies to KdlVertex/KdlElement necessary to drive object deserialization.
     /// Source generator users need to explicitly declare support for object so that the derived converter gets used.
     /// </summary>
     internal sealed class SlimObjectConverter(IKdlTypeInfoResolver originatingResolver) : ObjectConverter
@@ -77,13 +77,13 @@ namespace System.Text.Kdl.Serialization.Converters
     }
 
     /// <summary>
-    /// Defines an object converter that supports deserialization via KdlElement/KdlNode representations.
+    /// Defines an object converter that supports deserialization via KdlElement/KdlVertex representations.
     /// Used as the default in reflection or if object is declared in the KdlSerializerContext type graph.
     /// </summary>
     internal sealed class DefaultObjectConverter : ObjectConverter
     {
         public DefaultObjectConverter() =>
-            // KdlElement/KdlNode parsing does not support async; force read ahead for now.
+            // KdlElement/KdlVertex parsing does not support async; force read ahead for now.
             RequiresReadAhead = true;
 
         public override object? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
@@ -93,7 +93,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 return KdlElement.ParseValue(ref reader);
             }
 
-            Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlNode);
+            Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
             return KdlNodeConverter.Instance.Read(ref reader, typeToConvert, options);
         }
 
@@ -119,9 +119,9 @@ namespace System.Text.Kdl.Serialization.Converters
                 return true;
             }
 
-            Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlNode);
+            Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
 
-            KdlNode? node = KdlNodeConverter.Instance.Read(ref reader, typeToConvert, options);
+            KdlVertex? node = KdlNodeConverter.Instance.Read(ref reader, typeToConvert, options);
 
             if (options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve &&
                 KdlSerializer.TryHandleReferenceFromKdlNode(ref reader, ref state, node, out referenceValue))

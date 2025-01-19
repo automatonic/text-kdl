@@ -8,7 +8,7 @@ namespace System.Text.Kdl.Nodes
     /// <summary>
     /// Represents a mutable KDL value.
     /// </summary>
-    public abstract partial class KdlValue : KdlNode
+    public abstract partial class KdlValue : KdlVertex
     {
         internal const string CreateUnreferencedCodeMessage = "Creating KdlValue instances with non-primitive types is not compatible with trimming. It can result in non-primitive types being serialized, which may have their members trimmed.";
         internal const string CreateDynamicCodeMessage = "Creating KdlValue instances with non-primitive types requires generating code at runtime.";
@@ -26,7 +26,7 @@ namespace System.Text.Kdl.Nodes
         ///   The underlying value of a <see cref="KdlValue"/> after deserialization is an instance of <see cref="KdlElement"/>,
         ///   otherwise it's the value specified when the <see cref="KdlValue"/> was created.
         /// </remarks>
-        /// <seealso cref="KdlNode.GetValue{T}"></seealso>
+        /// <seealso cref="KdlVertex.GetValue{T}"></seealso>
         /// <typeparam name="T">The type of value to obtain.</typeparam>
         /// <param name="value">When this method returns, contains the parsed value.</param>
         /// <returns><see langword="true"/> if the value can be successfully obtained; otherwise, <see langword="false"/>.</returns>
@@ -51,7 +51,7 @@ namespace System.Text.Kdl.Nodes
                 return null;
             }
 
-            if (value is KdlNode)
+            if (value is KdlVertex)
             {
                 ThrowHelper.ThrowArgumentException_NodeValueNotAllowed(nameof(value));
             }
@@ -88,7 +88,7 @@ namespace System.Text.Kdl.Nodes
                 return null;
             }
 
-            if (value is KdlNode)
+            if (value is KdlVertex)
             {
                 ThrowHelper.ThrowArgumentException_NodeValueNotAllowed(nameof(value));
             }
@@ -103,7 +103,7 @@ namespace System.Text.Kdl.Nodes
             return CreateFromTypeInfo(value, jsonTypeInfo, options);
         }
 
-        internal override bool DeepEqualsCore(KdlNode otherNode)
+        internal override bool DeepEqualsCore(KdlVertex otherNode)
         {
             if (GetValueKind() != otherNode.GetValueKind())
             {
@@ -123,9 +123,9 @@ namespace System.Text.Kdl.Nodes
                 otherDocument?.Dispose();
             }
 
-            static KdlElement ToKdlElement(KdlNode node, out KdlDocument? backingDocument)
+            static KdlElement ToKdlElement(KdlVertex vertex, out KdlDocument? backingDocument)
             {
-                if (node.UnderlyingElement is { } element)
+                if (vertex.UnderlyingElement is { } element)
                 {
                     backingDocument = null;
                     return element;
@@ -138,7 +138,7 @@ namespace System.Text.Kdl.Nodes
 
                 try
                 {
-                    node.WriteTo(writer);
+                    vertex.WriteTo(writer);
                     writer.Flush();
                     KdlReader reader = new(output.WrittenMemory.Span);
                     backingDocument = KdlDocument.ParseValue(ref reader);
@@ -151,7 +151,7 @@ namespace System.Text.Kdl.Nodes
             }
         }
 
-        internal sealed override void GetPath(ref ValueStringBuilder path, KdlNode? child)
+        internal sealed override void GetPath(ref ValueStringBuilder path, KdlVertex? child)
         {
             Debug.Assert(child == null);
 
@@ -182,8 +182,8 @@ namespace System.Text.Kdl.Nodes
                 case KdlValueKind.Null:
                     return null;
 
-                case KdlValueKind.Object or KdlValueKind.Array:
-                    // Force usage of KdlArray and KdlObject instead of supporting those in an KdlValue.
+                case KdlValueKind.Node:
+                    // Force usage of KdlNode and KdlNode instead of supporting those in an KdlValue.
                     ThrowHelper.ThrowInvalidOperationException_NodeElementCannotBeObjectOrArray();
                     return null;
 

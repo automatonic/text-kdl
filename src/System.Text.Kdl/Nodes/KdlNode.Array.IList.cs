@@ -1,21 +1,17 @@
 ﻿using System.Collections;
+using System.Diagnostics;
 
 namespace System.Text.Kdl.Nodes
 {
-    public sealed partial class KdlArray : KdlNode, IList<KdlNode?>
+    public sealed partial class KdlNode : KdlVertex, IList<KdlVertex?>
     {
         /// <summary>
-        ///   Gets the number of elements contained in the <see cref="KdlArray"/>.
-        /// </summary>
-        public int Count => List.Count;
-
-        /// <summary>
-        ///   Adds a <see cref="KdlNode"/> to the end of the <see cref="KdlArray"/>.
+        ///   Adds a <see cref="KdlVertex"/> to the end of the <see cref="KdlNode"/>.
         /// </summary>
         /// <param name="item">
-        ///   The <see cref="KdlNode"/> to be added to the end of the <see cref="KdlArray"/>.
+        ///   The <see cref="KdlVertex"/> to be added to the end of the <see cref="KdlNode"/>.
         /// </param>
-        public void Add(KdlNode? item)
+        public void Add(KdlVertex? item)
         {
             item?.AssignParent(this);
 
@@ -23,73 +19,88 @@ namespace System.Text.Kdl.Nodes
         }
 
         /// <summary>
-        ///   Removes all elements from the <see cref="KdlArray"/>.
+        ///   Removes all elements from the <see cref="KdlNode"/>.
         /// </summary>
         public void Clear()
         {
-            List<KdlNode?>? list = _list;
+            List<KdlVertex?>? list = _list;
 
             if (list is null)
             {
-                _jsonElement = null;
+                _kdlElement = null;
             }
             else
             {
                 for (int i = 0; i < list.Count; i++)
                 {
-                    DetachParent(list[i]);
+                    DetachParentForListItem(list[i]);
                 }
 
                 list.Clear();
             }
+
+            OrderedDictionary<string, KdlVertex?>? dictionary = _dictionary;
+
+            if (dictionary is null)
+            {
+                _kdlElement = null;
+                return;
+            }
+
+            foreach (KdlVertex? node in dictionary.Values)
+            {
+                DetachParentForDictionaryItem(node);
+            }
+
+            dictionary.Clear();
         }
 
         /// <summary>
-        ///   Determines whether an element is in the <see cref="KdlArray"/>.
+        ///   Determines whether an element is in the <see cref="KdlNode"/>.
         /// </summary>
-        /// <param name="item">The object to locate in the <see cref="KdlArray"/>.</param>
+        /// <param name="item">The object to locate in the <see cref="KdlNode"/>.</param>
         /// <returns>
-        ///   <see langword="true"/> if <paramref name="item"/> is found in the <see cref="KdlArray"/>; otherwise, <see langword="false"/>.
+        ///   <see langword="true"/> if <paramref name="item"/> is found in the <see cref="KdlNode"/>; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool Contains(KdlNode? item) => List.Contains(item);
+        public bool Contains(KdlVertex? item) => List.Contains(item);
 
         /// <summary>
-        ///   The object to locate in the <see cref="KdlArray"/>.
+        ///   The object to locate in the <see cref="KdlNode"/>.
         /// </summary>
-        /// <param name="item">The <see cref="KdlNode"/> to locate in the <see cref="KdlArray"/>.</param>
+        /// <param name="item">The <see cref="KdlVertex"/> to locate in the <see cref="KdlNode"/>.</param>
         /// <returns>
         ///  The index of item if found in the list; otherwise, -1.
         /// </returns>
-        public int IndexOf(KdlNode? item) => List.IndexOf(item);
+        public int IndexOf(KdlVertex? item) => List.IndexOf(item);
 
         /// <summary>
-        ///   Inserts an element into the <see cref="KdlArray"/> at the specified index.
+        ///   Inserts an element into the <see cref="KdlNode"/> at the specified index.
         /// </summary>
         /// <param name="index">The zero-based index at which <paramref name="item"/> should be inserted.</param>
-        /// <param name="item">The <see cref="KdlNode"/> to insert.</param>
+        /// <param name="item">The <see cref="KdlVertex"/> to insert.</param>
         /// <exception cref="ArgumentOutOfRangeException">
         ///   <paramref name="index"/> is less than 0 or <paramref name="index"/> is greater than <see cref="Count"/>.
         /// </exception>
-        public void Insert(int index, KdlNode? item)
+        public void Insert(int index, KdlVertex? item)
         {
             item?.AssignParent(this);
             List.Insert(index, item);
         }
 
         /// <summary>
-        ///   Removes the first occurrence of a specific <see cref="KdlNode"/> from the <see cref="KdlArray"/>.
+        ///   Removes the first occurrence of a specific <see cref="KdlVertex"/> from the <see cref="KdlNode"/>.
         /// </summary>
         /// <param name="item">
-        ///   The <see cref="KdlNode"/> to remove from the <see cref="KdlArray"/>.
+        ///   The <see cref="KdlVertex"/> to remove from the <see cref="KdlNode"/>.
         /// </param>
         /// <returns>
         ///   <see langword="true"/> if <paramref name="item"/> is successfully removed; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool Remove(KdlNode? item)
+        public bool Remove(KdlVertex? item)
         {
             if (List.Remove(item))
             {
-                DetachParent(item);
+                DetachParentForListItem(item);
                 return true;
             }
 
@@ -97,7 +108,7 @@ namespace System.Text.Kdl.Nodes
         }
 
         /// <summary>
-        ///   Removes the element at the specified index of the <see cref="KdlArray"/>.
+        ///   Removes the element at the specified index of the <see cref="KdlNode"/>.
         /// </summary>
         /// <param name="index">The zero-based index of the element to remove.</param>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -105,20 +116,20 @@ namespace System.Text.Kdl.Nodes
         /// </exception>
         public void RemoveAt(int index)
         {
-            KdlNode? item = List[index];
+            KdlVertex? item = List[index];
             List.RemoveAt(index);
-            DetachParent(item);
+            DetachParentForListItem(item);
         }
 
         /// <summary>
         ///   Removes all the elements that match the conditions defined by the specified predicate.
         /// </summary>
         /// <param name="match">The predicate that defines the conditions of the elements to remove.</param>
-        /// <returns>The number of elements removed from the <see cref="KdlArray"/>.</returns>
+        /// <returns>The number of elements removed from the <see cref="KdlNode"/>.</returns>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="match"/> is <see langword="null"/>.
         /// </exception>
-        public int RemoveAll(Func<KdlNode?, bool> match)
+        public int RemoveAll(Func<KdlVertex?, bool> match)
         {
             if (match == null)
             {
@@ -129,7 +140,7 @@ namespace System.Text.Kdl.Nodes
             {
                 if (match(node))
                 {
-                    DetachParent(node);
+                    DetachParentForListItem(node);
                     return true;
                 }
                 else
@@ -140,7 +151,7 @@ namespace System.Text.Kdl.Nodes
         }
 
         /// <summary>
-        ///   Removes a range of elements from the <see cref="KdlArray"/>.
+        ///   Removes a range of elements from the <see cref="KdlNode"/>.
         /// </summary>
         /// <param name="index">The zero-based starting index of the range of elements to remove.</param>
         /// <param name="count">The number of elements to remove.</param>
@@ -148,7 +159,7 @@ namespace System.Text.Kdl.Nodes
         ///   <paramref name="index"/> or <paramref name="count"/> is less than 0.
         /// </exception>
         /// <exception cref="ArgumentException">
-        ///   <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the <see cref="KdlArray"/>.
+        ///   <paramref name="index"/> and <paramref name="count"/> do not denote a valid range of elements in the <see cref="KdlNode"/>.
         /// </exception>
         public void RemoveRange(int index, int count)
         {
@@ -162,7 +173,7 @@ namespace System.Text.Kdl.Nodes
                 ThrowHelper.ThrowArgumentOutOfRangeException_NeedNonNegNum(nameof(count));
             }
 
-            List<KdlNode?> list = List;
+            List<KdlVertex?> list = List;
 
             if (list.Count - index < count)
             {
@@ -173,7 +184,7 @@ namespace System.Text.Kdl.Nodes
             {
                 for (int i = 0; i < count; i++)
                 {
-                    DetachParent(list[index + i]);
+                    DetachParentForListItem(list[index + i]);
                     // There's no need to assign nulls because List<>.RemoveRange calls
                     // Array.Clear on the removed partition.
                 }
@@ -190,7 +201,7 @@ namespace System.Text.Kdl.Nodes
         /// </summary>
         /// <param name="array">
         ///   The one-dimensional <see cref="Array"/> that is the destination of the elements copied
-        ///   from <see cref="KdlArray"/>. The Array must have zero-based indexing.</param>
+        ///   from <see cref="KdlNode"/>. The Array must have zero-based indexing.</param>
         /// <param name="index">
         ///   The zero-based index in <paramref name="array"/> at which copying begins.
         /// </param>
@@ -204,31 +215,34 @@ namespace System.Text.Kdl.Nodes
         ///   The number of elements in the source ICollection is greater than the available space from <paramref name="index"/>
         ///   to the end of the destination <paramref name="array"/>.
         /// </exception>
-        void ICollection<KdlNode?>.CopyTo(KdlNode?[] array, int index) => List.CopyTo(array, index);
+        void ICollection<KdlVertex?>.CopyTo(KdlVertex?[] array, int index) => List.CopyTo(array, index);
 
         /// <summary>
-        ///   Returns an enumerator that iterates through the <see cref="KdlArray"/>.
+        ///   Returns an enumerator that iterates through the <see cref="KdlNode"/>.
         /// </summary>
-        /// <returns>A <see cref="IEnumerator{KdlNode}"/> for the <see cref="KdlNode"/>.</returns>
-        public IEnumerator<KdlNode?> GetEnumerator() => List.GetEnumerator();
+        /// <returns>A <see cref="IEnumerator{KdlVertex}"/> for the <see cref="KdlVertex"/>.</returns>
+        public IEnumerator<KdlVertex?> GetEnumerator() => List.Concat(Dictionary.Values).GetEnumerator();
 
         /// <summary>
-        ///   Returns an enumerator that iterates through the <see cref="KdlArray"/>.
+        ///   Returns an enumerator that iterates through the <see cref="KdlNode"/>.
         /// </summary>
         /// <returns>
-        ///   A <see cref="IEnumerator"/> for the <see cref="KdlArray"/>.
+        ///   An enumerator that iterates through the <see cref="KdlNode"/>.
         /// </returns>
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)List).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => List.Concat(Dictionary.Values).GetEnumerator();
 
         /// <summary>
         ///   Returns <see langword="false"/>.
         /// </summary>
-        bool ICollection<KdlNode?>.IsReadOnly => false;
+        bool ICollection<KdlVertex?>.IsReadOnly => false;
 
         #endregion
 
-        private static void DetachParent(KdlNode? item)
+        private void DetachParentForDictionaryItem(KdlVertex? item)
         {
+            //TECHDEBT: Need to differentiate between cases. this may be true with properties
+            //But may be avoided if only items?
+            Debug.Assert(_dictionary != null, "Cannot have detachable nodes without a materialized dictionary.");
             if (item != null)
             {
                 item.Parent = null;

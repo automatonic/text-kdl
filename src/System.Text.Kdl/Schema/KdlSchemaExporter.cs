@@ -14,13 +14,13 @@ namespace System.Text.Kdl.Schema
     public static class KdlSchemaExporter
     {
         /// <summary>
-        /// Gets the KDL schema for <paramref name="type"/> as a <see cref="KdlNode"/> document.
+        /// Gets the KDL schema for <paramref name="type"/> as a <see cref="KdlVertex"/> document.
         /// </summary>
         /// <param name="options">The options declaring the contract for the type.</param>
         /// <param name="type">The type for which to resolve a schema.</param>
         /// <param name="exporterOptions">The options object governing the export operation.</param>
         /// <returns>A KDL object containing the schema for <paramref name="type"/>.</returns>
-        public static KdlNode GetKdlSchemaAsNode(this KdlSerializerOptions options, Type type, KdlSchemaExporterOptions? exporterOptions = null)
+        public static KdlVertex GetKdlSchemaAsNode(this KdlSerializerOptions options, Type type, KdlSchemaExporterOptions? exporterOptions = null)
         {
             if (options is null)
             {
@@ -38,12 +38,12 @@ namespace System.Text.Kdl.Schema
         }
 
         /// <summary>
-        /// Gets the KDL schema for <paramref name="typeInfo"/> as a <see cref="KdlNode"/> document.
+        /// Gets the KDL schema for <paramref name="typeInfo"/> as a <see cref="KdlVertex"/> document.
         /// </summary>
         /// <param name="typeInfo">The contract from which to resolve the KDL schema.</param>
         /// <param name="exporterOptions">The options object governing the export operation.</param>
         /// <returns>A KDL object containing the schema for <paramref name="typeInfo"/>.</returns>
-        public static KdlNode GetKdlSchemaAsNode(this KdlTypeInfo typeInfo, KdlSchemaExporterOptions? exporterOptions = null)
+        public static KdlVertex GetKdlSchemaAsNode(this KdlTypeInfo typeInfo, KdlSchemaExporterOptions? exporterOptions = null)
         {
             if (typeInfo is null)
             {
@@ -117,10 +117,10 @@ namespace System.Text.Kdl.Schema
                     KeyValuePair<string, KdlSchema>? derivedTypeDiscriminator = null;
                     if (derivedType.TypeDiscriminator is { } discriminatorValue)
                     {
-                        KdlNode discriminatorNode = discriminatorValue switch
+                        KdlVertex discriminatorNode = discriminatorValue switch
                         {
-                            string stringId => (KdlNode)stringId,
-                            _ => (KdlNode)(int)discriminatorValue,
+                            string stringId => (KdlVertex)stringId,
+                            _ => (KdlVertex)(int)discriminatorValue,
                         };
 
                         KdlSchema discriminatorSchema = new() { Constant = discriminatorNode };
@@ -368,7 +368,7 @@ namespace System.Text.Kdl.Schema
 
                 if (state.ExporterOptions.TransformSchemaNode != null)
                 {
-                    // Prime the schema for invocation by the KdlNode transformer.
+                    // Prime the schema for invocation by the KdlVertex transformer.
                     schema.ExporterContext = exporterContext;
                 }
 

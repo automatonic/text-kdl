@@ -25,6 +25,6 @@ namespace System.Text.Kdl.Schema
         /// <summary>
         /// Defines a callback that is invoked for every schema that is generated within the type graph.
         /// </summary>
-        public Func<KdlSchemaExporterContext, KdlNode, KdlNode>? TransformSchemaNode { get; init; }
+        public Func<KdlSchemaExporterContext, KdlVertex, KdlVertex>? TransformSchemaNode { get; init; }
     }
 }

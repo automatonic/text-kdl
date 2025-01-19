@@ -3,7 +3,7 @@ using System.Text.Kdl.Serialization.Converters;
 
 namespace System.Text.Kdl.Nodes
 {
-    public abstract partial class KdlNode
+    public abstract partial class KdlVertex
     {
         /// <summary>
         ///   Parses one KDL value (including objects or arrays) from the provided reader.
@@ -11,7 +11,7 @@ namespace System.Text.Kdl.Nodes
         /// <param name="reader">The reader to read.</param>
         /// <param name="nodeOptions">Options to control the behavior.</param>
         /// <returns>
-        ///   The <see cref="KdlNode"/> from the reader.
+        ///   The <see cref="KdlVertex"/> from the reader.
         /// </returns>
         /// <remarks>
         ///   <para>
@@ -38,7 +38,7 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static KdlNode? Parse(
+        public static KdlVertex? Parse(
             ref KdlReader reader,
             KdlNodeOptions? nodeOptions = null)
         {
@@ -53,7 +53,7 @@ namespace System.Text.Kdl.Nodes
         /// <param name="nodeOptions">Options to control the node behavior after parsing.</param>
         /// <param name="documentOptions">Options to control the document behavior during parsing.</param>
         /// <returns>
-        ///   A <see cref="KdlNode"/> representation of the KDL value.
+        ///   A <see cref="KdlVertex"/> representation of the KDL value.
         /// </returns>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="kdl"/> is <see langword="null"/>.
@@ -61,7 +61,7 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="KdlException">
         ///   <paramref name="kdl"/> does not represent a valid single KDL value.
         /// </exception>
-        public static KdlNode? Parse(
+        public static KdlVertex? Parse(
             [StringSyntax(StringSyntaxAttribute.Json)] string kdl,
             KdlNodeOptions? nodeOptions = null,
             KdlDocumentOptions documentOptions = default(KdlDocumentOptions))
@@ -82,12 +82,12 @@ namespace System.Text.Kdl.Nodes
         /// <param name="nodeOptions">Options to control the node behavior after parsing.</param>
         /// <param name="documentOptions">Options to control the document behavior during parsing.</param>
         /// <returns>
-        ///   A <see cref="KdlNode"/> representation of the KDL value.
+        ///   A <see cref="KdlVertex"/> representation of the KDL value.
         /// </returns>
         /// <exception cref="KdlException">
         ///   <paramref name="utf8Kdl"/> does not represent a valid single KDL value.
         /// </exception>
-        public static KdlNode? Parse(
+        public static KdlVertex? Parse(
             ReadOnlySpan<byte> utf8Kdl,
             KdlNodeOptions? nodeOptions = null,
             KdlDocumentOptions documentOptions = default(KdlDocumentOptions))
@@ -98,18 +98,18 @@ namespace System.Text.Kdl.Nodes
 
         /// <summary>
         ///   Parse a <see cref="Stream"/> as UTF-8 encoded data representing a single KDL value into a
-        ///   <see cref="KdlNode"/>.  The Stream will be read to completion.
+        ///   <see cref="KdlVertex"/>.  The Stream will be read to completion.
         /// </summary>
         /// <param name="utf8Kdl">KDL text to parse.</param>
         /// <param name="nodeOptions">Options to control the node behavior after parsing.</param>
         /// <param name="documentOptions">Options to control the document behavior during parsing.</param>
         /// <returns>
-        ///   A <see cref="KdlNode"/> representation of the KDL value.
+        ///   A <see cref="KdlVertex"/> representation of the KDL value.
         /// </returns>
         /// <exception cref="KdlException">
         ///   <paramref name="utf8Kdl"/> does not represent a valid single KDL value.
         /// </exception>
-        public static KdlNode? Parse(
+        public static KdlVertex? Parse(
             Stream utf8Kdl,
             KdlNodeOptions? nodeOptions = null,
             KdlDocumentOptions documentOptions = default)
@@ -125,19 +125,19 @@ namespace System.Text.Kdl.Nodes
 
         /// <summary>
         ///   Parse a <see cref="Stream"/> as UTF-8 encoded data representing a single KDL value into a
-        ///   <see cref="KdlNode"/>.  The Stream will be read to completion.
+        ///   <see cref="KdlVertex"/>.  The Stream will be read to completion.
         /// </summary>
         /// <param name="utf8Kdl">KDL text to parse.</param>
         /// <param name="nodeOptions">Options to control the node behavior after parsing.</param>
         /// <param name="documentOptions">Options to control the document behavior during parsing.</param>
         /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
         /// <returns>
-        ///   A <see cref="Task"/> to produce a <see cref="KdlNode"/> representation of the KDL value.
+        ///   A <see cref="Task"/> to produce a <see cref="KdlVertex"/> representation of the KDL value.
         /// </returns>
         /// <exception cref="KdlException">
         ///   <paramref name="utf8Kdl"/> does not represent a valid single KDL value.
         /// </exception>
-        public static async Task<KdlNode?> ParseAsync(
+        public static async Task<KdlVertex?> ParseAsync(
             Stream utf8Kdl,
             KdlNodeOptions? nodeOptions = null,
             KdlDocumentOptions documentOptions = default,

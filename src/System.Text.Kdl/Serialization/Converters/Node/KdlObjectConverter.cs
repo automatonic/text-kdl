@@ -5,11 +5,11 @@ using System.Text.Kdl.Serialization.Metadata;
 
 namespace System.Text.Kdl.Serialization.Converters
 {
-    internal sealed class KdlObjectConverter : KdlConverter<KdlObject?>
+    internal sealed class KdlObjectConverter : KdlConverter<KdlNode?>
     {
         internal override void ConfigureKdlTypeInfo(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options)
         {
-            jsonTypeInfo.CreateObjectForExtensionDataProperty = () => new KdlObject(options.GetNodeOptions());
+            jsonTypeInfo.CreateObjectForExtensionDataProperty = () => new KdlNode(options.GetNodeOptions());
         }
 
         internal override void ReadElementAndSetProperty(
@@ -19,15 +19,15 @@ namespace System.Text.Kdl.Serialization.Converters
             KdlSerializerOptions options,
             scoped ref ReadStack state)
         {
-            bool success = KdlNodeConverter.Instance.TryRead(ref reader, typeof(KdlNode), options, ref state, out KdlNode? value, out _);
+            bool success = KdlNodeConverter.Instance.TryRead(ref reader, typeof(KdlVertex), options, ref state, out KdlVertex? value, out _);
             Debug.Assert(success); // Node converters are not resumable.
 
-            Debug.Assert(obj is KdlObject);
-            KdlObject jObject = (KdlObject)obj;
+            Debug.Assert(obj is KdlNode);
+            KdlNode jObject = (KdlNode)obj;
             jObject[propertyName] = value;
         }
 
-        public override void Write(KdlWriter writer, KdlObject? value, KdlSerializerOptions options)
+        public override void Write(KdlWriter writer, KdlNode? value, KdlSerializerOptions options)
         {
             if (value is null)
             {
@@ -38,7 +38,7 @@ namespace System.Text.Kdl.Serialization.Converters
             value.WriteTo(writer, options);
         }
 
-        public override KdlObject? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlNode? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {
             switch (reader.TokenType)
             {
@@ -52,10 +52,10 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public static KdlObject ReadObject(ref KdlReader reader, KdlNodeOptions? options)
+        public static KdlNode ReadObject(ref KdlReader reader, KdlNodeOptions? options)
         {
             KdlElement jElement = KdlElement.ParseValue(ref reader);
-            KdlObject jObject = new KdlObject(jElement, options);
+            KdlNode jObject = new KdlNode(jElement, options);
             return jObject;
         }
 

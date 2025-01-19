@@ -93,7 +93,7 @@ namespace System.Text.Kdl.Serialization
         internal bool IsRootLevelMultiContentStreamingConverter { get; init; }
 
         /// <summary>
-        /// Used to support KdlObject as an extension property in a loosely-typed, trimmable manner.
+        /// Used to support KdlNode as an extension property in a loosely-typed, trimmable manner.
         /// </summary>
         internal virtual void ReadElementAndSetProperty(
             object obj,

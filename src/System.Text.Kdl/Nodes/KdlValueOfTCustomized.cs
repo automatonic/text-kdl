@@ -21,7 +21,7 @@ namespace System.Text.Kdl.Nodes
         }
 
         private protected override KdlValueKind GetValueKindCore() => _valueKind ??= ComputeValueKind();
-        internal override KdlNode DeepCloneCore() => KdlSerializer.SerializeToNode(Value, _jsonTypeInfo)!;
+        internal override KdlVertex DeepCloneCore() => KdlSerializer.SerializeToNode(Value, _jsonTypeInfo)!;
 
         public override void WriteTo(KdlWriter writer, KdlSerializerOptions? options = null)
         {

@@ -8,6 +8,10 @@ namespace System.Text.Kdl
     /// <summary>
     ///   Represents a specific KDL value within a <see cref="KdlDocument"/>.
     /// </summary>
+    /// <remarks>
+    /// This is apparently borrowed from HTML/XML where an "Element" is everything within the start/end tag. This is distinct from
+    /// "Node" in that is the top level structure of KDL and "node" is the graph theory API that we have aliased as "Vertex" to differentiate the semantics. 
+    /// </remarks>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public readonly partial struct KdlElement
     {
@@ -37,10 +41,10 @@ namespace System.Text.Kdl
 
         /// <summary>
         ///   Get the value at a specified index when the current value is a
-        ///   <see cref="KdlValueKind.Array"/>.
+        ///   <see cref="KdlValueKind.Node"/>.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Array"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="IndexOutOfRangeException">
         ///   <paramref name="index"/> is not in the range [0, <see cref="GetArrayLength"/>()).
@@ -63,7 +67,7 @@ namespace System.Text.Kdl
         /// </summary>
         /// <returns>The number of values contained within the current array value.</returns>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Array"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
@@ -80,7 +84,7 @@ namespace System.Text.Kdl
         /// </summary>
         /// <returns>The number of properties contained within the current object value.</returns>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
@@ -108,7 +112,7 @@ namespace System.Text.Kdl
         /// </returns>
         /// <seealso cref="EnumerateObject"/>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="KeyNotFoundException">
         ///   No property was found with the requested name.
@@ -154,7 +158,7 @@ namespace System.Text.Kdl
         /// </returns>
         /// <seealso cref="EnumerateObject"/>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="KeyNotFoundException">
         ///   No property was found with the requested name.
@@ -193,7 +197,7 @@ namespace System.Text.Kdl
         ///   A <see cref="KdlElement"/> representing the value of the requested property.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="KeyNotFoundException">
         ///   No property was found with the requested name.
@@ -233,7 +237,7 @@ namespace System.Text.Kdl
         ///   <see langword="true"/> if the property was found, <see langword="false"/> otherwise.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="propertyName"/> is <see langword="null"/>.
@@ -274,7 +278,7 @@ namespace System.Text.Kdl
         /// </returns>
         /// <seealso cref="EnumerateObject"/>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
@@ -310,7 +314,7 @@ namespace System.Text.Kdl
         /// </returns>
         /// <seealso cref="EnumerateObject"/>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
@@ -1283,7 +1287,7 @@ namespace System.Text.Kdl
 
                     return element1.ValueEquals(element2.ValueSpan);
 
-                case KdlValueKind.Array:
+                case KdlValueKind.Node:
                     if (element1.GetArrayLength() != element2.GetArrayLength())
                     {
                         return false;
@@ -1305,7 +1309,7 @@ namespace System.Text.Kdl
                     return true;
 
                 default:
-                    Debug.Assert(kind is KdlValueKind.Object);
+                    Debug.Assert(kind is KdlValueKind.Node);
 
                     int count = element1.GetPropertyCount();
                     if (count != element2.GetPropertyCount())
@@ -1554,7 +1558,7 @@ namespace System.Text.Kdl
         ///   An enumerator to enumerate the values in the KDL array represented by this KdlElement.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Array"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
@@ -1580,7 +1584,7 @@ namespace System.Text.Kdl
         ///   An enumerator to enumerate the properties in the KDL object represented by this KdlElement.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Object"/>.
+        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.

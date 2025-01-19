@@ -517,10 +517,10 @@ namespace System.Text.Kdl.Serialization.Converters
                     return new() { Type = KdlSchemaType.String };
                 }
 
-                KdlArray enumValues = [];
+                KdlNode enumValues = [];
                 foreach (EnumFieldInfo fieldInfo in _enumFieldInfo)
                 {
-                    enumValues.Add((KdlNode)fieldInfo.KdlName);
+                    enumValues.Add((KdlVertex)fieldInfo.KdlName);
                 }
 
                 return new() { Enum = enumValues };

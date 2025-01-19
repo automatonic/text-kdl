@@ -18,7 +18,7 @@ namespace System.Text.Kdl.Serialization.Metadata
     {
         internal const string MetadataFactoryRequiresUnreferencedCode = "KDL serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use System.Text.Kdl source generation for native AOT applications.";
 
-        internal const string KdlObjectTypeName = "System.Text.Kdl.Nodes.KdlObject";
+        internal const string KdlObjectTypeName = "System.Text.Kdl.Nodes.KdlNode";
 
         internal delegate T ParameterizedConstructorDelegate<T, TArg0, TArg1, TArg2, TArg3>(TArg0? arg0, TArg1? arg1, TArg2? arg2, TArg3? arg3);
 
@@ -1329,7 +1329,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         {
             return typeof(IDictionary<string, object>).IsAssignableFrom(propertyType) ||
                 typeof(IDictionary<string, KdlElement>).IsAssignableFrom(propertyType) ||
-                // Avoid a reference to typeof(KdlNode) to support trimming.
+                // Avoid a reference to typeof(KdlVertex) to support trimming.
                 (propertyType.FullName == KdlObjectTypeName && ReferenceEquals(propertyType.Assembly, typeof(KdlTypeInfo).Assembly));
         }
 

@@ -351,7 +351,7 @@ namespace System.Text.Kdl
             bool refMetadataFound = false;
             referenceValue = default;
 
-            if (element.ValueKind == KdlValueKind.Object)
+            if (element.ValueKind == KdlValueKind.Node)
             {
                 int propertyCount = 0;
                 foreach (KdlProperty property in element.EnumerateObject())
@@ -409,68 +409,69 @@ namespace System.Text.Kdl
         internal static bool TryHandleReferenceFromKdlNode(
             ref KdlReader reader,
             scoped ref ReadStack state,
-            KdlNode? jsonNode,
+            KdlVertex? jsonNode,
             [NotNullWhen(true)] out object? referenceValue)
         {
             bool refMetadataFound = false;
             referenceValue = default;
 
-            if (jsonNode is KdlObject jsonObject)
+            if (jsonNode is KdlNode kdlNode)
             {
                 int propertyCount = 0;
-                foreach (KeyValuePair<string, KdlNode?> property in jsonObject)
-                {
-                    propertyCount++;
-                    if (refMetadataFound)
-                    {
-                        // There are more properties in an object with $ref.
-                        ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties();
-                    }
-                    else if (property.Key == "$id")
-                    {
-                        if (state.ReferenceId != null)
-                        {
-                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
-                        }
+                //TECHDEBT
+                // foreach (KeyValuePair<string, KdlVertex?> property in kdlNode)
+                // {
+                //     propertyCount++;
+                //     if (refMetadataFound)
+                //     {
+                //         // There are more properties in an object with $ref.
+                //         ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties();
+                //     }
+                //     else if (property.Key == "$id")
+                //     {
+                //         if (state.ReferenceId != null)
+                //         {
+                //             ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
+                //         }
 
-                        string referenceId = ReadAsStringMetadataValue(property.Value);
-                        state.ReferenceResolver.AddReference(referenceId, jsonNode);
-                        referenceValue = jsonNode;
-                        return true;
-                    }
-                    else if (property.Key == "$ref")
-                    {
-                        if (state.ReferenceId != null)
-                        {
-                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
-                        }
+                //         string referenceId = ReadAsStringMetadataValue(property.Value);
+                //         state.ReferenceResolver.AddReference(referenceId, jsonNode);
+                //         referenceValue = jsonNode;
+                //         return true;
+                //     }
+                //     else if (property.Key == "$ref")
+                //     {
+                //         if (state.ReferenceId != null)
+                //         {
+                //             ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
+                //         }
 
-                        if (propertyCount > 1)
-                        {
-                            // $ref was found but there were other properties before.
-                            ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties();
-                        }
+                //         if (propertyCount > 1)
+                //         {
+                //             // $ref was found but there were other properties before.
+                //             ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties();
+                //         }
 
-                        string referenceId = ReadAsStringMetadataValue(property.Value);
-                        referenceValue = state.ReferenceResolver.ResolveReference(referenceId);
-                        refMetadataFound = true;
-                    }
+                //         string referenceId = ReadAsStringMetadataValue(property.Value);
+                //         referenceValue = state.ReferenceResolver.ResolveReference(referenceId);
+                //         refMetadataFound = true;
+                //     }
 
-                    static string ReadAsStringMetadataValue(KdlNode? jsonNode)
-                    {
-                        if (jsonNode is KdlValue jsonValue &&
-                            jsonValue.TryGetValue(out string? value) &&
-                            value is not null)
-                        {
-                            return value;
-                        }
+                //     static string ReadAsStringMetadataValue(KdlVertex? jsonNode)
+                //     {
+                //         if (jsonNode is KdlValue jsonValue &&
+                //             jsonValue.TryGetValue(out string? value) &&
+                //             value is not null)
+                //         {
+                //             return value;
+                //         }
 
-                        KdlValueKind metadataValueKind = jsonNode?.GetValueKind() ?? KdlValueKind.Null;
-                        Debug.Assert(metadataValueKind != KdlValueKind.Undefined);
-                        ThrowHelper.ThrowKdlException_MetadataValueWasNotString(metadataValueKind);
-                        return null!;
-                    }
-                }
+                //         KdlValueKind metadataValueKind = jsonNode?.GetValueKind() ?? KdlValueKind.Null;
+                //         Debug.Assert(metadataValueKind != KdlValueKind.Undefined);
+                //         ThrowHelper.ThrowKdlException_MetadataValueWasNotString(metadataValueKind);
+                //         return null!;
+                //     }
+                // }
             }
 
             return refMetadataFound;

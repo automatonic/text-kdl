@@ -55,8 +55,8 @@ namespace System.Text.Kdl.Schema
         public string? Pattern { get => _pattern; set { VerifyMutable(); _pattern = value; } }
         private string? _pattern;
 
-        public KdlNode? Constant { get => _constant; set { VerifyMutable(); _constant = value; } }
-        private KdlNode? _constant;
+        public KdlVertex? Constant { get => _constant; set { VerifyMutable(); _constant = value; } }
+        private KdlVertex? _constant;
 
         public List<KeyValuePair<string, KdlSchema>>? Properties { get => _properties; set { VerifyMutable(); _properties = value; } }
         private List<KeyValuePair<string, KdlSchema>>? _properties;
@@ -70,8 +70,8 @@ namespace System.Text.Kdl.Schema
         public KdlSchema? AdditionalProperties { get => _additionalProperties; set { VerifyMutable(); _additionalProperties = value; } }
         private KdlSchema? _additionalProperties;
 
-        public KdlArray? Enum { get => _enum; set { VerifyMutable(); _enum = value; } }
-        private KdlArray? _enum;
+        public KdlNode? Enum { get => _enum; set { VerifyMutable(); _enum = value; } }
+        private KdlNode? _enum;
 
         public KdlSchema? Not { get => _not; set { VerifyMutable(); _not = value; } }
         private KdlSchema? _not;
@@ -82,8 +82,8 @@ namespace System.Text.Kdl.Schema
         public bool HasDefaultValue { get => _hasDefaultValue; set { VerifyMutable(); _hasDefaultValue = value; } }
         private bool _hasDefaultValue;
 
-        public KdlNode? DefaultValue { get => _defaultValue; set { VerifyMutable(); _defaultValue = value; } }
-        private KdlNode? _defaultValue;
+        public KdlVertex? DefaultValue { get => _defaultValue; set { VerifyMutable(); _defaultValue = value; } }
+        private KdlVertex? _defaultValue;
 
         public int? MinLength { get => _minLength; set { VerifyMutable(); _minLength = value; } }
         private int? _minLength;
@@ -141,14 +141,14 @@ namespace System.Text.Kdl.Schema
             }
         }
 
-        public KdlNode ToKdlNode(KdlSchemaExporterOptions options)
+        public KdlVertex ToKdlNode(KdlSchemaExporterOptions options)
         {
             if (_trueOrFalse is { } boolSchema)
             {
-                return CompleteSchema((KdlNode)boolSchema);
+                return CompleteSchema((KdlVertex)boolSchema);
             }
 
-            var objSchema = new KdlObject();
+            var objSchema = new KdlNode();
 
             if (Ref != null)
             {
@@ -160,7 +160,7 @@ namespace System.Text.Kdl.Schema
                 objSchema.Add(CommentPropertyName, Comment);
             }
 
-            if (MapSchemaType(Type) is KdlNode type)
+            if (MapSchemaType(Type) is KdlVertex type)
             {
                 objSchema.Add(TypePropertyName, type);
             }
@@ -182,7 +182,7 @@ namespace System.Text.Kdl.Schema
 
             if (Properties != null)
             {
-                var properties = new KdlObject();
+                var properties = new KdlNode();
                 foreach (KeyValuePair<string, KdlSchema> property in Properties)
                 {
                     properties.Add(property.Key, property.Value.ToKdlNode(options));
@@ -193,10 +193,10 @@ namespace System.Text.Kdl.Schema
 
             if (Required != null)
             {
-                var requiredArray = new KdlArray();
+                var requiredArray = new KdlNode();
                 foreach (string requiredProperty in Required)
                 {
-                    requiredArray.Add((KdlNode)requiredProperty);
+                    requiredArray.Add((KdlVertex)requiredProperty);
                 }
 
                 objSchema.Add(RequiredPropertyName, requiredArray);
@@ -224,7 +224,7 @@ namespace System.Text.Kdl.Schema
 
             if (AnyOf != null)
             {
-                KdlArray anyOfArray = [];
+                KdlNode anyOfArray = [];
                 foreach (KdlSchema schema in AnyOf)
                 {
                     anyOfArray.Add(schema.ToKdlNode(options));
@@ -240,17 +240,17 @@ namespace System.Text.Kdl.Schema
 
             if (MinLength is int minLength)
             {
-                objSchema.Add(MinLengthPropertyName, (KdlNode)minLength);
+                objSchema.Add(MinLengthPropertyName, (KdlVertex)minLength);
             }
 
             if (MaxLength is int maxLength)
             {
-                objSchema.Add(MaxLengthPropertyName, (KdlNode)maxLength);
+                objSchema.Add(MaxLengthPropertyName, (KdlVertex)maxLength);
             }
 
             return CompleteSchema(objSchema);
 
-            KdlNode CompleteSchema(KdlNode schema)
+            KdlVertex CompleteSchema(KdlVertex schema)
             {
                 if (ExporterContext is { } context)
                 {
@@ -302,7 +302,7 @@ namespace System.Text.Kdl.Schema
             }
         }
 
-        public static KdlNode? MapSchemaType(KdlSchemaType schemaType)
+        public static KdlVertex? MapSchemaType(KdlSchemaType schemaType)
         {
             if (schemaType is KdlSchemaType.Any)
             {
@@ -314,12 +314,12 @@ namespace System.Text.Kdl.Schema
                 return identifier;
             }
 
-            var array = new KdlArray();
+            var array = new KdlNode();
             foreach (KdlSchemaType type in s_schemaValues)
             {
                 if ((schemaType & type) != 0)
                 {
-                    array.Add((KdlNode)ToIdentifier(type)!);
+                    array.Add((KdlVertex)ToIdentifier(type)!);
                 }
             }
 

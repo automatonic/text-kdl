@@ -11,10 +11,10 @@ namespace System.Text.Kdl.Nodes
         public KdlValueOfElement(KdlElement value, KdlNodeOptions? options) : base(value, options) => Debug.Assert(value.ValueKind is KdlValueKind.False or KdlValueKind.True or KdlValueKind.Number or KdlValueKind.String);
 
         internal override KdlElement? UnderlyingElement => Value;
-        internal override KdlNode DeepCloneCore() => new KdlValueOfElement(Value.Clone(), Options);
+        internal override KdlVertex DeepCloneCore() => new KdlValueOfElement(Value.Clone(), Options);
         private protected override KdlValueKind GetValueKindCore() => Value.ValueKind;
 
-        internal override bool DeepEqualsCore(KdlNode otherNode)
+        internal override bool DeepEqualsCore(KdlVertex otherNode)
         {
             if (otherNode.UnderlyingElement is KdlElement otherElement)
             {
