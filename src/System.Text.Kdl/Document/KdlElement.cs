@@ -47,7 +47,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="IndexOutOfRangeException">
-        ///   <paramref name="index"/> is not in the range [0, <see cref="GetArrayLength"/>()).
+        ///   <paramref name="index"/> is not in the range [0, <see cref="GetEntryCount"/>()).
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
@@ -63,37 +63,21 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        ///   Get the number of values contained within the current array value.
+        ///   Get the number of entries contained within the current node value.
         /// </summary>
-        /// <returns>The number of values contained within the current array value.</returns>
+        /// <returns>The number of entries contained within the current node value.</returns>
         /// <exception cref="InvalidOperationException">
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
         /// </exception>
-        public int GetArrayLength()
+        public int GetEntryCount()
         {
             CheckValidInstance();
 
+            //return _parent.GetPropertyCount(_idx);
             return _parent.GetArrayLength(_idx);
-        }
-
-        /// <summary>
-        ///   Get the number of properties contained within the current object value.
-        /// </summary>
-        /// <returns>The number of properties contained within the current object value.</returns>
-        /// <exception cref="InvalidOperationException">
-        ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
-        /// </exception>
-        /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
-        /// </exception>
-        public int GetPropertyCount()
-        {
-            CheckValidInstance();
-
-            return _parent.GetPropertyCount(_idx);
         }
 
         /// <summary>
@@ -110,7 +94,7 @@ namespace System.Text.Kdl
         /// <returns>
         ///   A <see cref="KdlElement"/> representing the value of the requested property.
         /// </returns>
-        /// <seealso cref="EnumerateObject"/>
+        /// <seealso cref="EnumerateNode"/>
         /// <exception cref="InvalidOperationException">
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
@@ -156,7 +140,7 @@ namespace System.Text.Kdl
         /// <returns>
         ///   A <see cref="KdlElement"/> representing the value of the requested property.
         /// </returns>
-        /// <seealso cref="EnumerateObject"/>
+        /// <seealso cref="EnumerateNode"/>
         /// <exception cref="InvalidOperationException">
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
@@ -205,7 +189,7 @@ namespace System.Text.Kdl
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
         /// </exception>
-        /// <seealso cref="EnumerateObject"/>
+        /// <seealso cref="EnumerateNode"/>
         public KdlElement GetProperty(ReadOnlySpan<byte> utf8PropertyName)
         {
             if (TryGetProperty(utf8PropertyName, out KdlElement property))
@@ -245,7 +229,7 @@ namespace System.Text.Kdl
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
         /// </exception>
-        /// <seealso cref="EnumerateObject"/>
+        /// <seealso cref="EnumerateNode"/>
         public bool TryGetProperty(string propertyName, out KdlElement value)
         {
             if (propertyName is null)
@@ -276,7 +260,7 @@ namespace System.Text.Kdl
         /// <returns>
         ///   <see langword="true"/> if the property was found, <see langword="false"/> otherwise.
         /// </returns>
-        /// <seealso cref="EnumerateObject"/>
+        /// <seealso cref="EnumerateNode"/>
         /// <exception cref="InvalidOperationException">
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
@@ -312,7 +296,7 @@ namespace System.Text.Kdl
         /// <returns>
         ///   <see langword="true"/> if the property was found, <see langword="false"/> otherwise.
         /// </returns>
-        /// <seealso cref="EnumerateObject"/>
+        /// <seealso cref="EnumerateNode"/>
         /// <exception cref="InvalidOperationException">
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
@@ -1207,6 +1191,13 @@ namespace System.Text.Kdl
             return _parent.GetPropertyRawValueAsString(_idx);
         }
 
+        internal string GetEntryRawText()
+        {
+            CheckValidInstance();
+
+            return _parent.GetPropertyRawValueAsString(_idx);
+        }
+
         internal bool ValueIsEscaped
         {
             get
@@ -1288,7 +1279,7 @@ namespace System.Text.Kdl
                     return element1.ValueEquals(element2.ValueSpan);
 
                 case KdlValueKind.Node:
-                    if (element1.GetArrayLength() != element2.GetArrayLength())
+                    if (element1.GetEntryCount() != element2.GetEntryCount())
                     {
                         return false;
                     }
@@ -1311,14 +1302,14 @@ namespace System.Text.Kdl
                 default:
                     Debug.Assert(kind is KdlValueKind.Node);
 
-                    int count = element1.GetPropertyCount();
-                    if (count != element2.GetPropertyCount())
+                    int count = element1.GetEntryCount();
+                    if (count != element2.GetEntryCount())
                     {
                         return false;
                     }
 
-                    ObjectEnumerator objectEnumerator1 = element1.EnumerateObject();
-                    ObjectEnumerator objectEnumerator2 = element2.EnumerateObject();
+                    NodeEnumerator objectEnumerator1 = element1.EnumerateNode();
+                    NodeEnumerator objectEnumerator2 = element2.EnumerateNode();
 
                     // Two KDL objects are considered equal if they define the same set of properties.
                     // Start optimistically with pairwise comparison, but fall back to unordered
@@ -1329,8 +1320,8 @@ namespace System.Text.Kdl
                         bool success = objectEnumerator2.MoveNext();
                         Debug.Assert(success, "enumerators should have matching lengths");
 
-                        KdlProperty prop1 = objectEnumerator1.Current;
-                        KdlProperty prop2 = objectEnumerator2.Current;
+                        IKdlEntry prop1 = objectEnumerator1.Current;
+                        IKdlEntry prop2 = objectEnumerator2.Current;
 
                         if (!NameEquals(prop1, prop2))
                         {
@@ -1349,7 +1340,7 @@ namespace System.Text.Kdl
                     Debug.Assert(!objectEnumerator2.MoveNext());
                     return true;
 
-                    static bool UnorderedObjectDeepEquals(ObjectEnumerator objectEnumerator1, ObjectEnumerator objectEnumerator2, int remainingProps)
+                    static bool UnorderedObjectDeepEquals(NodeEnumerator objectEnumerator1, NodeEnumerator objectEnumerator2, int remainingProps)
                     {
                         // KdlElement objects allow duplicate property names, which is optional per the KDL RFC.
                         // Even though this implementation of equality does not take property ordering into account,
@@ -1361,7 +1352,7 @@ namespace System.Text.Kdl
                         Dictionary<string, ValueQueue<KdlElement>> properties2 = new(capacity: remainingProps, StringComparer.Ordinal);
                         do
                         {
-                            KdlProperty prop2 = objectEnumerator2.Current;
+                            IKdlEntry prop2 = objectEnumerator2.Current;
 #if NET
                             ref ValueQueue<KdlElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop2.Name, out bool _);
 #else
@@ -1376,7 +1367,7 @@ namespace System.Text.Kdl
 
                         do
                         {
-                            KdlProperty prop = objectEnumerator1.Current;
+                            IKdlEntry prop = objectEnumerator1.Current;
 #if NET
                             ref ValueQueue<KdlElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop.Name, out bool exists);
 #else
@@ -1395,7 +1386,7 @@ namespace System.Text.Kdl
                         return true;
                     }
 
-                    static bool NameEquals(KdlProperty left, KdlProperty right)
+                    static bool NameEquals(IKdlEntry left, IKdlEntry right)
                     {
                         if (right.NameIsEscaped)
                         {
@@ -1589,7 +1580,7 @@ namespace System.Text.Kdl
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
         /// </exception>
-        public ObjectEnumerator EnumerateObject()
+        public NodeEnumerator EnumerateNode()
         {
             CheckValidInstance();
 
@@ -1600,7 +1591,7 @@ namespace System.Text.Kdl
                 ThrowHelper.ThrowKdlElementWrongTypeException(KdlTokenType.StartObject, tokenType);
             }
 
-            return new ObjectEnumerator(this);
+            return new NodeEnumerator(this);
         }
 
         /// <summary>

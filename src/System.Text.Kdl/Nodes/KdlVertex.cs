@@ -221,7 +221,7 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="InvalidOperationException">
         ///   The current <see cref="KdlVertex"/> is not a <see cref="KdlNode"/>.
         /// </exception>
-        public KdlVertex? this[string propertyName]
+        public KdlVertex? this[KdlEntryKey propertyName]
         {
             get => AsObject().GetItem(propertyName);
             set => AsObject().SetItem(propertyName, value);
@@ -248,7 +248,7 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="InvalidOperationException">
         /// The current parent is not a <see cref="KdlNode"/>.
         /// </exception>
-        public string GetPropertyName()
+        public KdlEntryKey? GetPropertyName()
         {
             KdlNode? parentObject = _parent as KdlNode;
 
@@ -366,7 +366,7 @@ namespace System.Text.Kdl.Nodes
 
             if (value is KdlElement element)
             {
-                return KdlNodeConverter.Create(element, options);
+                return KdlVertexConverter.Create(element, options);
             }
 
             var jsonTypeInfo = (KdlTypeInfo<T>)KdlSerializerOptions.Default.GetTypeInfo(typeof(T));

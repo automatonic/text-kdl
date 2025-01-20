@@ -19,7 +19,7 @@ namespace System.Text.Kdl.Serialization.Converters
             KdlSerializerOptions options,
             scoped ref ReadStack state)
         {
-            bool success = KdlNodeConverter.Instance.TryRead(ref reader, typeof(KdlVertex), options, ref state, out KdlVertex? value, out _);
+            bool success = KdlVertexConverter.Instance.TryRead(ref reader, typeof(KdlVertex), options, ref state, out KdlVertex? value, out _);
             Debug.Assert(success); // Node converters are not resumable.
 
             Debug.Assert(obj is KdlNode);

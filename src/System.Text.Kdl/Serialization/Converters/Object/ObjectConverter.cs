@@ -94,7 +94,7 @@ namespace System.Text.Kdl.Serialization.Converters
             }
 
             Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
-            return KdlNodeConverter.Instance.Read(ref reader, typeToConvert, options);
+            return KdlVertexConverter.Instance.Read(ref reader, typeToConvert, options);
         }
 
         internal override bool OnTryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out object? value)
@@ -121,7 +121,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
             Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
 
-            KdlVertex? node = KdlNodeConverter.Instance.Read(ref reader, typeToConvert, options);
+            KdlVertex? node = KdlVertexConverter.Instance.Read(ref reader, typeToConvert, options);
 
             if (options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve &&
                 KdlSerializer.TryHandleReferenceFromKdlNode(ref reader, ref state, node, out referenceValue))

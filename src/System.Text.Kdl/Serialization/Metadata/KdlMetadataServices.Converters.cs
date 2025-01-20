@@ -140,7 +140,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlVertex"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the System.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlVertex?> KdlNodeConverter => s_jsonNodeConverter ??= new KdlNodeConverter();
+        public static KdlConverter<KdlVertex?> KdlNodeConverter => s_jsonNodeConverter ??= new KdlVertexConverter();
         private static KdlConverter<KdlVertex?>? s_jsonNodeConverter;
 
         /// <summary>

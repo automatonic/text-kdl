@@ -43,7 +43,7 @@ namespace System.Text.Kdl.Nodes
             KdlNodeOptions? nodeOptions = null)
         {
             KdlElement element = KdlElement.ParseValue(ref reader);
-            return KdlNodeConverter.Create(element, nodeOptions);
+            return KdlVertexConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -72,7 +72,7 @@ namespace System.Text.Kdl.Nodes
             }
 
             KdlElement element = KdlElement.ParseValue(kdl, documentOptions);
-            return KdlNodeConverter.Create(element, nodeOptions);
+            return KdlVertexConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace System.Text.Kdl.Nodes
             KdlDocumentOptions documentOptions = default(KdlDocumentOptions))
         {
             KdlElement element = KdlElement.ParseValue(utf8Kdl, documentOptions);
-            return KdlNodeConverter.Create(element, nodeOptions);
+            return KdlVertexConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -120,7 +120,7 @@ namespace System.Text.Kdl.Nodes
             }
 
             KdlElement element = KdlElement.ParseValue(utf8Kdl, documentOptions);
-            return KdlNodeConverter.Create(element, nodeOptions);
+            return KdlVertexConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace System.Text.Kdl.Nodes
             }
 
             KdlDocument document = await KdlDocument.ParseAsyncCoreUnrented(utf8Kdl, documentOptions, cancellationToken).ConfigureAwait(false);
-            return KdlNodeConverter.Create(document.RootElement, nodeOptions);
+            return KdlVertexConverter.Create(document.RootElement, nodeOptions);
         }
     }
 }

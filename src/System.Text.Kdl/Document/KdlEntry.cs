@@ -1,25 +1,25 @@
-using System.Diagnostics;
 
 namespace System.Text.Kdl
 {
+    using System.Text.Kdl.Nodes;
+
     /// <summary>
     ///   Represents a single property for a KDL object.
     /// </summary>
-    [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public readonly struct KdlProperty : IKdlEntry
+    public interface IKdlEntry
     {
         /// <summary>
         ///   The value of this property.
         /// </summary>
         public KdlElement Value { get; }
-        private string? _name { get; }
-
-        internal KdlProperty(KdlElement value) => Value = value;
 
         /// <summary>
         ///   The name of this property.
         /// </summary>
-        public string Name => _name ?? Value.GetPropertyName();
+        public string Name { get; }
+        public bool NameIsEscaped { get; }
+        public ReadOnlySpan<byte> NameSpan { get; }
+        KdlEntryKey Key { get; }
 
         /// <summary>
         ///   Compares <paramref name="text" /> to the name of this property.
@@ -36,10 +36,7 @@ namespace System.Text.Kdl
         ///   This method is functionally equal to doing an ordinal comparison of <paramref name="text" /> and
         ///   <see cref="Name" />, but can avoid creating the string instance.
         /// </remarks>
-        public bool NameEquals(string? text)
-        {
-            return NameEquals(text.AsSpan());
-        }
+        public bool NameEquals(string? text);
 
         /// <summary>
         ///   Compares the text represented by <paramref name="utf8Text" /> to the name of this property.
@@ -56,10 +53,7 @@ namespace System.Text.Kdl
         ///   This method is functionally equal to doing an ordinal comparison of <paramref name="utf8Text" /> and
         ///   <see cref="Name" />, but can avoid creating the string instance.
         /// </remarks>
-        public bool NameEquals(ReadOnlySpan<byte> utf8Text)
-        {
-            return Value.TextEqualsHelper(utf8Text, isPropertyName: true, shouldUnescape: true);
-        }
+        public bool NameEquals(ReadOnlySpan<byte> utf8Text);
 
         /// <summary>
         ///   Compares <paramref name="text" /> to the name of this property.
@@ -76,18 +70,7 @@ namespace System.Text.Kdl
         ///   This method is functionally equal to doing an ordinal comparison of <paramref name="text" /> and
         ///   <see cref="Name" />, but can avoid creating the string instance.
         /// </remarks>
-        public bool NameEquals(ReadOnlySpan<char> text)
-        {
-            return Value.TextEqualsHelper(text, isPropertyName: true);
-        }
-
-        internal bool EscapedNameEquals(ReadOnlySpan<byte> utf8Text)
-        {
-            return Value.TextEqualsHelper(utf8Text, isPropertyName: true, shouldUnescape: false);
-        }
-
-        public bool NameIsEscaped => Value.ValueIsEscapedHelper(isPropertyName: true);
-        public ReadOnlySpan<byte> NameSpan => Value.GetPropertyNameRaw();
+        public bool NameEquals(ReadOnlySpan<char> text);
 
         /// <summary>
         ///   Write the property into the provided writer as a named KDL object property.
@@ -105,43 +88,6 @@ namespace System.Text.Kdl
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlDocument"/> has been disposed.
         /// </exception>>
-        public void WriteTo(KdlWriter writer)
-        {
-            if (writer is null)
-            {
-                ThrowHelper.ThrowArgumentNullException(nameof(writer));
-            }
-
-            if (_name is null)
-            {
-                Value.WritePropertyNameTo(writer);
-            }
-            else
-            {
-                writer.WritePropertyName(_name);
-            }
-
-            Value.WriteTo(writer);
-        }
-
-        /// <summary>
-        ///   Provides a <see cref="string"/> representation of the property for
-        ///   debugging purposes.
-        /// </summary>
-        /// <returns>
-        ///   A string containing the un-interpreted value of the property, beginning
-        ///   at the declaring open-quote and ending at the last character that is part of
-        ///   the value.
-        /// </returns>
-        public override string ToString()
-        {
-            return Value.GetPropertyRawText();
-        }
-
-        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-            => Value.ValueKind == KdlValueKind.Undefined ? "<Undefined>" : $"\"{ToString()}\"";
-
-        public KdlEntryKey Key => KdlEntryKey.ForProperty(_name ?? Value.GetPropertyName());
+        public void WriteTo(KdlWriter writer);
     }
 }

@@ -8,14 +8,14 @@ namespace System.Text.Kdl.Serialization.Converters
     /// Converter for KdlVertex-derived types. The {T} value must be Object and not KdlVertex
     /// since we allow Object-declared members\variables to deserialize as {KdlVertex}.
     /// </summary>
-    internal sealed class KdlNodeConverter : KdlConverter<KdlVertex?>
+    internal sealed class KdlVertexConverter : KdlConverter<KdlVertex?>
     {
-        private static KdlNodeConverter? s_nodeConverter;
+        private static KdlVertexConverter? s_nodeConverter;
         private static KdlArrayConverter? s_arrayConverter;
         private static KdlObjectConverter? s_objectConverter;
         private static KdlValueConverter? s_valueConverter;
 
-        public static KdlNodeConverter Instance => s_nodeConverter ??= new KdlNodeConverter();
+        public static KdlVertexConverter Instance => s_nodeConverter ??= new KdlVertexConverter();
         public static KdlArrayConverter ArrayConverter => s_arrayConverter ??= new KdlArrayConverter();
         public static KdlObjectConverter ObjectConverter => s_objectConverter ??= new KdlObjectConverter();
         public static KdlValueConverter ValueConverter => s_valueConverter ??= new KdlValueConverter();

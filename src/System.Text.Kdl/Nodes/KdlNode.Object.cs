@@ -18,12 +18,18 @@ namespace System.Text.Kdl.Nodes
         /// <summary>
         /// Gets or creates the underlying dictionary containing the properties of the object.
         /// </summary>
-        private OrderedDictionary<string, KdlVertex?> Dictionary => _dictionary ?? InitializeDictionary();
+        private OrderedDictionary<KdlEntryKey, KdlVertex?> Dictionary => _dictionary ?? InitializeDictionary();
 
-        internal string GetPropertyName(KdlVertex? node)
+        internal KdlEntryKey? GetPropertyName(KdlVertex? vertex)
         {
-            KeyValuePair<string, KdlVertex?>? item = FindValue(node);
-            return item.HasValue ? item.Value.Key : string.Empty;
+            KeyValuePair<KdlEntryKey, KdlVertex?>? item = FindValue(vertex);
+            return item.HasValue ? item.Value.Key : null;
+        }
+
+        internal int GetElementIndex(KdlVertex? vertex)
+        {
+            //TECHDEBT:
+            return 0;
         }
 
         /// <summary>
@@ -34,7 +40,7 @@ namespace System.Text.Kdl.Nodes
         /// <returns>
         ///   <see langword="true"/> if a property with the specified name was found; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool TryGetPropertyValue(string propertyName, out KdlVertex? jsonNode)
+        public bool TryGetPropertyValue(KdlEntryKey propertyName, out KdlVertex? jsonNode)
         {
             if (propertyName is null)
             {
@@ -44,7 +50,7 @@ namespace System.Text.Kdl.Nodes
             return Dictionary.TryGetValue(propertyName, out jsonNode);
         }
 
-        internal KdlVertex? GetItem(string propertyName)
+        internal KdlVertex? GetItem(KdlEntryKey propertyName)
         {
             if (propertyName is null)
             {
@@ -60,14 +66,14 @@ namespace System.Text.Kdl.Nodes
             return null;
         }
 
-        internal void SetItem(string propertyName, KdlVertex? value)
+        internal void SetItem(KdlEntryKey propertyName, KdlVertex? value)
         {
             if (propertyName is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyName));
             }
 
-            OrderedDictionary<string, KdlVertex?> dict = Dictionary;
+            OrderedDictionary<KdlEntryKey, KdlVertex?> dict = Dictionary;
 
             if (
 #if NET10_0_OR_GREATER
@@ -96,9 +102,9 @@ namespace System.Text.Kdl.Nodes
         }
 
 
-        private KeyValuePair<string, KdlVertex?>? FindValue(KdlVertex? value)
+        private KeyValuePair<KdlEntryKey, KdlVertex?>? FindValue(KdlVertex? value)
         {
-            foreach (KeyValuePair<string, KdlVertex?> item in Dictionary)
+            foreach (KeyValuePair<KdlEntryKey, KdlVertex?> item in Dictionary)
             {
                 if (ReferenceEquals(item.Value, value))
                 {

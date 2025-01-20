@@ -354,7 +354,7 @@ namespace System.Text.Kdl
             if (element.ValueKind == KdlValueKind.Node)
             {
                 int propertyCount = 0;
-                foreach (KdlProperty property in element.EnumerateObject())
+                foreach (KdlProperty property in element.EnumerateNode())
                 {
                     propertyCount++;
                     if (refMetadataFound)
@@ -419,7 +419,7 @@ namespace System.Text.Kdl
             {
                 int propertyCount = 0;
                 //TECHDEBT
-                // foreach (KeyValuePair<string, KdlVertex?> property in kdlNode)
+                // foreach (KeyValuePair<KdlEntryKey, KdlVertex?> property in kdlNode)
                 // {
                 //     propertyCount++;
                 //     if (refMetadataFound)

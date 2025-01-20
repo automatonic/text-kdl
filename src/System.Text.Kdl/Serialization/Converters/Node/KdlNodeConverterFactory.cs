@@ -9,21 +9,21 @@ namespace System.Text.Kdl.Serialization.Converters
         {
             if (typeof(KdlValue).IsAssignableFrom(typeToConvert))
             {
-                return KdlNodeConverter.ValueConverter;
+                return KdlVertexConverter.ValueConverter;
             }
 
             if (typeof(KdlNode) == typeToConvert)
             {
-                return KdlNodeConverter.ObjectConverter;
+                return KdlVertexConverter.ObjectConverter;
             }
 
             if (typeof(KdlNode) == typeToConvert)
             {
-                return KdlNodeConverter.ArrayConverter;
+                return KdlVertexConverter.ArrayConverter;
             }
 
             Debug.Assert(typeof(KdlVertex) == typeToConvert);
-            return KdlNodeConverter.Instance;
+            return KdlVertexConverter.Instance;
         }
 
         public override bool CanConvert(Type typeToConvert) => typeof(KdlVertex).IsAssignableFrom(typeToConvert);

@@ -191,7 +191,7 @@ namespace System.Text.Kdl.Schema
                 if (schema.Enum != null)
                 {
                     Debug.Assert(elementTypeInfo.Type.IsEnum, "The enum keyword should only be populated by schemas for enum types.");
-                    schema.Enum.Add(null); // Append null to the enum array.
+                    schema.Enum.Add("", null); // Append null to the enum array.
                 }
 
                 return CompleteSchema(ref state, schema);

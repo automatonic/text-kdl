@@ -9,13 +9,13 @@ namespace System.Text.Kdl
         ///   An enumerable and enumerator for the properties of a KDL object.
         /// </summary>
         [DebuggerDisplay("{Current,nq}")]
-        public struct ObjectEnumerator : IEnumerable<KdlProperty>, IEnumerator<KdlProperty>
+        public struct NodeEnumerator : IEnumerable<IKdlEntry>, IEnumerator<IKdlEntry>
         {
             private readonly KdlElement _target;
             private int _curIdx;
             private readonly int _endIdxOrVersion;
 
-            internal ObjectEnumerator(KdlElement target)
+            internal NodeEnumerator(KdlElement target)
             {
                 _target = target;
                 _curIdx = -1;
@@ -25,13 +25,13 @@ namespace System.Text.Kdl
             }
 
             /// <inheritdoc />
-            public readonly KdlProperty Current
+            public readonly IKdlEntry Current
             {
                 get
                 {
                     if (_curIdx < 0)
                     {
-                        return default;
+                        return default!;
                     }
 
                     return new KdlProperty(new KdlElement(_target._parent, _curIdx));
@@ -42,7 +42,7 @@ namespace System.Text.Kdl
             ///   Returns an enumerator that iterates the properties of an object.
             /// </summary>
             /// <returns>
-            ///   An <see cref="ObjectEnumerator"/> value that can be used to iterate
+            ///   An <see cref="NodeEnumerator"/> value that can be used to iterate
             ///   through the object.
             /// </returns>
             /// <remarks>
@@ -51,9 +51,9 @@ namespace System.Text.Kdl
             ///   property they will all individually be returned (each in the order
             ///   they appear in the content).
             /// </remarks>
-            public readonly ObjectEnumerator GetEnumerator()
+            public readonly NodeEnumerator GetEnumerator()
             {
-                ObjectEnumerator ator = this;
+                NodeEnumerator ator = this;
                 ator._curIdx = -1;
                 return ator;
             }
@@ -62,7 +62,7 @@ namespace System.Text.Kdl
             readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
-            readonly IEnumerator<KdlProperty> IEnumerable<KdlProperty>.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator<IKdlEntry> IEnumerable<IKdlEntry>.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
             public void Dispose()
