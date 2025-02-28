@@ -1,4 +1,4 @@
-﻿namespace System.Text.Kdl.Nodes
+﻿namespace System.Text.Kdl.Graph
 {
     public partial class KdlNode : IList<KeyValuePair<KdlEntryKey, KdlElement?>>
     {

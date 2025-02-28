@@ -455,7 +455,7 @@ namespace System.Text.Kdl.Serialization
             {
                 // If not KdlDictionaryConverter<T> then we are KdlNode.
                 // Avoid a type reference to KdlNode and its converter to support trimming.
-                Debug.Assert(Type == typeof(Nodes.KdlNode));
+                Debug.Assert(Type == typeof(Graph.KdlNode));
                 return TryWrite(writer, value, options, ref state);
             }
 

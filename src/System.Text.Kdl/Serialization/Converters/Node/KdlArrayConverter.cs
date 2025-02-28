@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Text.Kdl.Nodes;
+using System.Text.Kdl.Graph;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters
@@ -33,8 +34,8 @@ namespace System.Text.Kdl.Serialization.Converters
 
         public static KdlNode ReadList(ref KdlReader reader, KdlElementOptions? options = null)
         {
-            KdlReadOnlyElement jElement = KdlReadOnlyElement.ParseValue(ref reader);
-            return new KdlNode(jElement, options);
+            KdlReadOnlyElement kroElement = KdlReadOnlyElement.ParseValue(ref reader);
+            return new KdlNode(kroElement, options);
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.Array };

@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     /// <summary>
     ///   Represents a mutable KDL object. Was "Node" but was aliases as "Vertex" for graph theory reasons along with "Node" being the top level structure of KDL.

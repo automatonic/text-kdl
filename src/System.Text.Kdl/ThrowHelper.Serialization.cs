@@ -5,6 +5,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO.Pipelines;
 using System.Reflection;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Serialization;
 using System.Text.Kdl.Serialization.Metadata;
 

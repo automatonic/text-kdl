@@ -1,5 +1,6 @@
 using System.Diagnostics;
-using System.Text.Kdl.Nodes;
+using System.Text.Kdl.Graph;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Schema;
 using System.Text.Kdl.Serialization.Metadata;
 

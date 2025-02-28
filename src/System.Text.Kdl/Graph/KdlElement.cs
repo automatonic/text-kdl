@@ -1,8 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Serialization.Converters;
 using System.Text.Kdl.Serialization.Metadata;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     /// <summary>
     ///   The base class that represents a single node within a mutable KDL document.
@@ -58,7 +59,7 @@ namespace System.Text.Kdl.Nodes
 
             if (jArray is null)
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode));
+                ThrowHelper.ThrowInvalidOperationException_ElementWrongType(nameof(KdlNode));
             }
 
             return jArray;
@@ -73,16 +74,16 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="InvalidOperationException">
         ///   The node is not a <see cref="KdlNode"/>.
         /// </exception>
-        public KdlNode AsObject()
+        public KdlNode AsNode()
         {
-            KdlNode? jObject = this as KdlNode;
+            KdlNode? node = this as KdlNode;
 
-            if (jObject is null)
+            if (node is null)
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode));
+                ThrowHelper.ThrowInvalidOperationException_ElementWrongType(nameof(KdlNode));
             }
 
-            return jObject;
+            return node;
         }
 
         /// <summary>
@@ -100,7 +101,7 @@ namespace System.Text.Kdl.Nodes
 
             if (jValue is null)
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlValue));
+                ThrowHelper.ThrowInvalidOperationException_ElementWrongType(nameof(KdlValue));
             }
 
             return jValue;
@@ -174,7 +175,7 @@ namespace System.Text.Kdl.Nodes
         ///   The underlying value of a <see cref="KdlValue"/> after deserialization is an instance of <see cref="KdlReadOnlyElement"/>,
         ///   otherwise it's the value specified when the <see cref="KdlValue"/> was created.
         /// </remarks>
-        /// <seealso cref="System.Text.Kdl.Nodes.KdlValue.TryGetValue"></seealso>
+        /// <seealso cref="System.Text.Kdl.Graph.KdlValue.TryGetValue"></seealso>
         /// <exception cref="FormatException">
         ///   The current <see cref="KdlElement"/> cannot be represented as a {T}.
         /// </exception>
@@ -203,12 +204,12 @@ namespace System.Text.Kdl.Nodes
 
         private protected virtual KdlElement? GetItem(int index)
         {
-            ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode), nameof(KdlNode));
+            ThrowHelper.ThrowInvalidOperationException_ElementWrongType(nameof(KdlNode), nameof(KdlNode));
             return null;
         }
 
         private protected virtual void SetItem(int index, KdlElement? node) =>
-            ThrowHelper.ThrowInvalidOperationException_NodeWrongType(nameof(KdlNode), nameof(KdlNode));
+            ThrowHelper.ThrowInvalidOperationException_ElementWrongType(nameof(KdlNode), nameof(KdlNode));
 
         /// <summary>
         ///   Gets or sets the element with the specified property name.
@@ -223,8 +224,8 @@ namespace System.Text.Kdl.Nodes
         /// </exception>
         public KdlElement? this[KdlEntryKey propertyName]
         {
-            get => AsObject().GetItem(propertyName);
-            set => AsObject().SetItem(propertyName, value);
+            get => AsNode().GetItem(propertyName);
+            set => AsNode().SetItem(propertyName, value);
         }
 
         /// <summary>

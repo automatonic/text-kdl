@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     /// <summary>
     ///   Represents a single property for a KDL object.

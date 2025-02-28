@@ -1,4 +1,4 @@
-﻿using System.Text.Kdl.Nodes;
+﻿using System.Text.Kdl.Graph;
 
 namespace System.Text.Kdl.Schema
 {

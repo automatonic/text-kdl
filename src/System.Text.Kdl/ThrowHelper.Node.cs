@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Kdl.RandomAccess;
 
 namespace System.Text.Kdl
 {
@@ -48,7 +49,7 @@ namespace System.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_NodeWrongType(params ReadOnlySpan<string> supportedTypeNames)
+        public static void ThrowInvalidOperationException_ElementWrongType(params ReadOnlySpan<string> supportedTypeNames)
         {
             Debug.Assert(supportedTypeNames.Length > 0);
             string concatenatedNames = supportedTypeNames.Length == 1 ? supportedTypeNames[0] : string.Join(", ", supportedTypeNames.ToArray());

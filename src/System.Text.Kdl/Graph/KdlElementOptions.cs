@@ -1,4 +1,4 @@
-﻿namespace System.Text.Kdl.Nodes
+﻿namespace System.Text.Kdl.Graph
 {
     /// <summary>
     ///   Options to control <see cref="KdlElement"/> behavior.

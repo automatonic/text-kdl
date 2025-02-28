@@ -1,3 +1,4 @@
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters

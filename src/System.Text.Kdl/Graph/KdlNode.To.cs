@@ -1,4 +1,4 @@
-﻿namespace System.Text.Kdl.Nodes
+﻿namespace System.Text.Kdl.Graph
 {
     public abstract partial class KdlElement
     {

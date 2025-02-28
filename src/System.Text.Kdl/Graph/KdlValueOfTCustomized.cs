@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Serialization.Metadata;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     /// <summary>
     /// A KdlValue that encapsulates arbitrary .NET type configurations.

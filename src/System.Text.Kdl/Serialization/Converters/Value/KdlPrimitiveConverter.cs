@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Kdl.Nodes;
+using System.Text.Kdl.Graph;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters

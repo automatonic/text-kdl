@@ -1,6 +1,7 @@
 using System.Buffers;
 using System.Buffers.Text;
 using System.Diagnostics;
+using System.Text.Kdl.RandomAccess;
 
 namespace System.Text.Kdl
 {

@@ -3,7 +3,7 @@ using System.Buffers.Text;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     /// <summary>
     ///   Represents the structure of a KDL value in a lightweight, read-only form.

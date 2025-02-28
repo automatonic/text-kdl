@@ -1,6 +1,6 @@
 using System.Diagnostics;
 
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     /// <summary>
     /// Provides the ability for the user to define custom behavior when parsing KDL to create a <see cref="KdlReadOnlyDocument"/>.

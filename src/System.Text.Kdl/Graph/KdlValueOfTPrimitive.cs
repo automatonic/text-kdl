@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Serialization;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     /// <summary>
     /// A KdlValue encapsulating a primitive value using a built-in converter for the type.

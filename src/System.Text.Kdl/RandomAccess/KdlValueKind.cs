@@ -1,4 +1,4 @@
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     /// <summary>
     ///   Specifies the data type of a KDL value.

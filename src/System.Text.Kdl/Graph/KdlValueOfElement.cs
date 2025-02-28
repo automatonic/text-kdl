@@ -1,7 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Kdl.RandomAccess;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     /// <summary>
     /// Defines a primitive KDL value that is wrapping a <see cref="KdlReadOnlyElement"/>.

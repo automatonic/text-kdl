@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
-using System.Text.Kdl.Nodes;
+using System.Text.Kdl.Graph;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Schema;
 using System.Text.Kdl.Serialization.Metadata;
 
@@ -23,8 +24,8 @@ namespace System.Text.Kdl.Serialization.Converters
             Debug.Assert(success); // Node converters are not resumable.
 
             Debug.Assert(obj is KdlNode);
-            KdlNode jObject = (KdlNode)obj;
-            jObject[propertyName] = value;
+            KdlNode node = (KdlNode)obj;
+            node[propertyName] = value;
         }
 
         public override void Write(KdlWriter writer, KdlNode? value, KdlSerializerOptions options)
@@ -54,9 +55,9 @@ namespace System.Text.Kdl.Serialization.Converters
 
         public static KdlNode ReadObject(ref KdlReader reader, KdlElementOptions? options)
         {
-            KdlReadOnlyElement jElement = KdlReadOnlyElement.ParseValue(ref reader);
-            KdlNode jObject = new KdlNode(jElement, options);
-            return jObject;
+            KdlReadOnlyElement kroElement = KdlReadOnlyElement.ParseValue(ref reader);
+            KdlNode node = new KdlNode(kroElement, options);
+            return node;
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.Object };

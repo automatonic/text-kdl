@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.Encodings.Web;
-using System.Text.Kdl.Nodes;
+using System.Text.Kdl.Graph;
 using System.Text.Kdl.Schema;
 
 namespace System.Text.Kdl.Serialization.Converters

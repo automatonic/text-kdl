@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     public partial class KdlElement
     {

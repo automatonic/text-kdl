@@ -2,7 +2,7 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     public sealed partial class KdlReadOnlyDocument
     {

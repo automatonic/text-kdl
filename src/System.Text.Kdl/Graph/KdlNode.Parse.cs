@@ -1,7 +1,8 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Serialization.Converters;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     public abstract partial class KdlElement
     {
@@ -90,7 +91,7 @@ namespace System.Text.Kdl.Nodes
         public static KdlElement? Parse(
             ReadOnlySpan<byte> utf8Kdl,
             KdlElementOptions? nodeOptions = null,
-            KdlReadOnlyDocumentOptions documentOptions = default(KdlReadOnlyDocumentOptions))
+            KdlReadOnlyDocumentOptions documentOptions = default)
         {
             KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(utf8Kdl, documentOptions);
             return KdlVertexConverter.Create(element, nodeOptions);

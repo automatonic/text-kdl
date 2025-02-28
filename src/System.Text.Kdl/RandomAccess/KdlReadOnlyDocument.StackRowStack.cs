@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // CS9191: The 'ref' modifier for argument 2 corresponding to 'in' parameter is equivalent to 'in'. Consider using 'in' instead.
 #pragma warning disable CS9191
 
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     public sealed partial class KdlReadOnlyDocument
     {

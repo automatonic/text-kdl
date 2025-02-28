@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Reflection;
 using System.Text.Kdl.Serialization;
 using System.Text.Kdl.Serialization.Metadata;
@@ -119,7 +120,7 @@ namespace System.Text.Kdl
                 Debug.Assert(
                     genericArgs[1].UnderlyingSystemType == KdlTypeInfo.ObjectType ||
                     genericArgs[1].UnderlyingSystemType == typeof(KdlReadOnlyElement) ||
-                    genericArgs[1].UnderlyingSystemType == typeof(Nodes.KdlElement));
+                    genericArgs[1].UnderlyingSystemType == typeof(Graph.KdlElement));
 #endif
 
                 Func<object>? createObjectForExtensionDataProp = jsonPropertyInfo.KdlTypeInfo.CreateObject

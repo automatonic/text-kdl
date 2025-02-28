@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     public sealed partial class KdlReadOnlyDocument
     {

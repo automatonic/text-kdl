@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-namespace System.Text.Kdl
+namespace System.Text.Kdl.RandomAccess
 {
     public readonly partial struct KdlReadOnlyElement
     {

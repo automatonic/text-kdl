@@ -1,7 +1,8 @@
 using System.Collections;
+using System.Text.Kdl.RandomAccess;
 using System.Text.Kdl.Serialization.Converters;
 
-namespace System.Text.Kdl.Nodes
+namespace System.Text.Kdl.Graph
 {
     public partial class KdlNode : IDictionary<KdlEntryKey, KdlElement?>
     {

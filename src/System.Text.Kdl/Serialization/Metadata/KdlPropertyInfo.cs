@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
+using System.Text.Kdl.RandomAccess;
 
 namespace System.Text.Kdl.Serialization.Metadata
 {
@@ -868,7 +869,7 @@ namespace System.Text.Kdl.Serialization.Metadata
             else
             {
                 // Avoid a type reference to KdlNode and its converter to support trimming.
-                Debug.Assert(propValue is Nodes.KdlNode);
+                Debug.Assert(propValue is Graph.KdlNode);
                 EffectiveConverter.ReadElementAndSetProperty(propValue, state.Current.KdlPropertyNameAsString!, ref reader, Options, ref state);
             }
 
