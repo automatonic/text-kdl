@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Text.Kdl
 {
-    public sealed partial class KdlDocument
+    public sealed partial class KdlReadOnlyDocument
     {
         [StructLayout(LayoutKind.Sequential)]
         internal readonly struct DbRow

@@ -234,9 +234,9 @@ namespace System.Text.Kdl.Serialization.Converters
                             KdlSerializer.CreateExtensionDataProperty(obj, jsonPropertyInfo, options);
                             object extDictionary = jsonPropertyInfo.GetValueAsObject(obj)!;
 
-                            if (extDictionary is IDictionary<string, KdlElement> dict)
+                            if (extDictionary is IDictionary<string, KdlReadOnlyElement> dict)
                             {
-                                dict[dataExtKey] = (KdlElement)propValue!;
+                                dict[dataExtKey] = (KdlReadOnlyElement)propValue!;
                             }
                             else
                             {

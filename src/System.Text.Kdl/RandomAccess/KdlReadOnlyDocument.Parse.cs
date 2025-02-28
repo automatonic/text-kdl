@@ -4,12 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace System.Text.Kdl
 {
-    public sealed partial class KdlDocument
+    public sealed partial class KdlReadOnlyDocument
     {
         // Cached unrented documents for literal values.
-        private static KdlDocument? s_nullLiteral;
-        private static KdlDocument? s_trueLiteral;
-        private static KdlDocument? s_falseLiteral;
+        private static KdlReadOnlyDocument? s_nullLiteral;
+        private static KdlReadOnlyDocument? s_trueLiteral;
+        private static KdlReadOnlyDocument? s_falseLiteral;
 
         private const int UnseekableStreamInitialRentSize = 4096;
 
@@ -38,7 +38,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlDocument Parse(ReadOnlyMemory<byte> utf8Kdl, KdlDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(ReadOnlyMemory<byte> utf8Kdl, KdlReadOnlyDocumentOptions options = default)
         {
             return Parse(utf8Kdl, options.GetReaderOptions());
         }
@@ -68,7 +68,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlDocument Parse(ReadOnlySequence<byte> utf8Kdl, KdlDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(ReadOnlySequence<byte> utf8Kdl, KdlReadOnlyDocumentOptions options = default)
         {
             KdlReaderOptions readerOptions = options.GetReaderOptions();
 
@@ -109,7 +109,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlDocument Parse(Stream utf8Kdl, KdlDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(Stream utf8Kdl, KdlReadOnlyDocumentOptions options = default)
         {
             if (utf8Kdl is null)
             {
@@ -131,7 +131,7 @@ namespace System.Text.Kdl
             }
         }
 
-        internal static KdlDocument ParseRented(PooledByteBufferWriter utf8Kdl, KdlDocumentOptions options = default)
+        internal static KdlReadOnlyDocument ParseRented(PooledByteBufferWriter utf8Kdl, KdlReadOnlyDocumentOptions options = default)
         {
             return Parse(
                 utf8Kdl.WrittenMemory,
@@ -140,7 +140,7 @@ namespace System.Text.Kdl
                 extraPooledByteBufferWriter: utf8Kdl);
         }
 
-        internal static KdlDocument ParseValue(Stream utf8Kdl, KdlDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(Stream utf8Kdl, KdlReadOnlyDocumentOptions options)
         {
             Debug.Assert(utf8Kdl != null);
 
@@ -157,7 +157,7 @@ namespace System.Text.Kdl
             return ParseUnrented(owned.AsMemory(), options.GetReaderOptions());
         }
 
-        internal static KdlDocument ParseValue(ReadOnlySpan<byte> utf8Kdl, KdlDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(ReadOnlySpan<byte> utf8Kdl, KdlReadOnlyDocumentOptions options)
         {
             byte[] owned = new byte[utf8Kdl.Length];
             utf8Kdl.CopyTo(owned);
@@ -165,7 +165,7 @@ namespace System.Text.Kdl
             return ParseUnrented(owned.AsMemory(), options.GetReaderOptions());
         }
 
-        internal static KdlDocument ParseValue(string kdl, KdlDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(string kdl, KdlReadOnlyDocumentOptions options)
         {
             Debug.Assert(kdl != null);
             return ParseValue(kdl.AsMemory(), options);
@@ -187,9 +187,9 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static Task<KdlDocument> ParseAsync(
+        public static Task<KdlReadOnlyDocument> ParseAsync(
             Stream utf8Kdl,
-            KdlDocumentOptions options = default,
+            KdlReadOnlyDocumentOptions options = default,
             CancellationToken cancellationToken = default)
         {
             if (utf8Kdl is null)
@@ -200,9 +200,9 @@ namespace System.Text.Kdl
             return ParseAsyncCore(utf8Kdl, options, cancellationToken);
         }
 
-        private static async Task<KdlDocument> ParseAsyncCore(
+        private static async Task<KdlReadOnlyDocument> ParseAsyncCore(
             Stream utf8Kdl,
-            KdlDocumentOptions options = default,
+            KdlReadOnlyDocumentOptions options = default,
             CancellationToken cancellationToken = default)
         {
             ArraySegment<byte> drained = await ReadToEndAsync(utf8Kdl, cancellationToken).ConfigureAwait(false);
@@ -220,9 +220,9 @@ namespace System.Text.Kdl
             }
         }
 
-        internal static async Task<KdlDocument> ParseAsyncCoreUnrented(
+        internal static async Task<KdlReadOnlyDocument> ParseAsyncCoreUnrented(
             Stream utf8Kdl,
-            KdlDocumentOptions options = default,
+            KdlReadOnlyDocumentOptions options = default,
             CancellationToken cancellationToken = default)
         {
             ArraySegment<byte> drained = await ReadToEndAsync(utf8Kdl, cancellationToken).ConfigureAwait(false);
@@ -257,7 +257,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlyMemory<char> kdl, KdlDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlyMemory<char> kdl, KdlReadOnlyDocumentOptions options = default)
         {
             ReadOnlySpan<char> jsonChars = kdl.Span;
             int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(jsonChars);
@@ -282,7 +282,7 @@ namespace System.Text.Kdl
             }
         }
 
-        internal static KdlDocument ParseValue(ReadOnlyMemory<char> kdl, KdlDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(ReadOnlyMemory<char> kdl, KdlReadOnlyDocumentOptions options)
         {
             ReadOnlySpan<char> jsonChars = kdl.Span;
             int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(jsonChars);
@@ -321,7 +321,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlReadOnlyDocumentOptions options = default)
         {
             if (kdl is null)
             {
@@ -369,7 +369,7 @@ namespace System.Text.Kdl
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static bool TryParseValue(ref KdlReader reader, [NotNullWhen(true)] out KdlDocument? document)
+        public static bool TryParseValue(ref KdlReader reader, [NotNullWhen(true)] out KdlReadOnlyDocument? document)
         {
             return TryParseValue(ref reader, out document, shouldThrow: false, useArrayPools: true);
         }
@@ -409,9 +409,9 @@ namespace System.Text.Kdl
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static KdlDocument ParseValue(ref KdlReader reader)
+        public static KdlReadOnlyDocument ParseValue(ref KdlReader reader)
         {
-            bool ret = TryParseValue(ref reader, out KdlDocument? document, shouldThrow: true, useArrayPools: true);
+            bool ret = TryParseValue(ref reader, out KdlReadOnlyDocument? document, shouldThrow: true, useArrayPools: true);
 
             Debug.Assert(ret, "TryParseValue returned false with shouldThrow: true.");
             Debug.Assert(document != null, "null document returned with shouldThrow: true.");
@@ -420,7 +420,7 @@ namespace System.Text.Kdl
 
         internal static bool TryParseValue(
             ref KdlReader reader,
-            [NotNullWhen(true)] out KdlDocument? document,
+            [NotNullWhen(true)] out KdlReadOnlyDocument? document,
             bool shouldThrow,
             bool useArrayPools)
         {
@@ -663,7 +663,7 @@ namespace System.Text.Kdl
             return true;
         }
 
-        private static KdlDocument CreateForLiteral(KdlTokenType tokenType)
+        private static KdlReadOnlyDocument CreateForLiteral(KdlTokenType tokenType)
         {
             switch (tokenType)
             {
@@ -679,15 +679,15 @@ namespace System.Text.Kdl
                     return s_nullLiteral;
             }
 
-            KdlDocument Create(byte[] utf8Kdl)
+            KdlReadOnlyDocument Create(byte[] utf8Kdl)
             {
                 MetadataDb database = MetadataDb.CreateLocked(utf8Kdl.Length);
                 database.Append(tokenType, startLocation: 0, utf8Kdl.Length);
-                return new KdlDocument(utf8Kdl, database, isDisposable: false);
+                return new KdlReadOnlyDocument(utf8Kdl, database, isDisposable: false);
             }
         }
 
-        private static KdlDocument Parse(
+        private static KdlReadOnlyDocument Parse(
             ReadOnlyMemory<byte> utf8Kdl,
             KdlReaderOptions readerOptions,
             byte[]? extraRentedArrayPoolBytes = null,
@@ -695,7 +695,7 @@ namespace System.Text.Kdl
         {
             ReadOnlySpan<byte> utf8KdlSpan = utf8Kdl.Span;
             var database = MetadataDb.CreateRented(utf8Kdl.Length, convertToAlloc: false);
-            var stack = new StackRowStack(KdlDocumentOptions.DefaultMaxDepth * StackRow.Size);
+            var stack = new StackRowStack(KdlReadOnlyDocumentOptions.DefaultMaxDepth * StackRow.Size);
 
             try
             {
@@ -711,10 +711,10 @@ namespace System.Text.Kdl
                 stack.Dispose();
             }
 
-            return new KdlDocument(utf8Kdl, database, extraRentedArrayPoolBytes, extraPooledByteBufferWriter);
+            return new KdlReadOnlyDocument(utf8Kdl, database, extraRentedArrayPoolBytes, extraPooledByteBufferWriter);
         }
 
-        private static KdlDocument ParseUnrented(
+        private static KdlReadOnlyDocument ParseUnrented(
             ReadOnlyMemory<byte> utf8Kdl,
             KdlReaderOptions readerOptions,
             KdlTokenType tokenType = KdlTokenType.None)
@@ -738,7 +738,7 @@ namespace System.Text.Kdl
             else
             {
                 database = MetadataDb.CreateRented(utf8Kdl.Length, convertToAlloc: true);
-                var stack = new StackRowStack(KdlDocumentOptions.DefaultMaxDepth * StackRow.Size);
+                var stack = new StackRowStack(KdlReadOnlyDocumentOptions.DefaultMaxDepth * StackRow.Size);
                 try
                 {
                     Parse(utf8KdlSpan, readerOptions, ref database, ref stack);
@@ -749,7 +749,7 @@ namespace System.Text.Kdl
                 }
             }
 
-            return new KdlDocument(utf8Kdl, database, isDisposable: false);
+            return new KdlReadOnlyDocument(utf8Kdl, database, isDisposable: false);
         }
 
         private static ArraySegment<byte> ReadToEnd(Stream stream)

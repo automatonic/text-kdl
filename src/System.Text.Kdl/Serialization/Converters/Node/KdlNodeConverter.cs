@@ -8,7 +8,7 @@ namespace System.Text.Kdl.Serialization.Converters
     /// Converter for KdlVertex-derived types. The {T} value must be Object and not KdlVertex
     /// since we allow Object-declared members\variables to deserialize as {KdlVertex}.
     /// </summary>
-    internal sealed class KdlVertexConverter : KdlConverter<KdlVertex?>
+    internal sealed class KdlVertexConverter : KdlConverter<KdlElement?>
     {
         private static KdlVertexConverter? s_nodeConverter;
         private static KdlArrayConverter? s_arrayConverter;
@@ -20,7 +20,7 @@ namespace System.Text.Kdl.Serialization.Converters
         public static KdlObjectConverter ObjectConverter => s_objectConverter ??= new KdlObjectConverter();
         public static KdlValueConverter ValueConverter => s_valueConverter ??= new KdlValueConverter();
 
-        public override void Write(KdlWriter writer, KdlVertex? value, KdlSerializerOptions options)
+        public override void Write(KdlWriter writer, KdlElement? value, KdlSerializerOptions options)
         {
             if (value is null)
             {
@@ -32,7 +32,7 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public override KdlVertex? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlElement? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
         {
             switch (reader.TokenType)
             {
@@ -53,9 +53,9 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public static KdlVertex? Create(KdlElement element, KdlNodeOptions? options)
+        public static KdlElement? Create(KdlReadOnlyElement element, KdlElementOptions? options)
         {
-            KdlVertex? node = element.ValueKind switch
+            KdlElement? node = element.ValueKind switch
             {
                 KdlValueKind.Null => null,
                 KdlValueKind.Node => new KdlNode(element, options),

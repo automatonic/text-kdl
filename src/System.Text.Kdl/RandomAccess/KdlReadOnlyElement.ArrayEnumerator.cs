@@ -3,57 +3,52 @@ using System.Diagnostics;
 
 namespace System.Text.Kdl
 {
-    public partial struct KdlElement
+    public partial struct KdlReadOnlyElement
     {
         /// <summary>
-        ///   An enumerable and enumerator for the properties of a KDL object.
+        ///   An enumerable and enumerator for the contents of a KDL array.
         /// </summary>
         [DebuggerDisplay("{Current,nq}")]
-        public struct NodeEnumerator : IEnumerable<IKdlEntry>, IEnumerator<IKdlEntry>
+        public struct ArrayEnumerator : IEnumerable<KdlReadOnlyElement>, IEnumerator<KdlReadOnlyElement>
         {
-            private readonly KdlElement _target;
+            private readonly KdlReadOnlyElement _target;
             private int _curIdx;
             private readonly int _endIdxOrVersion;
 
-            internal NodeEnumerator(KdlElement target)
+            internal ArrayEnumerator(KdlReadOnlyElement target)
             {
                 _target = target;
                 _curIdx = -1;
 
-                Debug.Assert(target.TokenType == KdlTokenType.StartObject);
+                Debug.Assert(target.TokenType == KdlTokenType.StartArray);
+
                 _endIdxOrVersion = target._parent.GetEndIndex(_target._idx, includeEndElement: false);
             }
 
             /// <inheritdoc />
-            public readonly IKdlEntry Current
+            public readonly KdlReadOnlyElement Current
             {
                 get
                 {
                     if (_curIdx < 0)
                     {
-                        return default!;
+                        return default;
                     }
 
-                    return new KdlProperty(new KdlElement(_target._parent, _curIdx));
+                    return new KdlReadOnlyElement(_target._parent, _curIdx);
                 }
             }
 
             /// <summary>
-            ///   Returns an enumerator that iterates the properties of an object.
+            ///   Returns an enumerator that iterates through a collection.
             /// </summary>
             /// <returns>
-            ///   An <see cref="NodeEnumerator"/> value that can be used to iterate
-            ///   through the object.
+            ///   An <see cref="ArrayEnumerator"/> value that can be used to iterate
+            ///   through the array.
             /// </returns>
-            /// <remarks>
-            ///   The enumerator will enumerate the properties in the order they are
-            ///   declared, and when an object has multiple definitions of a single
-            ///   property they will all individually be returned (each in the order
-            ///   they appear in the content).
-            /// </remarks>
-            public readonly NodeEnumerator GetEnumerator()
+            public readonly ArrayEnumerator GetEnumerator()
             {
-                NodeEnumerator ator = this;
+                ArrayEnumerator ator = this;
                 ator._curIdx = -1;
                 return ator;
             }
@@ -62,7 +57,7 @@ namespace System.Text.Kdl
             readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
-            readonly IEnumerator<IKdlEntry> IEnumerable<IKdlEntry>.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator<KdlReadOnlyElement> IEnumerable<KdlReadOnlyElement>.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
             public void Dispose()
@@ -89,15 +84,12 @@ namespace System.Text.Kdl
 
                 if (_curIdx < 0)
                 {
-                    _curIdx = _target._idx + KdlDocument.DbRow.Size;
+                    _curIdx = _target._idx + KdlReadOnlyDocument.DbRow.Size;
                 }
                 else
                 {
                     _curIdx = _target._parent.GetEndIndex(_curIdx, includeEndElement: true);
                 }
-
-                // _curIdx is now pointing at a property name, move one more to get the value
-                _curIdx += KdlDocument.DbRow.Size;
 
                 return _curIdx < _endIdxOrVersion;
             }

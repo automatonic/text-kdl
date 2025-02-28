@@ -520,7 +520,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 KdlNode enumValues = [];
                 foreach (EnumFieldInfo fieldInfo in _enumFieldInfo)
                 {
-                    enumValues.Add((KdlVertex)fieldInfo.KdlName);
+                    enumValues.Add((KdlElement)fieldInfo.KdlName);
                 }
 
                 return new() { Enum = enumValues };

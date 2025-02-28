@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Text.Kdl
 {
-    public sealed partial class KdlDocument
+    public sealed partial class KdlReadOnlyDocument
     {
         // SizeOrLength - offset - 0 - size - 4
         // NumberOfRows - offset - 4 - size - 4

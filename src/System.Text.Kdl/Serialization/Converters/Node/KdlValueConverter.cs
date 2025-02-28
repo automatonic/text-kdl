@@ -23,7 +23,7 @@ namespace System.Text.Kdl.Serialization.Converters
                 return null;
             }
 
-            KdlElement element = KdlElement.ParseValue(ref reader);
+            KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(ref reader);
             return KdlValue.CreateFromElement(ref element, options.GetNodeOptions());
         }
 

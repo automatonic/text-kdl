@@ -11,10 +11,10 @@ namespace System.Text.Kdl
         /// <summary>
         ///   The value of this property.
         /// </summary>
-        public KdlElement Value { get; }
+        public KdlReadOnlyElement Value { get; }
         private string? _name { get; }
 
-        internal KdlProperty(KdlElement value) => Value = value;
+        internal KdlProperty(KdlReadOnlyElement value) => Value = value;
 
         /// <summary>
         ///   The name of this property.
@@ -100,10 +100,10 @@ namespace System.Text.Kdl
         ///   This <see cref="Name"/>'s length is too large to be a KDL object property.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        ///   This <see cref="Value"/>'s <see cref="KdlElement.ValueKind"/> would result in an invalid KDL.
+        ///   This <see cref="Value"/>'s <see cref="KdlReadOnlyElement.ValueKind"/> would result in an invalid KDL.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>>
         public void WriteTo(KdlWriter writer)
         {

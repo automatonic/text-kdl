@@ -9,10 +9,10 @@ namespace System.Text.Kdl
     public static partial class KdlSerializer
     {
         /// <summary>
-        /// Converts the provided value into a <see cref="KdlVertex"/>.
+        /// Converts the provided value into a <see cref="KdlElement"/>.
         /// </summary>
         /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
-        /// <returns>A <see cref="KdlVertex"/> representation of the KDL value.</returns>
+        /// <returns>A <see cref="KdlElement"/> representation of the KDL value.</returns>
         /// <param name="value">The value to convert.</param>
         /// <param name="options">Options to control the conversion behavior.</param>
         /// <exception cref="NotSupportedException">
@@ -21,16 +21,16 @@ namespace System.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static KdlVertex? SerializeToNode<TValue>(TValue value, KdlSerializerOptions? options = null)
+        public static KdlElement? SerializeToNode<TValue>(TValue value, KdlSerializerOptions? options = null)
         {
             KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
             return WriteNode(value, jsonTypeInfo);
         }
 
         /// <summary>
-        /// Converts the provided value into a <see cref="KdlVertex"/>.
+        /// Converts the provided value into a <see cref="KdlElement"/>.
         /// </summary>
-        /// <returns>A <see cref="KdlVertex"/> representation of the value.</returns>
+        /// <returns>A <see cref="KdlElement"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
         /// <param name="inputType">The type of the <paramref name="value"/> to convert.</param>
         /// <param name="options">Options to control the conversion behavior.</param>
@@ -46,7 +46,7 @@ namespace System.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static KdlVertex? SerializeToNode(object? value, Type inputType, KdlSerializerOptions? options = null)
+        public static KdlElement? SerializeToNode(object? value, Type inputType, KdlSerializerOptions? options = null)
         {
             ValidateInputType(value, inputType);
             KdlTypeInfo typeInfo = GetTypeInfo(options, inputType);
@@ -54,16 +54,16 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Converts the provided value into a <see cref="KdlVertex"/>.
+        /// Converts the provided value into a <see cref="KdlElement"/>.
         /// </summary>
         /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
-        /// <returns>A <see cref="KdlVertex"/> representation of the value.</returns>
+        /// <returns>A <see cref="KdlElement"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
         /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlVertex? SerializeToNode<TValue>(TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static KdlElement? SerializeToNode<TValue>(TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
         {
             if (jsonTypeInfo is null)
             {
@@ -75,9 +75,9 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Converts the provided value into a <see cref="KdlVertex"/>.
+        /// Converts the provided value into a <see cref="KdlElement"/>.
         /// </summary>
-        /// <returns>A <see cref="KdlVertex"/> representation of the value.</returns>
+        /// <returns>A <see cref="KdlElement"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
         /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
@@ -86,7 +86,7 @@ namespace System.Text.Kdl
         /// <exception cref="InvalidCastException">
         /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
         /// </exception>
-        public static KdlVertex? SerializeToNode(object? value, KdlTypeInfo jsonTypeInfo)
+        public static KdlElement? SerializeToNode(object? value, KdlTypeInfo jsonTypeInfo)
         {
             if (jsonTypeInfo is null)
             {
@@ -98,9 +98,9 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Converts the provided value into a <see cref="KdlVertex"/>.
+        /// Converts the provided value into a <see cref="KdlElement"/>.
         /// </summary>
-        /// <returns>A <see cref="KdlVertex"/> representation of the value.</returns>
+        /// <returns>A <see cref="KdlElement"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
         /// <param name="inputType">The type of the <paramref name="value"/> to convert.</param>
         /// <param name="context">A metadata provider for serializable types.</param>
@@ -115,7 +115,7 @@ namespace System.Text.Kdl
         /// <exception cref="ArgumentNullException">
         /// <paramref name="inputType"/> or <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlVertex? SerializeToNode(object? value, Type inputType, KdlSerializerContext context)
+        public static KdlElement? SerializeToNode(object? value, Type inputType, KdlSerializerContext context)
         {
             if (context is null)
             {
@@ -127,7 +127,7 @@ namespace System.Text.Kdl
             return WriteNodeAsObject(value, jsonTypeInfo);
         }
 
-        private static KdlVertex? WriteNode<TValue>(in TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static KdlElement? WriteNode<TValue>(in TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
         {
             Debug.Assert(jsonTypeInfo.IsConfigured);
             KdlSerializerOptions options = jsonTypeInfo.Options;
@@ -137,7 +137,7 @@ namespace System.Text.Kdl
             try
             {
                 jsonTypeInfo.Serialize(writer, value);
-                return KdlVertex.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
+                return KdlElement.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
             }
             finally
             {
@@ -145,7 +145,7 @@ namespace System.Text.Kdl
             }
         }
 
-        private static KdlVertex? WriteNodeAsObject(object? value, KdlTypeInfo jsonTypeInfo)
+        private static KdlElement? WriteNodeAsObject(object? value, KdlTypeInfo jsonTypeInfo)
         {
             Debug.Assert(jsonTypeInfo.IsConfigured);
             KdlSerializerOptions options = jsonTypeInfo.Options;
@@ -155,7 +155,7 @@ namespace System.Text.Kdl
             try
             {
                 jsonTypeInfo.SerializeAsObject(writer, value);
-                return KdlVertex.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
+                return KdlElement.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
             }
             finally
             {

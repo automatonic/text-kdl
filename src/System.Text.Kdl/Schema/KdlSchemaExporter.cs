@@ -14,13 +14,13 @@ namespace System.Text.Kdl.Schema
     public static class KdlSchemaExporter
     {
         /// <summary>
-        /// Gets the KDL schema for <paramref name="type"/> as a <see cref="KdlVertex"/> document.
+        /// Gets the KDL schema for <paramref name="type"/> as a <see cref="KdlElement"/> document.
         /// </summary>
         /// <param name="options">The options declaring the contract for the type.</param>
         /// <param name="type">The type for which to resolve a schema.</param>
         /// <param name="exporterOptions">The options object governing the export operation.</param>
         /// <returns>A KDL object containing the schema for <paramref name="type"/>.</returns>
-        public static KdlVertex GetKdlSchemaAsNode(this KdlSerializerOptions options, Type type, KdlSchemaExporterOptions? exporterOptions = null)
+        public static KdlElement GetKdlSchemaAsNode(this KdlSerializerOptions options, Type type, KdlSchemaExporterOptions? exporterOptions = null)
         {
             if (options is null)
             {
@@ -38,12 +38,12 @@ namespace System.Text.Kdl.Schema
         }
 
         /// <summary>
-        /// Gets the KDL schema for <paramref name="typeInfo"/> as a <see cref="KdlVertex"/> document.
+        /// Gets the KDL schema for <paramref name="typeInfo"/> as a <see cref="KdlElement"/> document.
         /// </summary>
         /// <param name="typeInfo">The contract from which to resolve the KDL schema.</param>
         /// <param name="exporterOptions">The options object governing the export operation.</param>
         /// <returns>A KDL object containing the schema for <paramref name="typeInfo"/>.</returns>
-        public static KdlVertex GetKdlSchemaAsNode(this KdlTypeInfo typeInfo, KdlSchemaExporterOptions? exporterOptions = null)
+        public static KdlElement GetKdlSchemaAsNode(this KdlTypeInfo typeInfo, KdlSchemaExporterOptions? exporterOptions = null)
         {
             if (typeInfo is null)
             {
@@ -117,10 +117,10 @@ namespace System.Text.Kdl.Schema
                     KeyValuePair<string, KdlSchema>? derivedTypeDiscriminator = null;
                     if (derivedType.TypeDiscriminator is { } discriminatorValue)
                     {
-                        KdlVertex discriminatorNode = discriminatorValue switch
+                        KdlElement discriminatorNode = discriminatorValue switch
                         {
-                            string stringId => (KdlVertex)stringId,
-                            _ => (KdlVertex)(int)discriminatorValue,
+                            string stringId => (KdlElement)stringId,
+                            _ => (KdlElement)(int)discriminatorValue,
                         };
 
                         KdlSchema discriminatorSchema = new() { Constant = discriminatorNode };

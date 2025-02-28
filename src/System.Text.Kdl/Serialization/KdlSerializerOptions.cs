@@ -909,9 +909,9 @@ namespace System.Text.Kdl
             return info;
         }
 
-        internal KdlDocumentOptions GetDocumentOptions()
+        internal KdlReadOnlyDocumentOptions GetDocumentOptions()
         {
-            return new KdlDocumentOptions
+            return new KdlReadOnlyDocumentOptions
             {
                 AllowTrailingCommas = AllowTrailingCommas,
                 CommentHandling = ReadCommentHandling,
@@ -919,9 +919,9 @@ namespace System.Text.Kdl
             };
         }
 
-        internal KdlNodeOptions GetNodeOptions()
+        internal KdlElementOptions GetNodeOptions()
         {
-            return new KdlNodeOptions
+            return new KdlElementOptions
             {
                 PropertyNameCaseInsensitive = PropertyNameCaseInsensitive
             };

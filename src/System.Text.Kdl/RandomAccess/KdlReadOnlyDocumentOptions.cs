@@ -3,9 +3,9 @@ using System.Diagnostics;
 namespace System.Text.Kdl
 {
     /// <summary>
-    /// Provides the ability for the user to define custom behavior when parsing KDL to create a <see cref="KdlDocument"/>.
+    /// Provides the ability for the user to define custom behavior when parsing KDL to create a <see cref="KdlReadOnlyDocument"/>.
     /// </summary>
-    public struct KdlDocumentOptions
+    public struct KdlReadOnlyDocumentOptions
     {
         internal const int DefaultMaxDepth = 64;
 

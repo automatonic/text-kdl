@@ -7,13 +7,13 @@ namespace System.Text.Kdl.Serialization
     /// </summary>
     /// <remarks>
     /// When using <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/>, the TKey value must be <see cref="string"/>
-    /// and TValue must be <see cref="KdlElement"/> or <see cref="object"/>.
+    /// and TValue must be <see cref="KdlReadOnlyElement"/> or <see cref="object"/>.
     ///
     /// During deserializing with a <see cref="System.Collections.Generic.IDictionary{TKey, TValue}"/> extension property with TValue as
-    /// <see cref="object"/>, the type of object created will either be a <see cref="System.Text.Kdl.Nodes.KdlVertex"/> or a
-    /// <see cref="KdlElement"/> depending on the value of <see cref="System.Text.Kdl.KdlSerializerOptions.UnknownTypeHandling"/>.
+    /// <see cref="object"/>, the type of object created will either be a <see cref="System.Text.Kdl.Nodes.KdlElement"/> or a
+    /// <see cref="KdlReadOnlyElement"/> depending on the value of <see cref="System.Text.Kdl.KdlSerializerOptions.UnknownTypeHandling"/>.
     ///
-    /// If a <see cref="KdlElement"/> is created, a "null" KDL value is treated as a KdlElement with <see cref="KdlElement.ValueKind"/>
+    /// If a <see cref="KdlReadOnlyElement"/> is created, a "null" KDL value is treated as a KdlElement with <see cref="KdlReadOnlyElement.ValueKind"/>
     /// set to <see cref="KdlValueKind.Null"/>, otherwise a "null" KDL value is treated as a <c>null</c> object reference.
     ///
     /// During serializing, the name of the extension data member is not included in the KDL;

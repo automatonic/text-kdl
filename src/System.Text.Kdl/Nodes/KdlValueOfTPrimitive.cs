@@ -11,7 +11,7 @@ namespace System.Text.Kdl.Nodes
         private readonly KdlConverter<TValue> _converter;
         private readonly KdlValueKind _valueKind;
 
-        public KdlValuePrimitive(TValue value, KdlConverter<TValue> converter, KdlNodeOptions? options) : base(value, options)
+        public KdlValuePrimitive(TValue value, KdlConverter<TValue> converter, KdlElementOptions? options) : base(value, options)
         {
             Debug.Assert(TypeIsSupportedPrimitive, $"The type {typeof(TValue)} is not a supported primitive.");
             Debug.Assert(converter is { IsInternalConverter: true, ConverterStrategy: ConverterStrategy.Value });
@@ -21,9 +21,9 @@ namespace System.Text.Kdl.Nodes
         }
 
         private protected override KdlValueKind GetValueKindCore() => _valueKind;
-        internal override KdlVertex DeepCloneCore() => new KdlValuePrimitive<TValue>(Value, _converter, Options);
+        internal override KdlElement DeepCloneCore() => new KdlValuePrimitive<TValue>(Value, _converter, Options);
 
-        internal override bool DeepEqualsCore(KdlVertex otherNode)
+        internal override bool DeepEqualsCore(KdlElement otherNode)
         {
             if (otherNode is KdlValue otherValue && otherValue.TryGetValue(out TValue? v))
             {

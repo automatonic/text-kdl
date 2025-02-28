@@ -4,21 +4,21 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Text.Kdl.Nodes
 {
     /// <summary>
-    /// Defines a primitive KDL value that is wrapping a <see cref="KdlElement"/>.
+    /// Defines a primitive KDL value that is wrapping a <see cref="KdlReadOnlyElement"/>.
     /// </summary>
-    internal sealed class KdlValueOfElement : KdlValue<KdlElement>
+    internal sealed class KdlValueOfElement : KdlValue<KdlReadOnlyElement>
     {
-        public KdlValueOfElement(KdlElement value, KdlNodeOptions? options) : base(value, options) => Debug.Assert(value.ValueKind is KdlValueKind.False or KdlValueKind.True or KdlValueKind.Number or KdlValueKind.String);
+        public KdlValueOfElement(KdlReadOnlyElement value, KdlElementOptions? options) : base(value, options) => Debug.Assert(value.ValueKind is KdlValueKind.False or KdlValueKind.True or KdlValueKind.Number or KdlValueKind.String);
 
-        internal override KdlElement? UnderlyingElement => Value;
-        internal override KdlVertex DeepCloneCore() => new KdlValueOfElement(Value.Clone(), Options);
+        internal override KdlReadOnlyElement? UnderlyingReadOnlyElement => Value;
+        internal override KdlElement DeepCloneCore() => new KdlValueOfElement(Value.Clone(), Options);
         private protected override KdlValueKind GetValueKindCore() => Value.ValueKind;
 
-        internal override bool DeepEqualsCore(KdlVertex otherNode)
+        internal override bool DeepEqualsCore(KdlElement otherNode)
         {
-            if (otherNode.UnderlyingElement is KdlElement otherElement)
+            if (otherNode.UnderlyingReadOnlyElement is KdlReadOnlyElement otherElement)
             {
-                return KdlElement.DeepEquals(Value, otherElement);
+                return KdlReadOnlyElement.DeepEquals(Value, otherElement);
             }
 
             if (otherNode is KdlValue)

@@ -14,7 +14,7 @@ namespace System.Text.Kdl
     ///   the memory not being returned to the pool, which will cause an increase in GC impact across
     ///   various parts of the framework.
     /// </remarks>
-    public sealed partial class KdlDocument : IDisposable
+    public sealed partial class KdlReadOnlyDocument : IDisposable
     {
         private ReadOnlyMemory<byte> _utf8Kdl;
         private MetadataDb _parsedData;
@@ -25,11 +25,11 @@ namespace System.Text.Kdl
         internal bool IsDisposable { get; }
 
         /// <summary>
-        ///   The <see cref="KdlElement"/> representing the value of the document.
+        ///   The <see cref="KdlReadOnlyElement"/> representing the value of the document.
         /// </summary>
-        public KdlElement RootElement => new(this, 0);
+        public KdlReadOnlyElement RootElement => new(this, 0);
 
-        private KdlDocument(
+        private KdlReadOnlyDocument(
             ReadOnlyMemory<byte> utf8Kdl,
             MetadataDb parsedData,
             byte[]? extraRentedArrayPoolBytes = null,
@@ -91,10 +91,10 @@ namespace System.Text.Kdl
         ///   The <paramref name="writer"/> parameter is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        ///   This <see cref="RootElement"/>'s <see cref="KdlElement.ValueKind"/> would result in an invalid KDL.
+        ///   This <see cref="RootElement"/>'s <see cref="KdlReadOnlyElement.ValueKind"/> would result in an invalid KDL.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public void WriteTo(KdlWriter writer)
         {
@@ -146,7 +146,7 @@ namespace System.Text.Kdl
             return row.SizeOrLength;
         }
 
-        internal KdlElement GetArrayIndexElement(int currentIndex, int arrayIndex)
+        internal KdlReadOnlyElement GetArrayIndexElement(int currentIndex, int arrayIndex)
         {
             CheckNotDisposed();
 
@@ -166,7 +166,7 @@ namespace System.Text.Kdl
                 // Since we wouldn't be here without having completed the document parse, and we
                 // already vetted the index against the length, this new index will always be
                 // within the table.
-                return new KdlElement(this, currentIndex + ((arrayIndex + 1) * DbRow.Size));
+                return new KdlReadOnlyElement(this, currentIndex + ((arrayIndex + 1) * DbRow.Size));
             }
 
             int elementCount = 0;
@@ -176,7 +176,7 @@ namespace System.Text.Kdl
             {
                 if (arrayIndex == elementCount)
                 {
-                    return new KdlElement(this, objectOffset);
+                    return new KdlReadOnlyElement(this, objectOffset);
                 }
 
                 row = _parsedData.Get(objectOffset);
@@ -771,14 +771,14 @@ namespace System.Text.Kdl
             return KdlReaderHelper.TranscodeHelper(segment.Span);
         }
 
-        internal KdlElement CloneElement(int index)
+        internal KdlReadOnlyElement CloneElement(int index)
         {
             int endIndex = GetEndIndex(index, true);
             MetadataDb newDb = _parsedData.CopySegment(index, endIndex);
             ReadOnlyMemory<byte> segmentCopy = GetRawValue(index, includeQuotes: true).ToArray();
 
-            KdlDocument newDocument =
-                new KdlDocument(
+            KdlReadOnlyDocument newDocument =
+                new KdlReadOnlyDocument(
                     segmentCopy,
                     newDb,
                     extraRentedArrayPoolBytes: null,

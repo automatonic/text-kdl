@@ -3,9 +3,9 @@ using System.Text.Kdl.Serialization.Converters;
 
 namespace System.Text.Kdl.Nodes
 {
-    public partial class KdlNode : IDictionary<KdlEntryKey, KdlVertex?>
+    public partial class KdlNode : IDictionary<KdlEntryKey, KdlElement?>
     {
-        private OrderedDictionary<KdlEntryKey, KdlVertex?>? _dictionary;
+        private OrderedDictionary<KdlEntryKey, KdlElement?>? _dictionary;
 
         /// <summary>
         ///   Adds an element with the provided property name and value to the <see cref="KdlNode"/>.
@@ -18,7 +18,7 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="ArgumentException">
         ///   An element with the same property name already exists in the <see cref="KdlNode"/>.
         /// </exception>
-        public void Add(KdlEntryKey key, KdlVertex? value)
+        public void Add(KdlEntryKey key, KdlElement? value)
         {
             if (key is null)
             {
@@ -41,7 +41,7 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="ArgumentNullException">
         ///   The property name of <paramref name="property"/> is <see langword="null"/>.
         /// </exception>
-        public void Add(KeyValuePair<KdlEntryKey, KdlVertex?> property) => Add(property.Key, property.Value);
+        public void Add(KeyValuePair<KdlEntryKey, KdlElement?> property) => Add(property.Key, property.Value);
 
         /// <summary>
         ///   Determines whether the <see cref="KdlNode"/> contains an element with the specified property name.
@@ -85,7 +85,7 @@ namespace System.Text.Kdl.Nodes
                 ThrowHelper.ThrowArgumentNullException(nameof(key));
             }
 
-            bool success = Dictionary.Remove(key, out KdlVertex? removedNode);
+            bool success = Dictionary.Remove(key, out KdlElement? removedNode);
             if (success)
             {
                 DetachParentForDictionaryItem(removedNode);
@@ -95,14 +95,14 @@ namespace System.Text.Kdl.Nodes
         }
 
         /// <summary>
-        ///   Determines whether the <see cref="KdlNode"/> contains a specific property name and <see cref="KdlVertex"/> reference.
+        ///   Determines whether the <see cref="KdlNode"/> contains a specific property name and <see cref="KdlElement"/> reference.
         /// </summary>
         /// <param name="item">The element to locate in the <see cref="KdlNode"/>.</param>
         /// <returns>
         ///   <see langword="true"/> if the <see cref="KdlNode"/> contains an element with the property name; otherwise, <see langword="false"/>.
         /// </returns>
-        bool ICollection<KeyValuePair<KdlEntryKey, KdlVertex?>>.Contains(KeyValuePair<KdlEntryKey, KdlVertex?> item) =>
-            ((IDictionary<KdlEntryKey, KdlVertex?>)Dictionary).Contains(item);
+        bool ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.Contains(KeyValuePair<KdlEntryKey, KdlElement?> item) =>
+            ((IDictionary<KdlEntryKey, KdlElement?>)Dictionary).Contains(item);
 
         /// <summary>
         ///   Copies the elements of the <see cref="KdlNode"/> to an array of type KeyValuePair starting at the specified array index.
@@ -121,8 +121,8 @@ namespace System.Text.Kdl.Nodes
         ///   The number of elements in the source ICollection is greater than the available space from <paramref name="index"/>
         ///   to the end of the destination <paramref name="array"/>.
         /// </exception>
-        void ICollection<KeyValuePair<KdlEntryKey, KdlVertex?>>.CopyTo(KeyValuePair<KdlEntryKey, KdlVertex?>[] array, int index) =>
-            ((IDictionary<KdlEntryKey, KdlVertex?>)Dictionary).CopyTo(array, index);
+        void ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.CopyTo(KeyValuePair<KdlEntryKey, KdlElement?>[] array, int index) =>
+            ((IDictionary<KdlEntryKey, KdlElement?>)Dictionary).CopyTo(array, index);
 
         /// <summary>
         ///   Returns an enumerator that iterates through the <see cref="KdlNode"/>.
@@ -130,7 +130,7 @@ namespace System.Text.Kdl.Nodes
         /// <returns>
         ///   An enumerator that iterates through the <see cref="KdlNode"/>.
         /// </returns>
-        public IEnumerator<KeyValuePair<KdlEntryKey, KdlVertex?>> GetEnumerator() => Dictionary.GetEnumerator();
+        public IEnumerator<KeyValuePair<KdlEntryKey, KdlElement?>> GetEnumerator() => Dictionary.GetEnumerator();
 
         /// <summary>
         ///   Removes a key and value from the <see cref="KdlNode"/>.
@@ -141,17 +141,17 @@ namespace System.Text.Kdl.Nodes
         /// <returns>
         ///   <see langword="true"/> if the element is successfully removed; otherwise, <see langword="false"/>.
         /// </returns>
-        bool ICollection<KeyValuePair<KdlEntryKey, KdlVertex?>>.Remove(KeyValuePair<KdlEntryKey, KdlVertex?> item) => Remove(item.Key);
+        bool ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.Remove(KeyValuePair<KdlEntryKey, KdlElement?> item) => Remove(item.Key);
 
         /// <summary>
         ///   Gets a collection containing the property names in the <see cref="KdlNode"/>.
         /// </summary>
-        ICollection<KdlEntryKey> IDictionary<KdlEntryKey, KdlVertex?>.Keys => Dictionary.Keys;
+        ICollection<KdlEntryKey> IDictionary<KdlEntryKey, KdlElement?>.Keys => Dictionary.Keys;
 
         /// <summary>
         ///   Gets a collection containing the property values in the <see cref="KdlNode"/>.
         /// </summary>
-        ICollection<KdlVertex?> IDictionary<KdlEntryKey, KdlVertex?>.Values => Dictionary.Values;
+        ICollection<KdlElement?> IDictionary<KdlEntryKey, KdlElement?>.Values => Dictionary.Values;
 
         /// <summary>
         ///   Gets the value associated with the specified property name.
@@ -167,7 +167,7 @@ namespace System.Text.Kdl.Nodes
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="key"/> is <see langword="null"/>.
         /// </exception>
-        bool IDictionary<KdlEntryKey, KdlVertex?>.TryGetValue(KdlEntryKey key, out KdlVertex? kdlVertex)
+        bool IDictionary<KdlEntryKey, KdlElement?>.TryGetValue(KdlEntryKey key, out KdlElement? kdlVertex)
         {
             if (key is null)
             {
@@ -180,13 +180,11 @@ namespace System.Text.Kdl.Nodes
         /// <summary>
         ///   Returns <see langword="false"/>.
         /// </summary>
-        bool ICollection<KeyValuePair<KdlEntryKey, KdlVertex?>>.IsReadOnly => false;
+        bool ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.IsReadOnly => false;
 
-        public KdlVertex? this[KdlEntryKey key] { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
-        private OrderedDictionary<KdlEntryKey, KdlVertex?> InitializeDictionary()
+        private OrderedDictionary<KdlEntryKey, KdlElement?> InitializeDictionary()
         {
-            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlVertex?>? dictionary, out KdlElement? kdlElement);
+            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out KdlReadOnlyElement? kdlElement);
 
             if (dictionary is null)
             {
@@ -196,7 +194,7 @@ namespace System.Text.Kdl.Nodes
                 {
                     foreach (IKdlEntry jElementProperty in kdlElement.Value.EnumerateNode())
                     {
-                        KdlVertex? node = KdlVertexConverter.Create(jElementProperty.Value, Options);
+                        KdlElement? node = KdlVertexConverter.Create(jElementProperty.Value, Options);
                         if (node != null)
                         {
                             node.Parent = this;
@@ -215,7 +213,8 @@ namespace System.Text.Kdl.Nodes
             return dictionary;
         }
 
-        private static OrderedDictionary<KdlEntryKey, KdlVertex?> CreateDictionary(KdlNodeOptions? options, int capacity = 0)
+        [Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
+        private static OrderedDictionary<KdlEntryKey, KdlElement?> CreateDictionary(KdlElementOptions? options, int capacity = 0)
         {
             //TECHDEBT: Need a key comparer
             // StringComparer comparer = options?.PropertyNameCaseInsensitive ?? false
@@ -230,7 +229,7 @@ namespace System.Text.Kdl.Nodes
         /// Provides a coherent view of the underlying representation of the current node.
         /// The kdlElement value should be consumed if and only if dictionary value is null.
         /// </summary>
-        private void GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlVertex?>? dictionary, out KdlElement? kdlElement)
+        private void GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out KdlReadOnlyElement? kdlElement)
         {
             // Because KdlElement cannot be read atomically there might be torn reads,
             // however the order of read/write operations guarantees that that's only

@@ -118,8 +118,8 @@ namespace System.Text.Kdl
                 Debug.Assert(genericArgs[0].UnderlyingSystemType == typeof(string));
                 Debug.Assert(
                     genericArgs[1].UnderlyingSystemType == KdlTypeInfo.ObjectType ||
-                    genericArgs[1].UnderlyingSystemType == typeof(KdlElement) ||
-                    genericArgs[1].UnderlyingSystemType == typeof(Nodes.KdlVertex));
+                    genericArgs[1].UnderlyingSystemType == typeof(KdlReadOnlyElement) ||
+                    genericArgs[1].UnderlyingSystemType == typeof(Nodes.KdlElement));
 #endif
 
                 Func<object>? createObjectForExtensionDataProp = jsonPropertyInfo.KdlTypeInfo.CreateObject

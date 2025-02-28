@@ -7,11 +7,11 @@ namespace System.Text.Kdl
     public static partial class KdlSerializer
     {
         /// <summary>
-        /// Converts the <see cref="KdlElement"/> representing a single KDL value into a <typeparamref name="TValue"/>.
+        /// Converts the <see cref="KdlReadOnlyElement"/> representing a single KDL value into a <typeparamref name="TValue"/>.
         /// </summary>
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
-        /// <param name="element">The <see cref="KdlElement"/> to convert.</param>
+        /// <param name="element">The <see cref="KdlReadOnlyElement"/> to convert.</param>
         /// <param name="options">Options to control the behavior during parsing.</param>
         /// <exception cref="KdlException">
         /// <typeparamref name="TValue" /> is not compatible with the KDL.
@@ -22,7 +22,7 @@ namespace System.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>(this KdlElement element, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(this KdlReadOnlyElement element, KdlSerializerOptions? options = null)
         {
             KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
             ReadOnlySpan<byte> utf8Kdl = element.GetRawValue().Span;
@@ -30,10 +30,10 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Converts the <see cref="KdlElement"/> representing a single KDL value into a <paramref name="returnType"/>.
+        /// Converts the <see cref="KdlReadOnlyElement"/> representing a single KDL value into a <paramref name="returnType"/>.
         /// </summary>
         /// <returns>A <paramref name="returnType"/> representation of the KDL value.</returns>
-        /// <param name="element">The <see cref="KdlElement"/> to convert.</param>
+        /// <param name="element">The <see cref="KdlReadOnlyElement"/> to convert.</param>
         /// <param name="returnType">The type of the object to convert to and return.</param>
         /// <param name="options">Options to control the behavior during parsing.</param>
         /// <exception cref="System.ArgumentNullException">
@@ -48,7 +48,7 @@ namespace System.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(this KdlElement element, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(this KdlReadOnlyElement element, Type returnType, KdlSerializerOptions? options = null)
         {
             if (returnType is null)
             {
@@ -61,11 +61,11 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Converts the <see cref="KdlElement"/> representing a single KDL value into a <typeparamref name="TValue"/>.
+        /// Converts the <see cref="KdlReadOnlyElement"/> representing a single KDL value into a <typeparamref name="TValue"/>.
         /// </summary>
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
-        /// <param name="element">The <see cref="KdlElement"/> to convert.</param>
+        /// <param name="element">The <see cref="KdlReadOnlyElement"/> to convert.</param>
         /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
@@ -77,7 +77,7 @@ namespace System.Text.Kdl
         /// There is no compatible <see cref="System.Text.Kdl.Serialization.KdlConverter"/>
         /// for <typeparamref name="TValue"/> or its serializable members.
         /// </exception>
-        public static TValue? Deserialize<TValue>(this KdlElement element, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>(this KdlReadOnlyElement element, KdlTypeInfo<TValue> jsonTypeInfo)
         {
             if (jsonTypeInfo is null)
             {
@@ -90,15 +90,15 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Converts the <see cref="KdlElement"/> representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Converts the <see cref="KdlReadOnlyElement"/> representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
         /// </summary>
         /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
-        /// <param name="element">The <see cref="KdlElement"/> to convert.</param>
+        /// <param name="element">The <see cref="KdlReadOnlyElement"/> to convert.</param>
         /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static object? Deserialize(this KdlElement element, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize(this KdlReadOnlyElement element, KdlTypeInfo jsonTypeInfo)
         {
             if (jsonTypeInfo is null)
             {
@@ -111,10 +111,10 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Converts the <see cref="KdlElement"/> representing a single KDL value into a <paramref name="returnType"/>.
+        /// Converts the <see cref="KdlReadOnlyElement"/> representing a single KDL value into a <paramref name="returnType"/>.
         /// </summary>
         /// <returns>A <paramref name="returnType"/> representation of the KDL value.</returns>
-        /// <param name="element">The <see cref="KdlElement"/> to convert.</param>
+        /// <param name="element">The <see cref="KdlReadOnlyElement"/> to convert.</param>
         /// <param name="returnType">The type of the object to convert to and return.</param>
         /// <param name="context">A metadata provider for serializable types.</param>
         /// <exception cref="System.ArgumentNullException">
@@ -142,7 +142,7 @@ namespace System.Text.Kdl
         /// The <see cref="KdlSerializerContext.GetTypeInfo(Type)"/> method of the provided
         /// <paramref name="context"/> returns <see langword="null"/> for the type to convert.
         /// </exception>
-        public static object? Deserialize(this KdlElement element, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(this KdlReadOnlyElement element, Type returnType, KdlSerializerContext context)
         {
             if (returnType is null)
             {

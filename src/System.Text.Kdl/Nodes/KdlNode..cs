@@ -1,11 +1,10 @@
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using System.Text.Kdl.Serialization.Converters;
 
 namespace System.Text.Kdl.Nodes
 {
     /// <summary>
-    ///   Represents a mutable KDL array.
+    ///   Represents a mutable KDL node.
     /// </summary>
     /// <remarks>
     /// It is safe to perform multiple concurrent read operations on a <see cref="KdlNode"/>,
@@ -13,19 +12,19 @@ namespace System.Text.Kdl.Nodes
     /// </remarks>
     [DebuggerDisplay("KdlNode[{List.Count}]")]
     [DebuggerTypeProxy(typeof(DebugView))]
-    public sealed partial class KdlNode : KdlVertex
+    public sealed partial class KdlNode : KdlElement
     {
 
 
-        private KdlElement? _kdlElement;
+        private KdlReadOnlyElement? _kdlElement;
 
-        internal override KdlElement? UnderlyingElement => _kdlElement;
+        internal override KdlReadOnlyElement? UnderlyingReadOnlyElement => _kdlElement;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="KdlNode"/> class that is empty.
         /// </summary>
         /// <param name="options">Options to control the behavior.</param>
-        public KdlNode(KdlNodeOptions? options = null) : base(options) { }
+        public KdlNode(KdlElementOptions? options = null) : base(options) { }
 
         //TECHDEBT: May want these for argument inflow?
         /// <summary>
@@ -83,12 +82,12 @@ namespace System.Text.Kdl.Nodes
         /// </summary>
         /// <param name="properties">The properties to be added.</param>
         /// <param name="options">Options to control the behavior.</param>
-        public KdlNode(IEnumerable<KeyValuePair<KdlEntryKey, KdlVertex?>> properties, KdlNodeOptions? options = null) : this(options)
+        public KdlNode(IEnumerable<KeyValuePair<KdlEntryKey, KdlElement?>> properties, KdlElementOptions? options = null) : this(options)
         {
-            int capacity = properties is ICollection<KeyValuePair<KdlEntryKey, KdlVertex?>> propertiesCollection ? propertiesCollection.Count : 0;
-            OrderedDictionary<KdlEntryKey, KdlVertex?> dictionary = CreateDictionary(options, capacity);
+            int capacity = properties is ICollection<KeyValuePair<KdlEntryKey, KdlElement?>> propertiesCollection ? propertiesCollection.Count : 0;
+            OrderedDictionary<KdlEntryKey, KdlElement?> dictionary = CreateDictionary(options, capacity);
 
-            foreach (KeyValuePair<KdlEntryKey, KdlVertex?> node in properties)
+            foreach (KeyValuePair<KdlEntryKey, KdlElement?> node in properties)
             {
                 dictionary.Add(node.Key, node.Value);
                 node.Value?.AssignParent(this);
@@ -101,10 +100,10 @@ namespace System.Text.Kdl.Nodes
 
         private protected override KdlValueKind GetValueKindCore() => KdlValueKind.Node;
 
-        internal override KdlVertex DeepCloneCore()
+        internal override KdlElement DeepCloneCore()
         {
             //TECHDEBT: unify these as well
-            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlVertex?>? dictionary, out var kdlElement);
+            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out var kdlElement);
 
             if (dictionary is null)
             {
@@ -118,7 +117,7 @@ namespace System.Text.Kdl.Nodes
                 _dictionary = CreateDictionary(Options, Count)
             };
 
-            foreach (KeyValuePair<KdlEntryKey, KdlVertex?> item in dictionary)
+            foreach (KeyValuePair<KdlEntryKey, KdlElement?> item in dictionary)
             {
                 kdlNode.Add(item.Key, item.Value?.DeepCloneCore());
             }
@@ -126,25 +125,25 @@ namespace System.Text.Kdl.Nodes
             return kdlNode;
         }
 
-        internal override bool DeepEqualsCore(KdlVertex vertex)
+        internal override bool DeepEqualsCore(KdlElement elementNode)
         {
-            switch (vertex)
+            switch (elementNode)
             {
                 case KdlValue value:
                     // KdlValue instances have special comparison semantics, dispatch to their implementation.
                     return value.DeepEqualsCore(this);
                 case KdlNode node:
-                    OrderedDictionary<KdlEntryKey, KdlVertex?> currentDict = Dictionary;
-                    OrderedDictionary<KdlEntryKey, KdlVertex?> otherDict = node.Dictionary;
+                    OrderedDictionary<KdlEntryKey, KdlElement?> currentDict = Dictionary;
+                    OrderedDictionary<KdlEntryKey, KdlElement?> otherDict = node.Dictionary;
 
                     if (currentDict.Count != otherDict.Count)
                     {
                         return false;
                     }
 
-                    foreach (KeyValuePair<KdlEntryKey, KdlVertex?> item in currentDict)
+                    foreach (KeyValuePair<KdlEntryKey, KdlElement?> item in currentDict)
                     {
-                        otherDict.TryGetValue(item.Key, out KdlVertex? jsonNode);
+                        otherDict.TryGetValue(item.Key, out KdlElement? jsonNode);
 
                         if (!DeepEquals(item.Value, jsonNode))
                         {
@@ -161,17 +160,17 @@ namespace System.Text.Kdl.Nodes
 
 
         /// <summary>
-        ///   Initializes a new instance of the <see cref="KdlNode"/> class that contains items from the specified <see cref="KdlElement"/>.
+        ///   Initializes a new instance of the <see cref="KdlNode"/> class that contains items from the specified <see cref="KdlReadOnlyElement"/>.
         /// </summary>
         /// <returns>
-        ///   The new instance of the <see cref="KdlNode"/> class that contains items from the specified <see cref="KdlElement"/>.
+        ///   The new instance of the <see cref="KdlNode"/> class that contains items from the specified <see cref="KdlReadOnlyElement"/>.
         /// </returns>
-        /// <param name="element">The <see cref="KdlElement"/>.</param>
+        /// <param name="element">The <see cref="KdlReadOnlyElement"/>.</param>
         /// <param name="options">Options to control the behavior.</param>
         /// <exception cref="InvalidOperationException">
         ///   The <paramref name="element"/> is not a <see cref="KdlValueKind.Node"/>.
         /// </exception>
-        public static KdlNode? Create(KdlElement element, KdlNodeOptions? options = null)
+        public static KdlNode? Create(KdlReadOnlyElement element, KdlElementOptions? options = null)
         {
             return element.ValueKind switch
             {
@@ -181,7 +180,7 @@ namespace System.Text.Kdl.Nodes
             };
         }
 
-        internal KdlNode(KdlElement element, KdlNodeOptions? options = null) : base(options)
+        internal KdlNode(KdlReadOnlyElement element, KdlElementOptions? options = null) : base(options)
         {
             Debug.Assert(element.ValueKind == KdlValueKind.Node);
             _kdlElement = element;
@@ -198,12 +197,12 @@ namespace System.Text.Kdl.Nodes
         [RequiresDynamicCode(KdlValue.CreateDynamicCodeMessage)]
         public void Add<T>(T? value)
         {
-            KdlVertex? nodeToAdd = ConvertFromValue(value, Options);
+            KdlElement? nodeToAdd = ConvertFromValue(value, Options);
             Add(nodeToAdd);
         }
 
 
-        internal override void GetPath(ref ValueStringBuilder path, KdlVertex? child)
+        internal override void GetPath(ref ValueStringBuilder path, KdlElement? child)
         {
             Parent?.GetPath(ref path, this);
 
@@ -233,7 +232,7 @@ namespace System.Text.Kdl.Nodes
                 ThrowHelper.ThrowArgumentNullException(nameof(writer));
             }
 
-            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlVertex?>? dictionary, out KdlElement? kdlElement);
+            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out KdlReadOnlyElement? kdlElement);
 
             if (dictionary is null && kdlElement.HasValue)
             {
@@ -244,7 +243,7 @@ namespace System.Text.Kdl.Nodes
             {
                 writer.WriteStartObject();
 
-                foreach (KeyValuePair<KdlEntryKey, KdlVertex?> entry in Dictionary)
+                foreach (KeyValuePair<KdlEntryKey, KdlElement?> entry in Dictionary)
                 {
                     writer.WritePropertyName(entry.Key.PropertyName ?? "");
 
@@ -262,7 +261,7 @@ namespace System.Text.Kdl.Nodes
             }
         }
 
-        private void DetachParentForDictionaryItem(KdlVertex? item)
+        private void DetachParentForDictionaryItem(KdlElement? item)
         {
             //TECHDEBT: Need to differentiate between cases. this may be true with properties
             //But may be avoided if only items?
@@ -307,7 +306,7 @@ namespace System.Text.Kdl.Nodes
             private struct DebugViewEntry
             {
                 [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-                public KdlVertex? Value;
+                public KdlElement? Value;
 
                 [DebuggerBrowsable(DebuggerBrowsableState.Never)]
                 public string EntryName;

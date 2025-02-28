@@ -19,7 +19,7 @@ namespace System.Text.Kdl.Serialization.Converters
             KdlSerializerOptions options,
             scoped ref ReadStack state)
         {
-            bool success = KdlVertexConverter.Instance.TryRead(ref reader, typeof(KdlVertex), options, ref state, out KdlVertex? value, out _);
+            bool success = KdlVertexConverter.Instance.TryRead(ref reader, typeof(KdlElement), options, ref state, out KdlElement? value, out _);
             Debug.Assert(success); // Node converters are not resumable.
 
             Debug.Assert(obj is KdlNode);
@@ -52,9 +52,9 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public static KdlNode ReadObject(ref KdlReader reader, KdlNodeOptions? options)
+        public static KdlNode ReadObject(ref KdlReader reader, KdlElementOptions? options)
         {
-            KdlElement jElement = KdlElement.ParseValue(ref reader);
+            KdlReadOnlyElement jElement = KdlReadOnlyElement.ParseValue(ref reader);
             KdlNode jObject = new KdlNode(jElement, options);
             return jObject;
         }

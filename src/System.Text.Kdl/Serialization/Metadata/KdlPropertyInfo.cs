@@ -859,10 +859,10 @@ namespace System.Text.Kdl.Serialization.Metadata
                     dictionaryObjectValue[state.Current.KdlPropertyNameAsString!] = value;
                 }
             }
-            else if (propValue is IDictionary<string, KdlElement> dictionaryElementValue)
+            else if (propValue is IDictionary<string, KdlReadOnlyElement> dictionaryElementValue)
             {
-                KdlConverter<KdlElement> converter = GetDictionaryValueConverter<KdlElement>();
-                KdlElement value = converter.Read(ref reader, typeof(KdlElement), Options);
+                KdlConverter<KdlReadOnlyElement> converter = GetDictionaryValueConverter<KdlReadOnlyElement>();
+                KdlReadOnlyElement value = converter.Read(ref reader, typeof(KdlReadOnlyElement), Options);
                 dictionaryElementValue[state.Current.KdlPropertyNameAsString!] = value;
             }
             else
@@ -902,8 +902,8 @@ namespace System.Text.Kdl.Serialization.Metadata
                 return true;
             }
 
-            KdlConverter<KdlElement> converter = (KdlConverter<KdlElement>)Options.GetConverterInternal(typeof(KdlElement));
-            if (!converter.TryRead(ref reader, typeof(KdlElement), Options, ref state, out KdlElement kdlElement, out _))
+            KdlConverter<KdlReadOnlyElement> converter = (KdlConverter<KdlReadOnlyElement>)Options.GetConverterInternal(typeof(KdlReadOnlyElement));
+            if (!converter.TryRead(ref reader, typeof(KdlReadOnlyElement), Options, ref state, out KdlReadOnlyElement kdlElement, out _))
             {
                 // KdlElement is a struct that must be read in full.
                 value = null;

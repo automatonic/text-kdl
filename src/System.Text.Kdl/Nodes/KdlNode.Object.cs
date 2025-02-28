@@ -13,20 +13,22 @@ namespace System.Text.Kdl.Nodes
     ///   Initializes a new instance of the <see cref="KdlNode"/> class that is empty.
     /// </remarks>
     /// <param name="options">Options to control the behavior.</param>
-    public sealed partial class KdlNode : KdlVertex
+    public sealed partial class KdlNode : KdlElement
     {
         /// <summary>
         /// Gets or creates the underlying dictionary containing the properties of the object.
         /// </summary>
-        private OrderedDictionary<KdlEntryKey, KdlVertex?> Dictionary => _dictionary ?? InitializeDictionary();
+        private OrderedDictionary<KdlEntryKey, KdlElement?> Dictionary => _dictionary ?? InitializeDictionary();
 
-        internal KdlEntryKey? GetPropertyName(KdlVertex? vertex)
+        internal KdlEntryKey? GetPropertyName(KdlElement? elementNode)
         {
-            KeyValuePair<KdlEntryKey, KdlVertex?>? item = FindValue(vertex);
+            KeyValuePair<KdlEntryKey, KdlElement?>? item = FindValue(elementNode);
             return item.HasValue ? item.Value.Key : null;
         }
 
-        internal int GetElementIndex(KdlVertex? vertex)
+        [Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
+        [Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
+        internal int GetElementIndex(KdlElement? elementNode)
         {
             //TECHDEBT:
             return 0;
@@ -40,7 +42,7 @@ namespace System.Text.Kdl.Nodes
         /// <returns>
         ///   <see langword="true"/> if a property with the specified name was found; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool TryGetPropertyValue(KdlEntryKey propertyName, out KdlVertex? jsonNode)
+        public bool TryGetPropertyValue(KdlEntryKey propertyName, out KdlElement? jsonNode)
         {
             if (propertyName is null)
             {
@@ -50,14 +52,14 @@ namespace System.Text.Kdl.Nodes
             return Dictionary.TryGetValue(propertyName, out jsonNode);
         }
 
-        internal KdlVertex? GetItem(KdlEntryKey propertyName)
+        internal KdlElement? GetItem(KdlEntryKey propertyName)
         {
             if (propertyName is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyName));
             }
 
-            if (TryGetPropertyValue(propertyName, out KdlVertex? value))
+            if (TryGetPropertyValue(propertyName, out KdlElement? value))
             {
                 return value;
             }
@@ -66,14 +68,14 @@ namespace System.Text.Kdl.Nodes
             return null;
         }
 
-        internal void SetItem(KdlEntryKey propertyName, KdlVertex? value)
+        internal void SetItem(KdlEntryKey propertyName, KdlElement? value)
         {
             if (propertyName is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyName));
             }
 
-            OrderedDictionary<KdlEntryKey, KdlVertex?> dict = Dictionary;
+            OrderedDictionary<KdlEntryKey, KdlElement?> dict = Dictionary;
 
             if (
 #if NET10_0_OR_GREATER
@@ -87,7 +89,7 @@ namespace System.Text.Kdl.Nodes
                 int index = dict.IndexOf(propertyName);
 #endif
                 Debug.Assert(index >= 0);
-                KdlVertex? replacedValue = dict.GetAt(index).Value;
+                KdlElement? replacedValue = dict.GetAt(index).Value;
 
                 if (ReferenceEquals(value, replacedValue))
                 {
@@ -102,9 +104,9 @@ namespace System.Text.Kdl.Nodes
         }
 
 
-        private KeyValuePair<KdlEntryKey, KdlVertex?>? FindValue(KdlVertex? value)
+        private KeyValuePair<KdlEntryKey, KdlElement?>? FindValue(KdlElement? value)
         {
-            foreach (KeyValuePair<KdlEntryKey, KdlVertex?> item in Dictionary)
+            foreach (KeyValuePair<KdlEntryKey, KdlElement?> item in Dictionary)
             {
                 if (ReferenceEquals(item.Value, value))
                 {

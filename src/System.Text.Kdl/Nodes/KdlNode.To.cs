@@ -1,6 +1,6 @@
 ﻿namespace System.Text.Kdl.Nodes
 {
-    public abstract partial class KdlVertex
+    public abstract partial class KdlElement
     {
         /// <summary>
         ///   Converts the current instance to string in KDL format.
@@ -64,7 +64,7 @@
         }
 
         /// <summary>
-        ///   Write the <see cref="KdlVertex"/> into the provided <see cref="KdlWriter"/> as KDL.
+        ///   Write the <see cref="KdlElement"/> into the provided <see cref="KdlWriter"/> as KDL.
         /// </summary>
         /// <param name="writer">The <see cref="KdlWriter"/>.</param>
         /// <exception cref="ArgumentNullException">

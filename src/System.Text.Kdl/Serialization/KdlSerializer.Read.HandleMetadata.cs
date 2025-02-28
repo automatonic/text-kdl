@@ -345,7 +345,7 @@ namespace System.Text.Kdl
         internal static bool TryHandleReferenceFromKdlElement(
             ref KdlReader reader,
             scoped ref ReadStack state,
-            KdlElement element,
+            KdlReadOnlyElement element,
             [NotNullWhen(true)] out object? referenceValue)
         {
             bool refMetadataFound = false;
@@ -409,7 +409,7 @@ namespace System.Text.Kdl
         internal static bool TryHandleReferenceFromKdlNode(
             ref KdlReader reader,
             scoped ref ReadStack state,
-            KdlVertex? jsonNode,
+            KdlElement? jsonNode,
             [NotNullWhen(true)] out object? referenceValue)
         {
             bool refMetadataFound = false;
@@ -417,7 +417,9 @@ namespace System.Text.Kdl
 
             if (jsonNode is KdlNode kdlNode)
             {
+#pragma warning disable CS0219 // Variable is assigned but its value is never used
                 int propertyCount = 0;
+#pragma warning restore CS0219 // Variable is assigned but its value is never used
                 //TECHDEBT
                 // foreach (KeyValuePair<KdlEntryKey, KdlVertex?> property in kdlNode)
                 // {

@@ -130,18 +130,18 @@ namespace System.Text.Kdl.Serialization.Metadata
         private static KdlConverter<KdlNode?>? s_jsonArrayConverter;
 
         /// <summary>
+        /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlReadOnlyElement"/> values.
+        /// </summary>
+        /// <remarks>This API is for use by the output of the System.Text.Kdl source generator and should not be called directly.</remarks>
+        public static KdlConverter<KdlReadOnlyElement> KdlElementConverter => s_jsonElementConverter ??= new KdlElementConverter();
+        private static KdlConverter<KdlReadOnlyElement>? s_jsonElementConverter;
+
+        /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlElement"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the System.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlElement> KdlElementConverter => s_jsonElementConverter ??= new KdlElementConverter();
-        private static KdlConverter<KdlElement>? s_jsonElementConverter;
-
-        /// <summary>
-        /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlVertex"/> values.
-        /// </summary>
-        /// <remarks>This API is for use by the output of the System.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlVertex?> KdlNodeConverter => s_jsonNodeConverter ??= new KdlVertexConverter();
-        private static KdlConverter<KdlVertex?>? s_jsonNodeConverter;
+        public static KdlConverter<KdlElement?> KdlNodeConverter => s_jsonNodeConverter ??= new KdlVertexConverter();
+        private static KdlConverter<KdlElement?>? s_jsonNodeConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlNode"/> values.
@@ -158,11 +158,11 @@ namespace System.Text.Kdl.Serialization.Metadata
         private static KdlConverter<KdlValue?>? s_jsonValueConverter;
 
         /// <summary>
-        /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlDocument"/> values.
+        /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlReadOnlyDocument"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the System.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlDocument?> KdlDocumentConverter => s_jsonDocumentConverter ??= new KdlDocumentConverter();
-        private static KdlConverter<KdlDocument?>? s_jsonDocumentConverter;
+        public static KdlConverter<KdlReadOnlyDocument?> KdlDocumentConverter => s_jsonDocumentConverter ??= new KdlDocumentConverter();
+        private static KdlConverter<KdlReadOnlyDocument?>? s_jsonDocumentConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="Memory{Byte}"/> values.

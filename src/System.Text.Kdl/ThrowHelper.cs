@@ -728,7 +728,7 @@ namespace System.Text.Kdl
         [DoesNotReturn]
         public static void ThrowObjectDisposedException_KdlDocument()
         {
-            throw new ObjectDisposedException(nameof(KdlDocument));
+            throw new ObjectDisposedException(nameof(KdlReadOnlyDocument));
         }
 
         [DoesNotReturn]

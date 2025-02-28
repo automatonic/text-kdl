@@ -22,10 +22,10 @@ namespace System.Text.Kdl.Serialization.Converters
                 return KdlVertexConverter.ArrayConverter;
             }
 
-            Debug.Assert(typeof(KdlVertex) == typeToConvert);
+            Debug.Assert(typeof(KdlElement) == typeToConvert);
             return KdlVertexConverter.Instance;
         }
 
-        public override bool CanConvert(Type typeToConvert) => typeof(KdlVertex).IsAssignableFrom(typeToConvert);
+        public override bool CanConvert(Type typeToConvert) => typeof(KdlElement).IsAssignableFrom(typeToConvert);
     }
 }

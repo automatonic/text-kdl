@@ -9,11 +9,11 @@ namespace System.Text.Kdl.Nodes
     {
         internal readonly TValue Value; // keep as a field for direct access to avoid copies
 
-        protected KdlValue(TValue value, KdlNodeOptions? options) : base(options)
+        protected KdlValue(TValue value, KdlElementOptions? options) : base(options)
         {
             Debug.Assert(value != null);
-            Debug.Assert(value is not KdlElement or KdlElement { ValueKind: not KdlValueKind.Null });
-            Debug.Assert(value is not KdlVertex);
+            Debug.Assert(value is not KdlReadOnlyElement or KdlReadOnlyElement { ValueKind: not KdlValueKind.Null });
+            Debug.Assert(value is not KdlElement);
             Value = value;
         }
 

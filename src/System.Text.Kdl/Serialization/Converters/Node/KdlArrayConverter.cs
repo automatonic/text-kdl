@@ -31,9 +31,9 @@ namespace System.Text.Kdl.Serialization.Converters
             }
         }
 
-        public static KdlNode ReadList(ref KdlReader reader, KdlNodeOptions? options = null)
+        public static KdlNode ReadList(ref KdlReader reader, KdlElementOptions? options = null)
         {
-            KdlElement jElement = KdlElement.ParseValue(ref reader);
+            KdlReadOnlyElement jElement = KdlReadOnlyElement.ParseValue(ref reader);
             return new KdlNode(jElement, options);
         }
 

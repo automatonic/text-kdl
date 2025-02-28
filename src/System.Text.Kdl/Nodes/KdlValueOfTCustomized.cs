@@ -14,14 +14,14 @@ namespace System.Text.Kdl.Nodes
         private readonly KdlTypeInfo<TValue> _jsonTypeInfo;
         private KdlValueKind? _valueKind;
 
-        public KdlValueCustomized(TValue value, KdlTypeInfo<TValue> jsonTypeInfo, KdlNodeOptions? options = null) : base(value, options)
+        public KdlValueCustomized(TValue value, KdlTypeInfo<TValue> jsonTypeInfo, KdlElementOptions? options = null) : base(value, options)
         {
             Debug.Assert(jsonTypeInfo.IsConfigured);
             _jsonTypeInfo = jsonTypeInfo;
         }
 
         private protected override KdlValueKind GetValueKindCore() => _valueKind ??= ComputeValueKind();
-        internal override KdlVertex DeepCloneCore() => KdlSerializer.SerializeToNode(Value, _jsonTypeInfo)!;
+        internal override KdlElement DeepCloneCore() => KdlSerializer.SerializeToNode(Value, _jsonTypeInfo)!;
 
         public override void WriteTo(KdlWriter writer, KdlSerializerOptions? options = null)
         {

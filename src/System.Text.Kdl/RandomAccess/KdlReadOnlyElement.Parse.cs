@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace System.Text.Kdl
 {
-    public readonly partial struct KdlElement
+    public readonly partial struct KdlReadOnlyElement
     {
         /// <summary>
         ///   Parses one KDL value (including objects or arrays) from the provided reader.
@@ -40,30 +40,30 @@ namespace System.Text.Kdl
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static KdlElement ParseValue(ref KdlReader reader)
+        public static KdlReadOnlyElement ParseValue(ref KdlReader reader)
         {
-            bool ret = KdlDocument.TryParseValue(ref reader, out KdlDocument? document, shouldThrow: true, useArrayPools: false);
+            bool ret = KdlReadOnlyDocument.TryParseValue(ref reader, out KdlReadOnlyDocument? document, shouldThrow: true, useArrayPools: false);
 
             Debug.Assert(ret, "TryParseValue returned false with shouldThrow: true.");
             Debug.Assert(document != null, "null document returned with shouldThrow: true.");
             return document.RootElement;
         }
 
-        internal static KdlElement ParseValue(Stream utf8Kdl, KdlDocumentOptions options)
+        internal static KdlReadOnlyElement ParseValue(Stream utf8Kdl, KdlReadOnlyDocumentOptions options)
         {
-            KdlDocument document = KdlDocument.ParseValue(utf8Kdl, options);
+            KdlReadOnlyDocument document = KdlReadOnlyDocument.ParseValue(utf8Kdl, options);
             return document.RootElement;
         }
 
-        internal static KdlElement ParseValue(ReadOnlySpan<byte> utf8Kdl, KdlDocumentOptions options)
+        internal static KdlReadOnlyElement ParseValue(ReadOnlySpan<byte> utf8Kdl, KdlReadOnlyDocumentOptions options)
         {
-            KdlDocument document = KdlDocument.ParseValue(utf8Kdl, options);
+            KdlReadOnlyDocument document = KdlReadOnlyDocument.ParseValue(utf8Kdl, options);
             return document.RootElement;
         }
 
-        internal static KdlElement ParseValue(string kdl, KdlDocumentOptions options)
+        internal static KdlReadOnlyElement ParseValue(string kdl, KdlReadOnlyDocumentOptions options)
         {
-            KdlDocument document = KdlDocument.ParseValue(kdl, options);
+            KdlReadOnlyDocument document = KdlReadOnlyDocument.ParseValue(kdl, options);
             return document.RootElement;
         }
 
@@ -105,9 +105,9 @@ namespace System.Text.Kdl
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static bool TryParseValue(ref KdlReader reader, [NotNullWhen(true)] out KdlElement? element)
+        public static bool TryParseValue(ref KdlReader reader, [NotNullWhen(true)] out KdlReadOnlyElement? element)
         {
-            bool ret = KdlDocument.TryParseValue(ref reader, out KdlDocument? document, shouldThrow: false, useArrayPools: false);
+            bool ret = KdlReadOnlyDocument.TryParseValue(ref reader, out KdlReadOnlyDocument? document, shouldThrow: false, useArrayPools: false);
             element = document?.RootElement;
             return ret;
         }

@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace System.Text.Kdl
 {
-    public sealed partial class KdlDocument
+    public sealed partial class KdlReadOnlyDocument
     {
         private struct StackRowStack : IDisposable
         {

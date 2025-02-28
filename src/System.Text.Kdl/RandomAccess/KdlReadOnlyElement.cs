@@ -6,19 +6,19 @@ using System.Runtime.InteropServices;
 namespace System.Text.Kdl
 {
     /// <summary>
-    ///   Represents a specific KDL value within a <see cref="KdlDocument"/>.
+    ///   Represents a specific KDL value within a <see cref="KdlReadOnlyDocument"/>.
     /// </summary>
     /// <remarks>
     /// This is apparently borrowed from HTML/XML where an "Element" is everything within the start/end tag. This is distinct from
-    /// "Node" in that is the top level structure of KDL and "node" is the graph theory API that we have aliased as "Vertex" to differentiate the semantics. 
+    /// "Node" in that is the top level structure of KDL and "node" is the graph theory API that we have aliased as "DocumentNode" to differentiate the semantics. 
     /// </remarks>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
-    public readonly partial struct KdlElement
+    public readonly partial struct KdlReadOnlyElement
     {
-        private readonly KdlDocument _parent;
+        private readonly KdlReadOnlyDocument _parent;
         private readonly int _idx;
 
-        internal KdlElement(KdlDocument parent, int idx)
+        internal KdlReadOnlyElement(KdlReadOnlyDocument parent, int idx)
         {
             // parent is usually not null, but the Current property
             // on the enumerators (when initialized as `default`) can
@@ -35,7 +35,7 @@ namespace System.Text.Kdl
         ///   The <see cref="KdlValueKind"/> that the value is.
         /// </summary>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public KdlValueKind ValueKind => TokenType.ToValueKind();
 
@@ -50,9 +50,9 @@ namespace System.Text.Kdl
         ///   <paramref name="index"/> is not in the range [0, <see cref="GetEntryCount"/>()).
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
-        public KdlElement this[int index]
+        public KdlReadOnlyElement this[int index]
         {
             get
             {
@@ -70,7 +70,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public int GetEntryCount()
         {
@@ -81,7 +81,7 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        ///   Gets a <see cref="KdlElement"/> representing the value of a required property identified
+        ///   Gets a <see cref="KdlReadOnlyElement"/> representing the value of a required property identified
         ///   by <paramref name="propertyName"/>.
         /// </summary>
         /// <remarks>
@@ -92,7 +92,7 @@ namespace System.Text.Kdl
         /// </remarks>
         /// <param name="propertyName">Name of the property whose value to return.</param>
         /// <returns>
-        ///   A <see cref="KdlElement"/> representing the value of the requested property.
+        ///   A <see cref="KdlReadOnlyElement"/> representing the value of the requested property.
         /// </returns>
         /// <seealso cref="EnumerateNode"/>
         /// <exception cref="InvalidOperationException">
@@ -105,16 +105,16 @@ namespace System.Text.Kdl
         ///   <paramref name="propertyName"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
-        public KdlElement GetProperty(string propertyName)
+        public KdlReadOnlyElement GetProperty(string propertyName)
         {
             if (propertyName is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyName));
             }
 
-            if (TryGetProperty(propertyName, out KdlElement property))
+            if (TryGetProperty(propertyName, out KdlReadOnlyElement property))
             {
                 return property;
             }
@@ -123,7 +123,7 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        ///   Gets a <see cref="KdlElement"/> representing the value of a required property identified
+        ///   Gets a <see cref="KdlReadOnlyElement"/> representing the value of a required property identified
         ///   by <paramref name="propertyName"/>.
         /// </summary>
         /// <remarks>
@@ -138,7 +138,7 @@ namespace System.Text.Kdl
         /// </remarks>
         /// <param name="propertyName">Name of the property whose value to return.</param>
         /// <returns>
-        ///   A <see cref="KdlElement"/> representing the value of the requested property.
+        ///   A <see cref="KdlReadOnlyElement"/> representing the value of the requested property.
         /// </returns>
         /// <seealso cref="EnumerateNode"/>
         /// <exception cref="InvalidOperationException">
@@ -148,11 +148,11 @@ namespace System.Text.Kdl
         ///   No property was found with the requested name.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
-        public KdlElement GetProperty(ReadOnlySpan<char> propertyName)
+        public KdlReadOnlyElement GetProperty(ReadOnlySpan<char> propertyName)
         {
-            if (TryGetProperty(propertyName, out KdlElement property))
+            if (TryGetProperty(propertyName, out KdlReadOnlyElement property))
             {
                 return property;
             }
@@ -161,7 +161,7 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        ///   Gets a <see cref="KdlElement"/> representing the value of a required property identified
+        ///   Gets a <see cref="KdlReadOnlyElement"/> representing the value of a required property identified
         ///   by <paramref name="utf8PropertyName"/>.
         /// </summary>
         /// <remarks>
@@ -178,7 +178,7 @@ namespace System.Text.Kdl
         ///   The UTF-8 (with no Byte-Order-Mark (BOM)) representation of the name of the property to return.
         /// </param>
         /// <returns>
-        ///   A <see cref="KdlElement"/> representing the value of the requested property.
+        ///   A <see cref="KdlReadOnlyElement"/> representing the value of the requested property.
         /// </returns>
         /// <exception cref="InvalidOperationException">
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
@@ -187,12 +187,12 @@ namespace System.Text.Kdl
         ///   No property was found with the requested name.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="EnumerateNode"/>
-        public KdlElement GetProperty(ReadOnlySpan<byte> utf8PropertyName)
+        public KdlReadOnlyElement GetProperty(ReadOnlySpan<byte> utf8PropertyName)
         {
-            if (TryGetProperty(utf8PropertyName, out KdlElement property))
+            if (TryGetProperty(utf8PropertyName, out KdlReadOnlyElement property))
             {
                 return property;
             }
@@ -227,10 +227,10 @@ namespace System.Text.Kdl
         ///   <paramref name="propertyName"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="EnumerateNode"/>
-        public bool TryGetProperty(string propertyName, out KdlElement value)
+        public bool TryGetProperty(string propertyName, out KdlReadOnlyElement value)
         {
             if (propertyName is null)
             {
@@ -265,9 +265,9 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
-        public bool TryGetProperty(ReadOnlySpan<char> propertyName, out KdlElement value)
+        public bool TryGetProperty(ReadOnlySpan<char> propertyName, out KdlReadOnlyElement value)
         {
             CheckValidInstance();
 
@@ -301,9 +301,9 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
-        public bool TryGetProperty(ReadOnlySpan<byte> utf8PropertyName, out KdlElement value)
+        public bool TryGetProperty(ReadOnlySpan<byte> utf8PropertyName, out KdlReadOnlyElement value)
         {
             CheckValidInstance();
 
@@ -322,7 +322,7 @@ namespace System.Text.Kdl
         ///   <see cref="KdlValueKind.False"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool GetBoolean()
         {
@@ -348,7 +348,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is neither <see cref="KdlValueKind.String"/> nor <see cref="KdlValueKind.Null"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="ToString"/>
         public string? GetString()
@@ -373,7 +373,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.String"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetBytesFromBase64([NotNullWhen(true)] out byte[]? value)
         {
@@ -396,7 +396,7 @@ namespace System.Text.Kdl
         ///   The value is not encoded as Base64 text and hence cannot be decoded to bytes.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="ToString"/>
         public byte[] GetBytesFromBase64()
@@ -424,7 +424,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public bool TryGetSByte(out sbyte value)
@@ -445,7 +445,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as an <see cref="sbyte"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public sbyte GetSByte()
@@ -473,7 +473,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetByte(out byte value)
         {
@@ -496,7 +496,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="byte"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public byte GetByte()
         {
@@ -523,7 +523,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetInt16(out short value)
         {
@@ -543,7 +543,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as an <see cref="short"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public short GetInt16()
         {
@@ -570,7 +570,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public bool TryGetUInt16(out ushort value)
@@ -594,7 +594,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="ushort"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public ushort GetUInt16()
@@ -622,7 +622,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetInt32(out int value)
         {
@@ -642,7 +642,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as an <see cref="int"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public int GetInt32()
         {
@@ -669,7 +669,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public bool TryGetUInt32(out uint value)
@@ -693,7 +693,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="uint"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public uint GetUInt32()
@@ -721,7 +721,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetInt64(out long value)
         {
@@ -744,7 +744,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="long"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public long GetInt64()
         {
@@ -771,7 +771,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public bool TryGetUInt64(out ulong value)
@@ -795,7 +795,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="ulong"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         [CLSCompliant(false)]
         public ulong GetUInt64()
@@ -832,7 +832,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetDouble(out double value)
         {
@@ -863,7 +863,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="double"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public double GetDouble()
         {
@@ -899,7 +899,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetSingle(out float value)
         {
@@ -930,7 +930,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="float"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public float GetSingle()
         {
@@ -957,7 +957,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Number"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="GetRawText"/>
         public bool TryGetDecimal(out decimal value)
@@ -981,7 +981,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="decimal"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="GetRawText"/>
         public decimal GetDecimal()
@@ -1009,7 +1009,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.String"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetDateTime(out DateTime value)
         {
@@ -1032,7 +1032,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="DateTime"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="ToString"/>
         public DateTime GetDateTime()
@@ -1060,7 +1060,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.String"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetDateTimeOffset(out DateTimeOffset value)
         {
@@ -1083,7 +1083,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="DateTimeOffset"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="ToString"/>
         public DateTimeOffset GetDateTimeOffset()
@@ -1111,7 +1111,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.String"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public bool TryGetGuid(out Guid value)
         {
@@ -1134,7 +1134,7 @@ namespace System.Text.Kdl
         ///   The value cannot be represented as a <see cref="Guid"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         /// <seealso cref="ToString"/>
         public Guid GetGuid()
@@ -1168,7 +1168,7 @@ namespace System.Text.Kdl
         ///   The original input data backing this value, returning it as a <see cref="string"/>.
         /// </returns>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public string GetRawText()
         {
@@ -1219,10 +1219,10 @@ namespace System.Text.Kdl
         }
 
         /// <summary>
-        /// Compares the values of two <see cref="KdlElement"/> values for equality, including the values of all descendant elements.
+        /// Compares the values of two <see cref="KdlReadOnlyElement"/> values for equality, including the values of all descendant elements.
         /// </summary>
-        /// <param name="element1">The first <see cref="KdlElement"/> to compare.</param>
-        /// <param name="element2">The second <see cref="KdlElement"/> to compare.</param>
+        /// <param name="element1">The first <see cref="KdlReadOnlyElement"/> to compare.</param>
+        /// <param name="element2">The second <see cref="KdlReadOnlyElement"/> to compare.</param>
         /// <returns><see langword="true"/> if the two values are equal; otherwise, <see langword="false"/>.</returns>
         /// <remarks>
         /// Deep equality of two KDL values is defined as follows:
@@ -1239,7 +1239,7 @@ namespace System.Text.Kdl
         /// </item>
         /// </list>
         /// </remarks>
-        public static bool DeepEquals(KdlElement element1, KdlElement element2)
+        public static bool DeepEquals(KdlReadOnlyElement element1, KdlReadOnlyElement element2)
         {
             if (!StackHelper.TryEnsureSufficientExecutionStack())
             {
@@ -1285,7 +1285,7 @@ namespace System.Text.Kdl
                     }
 
                     ArrayEnumerator arrayEnumerator2 = element2.EnumerateArray();
-                    foreach (KdlElement e1 in element1.EnumerateArray())
+                    foreach (KdlReadOnlyElement e1 in element1.EnumerateArray())
                     {
                         bool success = arrayEnumerator2.MoveNext();
                         Debug.Assert(success, "enumerators must have matching length");
@@ -1349,12 +1349,12 @@ namespace System.Text.Kdl
                         // or last occurrence of a repeated property name is used. It also simplifies the implementation
                         // and keeps it at O(n + m) complexity.
 
-                        Dictionary<string, ValueQueue<KdlElement>> properties2 = new(capacity: remainingProps, StringComparer.Ordinal);
+                        Dictionary<string, ValueQueue<KdlReadOnlyElement>> properties2 = new(capacity: remainingProps, StringComparer.Ordinal);
                         do
                         {
                             IKdlEntry prop2 = objectEnumerator2.Current;
 #if NET
-                            ref ValueQueue<KdlElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop2.Name, out bool _);
+                            ref ValueQueue<KdlReadOnlyElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop2.Name, out bool _);
 #else
                             properties2.TryGetValue(prop2.Name, out ValueQueue<KdlElement> values);
 #endif
@@ -1369,11 +1369,11 @@ namespace System.Text.Kdl
                         {
                             IKdlEntry prop = objectEnumerator1.Current;
 #if NET
-                            ref ValueQueue<KdlElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop.Name, out bool exists);
+                            ref ValueQueue<KdlReadOnlyElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop.Name, out bool exists);
 #else
                             bool exists = properties2.TryGetValue(prop.Name, out ValueQueue<KdlElement> values);
 #endif
-                            if (!exists || !values.TryDequeue(out KdlElement value) || !DeepEquals(prop.Value, value))
+                            if (!exists || !values.TryDequeue(out KdlReadOnlyElement value) || !DeepEquals(prop.Value, value))
                             {
                                 return false;
                             }
@@ -1521,7 +1521,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is <see cref="KdlValueKind.Undefined"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public void WriteTo(KdlWriter writer)
         {
@@ -1552,7 +1552,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public ArrayEnumerator EnumerateArray()
         {
@@ -1578,7 +1578,7 @@ namespace System.Text.Kdl
         ///   This value's <see cref="ValueKind"/> is not <see cref="KdlValueKind.Node"/>.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public NodeEnumerator EnumerateNode()
         {
@@ -1599,7 +1599,7 @@ namespace System.Text.Kdl
         /// </summary>
         /// <remarks>
         ///   <para>
-        ///     For KdlElement built from <see cref="KdlDocument"/>:
+        ///     For KdlElement built from <see cref="KdlReadOnlyDocument"/>:
         ///   </para>
         ///
         ///   <para>
@@ -1626,7 +1626,7 @@ namespace System.Text.Kdl
         ///   A string representation for the current value appropriate to the value type.
         /// </returns>
         /// <exception cref="ObjectDisposedException">
-        ///   The parent <see cref="KdlDocument"/> has been disposed.
+        ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
         public override string ToString()
         {
@@ -1660,11 +1660,11 @@ namespace System.Text.Kdl
 
         /// <summary>
         ///   Get a KdlElement which can be safely stored beyond the lifetime of the
-        ///   original <see cref="KdlDocument"/>.
+        ///   original <see cref="KdlReadOnlyDocument"/>.
         /// </summary>
         /// <returns>
         ///   A KdlElement which can be safely stored beyond the lifetime of the
-        ///   original <see cref="KdlDocument"/>.
+        ///   original <see cref="KdlReadOnlyDocument"/>.
         /// </returns>
         /// <remarks>
         ///   <para>
@@ -1673,7 +1673,7 @@ namespace System.Text.Kdl
         ///     call to Clone, this method results in no additional memory allocation.
         ///   </para>
         /// </remarks>
-        public KdlElement Clone()
+        public KdlReadOnlyElement Clone()
         {
             CheckValidInstance();
 

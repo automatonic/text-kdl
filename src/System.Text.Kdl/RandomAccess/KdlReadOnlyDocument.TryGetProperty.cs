@@ -3,9 +3,9 @@ using System.Diagnostics;
 
 namespace System.Text.Kdl
 {
-    public sealed partial class KdlDocument
+    public sealed partial class KdlReadOnlyDocument
     {
-        internal bool TryGetNamedPropertyValue(int index, ReadOnlySpan<char> propertyName, out KdlElement value)
+        internal bool TryGetNamedPropertyValue(int index, ReadOnlySpan<char> propertyName, out KdlReadOnlyElement value)
         {
             CheckNotDisposed();
 
@@ -105,7 +105,7 @@ namespace System.Text.Kdl
             return false;
         }
 
-        internal bool TryGetNamedPropertyValue(int index, ReadOnlySpan<byte> propertyName, out KdlElement value)
+        internal bool TryGetNamedPropertyValue(int index, ReadOnlySpan<byte> propertyName, out KdlReadOnlyElement value)
         {
             CheckNotDisposed();
 
@@ -133,7 +133,7 @@ namespace System.Text.Kdl
             int startIndex,
             int endIndex,
             ReadOnlySpan<byte> propertyName,
-            out KdlElement value)
+            out KdlReadOnlyElement value)
         {
             ReadOnlySpan<byte> documentSpan = _utf8Kdl.Span;
             Span<byte> utf8UnescapedStack = stackalloc byte[KdlConstants.StackallocByteThreshold];
@@ -192,7 +192,7 @@ namespace System.Text.Kdl
                                 if (utf8Unescaped[..written].SequenceEqual(propertyName[idx..]))
                                 {
                                     // If the property name is a match, the answer is the next element.
-                                    value = new KdlElement(this, index + DbRow.Size);
+                                    value = new KdlReadOnlyElement(this, index + DbRow.Size);
                                     return true;
                                 }
                             }
@@ -210,7 +210,7 @@ namespace System.Text.Kdl
                 else if (currentPropertyName.SequenceEqual(propertyName))
                 {
                     // If the property name is a match, the answer is the next element.
-                    value = new KdlElement(this, index + DbRow.Size);
+                    value = new KdlReadOnlyElement(this, index + DbRow.Size);
                     return true;
                 }
 

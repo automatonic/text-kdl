@@ -90,7 +90,7 @@ namespace System.Text.Kdl.Serialization.Converters
         {
             if (options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlElement)
             {
-                return KdlElement.ParseValue(ref reader);
+                return KdlReadOnlyElement.ParseValue(ref reader);
             }
 
             Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
@@ -103,7 +103,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
             if (options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlElement)
             {
-                KdlElement element = KdlElement.ParseValue(ref reader);
+                KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(ref reader);
 
                 // Edge case where we want to lookup for a reference when parsing into typeof(object)
                 if (options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve &&
@@ -121,7 +121,7 @@ namespace System.Text.Kdl.Serialization.Converters
 
             Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
 
-            KdlVertex? node = KdlVertexConverter.Instance.Read(ref reader, typeToConvert, options);
+            KdlElement? node = KdlVertexConverter.Instance.Read(ref reader, typeToConvert, options);
 
             if (options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve &&
                 KdlSerializer.TryHandleReferenceFromKdlNode(ref reader, ref state, node, out referenceValue))

@@ -1328,7 +1328,7 @@ namespace System.Text.Kdl.Serialization.Metadata
         internal static bool IsValidExtensionDataProperty(Type propertyType)
         {
             return typeof(IDictionary<string, object>).IsAssignableFrom(propertyType) ||
-                typeof(IDictionary<string, KdlElement>).IsAssignableFrom(propertyType) ||
+                typeof(IDictionary<string, KdlReadOnlyElement>).IsAssignableFrom(propertyType) ||
                 // Avoid a reference to typeof(KdlVertex) to support trimming.
                 (propertyType.FullName == KdlObjectTypeName && ReferenceEquals(propertyType.Assembly, typeof(KdlTypeInfo).Assembly));
         }
