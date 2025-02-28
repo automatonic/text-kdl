@@ -1,11 +1,11 @@
-# System.Text.Kdl
+# Automatonic.Text.Kdl
 C# support for [KDL](https://kdl.dev) in the style of the [System.Text.Json](https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/how-to) library.
 
 > This is a goal / passion project for [me](https://github.com/el2iot2) personally. I will be using it
 > as a self-directed exercise to expand my skills with several key SDKs in modern
 > C# and to "scratch the itch" of supporting/implementing a configuration language that I find interesting / compelling. I want to:
 > - Compare and contrast `NewtonSoft.Json` (with which I am very familiar) to `System.Text.Json` for posterity and performance
-> - Use the resulting knowledge of low allocation span-based parsers to create `System.Text.Kdl` primitives
+> - Use the resulting knowledge of low allocation span-based parsers to create `Automatonic.Text.Kdl` primitives
 > - Build out additional features as relevant/appropriate
 
 # Must Have

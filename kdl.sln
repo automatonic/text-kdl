@@ -5,11 +5,11 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F5E08443-92FD-4C40-9AA0-5FC39CCD07A6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Text.Kdl", "src\System.Text.Kdl\System.Text.Kdl.csproj", "{CF43C92A-E25B-46E1-A02D-EF640C158B2E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Automatonic.Text.Kdl", "src\Automatonic.Text.Kdl\Automatonic.Text.Kdl.csproj", "{CF43C92A-E25B-46E1-A02D-EF640C158B2E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1A9CA199-B822-4BD7-A54A-EE0FBB6BA29A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Text.Kdl.Should", "tests\System.Text.Kdl.Should\System.Text.Kdl.Should.csproj", "{6E881646-DCBE-47DB-A0BB-B0F2788F59B2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Automatonic.Text.Kdl.Should", "tests\Automatonic.Text.Kdl.Should\Automatonic.Text.Kdl.Should.csproj", "{6E881646-DCBE-47DB-A0BB-B0F2788F59B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
