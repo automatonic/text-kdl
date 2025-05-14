@@ -137,7 +137,7 @@ namespace Automatonic.Text.Kdl
         }
 
         internal void Initialize(
-            KdlTypeInfo jsonTypeInfo,
+            KdlTypeInfo kdlTypeInfo,
             object? rootValueBoxed = null,
             bool supportContinuation = false,
             bool supportAsync = false)
@@ -146,20 +146,20 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(!IsContinuation);
             Debug.Assert(CurrentDepth == 0);
 
-            Current.KdlTypeInfo = jsonTypeInfo;
-            Current.KdlPropertyInfo = jsonTypeInfo.PropertyInfoForTypeInfo;
+            Current.KdlTypeInfo = kdlTypeInfo;
+            Current.KdlPropertyInfo = kdlTypeInfo.PropertyInfoForTypeInfo;
             Current.NumberHandling = Current.KdlPropertyInfo.EffectiveNumberHandling;
             SupportContinuation = supportContinuation;
             SupportAsync = supportAsync;
 
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            KdlSerializerOptions options = kdlTypeInfo.Options;
             if (options.ReferenceHandlingStrategy != KdlKnownReferenceHandler.Unspecified)
             {
                 Debug.Assert(options.ReferenceHandler != null);
                 ReferenceResolver = options.ReferenceHandler.CreateResolver(writing: true);
 
                 if (options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.IgnoreCycles &&
-                    rootValueBoxed is not null && jsonTypeInfo.Type.IsValueType)
+                    rootValueBoxed is not null && kdlTypeInfo.Type.IsValueType)
                 {
                     // Root object is a boxed value type, we need to push it to the reference stack before starting the serializer.
                     ReferenceResolver.PushReferenceForCycleDetection(rootValueBoxed);
@@ -191,7 +191,7 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    KdlTypeInfo jsonTypeInfo = Current.GetNestedKdlTypeInfo();
+                    KdlTypeInfo kdlTypeInfo = Current.GetNestedKdlTypeInfo();
                     KdlNumberHandling? numberHandling = Current.NumberHandling;
 
                     EnsurePushCapacity();
@@ -199,8 +199,8 @@ namespace Automatonic.Text.Kdl
                     Current = default;
                     _count++;
 
-                    Current.KdlTypeInfo = jsonTypeInfo;
-                    Current.KdlPropertyInfo = jsonTypeInfo.PropertyInfoForTypeInfo;
+                    Current.KdlTypeInfo = kdlTypeInfo;
+                    Current.KdlPropertyInfo = kdlTypeInfo.PropertyInfoForTypeInfo;
                     // Allow number handling on property to win over handling on type.
                     Current.NumberHandling = numberHandling ?? Current.KdlPropertyInfo.EffectiveNumberHandling;
                 }

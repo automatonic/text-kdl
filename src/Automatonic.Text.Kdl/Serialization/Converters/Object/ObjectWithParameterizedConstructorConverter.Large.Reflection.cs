@@ -17,9 +17,9 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal override void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
         {
-            jsonTypeInfo.CreateObjectWithArgs = DefaultKdlTypeInfoResolver.MemberAccessor.CreateParameterizedConstructor<T>(ConstructorInfo!);
+            kdlTypeInfo.CreateObjectWithArgs = DefaultKdlTypeInfoResolver.MemberAccessor.CreateParameterizedConstructor<T>(ConstructorInfo!);
         }
     }
 }

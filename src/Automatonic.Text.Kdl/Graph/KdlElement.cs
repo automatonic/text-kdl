@@ -373,8 +373,8 @@ namespace Automatonic.Text.Kdl.Graph
                 return KdlVertexConverter.Create(element, options);
             }
 
-            var jsonTypeInfo = (KdlTypeInfo<T>)KdlSerializerOptions.Default.GetTypeInfo(typeof(T));
-            return KdlValue.CreateFromTypeInfo(value, jsonTypeInfo, options);
+            var kdlTypeInfo = (KdlTypeInfo<T>)KdlSerializerOptions.Default.GetTypeInfo(typeof(T));
+            return KdlValue.CreateFromTypeInfo(value, kdlTypeInfo, options);
         }
     }
 }

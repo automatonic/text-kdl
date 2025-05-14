@@ -196,7 +196,7 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Constructs a new <see cref="KdlReader"/> instance.
         /// </summary>
-        /// <param name="jsonData">The ReadOnlySpan&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
+        /// <param name="kdlData">The ReadOnlySpan&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
         /// <param name="isFinalBlock">True when the input span contains the entire data to process.
         /// Set to false only if it is known that the input span contains partial data with more data to follow.</param>
         /// <param name="state">If this is the first call to the ctor, pass in a default state. Otherwise,
@@ -205,9 +205,9 @@ namespace Automatonic.Text.Kdl
         /// Since this type is a ref struct, it is a stack-only type and all the limitations of ref structs apply to it.
         /// This is the reason why the ctor accepts a <see cref="KdlReaderState"/>.
         /// </remarks>
-        public KdlReader(ReadOnlySpan<byte> jsonData, bool isFinalBlock, KdlReaderState state)
+        public KdlReader(ReadOnlySpan<byte> kdlData, bool isFinalBlock, KdlReaderState state)
         {
-            _buffer = jsonData;
+            _buffer = kdlData;
 
             _isFinalBlock = isFinalBlock;
             _isInputSequence = false;
@@ -245,7 +245,7 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Constructs a new <see cref="KdlReader"/> instance.
         /// </summary>
-        /// <param name="jsonData">The ReadOnlySpan&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
+        /// <param name="kdlData">The ReadOnlySpan&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
         /// <param name="options">Defines the customized behavior of the <see cref="KdlReader"/>
         /// that is different from the KDL RFC (for example how to handle comments or maximum depth allowed when reading).
         /// By default, the <see cref="KdlReader"/> follows the KDL RFC strictly (i.e. comments within the KDL are invalid) and reads up to a maximum depth of 64.</param>
@@ -257,8 +257,8 @@ namespace Automatonic.Text.Kdl
         ///     This assumes that the entire KDL payload is passed in (equivalent to <see cref="IsFinalBlock"/> = true)
         ///   </para>
         /// </remarks>
-        public KdlReader(ReadOnlySpan<byte> jsonData, KdlReaderOptions options = default)
-            : this(jsonData, isFinalBlock: true, new KdlReaderState(options))
+        public KdlReader(ReadOnlySpan<byte> kdlData, KdlReaderOptions options = default)
+            : this(kdlData, isFinalBlock: true, new KdlReaderState(options))
         {
         }
 

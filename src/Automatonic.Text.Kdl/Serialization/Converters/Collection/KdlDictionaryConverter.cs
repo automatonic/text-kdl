@@ -73,9 +73,9 @@ namespace Automatonic.Text.Kdl.Serialization
             scoped ref ReadStack state,
             [MaybeNullWhen(false)] out TDictionary value)
         {
-            KdlTypeInfo jsonTypeInfo = state.Current.KdlTypeInfo;
-            KdlTypeInfo keyTypeInfo = jsonTypeInfo.KeyTypeInfo!;
-            KdlTypeInfo elementTypeInfo = jsonTypeInfo.ElementTypeInfo!;
+            KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
+            KdlTypeInfo keyTypeInfo = kdlTypeInfo.KeyTypeInfo!;
+            KdlTypeInfo elementTypeInfo = kdlTypeInfo.ElementTypeInfo!;
 
             if (!state.SupportContinuation && !state.Current.CanContainMetadata)
             {
@@ -88,7 +88,7 @@ namespace Automatonic.Text.Kdl.Serialization
 
                 CreateCollection(ref reader, ref state);
 
-                jsonTypeInfo.OnDeserializing?.Invoke(state.Current.ReturnValue!);
+                kdlTypeInfo.OnDeserializing?.Invoke(state.Current.ReturnValue!);
 
                 _keyConverter ??= GetConverter<TKey>(keyTypeInfo);
                 _valueConverter ??= GetConverter<TValue>(elementTypeInfo);
@@ -162,7 +162,7 @@ namespace Automatonic.Text.Kdl.Serialization
                 // Handle the metadata properties.
                 if (state.Current.CanContainMetadata && state.Current.ObjectState < StackFrameObjectState.ReadMetadata)
                 {
-                    if (!KdlSerializer.TryReadMetadata(this, jsonTypeInfo, ref reader, ref state))
+                    if (!KdlSerializer.TryReadMetadata(this, kdlTypeInfo, ref reader, ref state))
                     {
                         value = default;
                         return false;
@@ -180,7 +180,7 @@ namespace Automatonic.Text.Kdl.Serialization
                 // Dispatch to any polymorphic converters: should always be entered regardless of ObjectState progress
                 if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Type) != 0 &&
                     state.Current.PolymorphicSerializationState != PolymorphicSerializationState.PolymorphicReEntryStarted &&
-                    ResolvePolymorphicConverter(jsonTypeInfo, ref state) is KdlConverter polymorphicConverter)
+                    ResolvePolymorphicConverter(kdlTypeInfo, ref state) is KdlConverter polymorphicConverter)
                 {
                     Debug.Assert(!IsValueType);
                     bool success = polymorphicConverter.OnTryReadAsObject(ref reader, polymorphicConverter.Type!, options, ref state, out object? objectResult);
@@ -208,7 +208,7 @@ namespace Automatonic.Text.Kdl.Serialization
                         state.ReferenceId = null;
                     }
 
-                    jsonTypeInfo.OnDeserializing?.Invoke(state.Current.ReturnValue!);
+                    kdlTypeInfo.OnDeserializing?.Invoke(state.Current.ReturnValue!);
 
                     state.Current.ObjectState = StackFrameObjectState.CreatedObject;
                 }
@@ -303,7 +303,7 @@ namespace Automatonic.Text.Kdl.Serialization
 
             ConvertCollection(ref state, options);
             object result = state.Current.ReturnValue!;
-            jsonTypeInfo.OnDeserialized?.Invoke(result);
+            kdlTypeInfo.OnDeserialized?.Invoke(result);
             value = (TDictionary)result;
 
             return true;
@@ -340,13 +340,13 @@ namespace Automatonic.Text.Kdl.Serialization
                 return true;
             }
 
-            KdlTypeInfo jsonTypeInfo = state.Current.KdlTypeInfo;
+            KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
 
             if (!state.Current.ProcessedStartToken)
             {
                 state.Current.ProcessedStartToken = true;
 
-                jsonTypeInfo.OnSerializing?.Invoke(dictionary);
+                kdlTypeInfo.OnSerializing?.Invoke(dictionary);
 
                 writer.WriteStartObject();
 
@@ -355,7 +355,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     KdlSerializer.WriteMetadataForObject(this, ref state, writer);
                 }
 
-                state.Current.KdlPropertyInfo = jsonTypeInfo.ElementTypeInfo!.PropertyInfoForTypeInfo;
+                state.Current.KdlPropertyInfo = kdlTypeInfo.ElementTypeInfo!.PropertyInfoForTypeInfo;
             }
 
             bool success = OnWriteResume(writer, dictionary, options, ref state);
@@ -367,7 +367,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     writer.WriteEndObject();
                 }
 
-                jsonTypeInfo.OnSerialized?.Invoke(dictionary);
+                kdlTypeInfo.OnSerialized?.Invoke(dictionary);
             }
 
             return success;

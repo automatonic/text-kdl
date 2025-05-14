@@ -223,13 +223,13 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <summary>
         /// Used for hooking custom configuration to a newly created associated KdlTypeInfo instance.
         /// </summary>
-        internal virtual void ConfigureKdlTypeInfo(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options) { }
+        internal virtual void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options) { }
 
         /// <summary>
         /// Additional reflection-specific configuration required by certain collection converters.
         /// </summary>
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal virtual void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options) { }
+        internal virtual void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options) { }
     }
 }

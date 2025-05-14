@@ -127,43 +127,43 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlNode"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlNode?> KdlArrayConverter => s_jsonArrayConverter ??= new KdlArrayConverter();
-        private static KdlConverter<KdlNode?>? s_jsonArrayConverter;
+        public static KdlConverter<KdlNode?> KdlArrayConverter => s_kdlArrayConverter ??= new KdlArrayConverter();
+        private static KdlConverter<KdlNode?>? s_kdlArrayConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlReadOnlyElement"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlReadOnlyElement> KdlElementConverter => s_jsonElementConverter ??= new KdlElementConverter();
-        private static KdlConverter<KdlReadOnlyElement>? s_jsonElementConverter;
+        public static KdlConverter<KdlReadOnlyElement> KdlElementConverter => s_kdlElementConverter ??= new KdlElementConverter();
+        private static KdlConverter<KdlReadOnlyElement>? s_kdlElementConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlElement"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlElement?> KdlNodeConverter => s_jsonNodeConverter ??= new KdlVertexConverter();
-        private static KdlConverter<KdlElement?>? s_jsonNodeConverter;
+        public static KdlConverter<KdlElement?> KdlNodeConverter => s_kdlNodeConverter ??= new KdlVertexConverter();
+        private static KdlConverter<KdlElement?>? s_kdlNodeConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlNode"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlNode?> KdlObjectConverter => s_jsonObjectConverter ??= new KdlObjectConverter();
-        private static KdlConverter<KdlNode?>? s_jsonObjectConverter;
+        public static KdlConverter<KdlNode?> KdlObjectConverter => s_kdlObjectConverter ??= new KdlObjectConverter();
+        private static KdlConverter<KdlNode?>? s_kdlObjectConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlNode"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlValue?> KdlValueConverter => s_jsonValueConverter ??= new KdlValueConverter();
-        private static KdlConverter<KdlValue?>? s_jsonValueConverter;
+        public static KdlConverter<KdlValue?> KdlValueConverter => s_kdlValueConverter ??= new KdlValueConverter();
+        private static KdlConverter<KdlValue?>? s_kdlValueConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlReadOnlyDocument"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlConverter<KdlReadOnlyDocument?> KdlDocumentConverter => s_jsonDocumentConverter ??= new KdlDocumentConverter();
-        private static KdlConverter<KdlReadOnlyDocument?>? s_jsonDocumentConverter;
+        public static KdlConverter<KdlReadOnlyDocument?> KdlDocumentConverter => s_kdlDocumentConverter ??= new KdlDocumentConverter();
+        private static KdlConverter<KdlReadOnlyDocument?>? s_kdlDocumentConverter;
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="Memory{Byte}"/> values.

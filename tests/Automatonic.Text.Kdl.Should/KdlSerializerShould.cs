@@ -22,4 +22,13 @@ public class KdlSerializerShould
         var kdl = KdlSerializer.Serialize(weatherForecast);
         return Verify(kdl);
     }
+
+    [Fact]
+    public Task Serialize_WeatherForecast_class_with_null()
+    {
+        // Load the kdl file from the test_cases/input folder
+        var kdl = File.ReadAllText("test_cases/input/WeatherForecast.kdl");
+        var weatherForecast = KdlSerializer.Deserialize<WeatherForecast>(text);
+        return Verify(kdl);
+    }
 }

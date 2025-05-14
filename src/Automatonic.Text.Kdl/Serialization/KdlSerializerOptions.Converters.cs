@@ -59,8 +59,8 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         internal KdlConverter GetConverterInternal(Type typeToConvert)
         {
-            KdlTypeInfo jsonTypeInfo = GetTypeInfoInternal(typeToConvert, ensureConfigured: false, resolveIfMutable: true);
-            return jsonTypeInfo.Converter;
+            KdlTypeInfo kdlTypeInfo = GetTypeInfoInternal(typeToConvert, ensureConfigured: false, resolveIfMutable: true);
+            return kdlTypeInfo.Converter;
         }
 
         internal KdlConverter? GetConverterFromList(Type typeToConvert)

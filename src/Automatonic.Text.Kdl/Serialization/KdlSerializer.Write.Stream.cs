@@ -43,8 +43,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return jsonTypeInfo.SerializeAsync(utf8Kdl, value, cancellationToken);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return kdlTypeInfo.SerializeAsync(utf8Kdl, value, cancellationToken);
         }
 
         /// <summary>
@@ -73,8 +73,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            jsonTypeInfo.Serialize(utf8Kdl, value);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            kdlTypeInfo.Serialize(utf8Kdl, value);
         }
 
         /// <summary>
@@ -111,8 +111,8 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, inputType);
-            return jsonTypeInfo.SerializeAsObjectAsync(utf8Kdl, value, cancellationToken);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
+            return kdlTypeInfo.SerializeAsObjectAsync(utf8Kdl, value, cancellationToken);
         }
 
         /// <summary>
@@ -146,8 +146,8 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, inputType);
-            jsonTypeInfo.SerializeAsObject(utf8Kdl, value);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
+            kdlTypeInfo.SerializeAsObject(utf8Kdl, value);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Automatonic.Text.Kdl
         /// <returns>A task that represents the asynchronous write operation.</returns>
         /// <param name="utf8Kdl">The UTF-8 <see cref="System.IO.Stream"/> to write to.</param>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <param name="cancellationToken">The <see cref="System.Threading.CancellationToken"/> that can be used to cancel the write operation.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="utf8Kdl"/> is <see langword="null"/>.
@@ -165,20 +165,20 @@ namespace Automatonic.Text.Kdl
         public static Task SerializeAsync<TValue>(
             Stream utf8Kdl,
             TValue value,
-            KdlTypeInfo<TValue> jsonTypeInfo,
+            KdlTypeInfo<TValue> kdlTypeInfo,
             CancellationToken cancellationToken = default)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return jsonTypeInfo.SerializeAsync(utf8Kdl, value, cancellationToken);
+            kdlTypeInfo.EnsureConfigured();
+            return kdlTypeInfo.SerializeAsync(utf8Kdl, value, cancellationToken);
         }
 
         /// <summary>
@@ -187,26 +187,26 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
         /// <param name="utf8Kdl">The UTF-8 <see cref="System.IO.Stream"/> to write to.</param>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="utf8Kdl"/> is <see langword="null"/>.
         /// </exception>
         public static void Serialize<TValue>(
             Stream utf8Kdl,
             TValue value,
-            KdlTypeInfo<TValue> jsonTypeInfo)
+            KdlTypeInfo<TValue> kdlTypeInfo)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            jsonTypeInfo.Serialize(utf8Kdl, value);
+            kdlTypeInfo.EnsureConfigured();
+            kdlTypeInfo.Serialize(utf8Kdl, value);
         }
 
         /// <summary>
@@ -215,31 +215,31 @@ namespace Automatonic.Text.Kdl
         /// <returns>A task that represents the asynchronous write operation.</returns>
         /// <param name="utf8Kdl">The UTF-8 <see cref="System.IO.Stream"/> to write to.</param>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <param name="cancellationToken">The <see cref="System.Threading.CancellationToken"/> that can be used to cancel the write operation.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="utf8Kdl"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidCastException">
-        /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
+        /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
         public static Task SerializeAsync(
             Stream utf8Kdl,
             object? value,
-            KdlTypeInfo jsonTypeInfo,
+            KdlTypeInfo kdlTypeInfo,
             CancellationToken cancellationToken = default)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return jsonTypeInfo.SerializeAsObjectAsync(utf8Kdl, value, cancellationToken);
+            kdlTypeInfo.EnsureConfigured();
+            return kdlTypeInfo.SerializeAsObjectAsync(utf8Kdl, value, cancellationToken);
         }
 
         /// <summary>
@@ -247,29 +247,29 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <param name="utf8Kdl">The UTF-8 <see cref="System.IO.Stream"/> to write to.</param>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
         /// <paramref name="utf8Kdl"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidCastException">
-        /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
+        /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
         public static void Serialize(
             Stream utf8Kdl,
             object? value,
-            KdlTypeInfo jsonTypeInfo)
+            KdlTypeInfo kdlTypeInfo)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            jsonTypeInfo.SerializeAsObject(utf8Kdl, value);
+            kdlTypeInfo.EnsureConfigured();
+            kdlTypeInfo.SerializeAsObject(utf8Kdl, value);
         }
 
         /// <summary>
@@ -308,8 +308,8 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, inputType);
-            return jsonTypeInfo.SerializeAsObjectAsync(utf8Kdl, value, cancellationToken);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, inputType);
+            return kdlTypeInfo.SerializeAsObjectAsync(utf8Kdl, value, cancellationToken);
         }
 
         /// <summary>
@@ -345,8 +345,8 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, inputType);
-            jsonTypeInfo.SerializeAsObject(utf8Kdl, value);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, inputType);
+            kdlTypeInfo.SerializeAsObject(utf8Kdl, value);
         }
     }
 }

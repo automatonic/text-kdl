@@ -145,9 +145,9 @@ namespace Automatonic.Text.Kdl.Graph
 
                     foreach (KeyValuePair<KdlEntryKey, KdlElement?> item in currentDict)
                     {
-                        otherDict.TryGetValue(item.Key, out KdlElement? jsonNode);
+                        otherDict.TryGetValue(item.Key, out KdlElement? kdlNode);
 
-                        if (!DeepEquals(item.Value, jsonNode))
+                        if (!DeepEquals(item.Value, kdlNode))
                         {
                             return false;
                         }

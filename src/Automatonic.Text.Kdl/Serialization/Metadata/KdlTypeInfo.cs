@@ -953,24 +953,24 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         [RequiresDynamicCode(MetadataFactoryRequiresUnreferencedCode)]
         internal static KdlTypeInfo CreateKdlTypeInfo(Type type, KdlConverter converter, KdlSerializerOptions options)
         {
-            KdlTypeInfo jsonTypeInfo;
+            KdlTypeInfo kdlTypeInfo;
 
             if (converter.Type == type)
             {
                 // For performance, avoid doing a reflection-based instantiation
                 // if the converter type matches that of the declared type.
-                jsonTypeInfo = converter.CreateKdlTypeInfo(options);
+                kdlTypeInfo = converter.CreateKdlTypeInfo(options);
             }
             else
             {
-                Type jsonTypeInfoType = typeof(KdlTypeInfo<>).MakeGenericType(type);
-                jsonTypeInfo = (KdlTypeInfo)jsonTypeInfoType.CreateInstanceNoWrapExceptions(
+                Type kdlTypeInfoType = typeof(KdlTypeInfo<>).MakeGenericType(type);
+                kdlTypeInfo = (KdlTypeInfo)kdlTypeInfoType.CreateInstanceNoWrapExceptions(
                     parameterTypes: [typeof(KdlConverter), typeof(KdlSerializerOptions)],
                     parameters: [converter, options])!;
             }
 
-            Debug.Assert(jsonTypeInfo.Type == type);
-            return jsonTypeInfo;
+            Debug.Assert(kdlTypeInfo.Type == type);
+            return kdlTypeInfo;
         }
 
         /// <summary>
@@ -1012,27 +1012,27 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         internal KdlPropertyInfo CreatePropertyUsingReflection(Type propertyType, Type? declaringType)
         {
-            KdlPropertyInfo jsonPropertyInfo;
+            KdlPropertyInfo kdlPropertyInfo;
 
-            if (Options.TryGetTypeInfoCached(propertyType, out KdlTypeInfo? jsonTypeInfo))
+            if (Options.TryGetTypeInfoCached(propertyType, out KdlTypeInfo? kdlTypeInfo))
             {
                 // If a KdlTypeInfo has already been cached for the property type,
                 // avoid reflection-based initialization by delegating construction
                 // of KdlPropertyInfo<T> construction to the property type metadata.
-                jsonPropertyInfo = jsonTypeInfo.CreateKdlPropertyInfo(declaringTypeInfo: this, declaringType, Options);
+                kdlPropertyInfo = kdlTypeInfo.CreateKdlPropertyInfo(declaringTypeInfo: this, declaringType, Options);
             }
             else
             {
                 // Metadata for `propertyType` has not been registered yet.
                 // Use reflection to instantiate the correct KdlPropertyInfo<T>
                 Type propertyInfoType = typeof(KdlPropertyInfo<>).MakeGenericType(propertyType);
-                jsonPropertyInfo = (KdlPropertyInfo)propertyInfoType.CreateInstanceNoWrapExceptions(
+                kdlPropertyInfo = (KdlPropertyInfo)propertyInfoType.CreateInstanceNoWrapExceptions(
                     parameterTypes: [typeof(Type), typeof(KdlTypeInfo), typeof(KdlSerializerOptions)],
                     parameters: [declaringType ?? Type, this, Options])!;
             }
 
-            Debug.Assert(jsonPropertyInfo.PropertyType == propertyType);
-            return jsonPropertyInfo;
+            Debug.Assert(kdlPropertyInfo.PropertyType == propertyType);
+            return kdlPropertyInfo;
         }
 
         /// <summary>
@@ -1363,27 +1363,27 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal sealed class KdlPropertyInfoList(KdlTypeInfo jsonTypeInfo) : ConfigurationList<KdlPropertyInfo>
+        internal sealed class KdlPropertyInfoList(KdlTypeInfo kdlTypeInfo) : ConfigurationList<KdlPropertyInfo>
         {
-            private readonly KdlTypeInfo _jsonTypeInfo = jsonTypeInfo;
+            private readonly KdlTypeInfo _kdlTypeInfo = kdlTypeInfo;
 
-            public override bool IsReadOnly => (_jsonTypeInfo._properties == this && _jsonTypeInfo.IsReadOnly) || _jsonTypeInfo.Kind != KdlTypeInfoKind.Object;
+            public override bool IsReadOnly => (_kdlTypeInfo._properties == this && _kdlTypeInfo.IsReadOnly) || _kdlTypeInfo.Kind != KdlTypeInfoKind.Object;
             protected override void OnCollectionModifying()
             {
-                if (_jsonTypeInfo._properties == this)
+                if (_kdlTypeInfo._properties == this)
                 {
-                    _jsonTypeInfo.VerifyMutable();
+                    _kdlTypeInfo.VerifyMutable();
                 }
 
-                if (_jsonTypeInfo.Kind != KdlTypeInfoKind.Object)
+                if (_kdlTypeInfo.Kind != KdlTypeInfoKind.Object)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(_jsonTypeInfo.Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(_kdlTypeInfo.Kind);
                 }
             }
 
             protected override void ValidateAddedValue(KdlPropertyInfo item)
             {
-                item.EnsureChildOf(_jsonTypeInfo);
+                item.EnsureChildOf(_kdlTypeInfo);
             }
 
             public void SortProperties()
@@ -1394,53 +1394,53 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             /// <summary>
             /// Used by the built-in resolvers to add property metadata applying conflict resolution.
             /// </summary>
-            public void AddPropertyWithConflictResolution(KdlPropertyInfo jsonPropertyInfo, ref PropertyHierarchyResolutionState state)
+            public void AddPropertyWithConflictResolution(KdlPropertyInfo kdlPropertyInfo, ref PropertyHierarchyResolutionState state)
             {
-                Debug.Assert(!_jsonTypeInfo.IsConfigured);
-                Debug.Assert(jsonPropertyInfo.MemberName != null, "MemberName can be null in custom KdlPropertyInfo instances and should never be passed in this method");
+                Debug.Assert(!_kdlTypeInfo.IsConfigured);
+                Debug.Assert(kdlPropertyInfo.MemberName != null, "MemberName can be null in custom KdlPropertyInfo instances and should never be passed in this method");
 
                 // Algorithm should be kept in sync with the Roslyn equivalent in KdlSourceGenerator.Parser.cs
-                string memberName = jsonPropertyInfo.MemberName;
+                string memberName = kdlPropertyInfo.MemberName;
 
-                if (state.AddedProperties.TryAdd(jsonPropertyInfo.Name, (jsonPropertyInfo, Count)))
+                if (state.AddedProperties.TryAdd(kdlPropertyInfo.Name, (kdlPropertyInfo, Count)))
                 {
-                    Add(jsonPropertyInfo);
-                    state.IsPropertyOrderSpecified |= jsonPropertyInfo.Order != 0;
+                    Add(kdlPropertyInfo);
+                    state.IsPropertyOrderSpecified |= kdlPropertyInfo.Order != 0;
                 }
                 else
                 {
                     // The KdlPropertyNameAttribute or naming policy resulted in a collision.
-                    (KdlPropertyInfo other, int index) = state.AddedProperties[jsonPropertyInfo.Name];
+                    (KdlPropertyInfo other, int index) = state.AddedProperties[kdlPropertyInfo.Name];
 
                     if (other.IsIgnored)
                     {
                         // Overwrite previously cached property since it has [KdlIgnore].
-                        state.AddedProperties[jsonPropertyInfo.Name] = (jsonPropertyInfo, index);
-                        this[index] = jsonPropertyInfo;
-                        state.IsPropertyOrderSpecified |= jsonPropertyInfo.Order != 0;
+                        state.AddedProperties[kdlPropertyInfo.Name] = (kdlPropertyInfo, index);
+                        this[index] = kdlPropertyInfo;
+                        state.IsPropertyOrderSpecified |= kdlPropertyInfo.Order != 0;
                     }
                     else
                     {
                         bool ignoreCurrentProperty =
                             // Does the current property have `KdlIgnoreAttribute`?
-                            jsonPropertyInfo.IsIgnored ||
+                            kdlPropertyInfo.IsIgnored ||
                             // Is the current property hidden by the previously cached property
                             // (with `new` keyword, or by overriding)?
-                            jsonPropertyInfo.IsOverriddenOrShadowedBy(other) ||
+                            kdlPropertyInfo.IsOverriddenOrShadowedBy(other) ||
                             // Was a property with the same CLR name ignored? That property hid the current property,
                             // thus, if it was ignored, the current property should be ignored too.
-                            (state.IgnoredProperties?.TryGetValue(memberName, out KdlPropertyInfo? ignored) == true && jsonPropertyInfo.IsOverriddenOrShadowedBy(ignored));
+                            (state.IgnoredProperties?.TryGetValue(memberName, out KdlPropertyInfo? ignored) == true && kdlPropertyInfo.IsOverriddenOrShadowedBy(ignored));
 
                         if (!ignoreCurrentProperty)
                         {
-                            ThrowHelper.ThrowInvalidOperationException_SerializerPropertyNameConflict(_jsonTypeInfo.Type, jsonPropertyInfo.Name);
+                            ThrowHelper.ThrowInvalidOperationException_SerializerPropertyNameConflict(_kdlTypeInfo.Type, kdlPropertyInfo.Name);
                         }
                     }
                 }
 
-                if (jsonPropertyInfo.IsIgnored)
+                if (kdlPropertyInfo.IsIgnored)
                 {
-                    (state.IgnoredProperties ??= [])[memberName] = jsonPropertyInfo;
+                    (state.IgnoredProperties ??= [])[memberName] = kdlPropertyInfo;
                 }
             }
         }

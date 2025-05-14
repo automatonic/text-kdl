@@ -27,12 +27,12 @@ namespace Automatonic.Text.Kdl.Serialization
                         ThrowHelper.ReThrowWithPath(ref state, ex);
                         break;
 
-                    case KdlException { Path: null } jsonException:
+                    case KdlException { Path: null } kdlException:
                         // KdlExceptions where the Path property is already set
                         // typically originate from nested calls to KdlSerializer;
                         // treat these cases as any other exception type and do not
                         // overwrite any exception information.
-                        ThrowHelper.AddKdlExceptionInformation(ref state, jsonException);
+                        ThrowHelper.AddKdlExceptionInformation(ref state, kdlException);
                         break;
 
                     case NotSupportedException when !ex.Message.Contains(" Path: "):

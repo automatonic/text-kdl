@@ -41,9 +41,9 @@
             // Special case for string; don't quote it.
             if (this is KdlValue)
             {
-                if (this is KdlValuePrimitive<string> jsonString)
+                if (this is KdlValuePrimitive<string> kdlString)
                 {
-                    return jsonString.Value;
+                    return kdlString.Value;
                 }
 
                 if (this is KdlValueOfElement { Value.ValueKind: KdlValueKind.String } kdlElement)

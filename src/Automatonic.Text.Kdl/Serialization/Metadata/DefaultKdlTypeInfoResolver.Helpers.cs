@@ -201,15 +201,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             bool hasKdlIncludeAttribute,
             ref KdlTypeInfo.PropertyHierarchyResolutionState state)
         {
-            KdlPropertyInfo? jsonPropertyInfo = CreatePropertyInfo(typeInfo, typeToConvert, memberInfo, nullabilityCtx, typeInfo.Options, shouldCheckForRequiredKeyword, hasKdlIncludeAttribute);
-            if (jsonPropertyInfo == null)
+            KdlPropertyInfo? kdlPropertyInfo = CreatePropertyInfo(typeInfo, typeToConvert, memberInfo, nullabilityCtx, typeInfo.Options, shouldCheckForRequiredKeyword, hasKdlIncludeAttribute);
+            if (kdlPropertyInfo == null)
             {
                 // ignored invalid property
                 return;
             }
 
-            Debug.Assert(jsonPropertyInfo.Name != null);
-            typeInfo.PropertyList.AddPropertyWithConflictResolution(jsonPropertyInfo, ref state);
+            Debug.Assert(kdlPropertyInfo.Name != null);
+            typeInfo.PropertyList.AddPropertyWithConflictResolution(kdlPropertyInfo, ref state);
         }
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
@@ -247,9 +247,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 return null;
             }
 
-            KdlPropertyInfo jsonPropertyInfo = typeInfo.CreatePropertyUsingReflection(typeToConvert, declaringType: memberInfo.DeclaringType);
-            PopulatePropertyInfo(jsonPropertyInfo, memberInfo, customConverter, ignoreCondition, nullabilityCtx, shouldCheckForRequiredKeyword, hasKdlIncludeAttribute);
-            return jsonPropertyInfo;
+            KdlPropertyInfo kdlPropertyInfo = typeInfo.CreatePropertyUsingReflection(typeToConvert, declaringType: memberInfo.DeclaringType);
+            PopulatePropertyInfo(kdlPropertyInfo, memberInfo, customConverter, ignoreCondition, nullabilityCtx, shouldCheckForRequiredKeyword, hasKdlIncludeAttribute);
+            return kdlPropertyInfo;
         }
 
         private static KdlNumberHandling? GetNumberHandlingForType(Type type)
@@ -285,7 +285,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             Debug.Assert(typeInfo.Converter.ConstructorInfo != null);
             ParameterInfo[] parameters = typeInfo.Converter.ConstructorInfo.GetParameters();
             int parameterCount = parameters.Length;
-            KdlParameterInfoValues[] jsonParameters = new KdlParameterInfoValues[parameterCount];
+            KdlParameterInfoValues[] kdlParameters = new KdlParameterInfoValues[parameterCount];
 
             for (int i = 0; i < parameterCount; i++)
             {
@@ -298,7 +298,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     ThrowHelper.ThrowNotSupportedException_ConstructorContainsNullParameterNames(typeInfo.Converter.ConstructorInfo.DeclaringType);
                 }
 
-                KdlParameterInfoValues jsonInfo = new()
+                KdlParameterInfoValues kdlInfo = new()
                 {
                     Name = reflectionInfo.Name,
                     ParameterType = reflectionInfo.ParameterType,
@@ -308,16 +308,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     IsNullable = DetermineParameterNullability(reflectionInfo, nullabilityCtx) is not NullabilityState.NotNull,
                 };
 
-                jsonParameters[i] = jsonInfo;
+                kdlParameters[i] = kdlInfo;
             }
 
-            typeInfo.PopulateParameterInfoValues(jsonParameters);
+            typeInfo.PopulateParameterInfoValues(kdlParameters);
         }
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
         private static void PopulatePropertyInfo(
-            KdlPropertyInfo jsonPropertyInfo,
+            KdlPropertyInfo kdlPropertyInfo,
             MemberInfo memberInfo,
             KdlConverter? customConverter,
             KdlIgnoreCondition? ignoreCondition,
@@ -325,37 +325,37 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             bool shouldCheckForRequiredKeyword,
             bool hasKdlIncludeAttribute)
         {
-            Debug.Assert(jsonPropertyInfo.AttributeProvider == null);
+            Debug.Assert(kdlPropertyInfo.AttributeProvider == null);
 
-            switch (jsonPropertyInfo.AttributeProvider = memberInfo)
+            switch (kdlPropertyInfo.AttributeProvider = memberInfo)
             {
                 case PropertyInfo propertyInfo:
-                    jsonPropertyInfo.MemberName = propertyInfo.Name;
-                    jsonPropertyInfo.IsVirtual = propertyInfo.IsVirtual();
-                    jsonPropertyInfo.MemberType = MemberTypes.Property;
+                    kdlPropertyInfo.MemberName = propertyInfo.Name;
+                    kdlPropertyInfo.IsVirtual = propertyInfo.IsVirtual();
+                    kdlPropertyInfo.MemberType = MemberTypes.Property;
                     break;
                 case FieldInfo fieldInfo:
-                    jsonPropertyInfo.MemberName = fieldInfo.Name;
-                    jsonPropertyInfo.MemberType = MemberTypes.Field;
+                    kdlPropertyInfo.MemberName = fieldInfo.Name;
+                    kdlPropertyInfo.MemberType = MemberTypes.Field;
                     break;
                 default:
                     Debug.Fail("Only FieldInfo and PropertyInfo members are supported.");
                     break;
             }
 
-            jsonPropertyInfo.CustomConverter = customConverter;
-            DeterminePropertyPolicies(jsonPropertyInfo, memberInfo);
-            DeterminePropertyName(jsonPropertyInfo, memberInfo);
-            DeterminePropertyIsRequired(jsonPropertyInfo, memberInfo, shouldCheckForRequiredKeyword);
-            DeterminePropertyNullability(jsonPropertyInfo, memberInfo, nullabilityCtx);
+            kdlPropertyInfo.CustomConverter = customConverter;
+            DeterminePropertyPolicies(kdlPropertyInfo, memberInfo);
+            DeterminePropertyName(kdlPropertyInfo, memberInfo);
+            DeterminePropertyIsRequired(kdlPropertyInfo, memberInfo, shouldCheckForRequiredKeyword);
+            DeterminePropertyNullability(kdlPropertyInfo, memberInfo, nullabilityCtx);
 
             if (ignoreCondition != KdlIgnoreCondition.Always)
             {
-                jsonPropertyInfo.DetermineReflectionPropertyAccessors(memberInfo, useNonPublicAccessors: hasKdlIncludeAttribute);
+                kdlPropertyInfo.DetermineReflectionPropertyAccessors(memberInfo, useNonPublicAccessors: hasKdlIncludeAttribute);
             }
 
-            jsonPropertyInfo.IgnoreCondition = ignoreCondition;
-            jsonPropertyInfo.IsExtensionData = memberInfo.GetCustomAttribute<KdlExtensionDataAttribute>(inherit: false) != null;
+            kdlPropertyInfo.IgnoreCondition = ignoreCondition;
+            kdlPropertyInfo.IsExtensionData = memberInfo.GetCustomAttribute<KdlExtensionDataAttribute>(inherit: false) != null;
         }
 
         private static void DeterminePropertyPolicies(KdlPropertyInfo propertyInfo, MemberInfo memberInfo)
@@ -404,7 +404,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal static void DeterminePropertyAccessors<T>(KdlPropertyInfo<T> jsonPropertyInfo, MemberInfo memberInfo, bool useNonPublicAccessors)
+        internal static void DeterminePropertyAccessors<T>(KdlPropertyInfo<T> kdlPropertyInfo, MemberInfo memberInfo, bool useNonPublicAccessors)
         {
             Debug.Assert(memberInfo is FieldInfo or PropertyInfo);
 
@@ -414,13 +414,13 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     MethodInfo? getMethod = propertyInfo.GetMethod;
                     if (getMethod != null && (getMethod.IsPublic || useNonPublicAccessors))
                     {
-                        jsonPropertyInfo.Get = MemberAccessor.CreatePropertyGetter<T>(propertyInfo);
+                        kdlPropertyInfo.Get = MemberAccessor.CreatePropertyGetter<T>(propertyInfo);
                     }
 
                     MethodInfo? setMethod = propertyInfo.SetMethod;
                     if (setMethod != null && (setMethod.IsPublic || useNonPublicAccessors))
                     {
-                        jsonPropertyInfo.Set = MemberAccessor.CreatePropertySetter<T>(propertyInfo);
+                        kdlPropertyInfo.Set = MemberAccessor.CreatePropertySetter<T>(propertyInfo);
                     }
 
                     break;
@@ -428,11 +428,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 case FieldInfo fieldInfo:
                     Debug.Assert(fieldInfo.IsPublic || useNonPublicAccessors);
 
-                    jsonPropertyInfo.Get = MemberAccessor.CreateFieldGetter<T>(fieldInfo);
+                    kdlPropertyInfo.Get = MemberAccessor.CreateFieldGetter<T>(fieldInfo);
 
                     if (!fieldInfo.IsInitOnly)
                     {
-                        jsonPropertyInfo.Set = MemberAccessor.CreateFieldSetter<T>(fieldInfo);
+                        kdlPropertyInfo.Set = MemberAccessor.CreateFieldSetter<T>(fieldInfo);
                     }
 
                     break;

@@ -9,7 +9,7 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Constructs a new <see cref="KdlReader"/> instance.
         /// </summary>
-        /// <param name="jsonData">The ReadOnlySequence&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
+        /// <param name="kdlData">The ReadOnlySequence&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
         /// <param name="isFinalBlock">True when the input span contains the entire data to process.
         /// Set to false only if it is known that the input span contains partial data with more data to follow.</param>
         /// <param name="state">If this is the first call to the ctor, pass in a default state. Otherwise,
@@ -18,9 +18,9 @@ namespace Automatonic.Text.Kdl
         /// Since this type is a ref struct, it is a stack-only type and all the limitations of ref structs apply to it.
         /// This is the reason why the ctor accepts a <see cref="KdlReaderState"/>.
         /// </remarks>
-        public KdlReader(ReadOnlySequence<byte> jsonData, bool isFinalBlock, KdlReaderState state)
+        public KdlReader(ReadOnlySequence<byte> kdlData, bool isFinalBlock, KdlReaderState state)
         {
-            _buffer = jsonData.First.Span;
+            _buffer = kdlData.First.Span;
 
             _isFinalBlock = isFinalBlock;
             _isInputSequence = true;
@@ -46,20 +46,20 @@ namespace Automatonic.Text.Kdl
 
             ValueSpan = [];
 
-            _sequence = jsonData;
+            _sequence = kdlData;
             HasValueSequence = false;
             ValueSequence = ReadOnlySequence<byte>.Empty;
 
-            if (jsonData.IsSingleSegment)
+            if (kdlData.IsSingleSegment)
             {
                 _nextPosition = default;
-                _currentPosition = jsonData.Start;
+                _currentPosition = kdlData.Start;
                 _isLastSegment = isFinalBlock;
                 _isMultiSegment = false;
             }
             else
             {
-                _currentPosition = jsonData.Start;
+                _currentPosition = kdlData.Start;
                 _nextPosition = _currentPosition;
 
                 bool firstSegmentIsEmpty = _buffer.Length == 0;
@@ -68,7 +68,7 @@ namespace Automatonic.Text.Kdl
                     // Once we find a non-empty segment, we need to set current position to it.
                     // Therefore, track the next position in a copy before it gets advanced to the next segment.
                     SequencePosition previousNextPosition = _nextPosition;
-                    while (jsonData.TryGet(ref _nextPosition, out ReadOnlyMemory<byte> memory, advance: true))
+                    while (kdlData.TryGet(ref _nextPosition, out ReadOnlyMemory<byte> memory, advance: true))
                     {
                         // _currentPosition should point to the segment right befor the segment that _nextPosition points to.
                         _currentPosition = previousNextPosition;
@@ -86,7 +86,7 @@ namespace Automatonic.Text.Kdl
                 //    Otherwise, we would end up skipping a segment (i.e. advance = false).
                 // If firstSegmentIsEmpty is false,
                 //    make sure to advance _nextPosition so that it is no longer the same as _currentPosition (i.e. advance = true).
-                _isLastSegment = !jsonData.TryGet(ref _nextPosition, out _, advance: !firstSegmentIsEmpty) && isFinalBlock; // Don't re-order to avoid short-circuiting
+                _isLastSegment = !kdlData.TryGet(ref _nextPosition, out _, advance: !firstSegmentIsEmpty) && isFinalBlock; // Don't re-order to avoid short-circuiting
 
                 Debug.Assert(!_nextPosition.Equals(_currentPosition));
 
@@ -97,7 +97,7 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Constructs a new <see cref="KdlReader"/> instance.
         /// </summary>
-        /// <param name="jsonData">The ReadOnlySequence&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
+        /// <param name="kdlData">The ReadOnlySequence&lt;byte&gt; containing the UTF-8 encoded KDL text to process.</param>
         /// <param name="options">Defines the customized behavior of the <see cref="KdlReader"/>
         /// that is different from the KDL RFC (for example how to handle comments or maximum depth allowed when reading).
         /// By default, the <see cref="KdlReader"/> follows the KDL RFC strictly (i.e. comments within the KDL are invalid) and reads up to a maximum depth of 64.</param>
@@ -109,8 +109,8 @@ namespace Automatonic.Text.Kdl
         ///     This assumes that the entire KDL payload is passed in (equivalent to <see cref="IsFinalBlock"/> = true)
         ///   </para>
         /// </remarks>
-        public KdlReader(ReadOnlySequence<byte> jsonData, KdlReaderOptions options = default)
-            : this(jsonData, isFinalBlock: true, new KdlReaderState(options))
+        public KdlReader(ReadOnlySequence<byte> kdlData, KdlReaderOptions options = default)
+            : this(kdlData, isFinalBlock: true, new KdlReaderState(options))
         {
         }
 

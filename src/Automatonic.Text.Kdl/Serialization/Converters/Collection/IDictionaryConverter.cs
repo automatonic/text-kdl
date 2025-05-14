@@ -92,13 +92,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return true;
         }
 
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
         {
             // Deserialize as Dictionary<TKey,TValue> for interface types that support it.
-            if (jsonTypeInfo.CreateObject is null && Type.IsAssignableFrom(typeof(Dictionary<string, object?>)))
+            if (kdlTypeInfo.CreateObject is null && Type.IsAssignableFrom(typeof(Dictionary<string, object?>)))
             {
                 Debug.Assert(Type.IsInterface);
-                jsonTypeInfo.CreateObject = () => new Dictionary<string, object?>();
+                kdlTypeInfo.CreateObject = () => new Dictionary<string, object?>();
             }
         }
     }

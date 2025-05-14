@@ -371,12 +371,12 @@ namespace Automatonic.Text.Kdl.Serialization
                 // handled by a polymorphic converter for a base type.
                 state.Current.PolymorphicSerializationState != PolymorphicSerializationState.PolymorphicReEntryStarted)
             {
-                KdlTypeInfo jsonTypeInfo = state.PeekNestedKdlTypeInfo();
-                Debug.Assert(jsonTypeInfo.Converter.Type == Type);
+                KdlTypeInfo kdlTypeInfo = state.PeekNestedKdlTypeInfo();
+                Debug.Assert(kdlTypeInfo.Converter.Type == Type);
 
-                bool canBePolymorphic = CanBePolymorphic || jsonTypeInfo.PolymorphicTypeResolver is not null;
+                bool canBePolymorphic = CanBePolymorphic || kdlTypeInfo.PolymorphicTypeResolver is not null;
                 KdlConverter? polymorphicConverter = canBePolymorphic ?
-                    ResolvePolymorphicConverter(value, jsonTypeInfo, options, ref state) :
+                    ResolvePolymorphicConverter(value, kdlTypeInfo, options, ref state) :
                     null;
 
                 if (!isContinuation && options.ReferenceHandlingStrategy != KdlKnownReferenceHandler.Unspecified &&

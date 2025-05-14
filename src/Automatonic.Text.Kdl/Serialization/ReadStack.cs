@@ -91,19 +91,19 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        internal void Initialize(KdlTypeInfo jsonTypeInfo, bool supportContinuation = false)
+        internal void Initialize(KdlTypeInfo kdlTypeInfo, bool supportContinuation = false)
         {
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            KdlSerializerOptions options = kdlTypeInfo.Options;
             if (options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve)
             {
                 ReferenceResolver = options.ReferenceHandler!.CreateResolver(writing: false);
                 PreserveReferences = true;
             }
 
-            Current.KdlTypeInfo = jsonTypeInfo;
-            Current.KdlPropertyInfo = jsonTypeInfo.PropertyInfoForTypeInfo;
+            Current.KdlTypeInfo = kdlTypeInfo;
+            Current.KdlPropertyInfo = kdlTypeInfo.PropertyInfoForTypeInfo;
             Current.NumberHandling = Current.KdlPropertyInfo.EffectiveNumberHandling;
-            Current.CanContainMetadata = PreserveReferences || jsonTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
+            Current.CanContainMetadata = PreserveReferences || kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
             SupportContinuation = supportContinuation;
         }
 
@@ -120,7 +120,7 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    KdlTypeInfo jsonTypeInfo = Current.KdlPropertyInfo?.KdlTypeInfo ?? Current.CtorArgumentState!.KdlParameterInfo!.KdlTypeInfo;
+                    KdlTypeInfo kdlTypeInfo = Current.KdlPropertyInfo?.KdlTypeInfo ?? Current.CtorArgumentState!.KdlParameterInfo!.KdlTypeInfo;
                     KdlNumberHandling? numberHandling = Current.NumberHandling;
 
                     EnsurePushCapacity();
@@ -128,11 +128,11 @@ namespace Automatonic.Text.Kdl
                     Current = default;
                     _count++;
 
-                    Current.KdlTypeInfo = jsonTypeInfo;
-                    Current.KdlPropertyInfo = jsonTypeInfo.PropertyInfoForTypeInfo;
+                    Current.KdlTypeInfo = kdlTypeInfo;
+                    Current.KdlPropertyInfo = kdlTypeInfo.PropertyInfoForTypeInfo;
                     // Allow number handling on property to win over handling on type.
                     Current.NumberHandling = numberHandling ?? Current.KdlPropertyInfo.EffectiveNumberHandling;
-                    Current.CanContainMetadata = PreserveReferences || jsonTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
+                    Current.CanContainMetadata = PreserveReferences || kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
                 }
             }
             else

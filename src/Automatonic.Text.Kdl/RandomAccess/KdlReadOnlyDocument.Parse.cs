@@ -257,15 +257,15 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlReadOnlyDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlyMemory<char> kdl, KdlReadOnlyDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(ReadOnlyMemory<char> kdl, KdlReadOnlyDocumentOptions options = default)
         {
-            ReadOnlySpan<char> jsonChars = kdl.Span;
-            int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(jsonChars);
+            ReadOnlySpan<char> kdlChars = kdl.Span;
+            int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(kdlChars);
             byte[] utf8Bytes = ArrayPool<byte>.Shared.Rent(expectedByteCount);
 
             try
             {
-                int actualByteCount = KdlReaderHelper.GetUtf8FromText(jsonChars, utf8Bytes);
+                int actualByteCount = KdlReaderHelper.GetUtf8FromText(kdlChars, utf8Bytes);
                 Debug.Assert(expectedByteCount == actualByteCount);
 
                 return Parse(
@@ -284,14 +284,14 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
         internal static KdlReadOnlyDocument ParseValue(ReadOnlyMemory<char> kdl, KdlReadOnlyDocumentOptions options)
         {
-            ReadOnlySpan<char> jsonChars = kdl.Span;
-            int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(jsonChars);
+            ReadOnlySpan<char> kdlChars = kdl.Span;
+            int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(kdlChars);
             byte[] owned;
             byte[] utf8Bytes = ArrayPool<byte>.Shared.Rent(expectedByteCount);
 
             try
             {
-                int actualByteCount = KdlReaderHelper.GetUtf8FromText(jsonChars, utf8Bytes);
+                int actualByteCount = KdlReaderHelper.GetUtf8FromText(kdlChars, utf8Bytes);
                 Debug.Assert(expectedByteCount == actualByteCount);
 
                 owned = new byte[actualByteCount];
@@ -321,7 +321,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlReadOnlyDocument Parse([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlReadOnlyDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(string kdl, KdlReadOnlyDocumentOptions options = default)
         {
             if (kdl is null)
             {

@@ -268,21 +268,21 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_SerializerPropertyNameNull(KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_SerializerPropertyNameNull(KdlPropertyInfo kdlPropertyInfo)
         {
-            throw new InvalidOperationException(Format(SR.SerializerPropertyNameNull, jsonPropertyInfo.DeclaringType, jsonPropertyInfo.MemberName));
+            throw new InvalidOperationException(Format(SR.SerializerPropertyNameNull, kdlPropertyInfo.DeclaringType, kdlPropertyInfo.MemberName));
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_KdlPropertyRequiredAndNotDeserializable(KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_KdlPropertyRequiredAndNotDeserializable(KdlPropertyInfo kdlPropertyInfo)
         {
-            throw new InvalidOperationException(Format(SR.KdlPropertyRequiredAndNotDeserializable, jsonPropertyInfo.Name, jsonPropertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.KdlPropertyRequiredAndNotDeserializable, kdlPropertyInfo.Name, kdlPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_KdlPropertyRequiredAndExtensionData(KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_KdlPropertyRequiredAndExtensionData(KdlPropertyInfo kdlPropertyInfo)
         {
-            throw new InvalidOperationException(Format(SR.KdlPropertyRequiredAndExtensionData, jsonPropertyInfo.Name, jsonPropertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.KdlPropertyRequiredAndExtensionData, kdlPropertyInfo.Name, kdlPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
@@ -362,9 +362,9 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_ExtensionDataCannotBindToCtorParam(string propertyName, KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_ExtensionDataCannotBindToCtorParam(string propertyName, KdlPropertyInfo kdlPropertyInfo)
         {
-            throw new InvalidOperationException(Format(SR.ExtensionDataCannotBindToCtorParam, propertyName, jsonPropertyInfo.DeclaringType));
+            throw new InvalidOperationException(Format(SR.ExtensionDataCannotBindToCtorParam, propertyName, kdlPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
@@ -380,16 +380,16 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_NumberHandlingOnPropertyInvalid(KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_NumberHandlingOnPropertyInvalid(KdlPropertyInfo kdlPropertyInfo)
         {
-            Debug.Assert(!jsonPropertyInfo.IsForTypeInfo);
-            throw new InvalidOperationException(Format(SR.NumberHandlingOnPropertyInvalid, jsonPropertyInfo.MemberName, jsonPropertyInfo.DeclaringType));
+            Debug.Assert(!kdlPropertyInfo.IsForTypeInfo);
+            throw new InvalidOperationException(Format(SR.NumberHandlingOnPropertyInvalid, kdlPropertyInfo.MemberName, kdlPropertyInfo.DeclaringType));
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_ConverterCanConvertMultipleTypes(Type runtimePropertyType, KdlConverter jsonConverter)
+        public static void ThrowInvalidOperationException_ConverterCanConvertMultipleTypes(Type runtimePropertyType, KdlConverter kdlConverter)
         {
-            throw new InvalidOperationException(Format(SR.ConverterCanConvertMultipleTypes, jsonConverter.GetType(), jsonConverter.Type, runtimePropertyType));
+            throw new InvalidOperationException(Format(SR.ConverterCanConvertMultipleTypes, kdlConverter.GetType(), kdlConverter.Type, runtimePropertyType));
         }
 
         [DoesNotReturn]
@@ -398,11 +398,11 @@ namespace Automatonic.Text.Kdl
             ref KdlReader reader,
             scoped ref ReadStack state)
         {
-            KdlTypeInfo jsonTypeInfo = state.GetTopKdlTypeInfoWithParameterizedConstructor();
+            KdlTypeInfo kdlTypeInfo = state.GetTopKdlTypeInfoWithParameterizedConstructor();
             state.Current.KdlPropertyName = propertyName.ToArray();
 
             NotSupportedException ex = new NotSupportedException(
-                Format(SR.ObjectWithParameterizedCtorRefMetadataNotSupported, jsonTypeInfo.Type));
+                Format(SR.ObjectWithParameterizedCtorRefMetadataNotSupported, kdlTypeInfo.Type));
             ThrowNotSupportedException(ref state, reader, ex);
         }
 
@@ -453,9 +453,9 @@ namespace Automatonic.Text.Kdl
         [DoesNotReturn]
         public static void ReThrowWithPath(scoped ref ReadStack state, in KdlReader reader, Exception ex)
         {
-            KdlException jsonException = new KdlException(null, ex);
-            AddKdlExceptionInformation(ref state, reader, jsonException);
-            throw jsonException;
+            KdlException kdlException = new KdlException(null, ex);
+            AddKdlExceptionInformation(ref state, reader, kdlException);
+            throw kdlException;
         }
 
         public static void AddKdlExceptionInformation(scoped ref ReadStack state, in KdlReader reader, KdlException ex)
@@ -491,9 +491,9 @@ namespace Automatonic.Text.Kdl
         [DoesNotReturn]
         public static void ReThrowWithPath(ref WriteStack state, Exception ex)
         {
-            KdlException jsonException = new KdlException(null, ex);
-            AddKdlExceptionInformation(ref state, jsonException);
-            throw jsonException;
+            KdlException kdlException = new KdlException(null, ex);
+            AddKdlExceptionInformation(ref state, kdlException);
+            throw kdlException;
         }
 
         public static void AddKdlExceptionInformation(ref WriteStack state, KdlException ex)
@@ -538,21 +538,21 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_ExtensionDataConflictsWithUnmappedMemberHandling(Type classType, KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_ExtensionDataConflictsWithUnmappedMemberHandling(Type classType, KdlPropertyInfo kdlPropertyInfo)
         {
-            throw new InvalidOperationException(Format(SR.ExtensionDataConflictsWithUnmappedMemberHandling, classType, jsonPropertyInfo.MemberName));
+            throw new InvalidOperationException(Format(SR.ExtensionDataConflictsWithUnmappedMemberHandling, classType, kdlPropertyInfo.MemberName));
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_SerializationDataExtensionPropertyInvalid(KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_SerializationDataExtensionPropertyInvalid(KdlPropertyInfo kdlPropertyInfo)
         {
-            throw new InvalidOperationException(Format(SR.SerializationDataExtensionPropertyInvalid, jsonPropertyInfo.PropertyType, jsonPropertyInfo.MemberName));
+            throw new InvalidOperationException(Format(SR.SerializationDataExtensionPropertyInvalid, kdlPropertyInfo.PropertyType, kdlPropertyInfo.MemberName));
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_PropertyTypeNotNullable(KdlPropertyInfo jsonPropertyInfo)
+        public static void ThrowInvalidOperationException_PropertyTypeNotNullable(KdlPropertyInfo kdlPropertyInfo)
         {
-            throw new InvalidOperationException(Format(SR.PropertyTypeNotNullable, jsonPropertyInfo.PropertyType));
+            throw new InvalidOperationException(Format(SR.PropertyTypeNotNullable, kdlPropertyInfo.PropertyType));
         }
 
         [DoesNotReturn]

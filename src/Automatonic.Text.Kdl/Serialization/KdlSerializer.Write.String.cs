@@ -26,8 +26,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static string Serialize<TValue>(TValue value, KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return WriteString(value, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return WriteString(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -59,8 +59,8 @@ namespace Automatonic.Text.Kdl
             KdlSerializerOptions? options = null)
         {
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, inputType);
-            return WriteStringAsObject(value, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
+            return WriteStringAsObject(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -69,23 +69,23 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
         /// <returns>A <see cref="string"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <remarks>Using a <see cref="string"/> is not as efficient as using UTF-8
         /// encoding since the implementation internally uses UTF-8. See also <see cref="SerializeToUtf8Bytes{TValue}(TValue, KdlTypeInfo{TValue})"/>
         /// and <see cref="SerializeAsync{TValue}(IO.Stream, TValue, KdlTypeInfo{TValue}, Threading.CancellationToken)"/>.
         /// </remarks>
-        public static string Serialize<TValue>(TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static string Serialize<TValue>(TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteString(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteString(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -93,26 +93,26 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <returns>A <see cref="string"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidCastException">
-        /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
+        /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
         /// <remarks>Using a <see cref="string"/> is not as efficient as using UTF-8
         /// encoding since the implementation internally uses UTF-8. See also <see cref="SerializeToUtf8Bytes(object?, KdlTypeInfo)"/>
         /// and <see cref="SerializeAsync(IO.Stream, object?, KdlTypeInfo, Threading.CancellationToken)"/>.
         /// </remarks>
-        public static string Serialize(object? value, KdlTypeInfo jsonTypeInfo)
+        public static string Serialize(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteStringAsObject(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteStringAsObject(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -145,19 +145,19 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, inputType);
-            return WriteStringAsObject(value, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, inputType);
+            return WriteStringAsObject(value, kdlTypeInfo);
         }
 
-        private static string WriteString<TValue>(in TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static string WriteString<TValue>(in TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(jsonTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
 
             try
             {
-                jsonTypeInfo.Serialize(writer, value);
+                kdlTypeInfo.Serialize(writer, value);
                 return KdlReaderHelper.TranscodeHelper(output.WrittenMemory.Span);
             }
             finally
@@ -166,15 +166,15 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static string WriteStringAsObject(object? value, KdlTypeInfo jsonTypeInfo)
+        private static string WriteStringAsObject(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(jsonTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
 
             try
             {
-                jsonTypeInfo.SerializeAsObject(writer, value);
+                kdlTypeInfo.SerializeAsObject(writer, value);
                 return KdlReaderHelper.TranscodeHelper(output.WrittenMemory.Span);
             }
             finally

@@ -23,8 +23,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static KdlReadOnlyDocument SerializeToDocument<TValue>(TValue value, KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return WriteDocument(value, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return WriteDocument(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -49,8 +49,8 @@ namespace Automatonic.Text.Kdl
         public static KdlReadOnlyDocument SerializeToDocument(object? value, Type inputType, KdlSerializerOptions? options = null)
         {
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, inputType);
-            return WriteDocumentAsObject(value, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
+            return WriteDocumentAsObject(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -59,19 +59,19 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
         /// <returns>A <see cref="KdlReadOnlyDocument"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlReadOnlyDocument SerializeToDocument<TValue>(TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static KdlReadOnlyDocument SerializeToDocument<TValue>(TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteDocument(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteDocument(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -79,22 +79,22 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <returns>A <see cref="KdlReadOnlyDocument"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidCastException">
-        /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
+        /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
-        public static KdlReadOnlyDocument SerializeToDocument(object? value, KdlTypeInfo jsonTypeInfo)
+        public static KdlReadOnlyDocument SerializeToDocument(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteDocumentAsObject(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteDocumentAsObject(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -126,10 +126,10 @@ namespace Automatonic.Text.Kdl
             return WriteDocumentAsObject(value, GetTypeInfo(context, inputType));
         }
 
-        private static KdlReadOnlyDocument WriteDocument<TValue>(in TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static KdlReadOnlyDocument WriteDocument<TValue>(in TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            Debug.Assert(kdlTypeInfo.IsConfigured);
+            KdlSerializerOptions options = kdlTypeInfo.Options;
 
             // For performance, share the same buffer across serialization and deserialization.
             // The PooledByteBufferWriter is cleared and returned when KdlDocument.Dispose() is called.
@@ -138,7 +138,7 @@ namespace Automatonic.Text.Kdl
 
             try
             {
-                jsonTypeInfo.Serialize(writer, value);
+                kdlTypeInfo.Serialize(writer, value);
                 return KdlReadOnlyDocument.ParseRented(output, options.GetDocumentOptions());
             }
             finally
@@ -147,10 +147,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static KdlReadOnlyDocument WriteDocumentAsObject(object? value, KdlTypeInfo jsonTypeInfo)
+        private static KdlReadOnlyDocument WriteDocumentAsObject(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            Debug.Assert(kdlTypeInfo.IsConfigured);
+            KdlSerializerOptions options = kdlTypeInfo.Options;
 
             // For performance, share the same buffer across serialization and deserialization.
             // The PooledByteBufferWriter is cleared and returned when KdlDocument.Dispose() is called.
@@ -159,7 +159,7 @@ namespace Automatonic.Text.Kdl
 
             try
             {
-                jsonTypeInfo.SerializeAsObject(writer, value);
+                kdlTypeInfo.SerializeAsObject(writer, value);
                 return KdlReadOnlyDocument.ParseRented(output, options.GetDocumentOptions());
             }
             finally

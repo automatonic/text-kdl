@@ -52,16 +52,16 @@ namespace Automatonic.Text.Kdl.RandomAccess
             static unsafe DbRow() => Debug.Assert(sizeof(DbRow) == Size);
 #endif
 
-            internal DbRow(KdlTokenType jsonTokenType, int location, int sizeOrLength)
+            internal DbRow(KdlTokenType kdlTokenType, int location, int sizeOrLength)
             {
-                Debug.Assert(jsonTokenType is > KdlTokenType.None and <= KdlTokenType.Null);
-                Debug.Assert((byte)jsonTokenType < 1 << 4);
+                Debug.Assert(kdlTokenType is > KdlTokenType.None and <= KdlTokenType.Null);
+                Debug.Assert((byte)kdlTokenType < 1 << 4);
                 Debug.Assert(location >= 0);
                 Debug.Assert(sizeOrLength >= UnknownSize);
 
                 _location = location;
                 _sizeOrLengthUnion = sizeOrLength;
-                _numberOfRowsAndTypeUnion = (int)jsonTokenType << 28;
+                _numberOfRowsAndTypeUnion = (int)kdlTokenType << 28;
             }
 
             internal bool IsSimpleValue => TokenType >= KdlTokenType.PropertyName;

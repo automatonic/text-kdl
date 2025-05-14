@@ -21,8 +21,8 @@ namespace Automatonic.Text.Kdl.Serialization
             // Bridge from resumable to value converters.
 
             ReadStack state = default;
-            KdlTypeInfo jsonTypeInfo = options.GetTypeInfoInternal(typeToConvert);
-            state.Initialize(jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = options.GetTypeInfoInternal(typeToConvert);
+            state.Initialize(kdlTypeInfo);
 
             TryRead(ref reader, typeToConvert, options, ref state, out T? value, out _);
             return value;

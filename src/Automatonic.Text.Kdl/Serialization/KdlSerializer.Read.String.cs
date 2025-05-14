@@ -41,15 +41,15 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(string kdl, KdlSerializerOptions? options = null)
         {
             if (kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(kdl));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return ReadFromSpan(kdl.AsSpan(), jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return ReadFromSpan(kdl.AsSpan(), kdlTypeInfo);
         }
 
         /// <summary>
@@ -78,10 +78,10 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(ReadOnlySpan<char> kdl, KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return ReadFromSpan(kdl, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return ReadFromSpan(kdl, kdlTypeInfo);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] string kdl, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(string kdl, Type returnType, KdlSerializerOptions? options = null)
         {
             if (kdl is null)
             {
@@ -124,8 +124,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(returnType));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, returnType);
-            return ReadFromSpanAsObject(kdl.AsSpan(), jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, returnType);
+            return ReadFromSpanAsObject(kdl.AsSpan(), kdlTypeInfo);
         }
 
         /// <summary>
@@ -157,7 +157,7 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(ReadOnlySpan<char> kdl, Type returnType, KdlSerializerOptions? options = null)
         {
             if (returnType is null)
             {
@@ -166,8 +166,8 @@ namespace Automatonic.Text.Kdl
 
             // default/null span is treated as empty
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, returnType);
-            return ReadFromSpanAsObject(kdl, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, returnType);
+            return ReadFromSpanAsObject(kdl, kdlTypeInfo);
         }
 
         /// <summary>
@@ -176,13 +176,13 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
         /// <param name="kdl">KDL text to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="kdl"/> is <see langword="null"/>.
         ///
         /// -or-
         ///
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid.
@@ -197,19 +197,19 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>(string kdl, KdlTypeInfo<TValue> kdlTypeInfo)
         {
             if (kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromSpan(kdl.AsSpan(), jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromSpan(kdl.AsSpan(), kdlTypeInfo);
         }
 
         /// <summary>
@@ -218,13 +218,13 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
         /// <param name="kdl">KDL text to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="kdl"/> is <see langword="null"/>.
         ///
         /// -or-
         ///
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid.
@@ -239,29 +239,29 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static TValue? Deserialize<TValue>([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>(ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromSpan(kdl, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromSpan(kdl, kdlTypeInfo);
         }
 
         /// <summary>
-        /// Parses the text representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Parses the text representing a single KDL value into an instance specified by the <paramref name="kdlTypeInfo"/>.
         /// </summary>
-        /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
+        /// <returns>A <paramref name="kdlTypeInfo"/> representation of the KDL value.</returns>
         /// <param name="kdl">KDL text to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
         /// <paramref name="kdl"/> is <see langword="null"/>.
         ///
         /// -or-
         ///
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid.
@@ -272,29 +272,29 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] string kdl, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize(string kdl, KdlTypeInfo kdlTypeInfo)
         {
             if (kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromSpanAsObject(kdl.AsSpan(), jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromSpanAsObject(kdl.AsSpan(), kdlTypeInfo);
         }
 
         /// <summary>
-        /// Parses the text representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Parses the text representing a single KDL value into an instance specified by the <paramref name="kdlTypeInfo"/>.
         /// </summary>
-        /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
+        /// <returns>A <paramref name="kdlTypeInfo"/> representation of the KDL value.</returns>
         /// <param name="kdl">KDL text to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid.
@@ -305,15 +305,15 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize(ReadOnlySpan<char> kdl, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromSpanAsObject(kdl, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromSpanAsObject(kdl, kdlTypeInfo);
         }
 
         /// <summary>
@@ -351,7 +351,7 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] string kdl, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(string kdl, Type returnType, KdlSerializerContext context)
         {
             if (kdl is null)
             {
@@ -366,8 +366,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(context));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, returnType);
-            return ReadFromSpanAsObject(kdl.AsSpan(), jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, returnType);
+            return ReadFromSpanAsObject(kdl.AsSpan(), kdlTypeInfo);
         }
 
         /// <summary>
@@ -405,7 +405,7 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize([StringSyntax(StringSyntaxAttribute.Json)] ReadOnlySpan<char> kdl, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(ReadOnlySpan<char> kdl, Type returnType, KdlSerializerContext context)
         {
             if (returnType is null)
             {
@@ -416,13 +416,13 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(context));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, returnType);
-            return ReadFromSpanAsObject(kdl, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, returnType);
+            return ReadFromSpanAsObject(kdl, kdlTypeInfo);
         }
 
-        private static TValue? ReadFromSpan<TValue>(ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static TValue? ReadFromSpan<TValue>(ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
             byte[]? tempArray = null;
 
             // For performance, avoid obtaining actual byte count unless memory usage is higher than the threshold.
@@ -439,7 +439,7 @@ namespace Automatonic.Text.Kdl
             {
                 int actualByteCount = KdlReaderHelper.GetUtf8FromText(kdl, utf8);
                 utf8 = utf8[..actualByteCount];
-                return ReadFromSpan(utf8, jsonTypeInfo, actualByteCount);
+                return ReadFromSpan(utf8, kdlTypeInfo, actualByteCount);
             }
             finally
             {
@@ -451,9 +451,9 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static object? ReadFromSpanAsObject(ReadOnlySpan<char> kdl, KdlTypeInfo jsonTypeInfo)
+        private static object? ReadFromSpanAsObject(ReadOnlySpan<char> kdl, KdlTypeInfo kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
             byte[]? tempArray = null;
 
             // For performance, avoid obtaining actual byte count unless memory usage is higher than the threshold.
@@ -470,7 +470,7 @@ namespace Automatonic.Text.Kdl
             {
                 int actualByteCount = KdlReaderHelper.GetUtf8FromText(kdl, utf8);
                 utf8 = utf8[..actualByteCount];
-                return ReadFromSpanAsObject(utf8, jsonTypeInfo, actualByteCount);
+                return ReadFromSpanAsObject(utf8, kdlTypeInfo, actualByteCount);
             }
             finally
             {

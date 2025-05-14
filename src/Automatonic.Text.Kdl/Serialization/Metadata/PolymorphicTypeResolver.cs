@@ -115,7 +115,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         public byte[]? CustomTypeDiscriminatorPropertyNameUtf8 { get; }
         public KdlEncodedText? CustomTypeDiscriminatorPropertyNameKdlEncoded { get; }
 
-        public bool TryGetDerivedKdlTypeInfo(Type runtimeType, [NotNullWhen(true)] out KdlTypeInfo? jsonTypeInfo, out object? typeDiscriminator)
+        public bool TryGetDerivedKdlTypeInfo(Type runtimeType, [NotNullWhen(true)] out KdlTypeInfo? kdlTypeInfo, out object? typeDiscriminator)
         {
             Debug.Assert(BaseType.IsAssignableFrom(runtimeType));
 
@@ -147,19 +147,19 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             if (result is null)
             {
-                jsonTypeInfo = null;
+                kdlTypeInfo = null;
                 typeDiscriminator = null;
                 return false;
             }
             else
             {
-                jsonTypeInfo = result.KdlTypeInfo;
+                kdlTypeInfo = result.KdlTypeInfo;
                 typeDiscriminator = result.TypeDiscriminator;
                 return true;
             }
         }
 
-        public bool TryGetDerivedKdlTypeInfo(object typeDiscriminator, [NotNullWhen(true)] out KdlTypeInfo? jsonTypeInfo)
+        public bool TryGetDerivedKdlTypeInfo(object typeDiscriminator, [NotNullWhen(true)] out KdlTypeInfo? kdlTypeInfo)
         {
             Debug.Assert(typeDiscriminator is int or string);
             Debug.Assert(UsesTypeDiscriminators);
@@ -168,7 +168,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             if (_discriminatorIdtoType.TryGetValue(typeDiscriminator, out DerivedKdlTypeInfo? result))
             {
                 Debug.Assert(typeDiscriminator.Equals(result.TypeDiscriminator));
-                jsonTypeInfo = result.KdlTypeInfo;
+                kdlTypeInfo = result.KdlTypeInfo;
                 return true;
             }
 
@@ -177,7 +177,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 ThrowHelper.ThrowKdlException_UnrecognizedTypeDiscriminator(typeDiscriminator);
             }
 
-            jsonTypeInfo = null;
+            kdlTypeInfo = null;
             return false;
         }
 

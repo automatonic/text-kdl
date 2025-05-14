@@ -22,7 +22,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             var bufferState = new ReadBufferState(options.DefaultBufferSize);
             ReadStack readStack = default;
             readStack.Initialize(this, supportContinuation: true);
-            var jsonReaderState = new KdlReaderState(options.GetReaderOptions());
+            var kdlReaderState = new KdlReaderState(options.GetReaderOptions());
 
             try
             {
@@ -31,7 +31,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     bufferState = await bufferState.ReadFromStreamAsync(utf8Kdl, cancellationToken).ConfigureAwait(false);
                     bool success = ContinueDeserialize(
                         ref bufferState,
-                        ref jsonReaderState,
+                        ref kdlReaderState,
                         ref readStack,
                         out T? value);
 
@@ -54,7 +54,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             var bufferState = new ReadBufferState(options.DefaultBufferSize);
             ReadStack readStack = default;
             readStack.Initialize(this, supportContinuation: true);
-            var jsonReaderState = new KdlReaderState(options.GetReaderOptions());
+            var kdlReaderState = new KdlReaderState(options.GetReaderOptions());
 
             try
             {
@@ -63,7 +63,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     bufferState.ReadFromStream(utf8Kdl);
                     bool success = ContinueDeserialize(
                         ref bufferState,
-                        ref jsonReaderState,
+                        ref kdlReaderState,
                         ref readStack,
                         out T? value);
 
@@ -101,11 +101,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         internal bool ContinueDeserialize(
             ref ReadBufferState bufferState,
-            ref KdlReaderState jsonReaderState,
+            ref KdlReaderState kdlReaderState,
             ref ReadStack readStack,
             out T? value)
         {
-            var reader = new KdlReader(bufferState.Bytes, bufferState.IsFinalBlock, jsonReaderState);
+            var reader = new KdlReader(bufferState.Bytes, bufferState.IsFinalBlock, kdlReaderState);
             bool success = EffectiveConverter.ReadCore(ref reader, out value, Options, ref readStack);
 
             Debug.Assert(reader.BytesConsumed <= bufferState.Bytes.Length);
@@ -113,7 +113,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 "The reader should have thrown if we have remaining bytes.");
 
             bufferState.AdvanceBuffer((int)reader.BytesConsumed);
-            jsonReaderState = reader.CurrentState;
+            kdlReaderState = reader.CurrentState;
             return success;
         }
     }

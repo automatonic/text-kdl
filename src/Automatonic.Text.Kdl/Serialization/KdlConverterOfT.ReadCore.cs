@@ -56,8 +56,8 @@ namespace Automatonic.Text.Kdl.Serialization
             {
                 switch (ex)
                 {
-                    case KdlReaderException jsonReaderEx:
-                        ThrowHelper.ReThrowWithPath(ref state, jsonReaderEx);
+                    case KdlReaderException kdlReaderEx:
+                        ThrowHelper.ReThrowWithPath(ref state, kdlReaderEx);
                         break;
 
                     case FormatException when ex.Source == ThrowHelper.ExceptionSourceValueToRethrowAsKdlException:
@@ -68,12 +68,12 @@ namespace Automatonic.Text.Kdl.Serialization
                         ThrowHelper.ReThrowWithPath(ref state, reader, ex);
                         break;
 
-                    case KdlException jsonEx when jsonEx.Path is null:
+                    case KdlException kdlEx when kdlEx.Path is null:
                         // KdlExceptions where the Path property is already set
                         // typically originate from nested calls to KdlSerializer;
                         // treat these cases as any other exception type and do not
                         // overwrite any exception information.
-                        ThrowHelper.AddKdlExceptionInformation(ref state, reader, jsonEx);
+                        ThrowHelper.AddKdlExceptionInformation(ref state, reader, kdlEx);
                         break;
 
                     case NotSupportedException when !ex.Message.Contains(" Path: "):

@@ -30,13 +30,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
         {
             // Deserialize as HashSet<TElement> for interface types that support it.
-            if (jsonTypeInfo.CreateObject is null && Type.IsAssignableFrom(typeof(HashSet<TElement>)))
+            if (kdlTypeInfo.CreateObject is null && Type.IsAssignableFrom(typeof(HashSet<TElement>)))
             {
                 Debug.Assert(Type.IsInterface);
-                jsonTypeInfo.CreateObject = () => new HashSet<TElement>();
+                kdlTypeInfo.CreateObject = () => new HashSet<TElement>();
             }
         }
     }

@@ -10,20 +10,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     /// </summary>
     internal class LargeObjectWithParameterizedConstructorConverter<T> : ObjectWithParameterizedConstructorConverter<T> where T : notnull
     {
-        protected sealed override bool ReadAndCacheConstructorArgument(scoped ref ReadStack state, ref KdlReader reader, KdlParameterInfo jsonParameterInfo)
+        protected sealed override bool ReadAndCacheConstructorArgument(scoped ref ReadStack state, ref KdlReader reader, KdlParameterInfo kdlParameterInfo)
         {
-            Debug.Assert(jsonParameterInfo.ShouldDeserialize);
+            Debug.Assert(kdlParameterInfo.ShouldDeserialize);
 
-            bool success = jsonParameterInfo.EffectiveConverter.TryReadAsObject(ref reader, jsonParameterInfo.ParameterType, jsonParameterInfo.Options, ref state, out object? arg);
+            bool success = kdlParameterInfo.EffectiveConverter.TryReadAsObject(ref reader, kdlParameterInfo.ParameterType, kdlParameterInfo.Options, ref state, out object? arg);
 
-            if (success && !(arg == null && jsonParameterInfo.IgnoreNullTokensOnRead))
+            if (success && !(arg == null && kdlParameterInfo.IgnoreNullTokensOnRead))
             {
-                if (arg == null && !jsonParameterInfo.IsNullable && jsonParameterInfo.Options.RespectNullableAnnotations)
+                if (arg == null && !kdlParameterInfo.IsNullable && kdlParameterInfo.Options.RespectNullableAnnotations)
                 {
-                    ThrowHelper.ThrowKdlException_ConstructorParameterDisallowNull(jsonParameterInfo.Name, state.Current.KdlTypeInfo.Type);
+                    ThrowHelper.ThrowKdlException_ConstructorParameterDisallowNull(kdlParameterInfo.Name, state.Current.KdlTypeInfo.Type);
                 }
 
-                ((object[])state.Current.CtorArgumentState!.Arguments)[jsonParameterInfo.Position] = arg!;
+                ((object[])state.Current.CtorArgumentState!.Arguments)[kdlParameterInfo.Position] = arg!;
             }
 
             return success;

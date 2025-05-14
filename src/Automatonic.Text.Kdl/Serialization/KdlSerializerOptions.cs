@@ -60,7 +60,7 @@ namespace Automatonic.Text.Kdl
         // and consider updating the EqualtyComparer used for comparing CachingContexts.
         private IKdlTypeInfoResolver? _typeInfoResolver;
         private KdlNamingPolicy? _dictionaryKeyPolicy;
-        private KdlNamingPolicy? _jsonPropertyNamingPolicy;
+        private KdlNamingPolicy? _kdlPropertyNamingPolicy;
         private KdlCommentHandling _readCommentHandling;
         private ReferenceHandler? _referenceHandler;
         private JavaScriptEncoder? _encoder;
@@ -112,7 +112,7 @@ namespace Automatonic.Text.Kdl
             //    _typeInfoResolver as its source of truth.
 
             _dictionaryKeyPolicy = options._dictionaryKeyPolicy;
-            _jsonPropertyNamingPolicy = options._jsonPropertyNamingPolicy;
+            _kdlPropertyNamingPolicy = options._kdlPropertyNamingPolicy;
             _readCommentHandling = options._readCommentHandling;
             _referenceHandler = options._referenceHandler;
             _converters = options._converters is { } converters ? new(this, converters) : null;
@@ -156,7 +156,7 @@ namespace Automatonic.Text.Kdl
             if (defaults == KdlSerializerDefaults.Web)
             {
                 _propertyNameCaseInsensitive = true;
-                _jsonPropertyNamingPolicy = KdlNamingPolicy.CamelCase;
+                _kdlPropertyNamingPolicy = KdlNamingPolicy.CamelCase;
                 _numberHandling = KdlNumberHandling.AllowReadingFromString;
             }
             else if (defaults != KdlSerializerDefaults.General)
@@ -502,11 +502,11 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         public KdlNamingPolicy? PropertyNamingPolicy
         {
-            get => _jsonPropertyNamingPolicy;
+            get => _kdlPropertyNamingPolicy;
             set
             {
                 VerifyMutable();
-                _jsonPropertyNamingPolicy = value;
+                _kdlPropertyNamingPolicy = value;
             }
         }
 

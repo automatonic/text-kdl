@@ -27,8 +27,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static TValue? Deserialize<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return ReadFromSpan(utf8Kdl, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return ReadFromSpan(utf8Kdl, kdlTypeInfo);
         }
 
         /// <summary>
@@ -59,8 +59,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(returnType));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, returnType);
-            return ReadFromSpanAsObject(utf8Kdl, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, returnType);
+            return ReadFromSpanAsObject(utf8Kdl, kdlTypeInfo);
         }
 
         /// <summary>
@@ -69,42 +69,42 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
         /// <param name="utf8Kdl">KDL text to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
         /// <typeparamref name="TValue"/> is not compatible with the KDL,
         /// or when there is remaining data in the buffer.
         /// </exception>
-        public static TValue? Deserialize<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromSpan(utf8Kdl, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromSpan(utf8Kdl, kdlTypeInfo);
         }
 
         /// <summary>
-        /// Parses the UTF-8 encoded text representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Parses the UTF-8 encoded text representing a single KDL value into an instance specified by the <paramref name="kdlTypeInfo"/>.
         /// </summary>
-        /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
+        /// <returns>A <paramref name="kdlTypeInfo"/> representation of the KDL value.</returns>
         /// <param name="utf8Kdl">KDL text to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
         /// or there is remaining data in the buffer.
         /// </exception>
-        public static object? Deserialize(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromSpanAsObject(utf8Kdl, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromSpanAsObject(utf8Kdl, kdlTypeInfo);
         }
 
         /// <summary>
@@ -144,34 +144,34 @@ namespace Automatonic.Text.Kdl
             return ReadFromSpanAsObject(utf8Kdl, GetTypeInfo(context, returnType));
         }
 
-        private static TValue? ReadFromSpan<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo<TValue> jsonTypeInfo, int? actualByteCount = null)
+        private static TValue? ReadFromSpan<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo<TValue> kdlTypeInfo, int? actualByteCount = null)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            var readerState = new KdlReaderState(jsonTypeInfo.Options.GetReaderOptions());
+            var readerState = new KdlReaderState(kdlTypeInfo.Options.GetReaderOptions());
             var reader = new KdlReader(utf8Kdl, isFinalBlock: true, readerState);
 
             ReadStack state = default;
-            state.Initialize(jsonTypeInfo);
+            state.Initialize(kdlTypeInfo);
 
-            TValue? value = jsonTypeInfo.Deserialize(ref reader, ref state);
+            TValue? value = kdlTypeInfo.Deserialize(ref reader, ref state);
 
             // The reader should have thrown if we have remaining bytes, unless AllowMultipleValues is true.
             Debug.Assert(reader.BytesConsumed == (actualByteCount ?? utf8Kdl.Length) || reader.CurrentState.Options.AllowMultipleValues);
             return value;
         }
 
-        private static object? ReadFromSpanAsObject(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo jsonTypeInfo, int? actualByteCount = null)
+        private static object? ReadFromSpanAsObject(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo kdlTypeInfo, int? actualByteCount = null)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            var readerState = new KdlReaderState(jsonTypeInfo.Options.GetReaderOptions());
+            var readerState = new KdlReaderState(kdlTypeInfo.Options.GetReaderOptions());
             var reader = new KdlReader(utf8Kdl, isFinalBlock: true, readerState);
 
             ReadStack state = default;
-            state.Initialize(jsonTypeInfo);
+            state.Initialize(kdlTypeInfo);
 
-            object? value = jsonTypeInfo.DeserializeAsObject(ref reader, ref state);
+            object? value = kdlTypeInfo.DeserializeAsObject(ref reader, ref state);
 
             // The reader should have thrown if we have remaining bytes, unless AllowMultipleValues is true.
             Debug.Assert(reader.BytesConsumed == (actualByteCount ?? utf8Kdl.Length) || reader.CurrentState.Options.AllowMultipleValues);

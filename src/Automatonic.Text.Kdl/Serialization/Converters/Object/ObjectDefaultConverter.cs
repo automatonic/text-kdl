@@ -15,7 +15,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         internal override bool OnTryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, [MaybeNullWhen(false)] out T value)
         {
-            KdlTypeInfo jsonTypeInfo = state.Current.KdlTypeInfo;
+            KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
 
             object obj;
 
@@ -34,15 +34,15 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 }
                 else
                 {
-                    if (jsonTypeInfo.CreateObject == null)
+                    if (kdlTypeInfo.CreateObject == null)
                     {
-                        ThrowHelper.ThrowNotSupportedException_DeserializeNoConstructor(jsonTypeInfo, ref reader, ref state);
+                        ThrowHelper.ThrowNotSupportedException_DeserializeNoConstructor(kdlTypeInfo, ref reader, ref state);
                     }
 
-                    obj = jsonTypeInfo.CreateObject();
+                    obj = kdlTypeInfo.CreateObject();
                 }
 
-                PopulatePropertiesFastPath(obj, jsonTypeInfo, options, ref reader, ref state);
+                PopulatePropertiesFastPath(obj, kdlTypeInfo, options, ref reader, ref state);
                 Debug.Assert(obj != null);
                 value = (T)obj;
                 return true;
@@ -64,7 +64,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 // Handle the metadata properties.
                 if (state.Current.CanContainMetadata && state.Current.ObjectState < StackFrameObjectState.ReadMetadata)
                 {
-                    if (!KdlSerializer.TryReadMetadata(this, jsonTypeInfo, ref reader, ref state))
+                    if (!KdlSerializer.TryReadMetadata(this, kdlTypeInfo, ref reader, ref state))
                     {
                         value = default;
                         return false;
@@ -82,7 +82,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 // Dispatch to any polymorphic converters: should always be entered regardless of ObjectState progress
                 if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Type) != 0 &&
                     state.Current.PolymorphicSerializationState != PolymorphicSerializationState.PolymorphicReEntryStarted &&
-                    ResolvePolymorphicConverter(jsonTypeInfo, ref state) is KdlConverter polymorphicConverter)
+                    ResolvePolymorphicConverter(kdlTypeInfo, ref state) is KdlConverter polymorphicConverter)
                 {
                     Debug.Assert(!IsValueType);
                     bool success = polymorphicConverter.OnTryReadAsObject(ref reader, polymorphicConverter.Type!, options, ref state, out object? objectResult);
@@ -110,12 +110,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     }
                     else
                     {
-                        if (jsonTypeInfo.CreateObject == null)
+                        if (kdlTypeInfo.CreateObject == null)
                         {
-                            ThrowHelper.ThrowNotSupportedException_DeserializeNoConstructor(jsonTypeInfo, ref reader, ref state);
+                            ThrowHelper.ThrowNotSupportedException_DeserializeNoConstructor(kdlTypeInfo, ref reader, ref state);
                         }
 
-                        obj = jsonTypeInfo.CreateObject();
+                        obj = kdlTypeInfo.CreateObject();
                     }
 
                     if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Id) != 0)
@@ -126,11 +126,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         state.ReferenceId = null;
                     }
 
-                    jsonTypeInfo.OnDeserializing?.Invoke(obj);
+                    kdlTypeInfo.OnDeserializing?.Invoke(obj);
 
                     state.Current.ReturnValue = obj;
                     state.Current.ObjectState = StackFrameObjectState.CreatedObject;
-                    state.Current.InitializeRequiredPropertiesValidationState(jsonTypeInfo);
+                    state.Current.InitializeRequiredPropertiesValidationState(kdlTypeInfo);
                 }
                 else
                 {
@@ -154,7 +154,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         state.Current.PropertyState = StackFramePropertyState.ReadName;
                     }
 
-                    KdlPropertyInfo jsonPropertyInfo;
+                    KdlPropertyInfo kdlPropertyInfo;
 
                     if (state.Current.PropertyState < StackFramePropertyState.Name)
                     {
@@ -167,7 +167,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         // Read method would have thrown if otherwise.
                         Debug.Assert(tokenType == KdlTokenType.PropertyName);
 
-                        jsonTypeInfo.ValidateCanBeUsedForPropertyMetadataSerialization();
+                        kdlTypeInfo.ValidateCanBeUsedForPropertyMetadataSerialization();
                         ReadOnlySpan<byte> unescapedPropertyName = KdlSerializer.GetPropertyName(ref state, ref reader, options, out bool isAlreadyReadMetadataProperty);
                         if (isAlreadyReadMetadataProperty)
                         {
@@ -177,7 +177,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                             continue;
                         }
 
-                        jsonPropertyInfo = KdlSerializer.LookupProperty(
+                        kdlPropertyInfo = KdlSerializer.LookupProperty(
                             obj,
                             unescapedPropertyName,
                             ref state,
@@ -190,12 +190,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     else
                     {
                         Debug.Assert(state.Current.KdlPropertyInfo != null);
-                        jsonPropertyInfo = state.Current.KdlPropertyInfo!;
+                        kdlPropertyInfo = state.Current.KdlPropertyInfo!;
                     }
 
                     if (state.Current.PropertyState < StackFramePropertyState.ReadValue)
                     {
-                        if (!jsonPropertyInfo.CanDeserializeOrPopulate)
+                        if (!kdlPropertyInfo.CanDeserializeOrPopulate)
                         {
                             if (!reader.TrySkipPartial(targetDepth: state.Current.OriginalDepth + 1))
                             {
@@ -208,7 +208,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                             continue;
                         }
 
-                        if (!ReadAheadPropertyValue(ref state, ref reader, jsonPropertyInfo))
+                        if (!ReadAheadPropertyValue(ref state, ref reader, kdlPropertyInfo))
                         {
                             state.Current.ReturnValue = obj;
                             value = default;
@@ -223,7 +223,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         // Obtain the CLR value from the KDL and set the member.
                         if (!state.Current.UseExtensionProperty)
                         {
-                            if (!jsonPropertyInfo.ReadKdlAndSetMember(obj, ref state, ref reader))
+                            if (!kdlPropertyInfo.ReadKdlAndSetMember(obj, ref state, ref reader))
                             {
                                 state.Current.ReturnValue = obj;
                                 value = default;
@@ -232,7 +232,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         }
                         else
                         {
-                            if (!jsonPropertyInfo.ReadKdlAndAddExtensionProperty(obj, ref state, ref reader))
+                            if (!kdlPropertyInfo.ReadKdlAndAddExtensionProperty(obj, ref state, ref reader))
                             {
                                 // No need to set 'value' here since KdlElement must be read in full.
                                 state.Current.ReturnValue = obj;
@@ -246,8 +246,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 }
             }
 
-            jsonTypeInfo.OnDeserialized?.Invoke(obj);
-            state.Current.ValidateAllRequiredPropertiesAreRead(jsonTypeInfo);
+            kdlTypeInfo.OnDeserialized?.Invoke(obj);
+            state.Current.ValidateAllRequiredPropertiesAreRead(kdlTypeInfo);
 
             // Unbox
             Debug.Assert(obj != null);
@@ -256,7 +256,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             // Check if we are trying to update the UTF-8 property cache.
             if (state.Current.PropertyRefCacheBuilder != null)
             {
-                jsonTypeInfo.UpdateUtf8PropertyCache(ref state.Current);
+                kdlTypeInfo.UpdateUtf8PropertyCache(ref state.Current);
             }
 
             return true;
@@ -264,10 +264,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         // This method is using aggressive inlining to avoid extra stack frame for deep object graphs.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void PopulatePropertiesFastPath(object obj, KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options, ref KdlReader reader, scoped ref ReadStack state)
+        internal static void PopulatePropertiesFastPath(object obj, KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options, ref KdlReader reader, scoped ref ReadStack state)
         {
-            jsonTypeInfo.OnDeserializing?.Invoke(obj);
-            state.Current.InitializeRequiredPropertiesValidationState(jsonTypeInfo);
+            kdlTypeInfo.OnDeserializing?.Invoke(obj);
+            state.Current.InitializeRequiredPropertiesValidationState(kdlTypeInfo);
 
             // Process all properties.
             while (true)
@@ -288,24 +288,24 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 ReadOnlySpan<byte> unescapedPropertyName = KdlSerializer.GetPropertyName(ref state, ref reader, options, out bool isAlreadyReadMetadataProperty);
                 Debug.Assert(!isAlreadyReadMetadataProperty, "Only possible for types that can read metadata, which do not call into the fast-path method.");
 
-                jsonTypeInfo.ValidateCanBeUsedForPropertyMetadataSerialization();
-                KdlPropertyInfo jsonPropertyInfo = KdlSerializer.LookupProperty(
+                kdlTypeInfo.ValidateCanBeUsedForPropertyMetadataSerialization();
+                KdlPropertyInfo kdlPropertyInfo = KdlSerializer.LookupProperty(
                     obj,
                     unescapedPropertyName,
                     ref state,
                     options,
                     out bool useExtensionProperty);
 
-                ReadPropertyValue(obj, ref state, ref reader, jsonPropertyInfo, useExtensionProperty);
+                ReadPropertyValue(obj, ref state, ref reader, kdlPropertyInfo, useExtensionProperty);
             }
 
-            jsonTypeInfo.OnDeserialized?.Invoke(obj);
-            state.Current.ValidateAllRequiredPropertiesAreRead(jsonTypeInfo);
+            kdlTypeInfo.OnDeserialized?.Invoke(obj);
+            state.Current.ValidateAllRequiredPropertiesAreRead(kdlTypeInfo);
 
             // Check if we are trying to update the UTF-8 property cache.
             if (state.Current.PropertyRefCacheBuilder != null)
             {
-                jsonTypeInfo.UpdateUtf8PropertyCache(ref state.Current);
+                kdlTypeInfo.UpdateUtf8PropertyCache(ref state.Current);
             }
         }
 
@@ -315,14 +315,14 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             KdlSerializerOptions options,
             ref WriteStack state)
         {
-            KdlTypeInfo jsonTypeInfo = state.Current.KdlTypeInfo;
-            jsonTypeInfo.ValidateCanBeUsedForPropertyMetadataSerialization();
+            KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
+            kdlTypeInfo.ValidateCanBeUsedForPropertyMetadataSerialization();
 
             object obj = value; // box once
 
             if (!state.SupportContinuation)
             {
-                jsonTypeInfo.OnSerializing?.Invoke(obj);
+                kdlTypeInfo.OnSerializing?.Invoke(obj);
 
                 writer.WriteStartObject();
 
@@ -331,15 +331,15 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     KdlSerializer.WriteMetadataForObject(this, ref state, writer);
                 }
 
-                foreach (KdlPropertyInfo jsonPropertyInfo in jsonTypeInfo.PropertyCache)
+                foreach (KdlPropertyInfo kdlPropertyInfo in kdlTypeInfo.PropertyCache)
                 {
-                    if (jsonPropertyInfo.CanSerialize)
+                    if (kdlPropertyInfo.CanSerialize)
                     {
                         // Remember the current property for KdlPath support if an exception is thrown.
-                        state.Current.KdlPropertyInfo = jsonPropertyInfo;
-                        state.Current.NumberHandling = jsonPropertyInfo.EffectiveNumberHandling;
+                        state.Current.KdlPropertyInfo = kdlPropertyInfo;
+                        state.Current.NumberHandling = kdlPropertyInfo.EffectiveNumberHandling;
 
-                        bool success = jsonPropertyInfo.GetMemberAndWriteKdl(obj, ref state, writer);
+                        bool success = kdlPropertyInfo.GetMemberAndWriteKdl(obj, ref state, writer);
                         // Converters only return 'false' when out of data which is not possible in fast path.
                         Debug.Assert(success);
 
@@ -348,7 +348,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 }
 
                 // Write extension data after the normal properties.
-                KdlPropertyInfo? extensionDataProperty = jsonTypeInfo.ExtensionDataProperty;
+                KdlPropertyInfo? extensionDataProperty = kdlTypeInfo.ExtensionDataProperty;
                 if (extensionDataProperty?.CanSerialize == true)
                 {
                     // Remember the current property for KdlPath support if an exception is thrown.
@@ -374,23 +374,23 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         KdlSerializer.WriteMetadataForObject(this, ref state, writer);
                     }
 
-                    jsonTypeInfo.OnSerializing?.Invoke(obj);
+                    kdlTypeInfo.OnSerializing?.Invoke(obj);
 
                     state.Current.ProcessedStartToken = true;
                 }
 
-                ReadOnlySpan<KdlPropertyInfo> propertyCache = jsonTypeInfo.PropertyCache;
+                ReadOnlySpan<KdlPropertyInfo> propertyCache = kdlTypeInfo.PropertyCache;
                 while (state.Current.EnumeratorIndex < propertyCache.Length)
                 {
-                    KdlPropertyInfo jsonPropertyInfo = propertyCache[state.Current.EnumeratorIndex];
-                    if (jsonPropertyInfo.CanSerialize)
+                    KdlPropertyInfo kdlPropertyInfo = propertyCache[state.Current.EnumeratorIndex];
+                    if (kdlPropertyInfo.CanSerialize)
                     {
-                        state.Current.KdlPropertyInfo = jsonPropertyInfo;
-                        state.Current.NumberHandling = jsonPropertyInfo.EffectiveNumberHandling;
+                        state.Current.KdlPropertyInfo = kdlPropertyInfo;
+                        state.Current.NumberHandling = kdlPropertyInfo.EffectiveNumberHandling;
 
-                        if (!jsonPropertyInfo.GetMemberAndWriteKdl(obj!, ref state, writer))
+                        if (!kdlPropertyInfo.GetMemberAndWriteKdl(obj!, ref state, writer))
                         {
-                            Debug.Assert(jsonPropertyInfo.EffectiveConverter.ConverterStrategy != ConverterStrategy.Value);
+                            Debug.Assert(kdlPropertyInfo.EffectiveConverter.ConverterStrategy != ConverterStrategy.Value);
                             return false;
                         }
 
@@ -411,7 +411,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 // Write extension data after the normal properties.
                 if (state.Current.EnumeratorIndex == propertyCache.Length)
                 {
-                    KdlPropertyInfo? extensionDataProperty = jsonTypeInfo.ExtensionDataProperty;
+                    KdlPropertyInfo? extensionDataProperty = kdlTypeInfo.ExtensionDataProperty;
                     if (extensionDataProperty?.CanSerialize == true)
                     {
                         // Remember the current property for KdlPath support if an exception is thrown.
@@ -444,7 +444,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 }
             }
 
-            jsonTypeInfo.OnSerialized?.Invoke(obj);
+            kdlTypeInfo.OnSerialized?.Invoke(obj);
 
             return true;
         }
@@ -455,11 +455,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             object obj,
             scoped ref ReadStack state,
             ref KdlReader reader,
-            KdlPropertyInfo jsonPropertyInfo,
+            KdlPropertyInfo kdlPropertyInfo,
             bool useExtensionProperty)
         {
             // Skip the property if not found.
-            if (!jsonPropertyInfo.CanDeserializeOrPopulate)
+            if (!kdlPropertyInfo.CanDeserializeOrPopulate)
             {
                 // The KdlReader.Skip() method will fail fast if it detects that we're reading
                 // from a partially read buffer, regardless of whether the next value is available.
@@ -477,11 +477,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
                 if (!useExtensionProperty)
                 {
-                    jsonPropertyInfo.ReadKdlAndSetMember(obj, ref state, ref reader);
+                    kdlPropertyInfo.ReadKdlAndSetMember(obj, ref state, ref reader);
                 }
                 else
                 {
-                    jsonPropertyInfo.ReadKdlAndAddExtensionProperty(obj, ref state, ref reader);
+                    kdlPropertyInfo.ReadKdlAndAddExtensionProperty(obj, ref state, ref reader);
                 }
             }
 
@@ -489,10 +489,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             state.Current.EndProperty();
         }
 
-        protected static bool ReadAheadPropertyValue(scoped ref ReadStack state, ref KdlReader reader, KdlPropertyInfo jsonPropertyInfo)
+        protected static bool ReadAheadPropertyValue(scoped ref ReadStack state, ref KdlReader reader, KdlPropertyInfo kdlPropertyInfo)
         {
             // Extension properties can use the KdlElement converter and thus require read-ahead.
-            bool requiresReadAhead = jsonPropertyInfo.EffectiveConverter.RequiresReadAhead || state.Current.UseExtensionProperty;
+            bool requiresReadAhead = kdlPropertyInfo.EffectiveConverter.RequiresReadAhead || state.Current.UseExtensionProperty;
             return reader.TryAdvanceWithOptionalReadAhead(requiresReadAhead);
         }
     }

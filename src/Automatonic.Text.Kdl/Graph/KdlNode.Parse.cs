@@ -63,7 +63,7 @@ namespace Automatonic.Text.Kdl.Graph
         ///   <paramref name="kdl"/> does not represent a valid single KDL value.
         /// </exception>
         public static KdlElement? Parse(
-            [StringSyntax(StringSyntaxAttribute.Json)] string kdl,
+            string kdl,
             KdlElementOptions? nodeOptions = null,
             KdlReadOnlyDocumentOptions documentOptions = default(KdlReadOnlyDocumentOptions))
         {

@@ -8,9 +8,9 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class KdlObjectConverter : KdlConverter<KdlNode?>
     {
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
         {
-            jsonTypeInfo.CreateObjectForExtensionDataProperty = () => new KdlNode(options.GetNodeOptions());
+            kdlTypeInfo.CreateObjectForExtensionDataProperty = () => new KdlNode(options.GetNodeOptions());
         }
 
         internal override void ReadElementAndSetProperty(

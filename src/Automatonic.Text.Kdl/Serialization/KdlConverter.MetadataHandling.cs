@@ -8,13 +8,13 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <summary>
         /// Initializes the state for polymorphic cases and returns the appropriate derived converter.
         /// </summary>
-        internal KdlConverter? ResolvePolymorphicConverter(KdlTypeInfo jsonTypeInfo, ref ReadStack state)
+        internal KdlConverter? ResolvePolymorphicConverter(KdlTypeInfo kdlTypeInfo, ref ReadStack state)
         {
             Debug.Assert(!IsValueType);
             Debug.Assert(CanHaveMetadata);
             Debug.Assert((state.Current.MetadataPropertyNames & MetadataPropertyName.Type) != 0);
             Debug.Assert(state.Current.PolymorphicSerializationState != PolymorphicSerializationState.PolymorphicReEntryStarted);
-            Debug.Assert(jsonTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true);
+            Debug.Assert(kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true);
 
             KdlConverter? polymorphicConverter = null;
 
@@ -24,7 +24,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     Debug.Assert(!state.IsContinuation);
                     Debug.Assert(state.PolymorphicTypeDiscriminator != null);
 
-                    PolymorphicTypeResolver resolver = jsonTypeInfo.PolymorphicTypeResolver;
+                    PolymorphicTypeResolver resolver = kdlTypeInfo.PolymorphicTypeResolver;
                     if (resolver.TryGetDerivedKdlTypeInfo(state.PolymorphicTypeDiscriminator, out KdlTypeInfo? resolvedType))
                     {
                         Debug.Assert(Type!.IsAssignableFrom(resolvedType.Type));
@@ -63,11 +63,11 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <summary>
         /// Initializes the state for polymorphic cases and returns the appropriate derived converter.
         /// </summary>
-        internal KdlConverter? ResolvePolymorphicConverter(object value, KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options, ref WriteStack state)
+        internal KdlConverter? ResolvePolymorphicConverter(object value, KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options, ref WriteStack state)
         {
             Debug.Assert(!IsValueType);
             Debug.Assert(value != null && Type!.IsAssignableFrom(value.GetType()));
-            Debug.Assert(CanBePolymorphic || jsonTypeInfo.PolymorphicTypeResolver != null);
+            Debug.Assert(CanBePolymorphic || kdlTypeInfo.PolymorphicTypeResolver != null);
             Debug.Assert(state.PolymorphicTypeDiscriminator is null);
 
             KdlConverter? polymorphicConverter = null;
@@ -82,13 +82,13 @@ namespace Automatonic.Text.Kdl.Serialization
                     if (CanBePolymorphic && runtimeType != Type)
                     {
                         Debug.Assert(Type == typeof(object));
-                        jsonTypeInfo = state.Current.InitializePolymorphicReEntry(runtimeType, options);
-                        polymorphicConverter = jsonTypeInfo.Converter;
+                        kdlTypeInfo = state.Current.InitializePolymorphicReEntry(runtimeType, options);
+                        polymorphicConverter = kdlTypeInfo.Converter;
                     }
 
-                    if (jsonTypeInfo.PolymorphicTypeResolver is PolymorphicTypeResolver resolver)
+                    if (kdlTypeInfo.PolymorphicTypeResolver is PolymorphicTypeResolver resolver)
                     {
-                        Debug.Assert(jsonTypeInfo.Converter.CanHaveMetadata);
+                        Debug.Assert(kdlTypeInfo.Converter.CanHaveMetadata);
 
                         if (resolver.TryGetDerivedKdlTypeInfo(runtimeType, out KdlTypeInfo? derivedKdlTypeInfo, out object? typeDiscriminator))
                         {

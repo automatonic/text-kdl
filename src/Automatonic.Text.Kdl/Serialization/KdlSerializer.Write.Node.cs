@@ -23,8 +23,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static KdlElement? SerializeToNode<TValue>(TValue value, KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return WriteNode(value, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return WriteNode(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -59,19 +59,19 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
         /// <returns>A <see cref="KdlElement"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlElement? SerializeToNode<TValue>(TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static KdlElement? SerializeToNode<TValue>(TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteNode(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteNode(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -79,22 +79,22 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <returns>A <see cref="KdlElement"/> representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidCastException">
-        /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
+        /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
-        public static KdlElement? SerializeToNode(object? value, KdlTypeInfo jsonTypeInfo)
+        public static KdlElement? SerializeToNode(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteNodeAsObject(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteNodeAsObject(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -123,20 +123,20 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, inputType);
-            return WriteNodeAsObject(value, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, inputType);
+            return WriteNodeAsObject(value, kdlTypeInfo);
         }
 
-        private static KdlElement? WriteNode<TValue>(in TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static KdlElement? WriteNode<TValue>(in TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            Debug.Assert(kdlTypeInfo.IsConfigured);
+            KdlSerializerOptions options = kdlTypeInfo.Options;
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(jsonTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
 
             try
             {
-                jsonTypeInfo.Serialize(writer, value);
+                kdlTypeInfo.Serialize(writer, value);
                 return KdlElement.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
             }
             finally
@@ -145,16 +145,16 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static KdlElement? WriteNodeAsObject(object? value, KdlTypeInfo jsonTypeInfo)
+        private static KdlElement? WriteNodeAsObject(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            Debug.Assert(kdlTypeInfo.IsConfigured);
+            KdlSerializerOptions options = kdlTypeInfo.Options;
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(jsonTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
 
             try
             {
-                jsonTypeInfo.SerializeAsObject(writer, value);
+                kdlTypeInfo.SerializeAsObject(writer, value);
                 return KdlElement.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
             }
             finally

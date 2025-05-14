@@ -23,8 +23,8 @@ namespace Automatonic.Text.Kdl
             TValue value,
             KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return WriteBytes(value, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return WriteBytes(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace Automatonic.Text.Kdl
             KdlSerializerOptions? options = null)
         {
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, inputType);
-            return WriteBytesAsObject(value, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
+            return WriteBytesAsObject(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -61,19 +61,19 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <returns>A UTF-8 representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static byte[] SerializeToUtf8Bytes<TValue>(TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static byte[] SerializeToUtf8Bytes<TValue>(TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteBytes(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteBytes(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -81,22 +81,22 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <returns>A UTF-8 representation of the value.</returns>
         /// <param name="value">The value to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidCastException">
-        /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
+        /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
-        public static byte[] SerializeToUtf8Bytes(object? value, KdlTypeInfo jsonTypeInfo)
+        public static byte[] SerializeToUtf8Bytes(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return WriteBytesAsObject(value, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return WriteBytesAsObject(value, kdlTypeInfo);
         }
 
         /// <summary>
@@ -128,19 +128,19 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, inputType);
-            return WriteBytesAsObject(value, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, inputType);
+            return WriteBytesAsObject(value, kdlTypeInfo);
         }
 
-        private static byte[] WriteBytes<TValue>(in TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static byte[] WriteBytes<TValue>(in TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(jsonTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
 
             try
             {
-                jsonTypeInfo.Serialize(writer, value);
+                kdlTypeInfo.Serialize(writer, value);
                 return output.WrittenMemory.ToArray();
             }
             finally
@@ -149,15 +149,15 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static byte[] WriteBytesAsObject(object? value, KdlTypeInfo jsonTypeInfo)
+        private static byte[] WriteBytesAsObject(object? value, KdlTypeInfo kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(jsonTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
 
             try
             {
-                jsonTypeInfo.SerializeAsObject(writer, value);
+                kdlTypeInfo.SerializeAsObject(writer, value);
                 return output.WrittenMemory.ToArray();
             }
             finally

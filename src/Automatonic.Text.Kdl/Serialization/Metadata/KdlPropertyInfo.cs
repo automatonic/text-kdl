@@ -424,10 +424,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
             else
             {
-                _jsonTypeInfo ??= Options.GetTypeInfoInternal(PropertyType);
-                _jsonTypeInfo.EnsureConfigured();
+                _kdlTypeInfo ??= Options.GetTypeInfoInternal(PropertyType);
+                _kdlTypeInfo.EnsureConfigured();
 
-                DetermineEffectiveConverter(_jsonTypeInfo);
+                DetermineEffectiveConverter(_kdlTypeInfo);
                 DetermineNumberHandlingForProperty();
                 DetermineEffectiveObjectCreationHandlingForProperty();
                 DetermineSerializationCapabilities();
@@ -463,7 +463,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             IsConfigured = true;
         }
 
-        private protected abstract void DetermineEffectiveConverter(KdlTypeInfo jsonTypeInfo);
+        private protected abstract void DetermineEffectiveConverter(KdlTypeInfo kdlTypeInfo);
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
@@ -587,14 +587,14 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             Debug.Assert(DeclaringTypeInfo != null, "We should have ensured parent is assigned in KdlTypeInfo");
             Debug.Assert(!IsConfigured, "Should not be called post-configuration.");
-            Debug.Assert(_jsonTypeInfo != null, "Must have already been determined on configuration.");
+            Debug.Assert(_kdlTypeInfo != null, "Must have already been determined on configuration.");
 
             bool numberHandlingIsApplicable = NumberHandingIsApplicable();
 
             if (numberHandlingIsApplicable)
             {
                 // Priority 1: Get handling from attribute on property/field, its parent class type or property type.
-                KdlNumberHandling? handling = NumberHandling ?? DeclaringTypeInfo.NumberHandling ?? _jsonTypeInfo.NumberHandling;
+                KdlNumberHandling? handling = NumberHandling ?? DeclaringTypeInfo.NumberHandling ?? _kdlTypeInfo.NumberHandling;
 
                 // Priority 2: Get handling from KdlSerializerOptions instance.
                 if (!handling.HasValue && Options.NumberHandling != KdlNumberHandling.Strict)
@@ -654,8 +654,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     ThrowHelper.ThrowInvalidOperationException_ObjectCreationHandlingPropertyValueTypeMustHaveASetter(this);
                 }
 
-                Debug.Assert(_jsonTypeInfo != null);
-                Debug.Assert(_jsonTypeInfo.IsConfigurationStarted);
+                Debug.Assert(_kdlTypeInfo != null);
+                Debug.Assert(_kdlTypeInfo.IsConfigurationStarted);
                 if (KdlTypeInfo.SupportsPolymorphicDeserialization)
                 {
                     ThrowHelper.ThrowInvalidOperationException_ObjectCreationHandlingPropertyCannotAllowPolymorphicDeserialization(this);
@@ -954,26 +954,26 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             get
             {
-                Debug.Assert(_jsonTypeInfo?.IsConfigurationStarted == true);
+                Debug.Assert(_kdlTypeInfo?.IsConfigurationStarted == true);
                 // Even though this instance has already been configured,
                 // it is possible for contending threads to call the property
                 // while the wider KdlTypeInfo graph is still being configured.
                 // Call EnsureConfigured() to force synchronization if necessary.
-                KdlTypeInfo jsonTypeInfo = _jsonTypeInfo;
-                jsonTypeInfo.EnsureConfigured();
-                return jsonTypeInfo;
+                KdlTypeInfo kdlTypeInfo = _kdlTypeInfo;
+                kdlTypeInfo.EnsureConfigured();
+                return kdlTypeInfo;
             }
-            set => _jsonTypeInfo = value;
+            set => _kdlTypeInfo = value;
         }
 
-        private KdlTypeInfo? _jsonTypeInfo;
+        private KdlTypeInfo? _kdlTypeInfo;
 
         /// <summary>
         /// Returns true if <see cref="KdlTypeInfo"/> has been configured.
         /// This might be false even if <see cref="IsConfigured"/> is true
         /// in cases of recursive types or <see cref="IsIgnored"/> is true.
         /// </summary>
-        internal bool IsPropertyTypeInfoConfigured => _jsonTypeInfo?.IsConfigured == true;
+        internal bool IsPropertyTypeInfoConfigured => _kdlTypeInfo?.IsConfigured == true;
 
         /// <summary>
         /// Property was marked KdlIgnoreCondition.Always and also hasn't been configured by the user.

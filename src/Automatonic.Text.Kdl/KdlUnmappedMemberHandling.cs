@@ -1,7 +1,7 @@
 ﻿namespace Automatonic.Text.Kdl.Serialization
 {
     /// <summary>
-    /// Determines how <see cref="KdlSerializer"/> handles JSON properties that
+    /// Determines how <see cref="KdlSerializer"/> handles KDL properties that
     /// cannot be mapped to a specific .NET member when deserializing object types.
     /// </summary>
     public enum KdlUnmappedMemberHandling

@@ -143,25 +143,25 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             // at run time since it is possible that the naming policy or other configs can be different then.
             KdlTypeInfo.PropertyHierarchyResolutionState state = new(typeInfo.Options);
 
-            foreach (KdlPropertyInfo jsonPropertyInfo in properties)
+            foreach (KdlPropertyInfo kdlPropertyInfo in properties)
             {
-                if (!jsonPropertyInfo.SrcGen_IsPublic)
+                if (!kdlPropertyInfo.SrcGen_IsPublic)
                 {
-                    if (jsonPropertyInfo.SrcGen_HasKdlInclude)
+                    if (kdlPropertyInfo.SrcGen_HasKdlInclude)
                     {
-                        Debug.Assert(jsonPropertyInfo.MemberName != null, "MemberName is not set by source gen");
-                        ThrowHelper.ThrowInvalidOperationException_KdlIncludeOnInaccessibleProperty(jsonPropertyInfo.MemberName, jsonPropertyInfo.DeclaringType);
+                        Debug.Assert(kdlPropertyInfo.MemberName != null, "MemberName is not set by source gen");
+                        ThrowHelper.ThrowInvalidOperationException_KdlIncludeOnInaccessibleProperty(kdlPropertyInfo.MemberName, kdlPropertyInfo.DeclaringType);
                     }
 
                     continue;
                 }
 
-                if (jsonPropertyInfo.MemberType == MemberTypes.Field && !jsonPropertyInfo.SrcGen_HasKdlInclude && !typeInfo.Options.IncludeFields)
+                if (kdlPropertyInfo.MemberType == MemberTypes.Field && !kdlPropertyInfo.SrcGen_HasKdlInclude && !typeInfo.Options.IncludeFields)
                 {
                     continue;
                 }
 
-                propertyList.AddPropertyWithConflictResolution(jsonPropertyInfo, ref state);
+                propertyList.AddPropertyWithConflictResolution(kdlPropertyInfo, ref state);
             }
 
             if (state.IsPropertyOrderSpecified)

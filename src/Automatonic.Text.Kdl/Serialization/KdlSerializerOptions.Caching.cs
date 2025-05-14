@@ -147,14 +147,14 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         internal KdlTypeInfo GetTypeInfoForRootType(Type type, bool fallBackToNearestAncestorType = false)
         {
-            KdlTypeInfo? jsonTypeInfo = _lastTypeInfo;
+            KdlTypeInfo? kdlTypeInfo = _lastTypeInfo;
 
-            if (jsonTypeInfo?.Type != type)
+            if (kdlTypeInfo?.Type != type)
             {
-                _lastTypeInfo = jsonTypeInfo = GetTypeInfoInternal(type, fallBackToNearestAncestorType: fallBackToNearestAncestorType);
+                _lastTypeInfo = kdlTypeInfo = GetTypeInfoInternal(type, fallBackToNearestAncestorType: fallBackToNearestAncestorType);
             }
 
-            return jsonTypeInfo;
+            return kdlTypeInfo;
         }
 
         internal bool TryGetPolymorphicTypeInfoForRootType(object rootValue, [NotNullWhen(true)] out KdlTypeInfo? polymorphicTypeInfo)
@@ -488,7 +488,7 @@ namespace Automatonic.Text.Kdl
 
                 return
                     left._dictionaryKeyPolicy == right._dictionaryKeyPolicy &&
-                    left._jsonPropertyNamingPolicy == right._jsonPropertyNamingPolicy &&
+                    left._kdlPropertyNamingPolicy == right._kdlPropertyNamingPolicy &&
                     left._readCommentHandling == right._readCommentHandling &&
                     left._referenceHandler == right._referenceHandler &&
                     left._encoder == right._encoder &&
@@ -552,7 +552,7 @@ namespace Automatonic.Text.Kdl
                 HashCode hc = default;
 
                 AddHashCode(ref hc, options._dictionaryKeyPolicy);
-                AddHashCode(ref hc, options._jsonPropertyNamingPolicy);
+                AddHashCode(ref hc, options._kdlPropertyNamingPolicy);
                 AddHashCode(ref hc, options._readCommentHandling);
                 AddHashCode(ref hc, options._referenceHandler);
                 AddHashCode(ref hc, options._encoder);

@@ -55,8 +55,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static TValue? Deserialize<TValue>(ref KdlReader reader, KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return Read<TValue>(ref reader, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return Read<TValue>(ref reader, kdlTypeInfo);
         }
 
         /// <summary>
@@ -113,8 +113,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(returnType));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, returnType);
-            return ReadAsObject(ref reader, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, returnType);
+            return ReadAsObject(ref reader, kdlTypeInfo);
         }
 
         /// <summary>
@@ -123,7 +123,7 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
         /// <param name="reader">The reader to read.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
         /// <typeparamref name="TValue"/> is not compatible with the KDL,
@@ -156,26 +156,26 @@ namespace Automatonic.Text.Kdl
         ///     Hence, <see cref="KdlReaderOptions.AllowTrailingCommas"/>, <see cref="KdlReaderOptions.MaxDepth"/>, and <see cref="KdlReaderOptions.CommentHandling"/> are used while reading.
         ///   </para>
         /// </remarks>
-        public static TValue? Deserialize<TValue>(ref KdlReader reader, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>(ref KdlReader reader, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return Read(ref reader, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return Read(ref reader, kdlTypeInfo);
         }
 
         /// <summary>
-        /// Reads one KDL value (including objects or arrays) from the provided reader into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Reads one KDL value (including objects or arrays) from the provided reader into an instance specified by the <paramref name="kdlTypeInfo"/>.
         /// </summary>
-        /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
+        /// <returns>A <paramref name="kdlTypeInfo"/> representation of the KDL value.</returns>
         /// <param name="reader">The reader to read.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
-        /// <paramref name="jsonTypeInfo"/> is not compatible with the KDL,
+        /// <paramref name="kdlTypeInfo"/> is not compatible with the KDL,
         /// or a value could not be read from the reader.
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -205,15 +205,15 @@ namespace Automatonic.Text.Kdl
         ///     Hence, <see cref="KdlReaderOptions.AllowTrailingCommas"/>, <see cref="KdlReaderOptions.MaxDepth"/>, and <see cref="KdlReaderOptions.CommentHandling"/> are used while reading.
         ///   </para>
         /// </remarks>
-        public static object? Deserialize(ref KdlReader reader, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize(ref KdlReader reader, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadAsObject(ref reader, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadAsObject(ref reader, kdlTypeInfo);
         }
 
         /// <summary>
@@ -279,9 +279,9 @@ namespace Automatonic.Text.Kdl
             return ReadAsObject(ref reader, GetTypeInfo(context, returnType));
         }
 
-        private static TValue? Read<TValue>(ref KdlReader reader, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static TValue? Read<TValue>(ref KdlReader reader, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
             if (reader.CurrentState.Options.CommentHandling == KdlCommentHandling.Allow)
             {
@@ -289,13 +289,13 @@ namespace Automatonic.Text.Kdl
             }
 
             ReadStack state = default;
-            state.Initialize(jsonTypeInfo);
+            state.Initialize(kdlTypeInfo);
             KdlReader restore = reader;
 
             try
             {
                 KdlReader scopedReader = GetReaderScopedToNextValue(ref reader, ref state);
-                return jsonTypeInfo.Deserialize(ref scopedReader, ref state);
+                return kdlTypeInfo.Deserialize(ref scopedReader, ref state);
             }
             catch (KdlException)
             {
@@ -304,9 +304,9 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static object? ReadAsObject(ref KdlReader reader, KdlTypeInfo jsonTypeInfo)
+        private static object? ReadAsObject(ref KdlReader reader, KdlTypeInfo kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
             if (reader.CurrentState.Options.CommentHandling == KdlCommentHandling.Allow)
             {
@@ -314,13 +314,13 @@ namespace Automatonic.Text.Kdl
             }
 
             ReadStack state = default;
-            state.Initialize(jsonTypeInfo);
+            state.Initialize(kdlTypeInfo);
             KdlReader restore = reader;
 
             try
             {
                 KdlReader scopedReader = GetReaderScopedToNextValue(ref reader, ref state);
-                return jsonTypeInfo.DeserializeAsObject(ref scopedReader, ref state);
+                return kdlTypeInfo.DeserializeAsObject(ref scopedReader, ref state);
             }
             catch (KdlException)
             {

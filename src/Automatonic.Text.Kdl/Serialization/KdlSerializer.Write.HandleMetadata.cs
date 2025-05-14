@@ -12,11 +12,11 @@ namespace Automatonic.Text.Kdl
         internal static readonly KdlEncodedText s_metadataValues = KdlEncodedText.Encode(ValuesPropertyName, encoder: null);
 
         internal static MetadataPropertyName WriteMetadataForObject(
-            KdlConverter jsonConverter,
+            KdlConverter kdlConverter,
             ref WriteStack state,
             KdlWriter writer)
         {
-            Debug.Assert(jsonConverter.CanHaveMetadata);
+            Debug.Assert(kdlConverter.CanHaveMetadata);
             Debug.Assert(!state.IsContinuation);
             Debug.Assert(state.CurrentContainsMetadata);
 
@@ -57,13 +57,13 @@ namespace Automatonic.Text.Kdl
         }
 
         internal static MetadataPropertyName WriteMetadataForCollection(
-            KdlConverter jsonConverter,
+            KdlConverter kdlConverter,
             ref WriteStack state,
             KdlWriter writer)
         {
             // For collections with metadata, we nest the array payload within a KDL object.
             writer.WriteStartObject();
-            MetadataPropertyName writtenMetadata = WriteMetadataForObject(jsonConverter, ref state, writer);
+            MetadataPropertyName writtenMetadata = WriteMetadataForObject(kdlConverter, ref state, writer);
             writer.WritePropertyName(s_metadataValues); // property name containing nested array values.
             return writtenMetadata;
         }

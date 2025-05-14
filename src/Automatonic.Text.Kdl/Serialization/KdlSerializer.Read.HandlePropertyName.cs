@@ -21,10 +21,10 @@ namespace Automatonic.Text.Kdl
             out bool useExtensionProperty,
             bool createExtensionProperty = true)
         {
-            KdlTypeInfo jsonTypeInfo = state.Current.KdlTypeInfo;
+            KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
             useExtensionProperty = false;
 
-            KdlPropertyInfo? jsonPropertyInfo = jsonTypeInfo.GetProperty(
+            KdlPropertyInfo? kdlPropertyInfo = kdlTypeInfo.GetProperty(
                 unescapedPropertyName,
                 ref state.Current,
                 out byte[] utf8PropertyName);
@@ -36,17 +36,17 @@ namespace Automatonic.Text.Kdl
             state.Current.KdlPropertyName = utf8PropertyName;
 
             // Handle missing properties
-            if (jsonPropertyInfo is null)
+            if (kdlPropertyInfo is null)
             {
-                if (jsonTypeInfo.EffectiveUnmappedMemberHandling is KdlUnmappedMemberHandling.Disallow)
+                if (kdlTypeInfo.EffectiveUnmappedMemberHandling is KdlUnmappedMemberHandling.Disallow)
                 {
-                    Debug.Assert(jsonTypeInfo.ExtensionDataProperty is null, "jsonTypeInfo.Configure() should have caught conflicting configuration.");
+                    Debug.Assert(kdlTypeInfo.ExtensionDataProperty is null, "kdlTypeInfo.Configure() should have caught conflicting configuration.");
                     string stringPropertyName = KdlHelpers.Utf8GetString(unescapedPropertyName);
-                    ThrowHelper.ThrowKdlException_UnmappedKdlProperty(jsonTypeInfo.Type, stringPropertyName);
+                    ThrowHelper.ThrowKdlException_UnmappedKdlProperty(kdlTypeInfo.Type, stringPropertyName);
                 }
 
                 // Determine if we should use the extension property.
-                if (jsonTypeInfo.ExtensionDataProperty is KdlPropertyInfo { HasGetter: true, HasSetter: true } dataExtProperty)
+                if (kdlTypeInfo.ExtensionDataProperty is KdlPropertyInfo { HasGetter: true, HasSetter: true } dataExtProperty)
                 {
                     state.Current.KdlPropertyNameAsString = KdlHelpers.Utf8GetString(unescapedPropertyName);
 
@@ -56,19 +56,19 @@ namespace Automatonic.Text.Kdl
                         CreateExtensionDataProperty(obj, dataExtProperty, options);
                     }
 
-                    jsonPropertyInfo = dataExtProperty;
+                    kdlPropertyInfo = dataExtProperty;
                     useExtensionProperty = true;
                 }
                 else
                 {
                     // Populate with a placeholder value required by KdlPath calculations
-                    jsonPropertyInfo = KdlPropertyInfo.s_missingProperty;
+                    kdlPropertyInfo = KdlPropertyInfo.s_missingProperty;
                 }
             }
 
-            state.Current.KdlPropertyInfo = jsonPropertyInfo;
-            state.Current.NumberHandling = jsonPropertyInfo.EffectiveNumberHandling;
-            return jsonPropertyInfo;
+            state.Current.KdlPropertyInfo = kdlPropertyInfo;
+            state.Current.NumberHandling = kdlPropertyInfo.EffectiveNumberHandling;
+            return kdlPropertyInfo;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -101,17 +101,17 @@ namespace Automatonic.Text.Kdl
 
         internal static void CreateExtensionDataProperty(
             object obj,
-            KdlPropertyInfo jsonPropertyInfo,
+            KdlPropertyInfo kdlPropertyInfo,
             KdlSerializerOptions options)
         {
-            Debug.Assert(jsonPropertyInfo != null);
+            Debug.Assert(kdlPropertyInfo != null);
 
-            object? extensionData = jsonPropertyInfo.GetValueAsObject(obj);
+            object? extensionData = kdlPropertyInfo.GetValueAsObject(obj);
             if (extensionData == null)
             {
                 // Create the appropriate dictionary type. We already verified the types.
 #if DEBUG
-                Type underlyingIDictionaryType = jsonPropertyInfo.PropertyType.GetCompatibleGenericInterface(typeof(IDictionary<,>))!;
+                Type underlyingIDictionaryType = kdlPropertyInfo.PropertyType.GetCompatibleGenericInterface(typeof(IDictionary<,>))!;
                 Type[] genericArgs = underlyingIDictionaryType.GetGenericArguments();
 
                 Debug.Assert(underlyingIDictionaryType.IsGenericType);
@@ -123,25 +123,25 @@ namespace Automatonic.Text.Kdl
                     genericArgs[1].UnderlyingSystemType == typeof(Graph.KdlElement));
 #endif
 
-                Func<object>? createObjectForExtensionDataProp = jsonPropertyInfo.KdlTypeInfo.CreateObject
-                    ?? jsonPropertyInfo.KdlTypeInfo.CreateObjectForExtensionDataProperty;
+                Func<object>? createObjectForExtensionDataProp = kdlPropertyInfo.KdlTypeInfo.CreateObject
+                    ?? kdlPropertyInfo.KdlTypeInfo.CreateObjectForExtensionDataProperty;
 
                 if (createObjectForExtensionDataProp == null)
                 {
                     // Avoid a reference to the KdlVertex type for trimming
-                    if (jsonPropertyInfo.PropertyType.FullName == KdlTypeInfo.KdlObjectTypeName)
+                    if (kdlPropertyInfo.PropertyType.FullName == KdlTypeInfo.KdlObjectTypeName)
                     {
                         ThrowHelper.ThrowInvalidOperationException_NodeKdlObjectCustomConverterNotAllowedOnExtensionProperty();
                     }
                     else
                     {
-                        ThrowHelper.ThrowNotSupportedException_SerializationNotSupported(jsonPropertyInfo.PropertyType);
+                        ThrowHelper.ThrowNotSupportedException_SerializationNotSupported(kdlPropertyInfo.PropertyType);
                     }
                 }
 
                 extensionData = createObjectForExtensionDataProp();
-                Debug.Assert(jsonPropertyInfo.Set != null);
-                jsonPropertyInfo.Set(obj, extensionData);
+                Debug.Assert(kdlPropertyInfo.Set != null);
+                kdlPropertyInfo.Set(obj, extensionData);
             }
 
             // We don't add the value to the dictionary here because we need to support the read-ahead functionality for Streams.

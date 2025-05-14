@@ -63,8 +63,8 @@ namespace Automatonic.Text.Kdl.Graph
                 return CreateFromElement(ref element, options);
             }
 
-            var jsonTypeInfo = (KdlTypeInfo<T>)KdlSerializerOptions.Default.GetTypeInfo(typeof(T));
-            return CreateFromTypeInfo(value, jsonTypeInfo, options);
+            var kdlTypeInfo = (KdlTypeInfo<T>)KdlSerializerOptions.Default.GetTypeInfo(typeof(T));
+            return CreateFromTypeInfo(value, kdlTypeInfo, options);
         }
 
         /// <summary>
@@ -75,14 +75,14 @@ namespace Automatonic.Text.Kdl.Graph
         /// </returns>
         /// <typeparam name="T">The type of value to create.</typeparam>
         /// <param name="value">The value to create.</param>
-        /// <param name="jsonTypeInfo">The <see cref="KdlTypeInfo"/> that will be used to serialize the value.</param>
+        /// <param name="kdlTypeInfo">The <see cref="KdlTypeInfo"/> that will be used to serialize the value.</param>
         /// <param name="options">Options to control the behavior.</param>
         /// <returns>The new instance of the <see cref="KdlValue"/> class that contains the specified value.</returns>
-        public static KdlValue? Create<T>(T? value, KdlTypeInfo<T> jsonTypeInfo, KdlElementOptions? options = null)
+        public static KdlValue? Create<T>(T? value, KdlTypeInfo<T> kdlTypeInfo, KdlElementOptions? options = null)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
             if (value is null)
@@ -95,14 +95,14 @@ namespace Automatonic.Text.Kdl.Graph
                 ThrowHelper.ThrowArgumentException_NodeValueNotAllowed(nameof(value));
             }
 
-            jsonTypeInfo.EnsureConfigured();
+            kdlTypeInfo.EnsureConfigured();
 
-            if (value is KdlReadOnlyElement element && jsonTypeInfo.EffectiveConverter.IsInternalConverter)
+            if (value is KdlReadOnlyElement element && kdlTypeInfo.EffectiveConverter.IsInternalConverter)
             {
                 return CreateFromElement(ref element, options);
             }
 
-            return CreateFromTypeInfo(value, jsonTypeInfo, options);
+            return CreateFromTypeInfo(value, kdlTypeInfo, options);
         }
 
         internal override bool DeepEqualsCore(KdlElement otherNode)
@@ -160,21 +160,21 @@ namespace Automatonic.Text.Kdl.Graph
             Parent?.GetPath(ref path, this);
         }
 
-        internal static KdlValue CreateFromTypeInfo<T>(T value, KdlTypeInfo<T> jsonTypeInfo, KdlElementOptions? options = null)
+        internal static KdlValue CreateFromTypeInfo<T>(T value, KdlTypeInfo<T> kdlTypeInfo, KdlElementOptions? options = null)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
             Debug.Assert(value != null);
 
             if (KdlValue<T>.TypeIsSupportedPrimitive &&
-                jsonTypeInfo is { EffectiveConverter.IsInternalConverter: true } &&
-                (jsonTypeInfo.EffectiveNumberHandling & KdlNumberHandling.WriteAsString) is 0)
+                kdlTypeInfo is { EffectiveConverter.IsInternalConverter: true } &&
+                (kdlTypeInfo.EffectiveNumberHandling & KdlNumberHandling.WriteAsString) is 0)
             {
                 // If the type is using the built-in converter for a known primitive,
                 // switch to the more efficient KdlValuePrimitive<T> implementation.
-                return new KdlValuePrimitive<T>(value, jsonTypeInfo.EffectiveConverter, options);
+                return new KdlValuePrimitive<T>(value, kdlTypeInfo.EffectiveConverter, options);
             }
 
-            return new KdlValueCustomized<T>(value, jsonTypeInfo, options);
+            return new KdlValueCustomized<T>(value, kdlTypeInfo, options);
         }
 
         internal static KdlValue? CreateFromElement(ref readonly KdlReadOnlyElement element, KdlElementOptions? options = null)

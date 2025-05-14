@@ -44,8 +44,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return jsonTypeInfo.DeserializeAsync(utf8Kdl, cancellationToken);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return kdlTypeInfo.DeserializeAsync(utf8Kdl, cancellationToken);
         }
 
         /// <summary>
@@ -79,8 +79,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return jsonTypeInfo.Deserialize(utf8Kdl);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return kdlTypeInfo.Deserialize(utf8Kdl);
         }
 
         /// <summary>
@@ -123,8 +123,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(returnType));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, returnType);
-            return jsonTypeInfo.DeserializeAsObjectAsync(utf8Kdl, cancellationToken);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, returnType);
+            return kdlTypeInfo.DeserializeAsObjectAsync(utf8Kdl, cancellationToken);
         }
 
         /// <summary>
@@ -163,8 +163,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(returnType));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, returnType);
-            return jsonTypeInfo.DeserializeAsObject(utf8Kdl);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, returnType);
+            return kdlTypeInfo.DeserializeAsObject(utf8Kdl);
         }
 
         /// <summary>
@@ -174,12 +174,12 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
         /// <param name="utf8Kdl">KDL data to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <param name="cancellationToken">
         /// The <see cref="System.Threading.CancellationToken"/> that can be used to cancel the read operation.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="utf8Kdl"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="utf8Kdl"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
@@ -188,34 +188,34 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         public static ValueTask<TValue?> DeserializeAsync<TValue>(
             Stream utf8Kdl,
-            KdlTypeInfo<TValue> jsonTypeInfo,
+            KdlTypeInfo<TValue> kdlTypeInfo,
             CancellationToken cancellationToken = default)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return jsonTypeInfo.DeserializeAsync(utf8Kdl, cancellationToken);
+            kdlTypeInfo.EnsureConfigured();
+            return kdlTypeInfo.DeserializeAsync(utf8Kdl, cancellationToken);
         }
 
         /// <summary>
-        /// Reads the UTF-8 encoded text representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Reads the UTF-8 encoded text representing a single KDL value into an instance specified by the <paramref name="kdlTypeInfo"/>.
         /// The Stream will be read to completion.
         /// </summary>
-        /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
+        /// <returns>A <paramref name="kdlTypeInfo"/> representation of the KDL value.</returns>
         /// <param name="utf8Kdl">KDL data to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <param name="cancellationToken">
         /// The <see cref="System.Threading.CancellationToken"/> that can be used to cancel the read operation.
         /// </param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="utf8Kdl"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="utf8Kdl"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
@@ -223,20 +223,20 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         public static ValueTask<object?> DeserializeAsync(
             Stream utf8Kdl,
-            KdlTypeInfo jsonTypeInfo,
+            KdlTypeInfo kdlTypeInfo,
             CancellationToken cancellationToken = default)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return jsonTypeInfo.DeserializeAsObjectAsync(utf8Kdl, cancellationToken);
+            kdlTypeInfo.EnsureConfigured();
+            return kdlTypeInfo.DeserializeAsObjectAsync(utf8Kdl, cancellationToken);
         }
 
         /// <summary>
@@ -246,9 +246,9 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
         /// <param name="utf8Kdl">KDL data to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="utf8Kdl"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="utf8Kdl"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
@@ -257,30 +257,30 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         public static TValue? Deserialize<TValue>(
             Stream utf8Kdl,
-            KdlTypeInfo<TValue> jsonTypeInfo)
+            KdlTypeInfo<TValue> kdlTypeInfo)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return jsonTypeInfo.Deserialize(utf8Kdl);
+            kdlTypeInfo.EnsureConfigured();
+            return kdlTypeInfo.Deserialize(utf8Kdl);
         }
 
         /// <summary>
-        /// Reads the UTF-8 encoded text representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Reads the UTF-8 encoded text representing a single KDL value into an instance specified by the <paramref name="kdlTypeInfo"/>.
         /// The Stream will be read to completion.
         /// </summary>
-        /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
+        /// <returns>A <paramref name="kdlTypeInfo"/> representation of the KDL value.</returns>
         /// <param name="utf8Kdl">KDL data to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="utf8Kdl"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="utf8Kdl"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// The KDL is invalid,
@@ -288,19 +288,19 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         public static object? Deserialize(
             Stream utf8Kdl,
-            KdlTypeInfo jsonTypeInfo)
+            KdlTypeInfo kdlTypeInfo)
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return jsonTypeInfo.DeserializeAsObject(utf8Kdl);
+            kdlTypeInfo.EnsureConfigured();
+            return kdlTypeInfo.DeserializeAsObject(utf8Kdl);
         }
 
         /// <summary>
@@ -349,8 +349,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(context));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, returnType);
-            return jsonTypeInfo.DeserializeAsObjectAsync(utf8Kdl, cancellationToken);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, returnType);
+            return kdlTypeInfo.DeserializeAsObjectAsync(utf8Kdl, cancellationToken);
         }
 
         /// <summary>
@@ -395,8 +395,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(context));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, returnType);
-            return jsonTypeInfo.DeserializeAsObject(utf8Kdl);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, returnType);
+            return kdlTypeInfo.DeserializeAsObject(utf8Kdl);
         }
 
         /// <summary>
@@ -453,8 +453,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return DeserializeAsyncEnumerableCore(utf8Kdl, jsonTypeInfo, topLevelValues, cancellationToken);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return DeserializeAsyncEnumerableCore(utf8Kdl, kdlTypeInfo, topLevelValues, cancellationToken);
         }
 
         /// <summary>
@@ -464,17 +464,17 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The element type to deserialize asynchronously.</typeparam>
         /// <returns>An <see cref="IAsyncEnumerable{TValue}" /> representation of the provided KDL array.</returns>
         /// <param name="utf8Kdl">KDL data to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the element type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the element type to convert.</param>
         /// <param name="cancellationToken">The <see cref="System.Threading.CancellationToken"/> that can be used to cancel the read operation.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="utf8Kdl"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="utf8Kdl"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         public static IAsyncEnumerable<TValue?> DeserializeAsyncEnumerable<TValue>(
             Stream utf8Kdl,
-            KdlTypeInfo<TValue> jsonTypeInfo,
+            KdlTypeInfo<TValue> kdlTypeInfo,
             CancellationToken cancellationToken = default)
         {
-            return DeserializeAsyncEnumerable(utf8Kdl, jsonTypeInfo, topLevelValues: false, cancellationToken);
+            return DeserializeAsyncEnumerable(utf8Kdl, kdlTypeInfo, topLevelValues: false, cancellationToken);
         }
 
         /// <summary>
@@ -484,11 +484,11 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The element type to deserialize asynchronously.</typeparam>
         /// <returns>An <see cref="IAsyncEnumerable{TValue}" /> representation of the provided KDL sequence.</returns>
         /// <param name="utf8Kdl">KDL data to parse.</param>
-        /// <param name="jsonTypeInfo">Metadata about the element type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the element type to convert.</param>
         /// <param name="topLevelValues">Whether to deserialize from a sequence of top-level KDL values.</param>
         /// <param name="cancellationToken">The <see cref="System.Threading.CancellationToken"/> that can be used to cancel the read operation.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="utf8Kdl"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="utf8Kdl"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <remarks>
         /// When <paramref name="topLevelValues"/> is set to <see langword="true" />, treats the stream as a sequence of
@@ -498,7 +498,7 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         public static IAsyncEnumerable<TValue?> DeserializeAsyncEnumerable<TValue>(
             Stream utf8Kdl,
-            KdlTypeInfo<TValue> jsonTypeInfo,
+            KdlTypeInfo<TValue> kdlTypeInfo,
             bool topLevelValues,
             CancellationToken cancellationToken = default)
         {
@@ -507,33 +507,33 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
 
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return DeserializeAsyncEnumerableCore(utf8Kdl, jsonTypeInfo, topLevelValues, cancellationToken);
+            kdlTypeInfo.EnsureConfigured();
+            return DeserializeAsyncEnumerableCore(utf8Kdl, kdlTypeInfo, topLevelValues, cancellationToken);
         }
 
         private static IAsyncEnumerable<T?> DeserializeAsyncEnumerableCore<T>(
             Stream utf8Kdl,
-            KdlTypeInfo<T> jsonTypeInfo,
+            KdlTypeInfo<T> kdlTypeInfo,
             bool topLevelValues,
             CancellationToken cancellationToken)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
+            Debug.Assert(kdlTypeInfo.IsConfigured);
 
             KdlTypeInfo<List<T?>> listTypeInfo;
-            KdlReaderOptions readerOptions = jsonTypeInfo.Options.GetReaderOptions();
+            KdlReaderOptions readerOptions = kdlTypeInfo.Options.GetReaderOptions();
             if (topLevelValues)
             {
-                listTypeInfo = GetOrAddListTypeInfoForRootLevelValueMode(jsonTypeInfo);
+                listTypeInfo = GetOrAddListTypeInfoForRootLevelValueMode(kdlTypeInfo);
                 readerOptions.AllowMultipleValues = true;
             }
             else
             {
-                listTypeInfo = GetOrAddListTypeInfoForArrayMode(jsonTypeInfo);
+                listTypeInfo = GetOrAddListTypeInfoForArrayMode(kdlTypeInfo);
             }
 
             return CreateAsyncEnumerableFromArray(utf8Kdl, listTypeInfo, readerOptions, cancellationToken);
@@ -549,7 +549,7 @@ namespace Automatonic.Text.Kdl
                 ReadBufferState bufferState = new(listTypeInfo.Options.DefaultBufferSize);
                 ReadStack readStack = default;
                 readStack.Initialize(listTypeInfo, supportContinuation: true);
-                KdlReaderState jsonReaderState = new(readerOptions);
+                KdlReaderState kdlReaderState = new(readerOptions);
 
                 try
                 {
@@ -559,7 +559,7 @@ namespace Automatonic.Text.Kdl
                         bufferState = await bufferState.ReadFromStreamAsync(utf8Kdl, cancellationToken, fillBuffer: false).ConfigureAwait(false);
                         success = listTypeInfo.ContinueDeserialize(
                             ref bufferState,
-                            ref jsonReaderState,
+                            ref kdlReaderState,
                             ref readStack,
                             out List<T?>? _);
 

@@ -25,8 +25,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static TValue? Deserialize<TValue>(this KdlElement? node, KdlSerializerOptions? options = null)
         {
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            return ReadFromNode(node, jsonTypeInfo);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            return ReadFromNode(node, kdlTypeInfo);
         }
 
         /// <summary>
@@ -52,8 +52,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(returnType));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, returnType);
-            return ReadFromNodeAsObject(node, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, returnType);
+            return ReadFromNodeAsObject(node, kdlTypeInfo);
         }
 
         /// <summary>
@@ -62,42 +62,42 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type to deserialize the KDL value into.</typeparam>
         /// <returns>A <typeparamref name="TValue"/> representation of the KDL value.</returns>
         /// <param name="node">The <see cref="KdlElement"/> to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="KdlException">
         /// <typeparamref name="TValue" /> is not compatible with the KDL.
         /// </exception>
-        public static TValue? Deserialize<TValue>(this KdlElement? node, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static TValue? Deserialize<TValue>(this KdlElement? node, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromNode(node, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromNode(node, kdlTypeInfo);
         }
 
         /// <summary>
-        /// Converts the <see cref="KdlElement"/> representing a single KDL value into an instance specified by the <paramref name="jsonTypeInfo"/>.
+        /// Converts the <see cref="KdlElement"/> representing a single KDL value into an instance specified by the <paramref name="kdlTypeInfo"/>.
         /// </summary>
-        /// <returns>A <paramref name="jsonTypeInfo"/> representation of the KDL value.</returns>
+        /// <returns>A <paramref name="kdlTypeInfo"/> representation of the KDL value.</returns>
         /// <param name="node">The <see cref="KdlElement"/> to convert.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="System.ArgumentNullException">
-        /// <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static object? Deserialize(this KdlElement? node, KdlTypeInfo jsonTypeInfo)
+        public static object? Deserialize(this KdlElement? node, KdlTypeInfo kdlTypeInfo)
         {
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            return ReadFromNodeAsObject(node, jsonTypeInfo);
+            kdlTypeInfo.EnsureConfigured();
+            return ReadFromNodeAsObject(node, kdlTypeInfo);
         }
 
         /// <summary>
@@ -143,13 +143,13 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(context));
             }
 
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, returnType);
-            return ReadFromNodeAsObject(node, jsonTypeInfo);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, returnType);
+            return ReadFromNodeAsObject(node, kdlTypeInfo);
         }
 
-        private static TValue? ReadFromNode<TValue>(KdlElement? node, KdlTypeInfo<TValue> jsonTypeInfo)
+        private static TValue? ReadFromNode<TValue>(KdlElement? node, KdlTypeInfo<TValue> kdlTypeInfo)
         {
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            KdlSerializerOptions options = kdlTypeInfo.Options;
 
             // For performance, share the same buffer across serialization and deserialization.
             using var output = new PooledByteBufferWriter(options.DefaultBufferSize);
@@ -165,12 +165,12 @@ namespace Automatonic.Text.Kdl
                 }
             }
 
-            return ReadFromSpan(output.WrittenMemory.Span, jsonTypeInfo);
+            return ReadFromSpan(output.WrittenMemory.Span, kdlTypeInfo);
         }
 
-        private static object? ReadFromNodeAsObject(KdlElement? node, KdlTypeInfo jsonTypeInfo)
+        private static object? ReadFromNodeAsObject(KdlElement? node, KdlTypeInfo kdlTypeInfo)
         {
-            KdlSerializerOptions options = jsonTypeInfo.Options;
+            KdlSerializerOptions options = kdlTypeInfo.Options;
 
             // For performance, share the same buffer across serialization and deserialization.
             using var output = new PooledByteBufferWriter(options.DefaultBufferSize);
@@ -186,7 +186,7 @@ namespace Automatonic.Text.Kdl
                 }
             }
 
-            return ReadFromSpanAsObject(output.WrittenMemory.Span, jsonTypeInfo);
+            return ReadFromSpanAsObject(output.WrittenMemory.Span, kdlTypeInfo);
         }
     }
 }

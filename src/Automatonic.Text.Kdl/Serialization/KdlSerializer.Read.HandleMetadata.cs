@@ -19,13 +19,13 @@ namespace Automatonic.Text.Kdl
         private static readonly byte[] s_typePropertyName = "$type"u8.ToArray();
         private static readonly byte[] s_valuesPropertyName = "$values"u8.ToArray();
 
-        internal static bool TryReadMetadata(KdlConverter converter, KdlTypeInfo jsonTypeInfo, ref KdlReader reader, scoped ref ReadStack state)
+        internal static bool TryReadMetadata(KdlConverter converter, KdlTypeInfo kdlTypeInfo, ref KdlReader reader, scoped ref ReadStack state)
         {
             Debug.Assert(state.Current.ObjectState == StackFrameObjectState.StartToken);
             Debug.Assert(state.Current.CanContainMetadata);
 
             KdlReader checkpoint;
-            bool allowOutOfOrderMetadata = jsonTypeInfo.Options.AllowOutOfOrderMetadataProperties;
+            bool allowOutOfOrderMetadata = kdlTypeInfo.Options.AllowOutOfOrderMetadataProperties;
             bool isReadingAheadOfNonMetadataProperties = false;
 
             if (allowOutOfOrderMetadata && !reader.IsFinalBlock)
@@ -77,7 +77,7 @@ namespace Automatonic.Text.Kdl
                     }
 
                     ReadOnlySpan<byte> propertyName = reader.GetUnescapedSpan();
-                    switch (state.Current.LatestMetadataPropertyName = GetMetadataPropertyName(propertyName, jsonTypeInfo.PolymorphicTypeResolver))
+                    switch (state.Current.LatestMetadataPropertyName = GetMetadataPropertyName(propertyName, kdlTypeInfo.PolymorphicTypeResolver))
                     {
                         case MetadataPropertyName.Id:
                             state.Current.KdlPropertyName = s_idPropertyName;
@@ -122,9 +122,9 @@ namespace Automatonic.Text.Kdl
                             break;
 
                         case MetadataPropertyName.Type:
-                            state.Current.KdlPropertyName = jsonTypeInfo.PolymorphicTypeResolver?.CustomTypeDiscriminatorPropertyNameUtf8 ?? s_typePropertyName;
+                            state.Current.KdlPropertyName = kdlTypeInfo.PolymorphicTypeResolver?.CustomTypeDiscriminatorPropertyNameUtf8 ?? s_typePropertyName;
 
-                            if (jsonTypeInfo.PolymorphicTypeResolver is null)
+                            if (kdlTypeInfo.PolymorphicTypeResolver is null)
                             {
                                 // Found a $type property in a type that doesn't support polymorphism
                                 ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(propertyName, ref state);
@@ -149,7 +149,7 @@ namespace Automatonic.Text.Kdl
                             if (isReadingAheadOfNonMetadataProperties)
                             {
                                 // Cannot combine a $values property with other non-metadata properties.
-                                ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(ref state, jsonTypeInfo.Type, reader);
+                                ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(ref state, kdlTypeInfo.Type, reader);
                             }
 
                             break;
@@ -170,7 +170,7 @@ namespace Automatonic.Text.Kdl
                                 if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Values) != 0)
                                 {
                                     // Cannot combine a $values property with other non-metadata properties.
-                                    ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(ref state, jsonTypeInfo.Type, reader);
+                                    ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(ref state, kdlTypeInfo.Type, reader);
                                 }
 
                                 if (IsMetadataPropertyName(propertyName, resolver: null))
@@ -410,13 +410,13 @@ namespace Automatonic.Text.Kdl
         internal static bool TryHandleReferenceFromKdlNode(
             ref KdlReader reader,
             scoped ref ReadStack state,
-            KdlElement? jsonNode,
+            KdlElement? kdlNode,
             [NotNullWhen(true)] out object? referenceValue)
         {
             bool refMetadataFound = false;
             referenceValue = default;
 
-            if (jsonNode is KdlNode kdlNode)
+            if (kdlNode is KdlNode kdlNode)
             {
 #pragma warning disable CS0219 // Variable is assigned but its value is never used
                 int propertyCount = 0;
@@ -438,8 +438,8 @@ namespace Automatonic.Text.Kdl
                 //         }
 
                 //         string referenceId = ReadAsStringMetadataValue(property.Value);
-                //         state.ReferenceResolver.AddReference(referenceId, jsonNode);
-                //         referenceValue = jsonNode;
+                //         state.ReferenceResolver.AddReference(referenceId, kdlNode);
+                //         referenceValue = kdlNode;
                 //         return true;
                 //     }
                 //     else if (property.Key == "$ref")
@@ -460,16 +460,16 @@ namespace Automatonic.Text.Kdl
                 //         refMetadataFound = true;
                 //     }
 
-                //     static string ReadAsStringMetadataValue(KdlVertex? jsonNode)
+                //     static string ReadAsStringMetadataValue(KdlVertex? kdlNode)
                 //     {
-                //         if (jsonNode is KdlValue jsonValue &&
-                //             jsonValue.TryGetValue(out string? value) &&
+                //         if (kdlNode is KdlValue kdlValue &&
+                //             kdlValue.TryGetValue(out string? value) &&
                 //             value is not null)
                 //         {
                 //             return value;
                 //         }
 
-                //         KdlValueKind metadataValueKind = jsonNode?.GetValueKind() ?? KdlValueKind.Null;
+                //         KdlValueKind metadataValueKind = kdlNode?.GetValueKind() ?? KdlValueKind.Null;
                 //         Debug.Assert(metadataValueKind != KdlValueKind.Undefined);
                 //         ThrowHelper.ThrowKdlException_MetadataValueWasNotString(metadataValueKind);
                 //         return null!;

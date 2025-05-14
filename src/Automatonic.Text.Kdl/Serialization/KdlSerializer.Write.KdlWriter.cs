@@ -32,8 +32,8 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(writer));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = GetTypeInfo<TValue>(options);
-            jsonTypeInfo.Serialize(writer, value);
+            KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
+            kdlTypeInfo.Serialize(writer, value);
         }
 
         /// <summary>
@@ -67,8 +67,8 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(options, inputType);
-            jsonTypeInfo.SerializeAsObject(writer, value);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
+            kdlTypeInfo.SerializeAsObject(writer, value);
         }
 
         /// <summary>
@@ -77,23 +77,23 @@ namespace Automatonic.Text.Kdl
         /// <typeparam name="TValue">The type of the value to serialize.</typeparam>
         /// <param name="writer">The writer to write.</param>
         /// <param name="value">The value to convert and write.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="writer"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        ///   <paramref name="writer"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static void Serialize<TValue>(KdlWriter writer, TValue value, KdlTypeInfo<TValue> jsonTypeInfo)
+        public static void Serialize<TValue>(KdlWriter writer, TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
         {
             if (writer is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(writer));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            jsonTypeInfo.Serialize(writer, value);
+            kdlTypeInfo.EnsureConfigured();
+            kdlTypeInfo.Serialize(writer, value);
         }
 
         /// <summary>
@@ -101,26 +101,26 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <param name="writer">The writer to write.</param>
         /// <param name="value">The value to convert and write.</param>
-        /// <param name="jsonTypeInfo">Metadata about the type to convert.</param>
+        /// <param name="kdlTypeInfo">Metadata about the type to convert.</param>
         /// <exception cref="ArgumentNullException">
-        ///   <paramref name="writer"/> or <paramref name="jsonTypeInfo"/> is <see langword="null"/>.
+        ///   <paramref name="writer"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
         /// <exception cref="InvalidCastException">
-        /// <paramref name="value"/> does not match the type of <paramref name="jsonTypeInfo"/>.
+        /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
-        public static void Serialize(KdlWriter writer, object? value, KdlTypeInfo jsonTypeInfo)
+        public static void Serialize(KdlWriter writer, object? value, KdlTypeInfo kdlTypeInfo)
         {
             if (writer is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(writer));
             }
-            if (jsonTypeInfo is null)
+            if (kdlTypeInfo is null)
             {
-                ThrowHelper.ThrowArgumentNullException(nameof(jsonTypeInfo));
+                ThrowHelper.ThrowArgumentNullException(nameof(kdlTypeInfo));
             }
 
-            jsonTypeInfo.EnsureConfigured();
-            jsonTypeInfo.SerializeAsObject(writer, value);
+            kdlTypeInfo.EnsureConfigured();
+            kdlTypeInfo.SerializeAsObject(writer, value);
         }
 
         /// <summary>
@@ -156,8 +156,8 @@ namespace Automatonic.Text.Kdl
             }
 
             ValidateInputType(value, inputType);
-            KdlTypeInfo jsonTypeInfo = GetTypeInfo(context, inputType);
-            jsonTypeInfo.SerializeAsObject(writer, value);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfo(context, inputType);
+            kdlTypeInfo.SerializeAsObject(writer, value);
         }
     }
 }

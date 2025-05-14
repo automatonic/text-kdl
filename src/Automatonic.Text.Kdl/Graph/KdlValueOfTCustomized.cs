@@ -12,17 +12,17 @@ namespace Automatonic.Text.Kdl.Graph
     /// </summary>
     internal sealed class KdlValueCustomized<TValue> : KdlValue<TValue>
     {
-        private readonly KdlTypeInfo<TValue> _jsonTypeInfo;
+        private readonly KdlTypeInfo<TValue> _kdlTypeInfo;
         private KdlValueKind? _valueKind;
 
-        public KdlValueCustomized(TValue value, KdlTypeInfo<TValue> jsonTypeInfo, KdlElementOptions? options = null) : base(value, options)
+        public KdlValueCustomized(TValue value, KdlTypeInfo<TValue> kdlTypeInfo, KdlElementOptions? options = null) : base(value, options)
         {
-            Debug.Assert(jsonTypeInfo.IsConfigured);
-            _jsonTypeInfo = jsonTypeInfo;
+            Debug.Assert(kdlTypeInfo.IsConfigured);
+            _kdlTypeInfo = kdlTypeInfo;
         }
 
         private protected override KdlValueKind GetValueKindCore() => _valueKind ??= ComputeValueKind();
-        internal override KdlElement DeepCloneCore() => KdlSerializer.SerializeToNode(Value, _jsonTypeInfo)!;
+        internal override KdlElement DeepCloneCore() => KdlSerializer.SerializeToNode(Value, _kdlTypeInfo)!;
 
         public override void WriteTo(KdlWriter writer, KdlSerializerOptions? options = null)
         {
@@ -31,15 +31,15 @@ namespace Automatonic.Text.Kdl.Graph
                 ThrowHelper.ThrowArgumentNullException(nameof(writer));
             }
 
-            KdlTypeInfo<TValue> jsonTypeInfo = _jsonTypeInfo;
+            KdlTypeInfo<TValue> kdlTypeInfo = _kdlTypeInfo;
 
-            if (options != null && options != jsonTypeInfo.Options)
+            if (options != null && options != kdlTypeInfo.Options)
             {
                 options.MakeReadOnly();
-                jsonTypeInfo = (KdlTypeInfo<TValue>)options.GetTypeInfoInternal(typeof(TValue));
+                kdlTypeInfo = (KdlTypeInfo<TValue>)options.GetTypeInfoInternal(typeof(TValue));
             }
 
-            jsonTypeInfo.Serialize(writer, Value);
+            kdlTypeInfo.Serialize(writer, Value);
         }
 
         /// <summary>

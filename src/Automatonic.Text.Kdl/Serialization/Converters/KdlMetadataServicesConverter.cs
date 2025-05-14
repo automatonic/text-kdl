@@ -46,23 +46,23 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         internal override bool OnTryWrite(KdlWriter writer, T value, KdlSerializerOptions options, ref WriteStack state)
         {
-            KdlTypeInfo jsonTypeInfo = state.Current.KdlTypeInfo;
-            Debug.Assert(jsonTypeInfo is KdlTypeInfo<T> typeInfo && typeInfo.SerializeHandler != null);
+            KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
+            Debug.Assert(kdlTypeInfo is KdlTypeInfo<T> typeInfo && typeInfo.SerializeHandler != null);
 
             if (!state.SupportContinuation &&
-                jsonTypeInfo.CanUseSerializeHandler &&
+                kdlTypeInfo.CanUseSerializeHandler &&
                 !KdlHelpers.RequiresSpecialNumberHandlingOnWrite(state.Current.NumberHandling) &&
                 !state.CurrentContainsMetadata) // Do not use the fast path if state needs to write metadata.
             {
-                ((KdlTypeInfo<T>)jsonTypeInfo).SerializeHandler!(writer, value);
+                ((KdlTypeInfo<T>)kdlTypeInfo).SerializeHandler!(writer, value);
                 return true;
             }
 
             return Converter.OnTryWrite(writer, value, options, ref state);
         }
 
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options)
-            => Converter.ConfigureKdlTypeInfo(jsonTypeInfo, options);
+        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
+            => Converter.ConfigureKdlTypeInfo(kdlTypeInfo, options);
 
         internal override KdlSchema? GetSchema(KdlNumberHandling numberHandling)
             => Converter.GetSchema(numberHandling);

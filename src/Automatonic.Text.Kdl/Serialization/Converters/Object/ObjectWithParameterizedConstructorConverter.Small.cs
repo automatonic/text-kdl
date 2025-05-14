@@ -21,26 +21,26 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         protected override bool ReadAndCacheConstructorArgument(
             scoped ref ReadStack state,
             ref KdlReader reader,
-            KdlParameterInfo jsonParameterInfo)
+            KdlParameterInfo kdlParameterInfo)
         {
             Debug.Assert(state.Current.CtorArgumentState!.Arguments != null);
             var arguments = (Arguments<TArg0, TArg1, TArg2, TArg3>)state.Current.CtorArgumentState.Arguments;
 
             bool success;
 
-            switch (jsonParameterInfo.Position)
+            switch (kdlParameterInfo.Position)
             {
                 case 0:
-                    success = TryRead(ref state, ref reader, jsonParameterInfo, out arguments.Arg0);
+                    success = TryRead(ref state, ref reader, kdlParameterInfo, out arguments.Arg0);
                     break;
                 case 1:
-                    success = TryRead(ref state, ref reader, jsonParameterInfo, out arguments.Arg1);
+                    success = TryRead(ref state, ref reader, kdlParameterInfo, out arguments.Arg1);
                     break;
                 case 2:
-                    success = TryRead(ref state, ref reader, jsonParameterInfo, out arguments.Arg2);
+                    success = TryRead(ref state, ref reader, kdlParameterInfo, out arguments.Arg2);
                     break;
                 case 3:
-                    success = TryRead(ref state, ref reader, jsonParameterInfo, out arguments.Arg3);
+                    success = TryRead(ref state, ref reader, kdlParameterInfo, out arguments.Arg3);
                     break;
                 default:
                     Debug.Fail("More than 4 params: we should be in override for LargeObjectWithParameterizedConstructorConverter.");
@@ -53,12 +53,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         private static bool TryRead<TArg>(
             scoped ref ReadStack state,
             ref KdlReader reader,
-            KdlParameterInfo jsonParameterInfo,
+            KdlParameterInfo kdlParameterInfo,
             out TArg? arg)
         {
-            Debug.Assert(jsonParameterInfo.ShouldDeserialize);
+            Debug.Assert(kdlParameterInfo.ShouldDeserialize);
 
-            var info = (KdlParameterInfo<TArg>)jsonParameterInfo;
+            var info = (KdlParameterInfo<TArg>)kdlParameterInfo;
 
             bool success = info.EffectiveConverter.TryRead(ref reader, info.ParameterType, info.Options, ref state, out TArg? value, out _);
 
@@ -117,9 +117,9 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal override void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo jsonTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
         {
-            jsonTypeInfo.CreateObjectWithArgs = DefaultKdlTypeInfoResolver.MemberAccessor.CreateParameterizedConstructor<T, TArg0, TArg1, TArg2, TArg3>(ConstructorInfo!);
+            kdlTypeInfo.CreateObjectWithArgs = DefaultKdlTypeInfoResolver.MemberAccessor.CreateParameterizedConstructor<T, TArg0, TArg1, TArg2, TArg3>(ConstructorInfo!);
         }
     }
 }

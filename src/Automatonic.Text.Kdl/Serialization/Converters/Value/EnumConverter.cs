@@ -568,8 +568,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     kind = namingPolicy != null ? EnumFieldNameKind.NamingPolicy : EnumFieldNameKind.Default;
                 }
 
-                string jsonName = ResolveAndValidateKdlName(originalName, namingPolicy, kind);
-                enumFields[i] = new EnumFieldInfo(key, kind, originalName, jsonName);
+                string kdlName = ResolveAndValidateKdlName(originalName, namingPolicy, kind);
+                enumFields[i] = new EnumFieldInfo(key, kind, originalName, kdlName);
             }
 
             return enumFields;
@@ -595,13 +595,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return name;
         }
 
-        private sealed class EnumFieldInfo(ulong key, EnumFieldNameKind kind, string originalName, string jsonName)
+        private sealed class EnumFieldInfo(ulong key, EnumFieldNameKind kind, string originalName, string kdlName)
         {
             private List<EnumFieldInfo>? _conflictingFields;
             public EnumFieldNameKind Kind { get; } = kind;
             public ulong Key { get; } = key;
             public string OriginalName { get; } = originalName;
-            public string KdlName { get; } = jsonName;
+            public string KdlName { get; } = kdlName;
 
             /// <summary>
             /// Assuming we have field that conflicts with the current up to case sensitivity,

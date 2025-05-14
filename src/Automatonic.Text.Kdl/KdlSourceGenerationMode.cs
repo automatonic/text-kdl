@@ -14,7 +14,7 @@ namespace Automatonic.Text.Kdl.Serialization
         Default = 0,
 
         /// <summary>
-        /// Instructs the JSON source generator to generate type-metadata initialization logic.
+        /// Instructs the KDL source generator to generate type-metadata initialization logic.
         /// </summary>
         /// <remarks>
         /// This mode supports all <see cref="KdlSerializer"/> features.
@@ -22,7 +22,7 @@ namespace Automatonic.Text.Kdl.Serialization
         Metadata = 1,
 
         /// <summary>
-        /// Instructs the JSON source generator to generate optimized serialization logic.
+        /// Instructs the KDL source generator to generate optimized serialization logic.
         /// </summary>
         /// <remarks>
         /// This mode supports only a subset of <see cref="KdlSerializer"/> features.

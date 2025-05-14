@@ -38,18 +38,18 @@ namespace Automatonic.Text.Kdl.Graph
         ///   Returns the value of a property with the specified name.
         /// </summary>
         /// <param name="propertyName">The name of the property to return.</param>
-        /// <param name="jsonNode">The KDL value of the property with the specified name.</param>
+        /// <param name="kdlNode">The KDL value of the property with the specified name.</param>
         /// <returns>
         ///   <see langword="true"/> if a property with the specified name was found; otherwise, <see langword="false"/>.
         /// </returns>
-        public bool TryGetPropertyValue(KdlEntryKey propertyName, out KdlElement? jsonNode)
+        public bool TryGetPropertyValue(KdlEntryKey propertyName, out KdlElement? kdlNode)
         {
             if (propertyName is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyName));
             }
 
-            return Dictionary.TryGetValue(propertyName, out jsonNode);
+            return Dictionary.TryGetValue(propertyName, out kdlNode);
         }
 
         internal KdlElement? GetItem(KdlEntryKey propertyName)

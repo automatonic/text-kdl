@@ -140,14 +140,14 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         internal override void DetermineReflectionPropertyAccessors(MemberInfo memberInfo, bool useNonPublicAccessors)
             => DefaultKdlTypeInfoResolver.DeterminePropertyAccessors<T>(this, memberInfo, useNonPublicAccessors);
 
-        private protected override void DetermineEffectiveConverter(KdlTypeInfo jsonTypeInfo)
+        private protected override void DetermineEffectiveConverter(KdlTypeInfo kdlTypeInfo)
         {
-            Debug.Assert(jsonTypeInfo is KdlTypeInfo<T>);
+            Debug.Assert(kdlTypeInfo is KdlTypeInfo<T>);
 
             KdlConverter<T> converter =
                 Options.ExpandConverterFactory(CustomConverter, PropertyType) // Expand any property-level custom converters.
                 ?.CreateCastingConverter<T>()                                 // Cast to KdlConverter<T>, potentially with wrapping.
-                ?? ((KdlTypeInfo<T>)jsonTypeInfo).EffectiveConverter;        // Fall back to the effective converter for the type.
+                ?? ((KdlTypeInfo<T>)kdlTypeInfo).EffectiveConverter;        // Fall back to the effective converter for the type.
 
             _effectiveConverter = converter;
             _typedEffectiveConverter = converter;
