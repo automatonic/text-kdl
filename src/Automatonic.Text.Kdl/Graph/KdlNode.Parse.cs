@@ -1,4 +1,3 @@
-using System.Diagnostics.CodeAnalysis;
 using Automatonic.Text.Kdl.RandomAccess;
 using Automatonic.Text.Kdl.Serialization.Converters;
 
@@ -65,7 +64,7 @@ namespace Automatonic.Text.Kdl.Graph
         public static KdlElement? Parse(
             string kdl,
             KdlElementOptions? nodeOptions = null,
-            KdlReadOnlyDocumentOptions documentOptions = default(KdlReadOnlyDocumentOptions))
+            KdlReadOnlyDocumentOptions documentOptions = default)
         {
             if (kdl is null)
             {

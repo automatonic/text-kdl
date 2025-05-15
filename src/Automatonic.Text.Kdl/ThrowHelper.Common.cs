@@ -1,4 +1,5 @@
 namespace Automatonic.Text.Kdl;
+
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 

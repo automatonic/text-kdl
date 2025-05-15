@@ -1,10 +1,10 @@
 ﻿namespace Automatonic.Text.Kdl.Reflection;
+
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Automatonic.Text.Kdl.Serialization;
-
 
 internal static partial class ReflectionExtensions
 {

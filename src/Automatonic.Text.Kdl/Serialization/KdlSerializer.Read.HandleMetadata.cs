@@ -355,7 +355,7 @@ namespace Automatonic.Text.Kdl
             if (element.ValueKind == KdlValueKind.Node)
             {
                 int propertyCount = 0;
-                foreach (KdlProperty property in element.EnumerateNode())
+                foreach (KdlProperty property in element.EnumerateNode().OfType<KdlProperty>())
                 {
                     propertyCount++;
                     if (refMetadataFound)
@@ -410,13 +410,13 @@ namespace Automatonic.Text.Kdl
         internal static bool TryHandleReferenceFromKdlNode(
             ref KdlReader reader,
             scoped ref ReadStack state,
-            KdlElement? kdlNode,
+            KdlElement? kdlElement,
             [NotNullWhen(true)] out object? referenceValue)
         {
             bool refMetadataFound = false;
             referenceValue = default;
 
-            if (kdlNode is KdlNode kdlNode)
+            if (kdlElement is KdlNode kdlNode)
             {
 #pragma warning disable CS0219 // Variable is assigned but its value is never used
                 int propertyCount = 0;
