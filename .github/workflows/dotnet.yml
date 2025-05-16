@@ -1,9 +1,13 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-name: .NET
+name: dotnet
 
 on:
+  workflow_dispatch: # Allow running the workflow manually from the GitHub UI
+                     # To run you must have writing permissions on the repository
+                     # But note, this file needs to be monitored in the main branch
+
   push:
     branches: [ "main" ]
   pull_request:
@@ -25,4 +29,9 @@ jobs:
     - name: Build
       run: dotnet build --no-restore
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test --no-build
+    - name: Pack
+      run: dotnet pack --no-build --output ${{ github.workspace }}/artifacts
+    - name: Publish
+      if: github.event_name == 'workflow_dispatch'
+      run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source "nuget.org" --api-key "${{ secrets.NUGET_API_KEY }}"
