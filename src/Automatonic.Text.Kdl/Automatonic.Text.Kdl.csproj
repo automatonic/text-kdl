@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -7,7 +6,6 @@
     <LanguageVersion>14.0</LanguageVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <NoWarn>$(NoWarn);CA1305;CA1710;CA1720;CA2201;CA2231;CA2241;CS8500;IDE0007;IDE0065;IDE0161;IDE1006;IDE0022</NoWarn>
-
     <!-- NuGet package properties -->
     <PackageId>Automatonic.Text.Kdl</PackageId>
     <Version>0.0.2-alpha</Version>
@@ -18,8 +16,7 @@
     <RepositoryUrl>https://github.com/automatonic/text-kdl</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
-
   <ItemGroup>
-      <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 </Project>
