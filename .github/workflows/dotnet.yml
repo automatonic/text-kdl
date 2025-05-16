@@ -20,18 +20,18 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Setup .NET
+    - name: actions/setup-dotnet
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: Restore dependencies
+    - name: dotnet restore
       run: dotnet restore
     - name: Build
       run: dotnet build --no-restore --configuration Release
     - name: Test
-      run: dotnet test --no-build
+      run: dotnet test --no-build --configuration Release
     - name: Pack
-      run: dotnet pack --no-build --output ${{ github.workspace }}/artifacts
+      run: dotnet pack --no-build --output ${{ github.workspace }}/artifacts --configuration Release
     - name: Publish
       if: github.event_name == 'workflow_dispatch'
       run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source "nuget.org" --api-key "${{ secrets.NUGET_API_KEY }}"
