@@ -14,7 +14,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  dotnet:
 
     runs-on: ubuntu-latest
 
@@ -24,14 +24,15 @@ jobs:
       uses: actions/setup-dotnet@v4
       with:
         dotnet-version: 9.0.x
-    - name: dotnet restore
+    - name: restore
       run: dotnet restore
-    - name: Build
+    - name: build
       run: dotnet build --no-restore --configuration Release
-    - name: Test
+    - name: test
       run: dotnet test --no-build --configuration Release
-    - name: Pack
+    - name: pack
       run: dotnet pack --no-build --output ${{ github.workspace }}/artifacts --configuration Release
-    - name: Publish
+    - name: nuget push
+      # This step will only run if the workflow is triggered manually
       if: github.event_name == 'workflow_dispatch'
       run: dotnet nuget push ${{ github.workspace }}/artifacts/*.nupkg --source "nuget.org" --api-key "${{ secrets.NUGET_API_KEY }}"
