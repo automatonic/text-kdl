@@ -8,7 +8,10 @@
     <NoWarn>$(NoWarn);CA1305;CA1710;CA1720;CA2201;CA2231;CA2241;CS8500;IDE0007;IDE0065;IDE0161;IDE1006;IDE0022</NoWarn>
     <!-- NuGet package properties -->
     <PackageId>Automatonic.Text.Kdl</PackageId>
-    <Version>0.0.2-alpha</Version>
+    <PackageIcon>icon.png</PackageIcon>
+    <ProjectUrl>https://github.com/automatonic/text-kdl</ProjectUrl>
+    <RepositoryType>git</RepositoryType>
+    <Version>0.0.3-alpha</Version>
     <Authors>Elliott B. Edwards (el2iot2)</Authors>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <Description>Support for KDL in the style of the System.Text.Json library for dotnet C#/CLI</Description>
@@ -18,5 +21,6 @@
   </PropertyGroup>
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\" />
+    <None Include="..\..\icon.png" Pack="true" Visible="false" PackagePath="\" />
   </ItemGroup>
 </Project>
