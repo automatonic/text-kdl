@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Automatonic.Text.Kdl/Automatonic.Text.Kdl.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Automatonic.Text.Kdl.Should/Automatonic.Text.Kdl.Should.csproj" />
+  </Folder>
+</Solution>
