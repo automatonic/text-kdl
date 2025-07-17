@@ -23,7 +23,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             {
                 // Fast path that avoids maintaining state variables and dealing with preserved references.
 
-                if (reader.TokenType != KdlTokenType.StartObject)
+                if (reader.TokenType != KdlTokenType.StartChildrenBlock)
                 {
                     ThrowHelper.ThrowKdlException_DeserializeUnableToConvertValue(Type);
                 }
@@ -53,7 +53,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
                 if (state.Current.ObjectState == StackFrameObjectState.None)
                 {
-                    if (reader.TokenType != KdlTokenType.StartObject)
+                    if (reader.TokenType != KdlTokenType.StartChildrenBlock)
                     {
                         ThrowHelper.ThrowKdlException_DeserializeUnableToConvertValue(Type);
                     }
@@ -159,7 +159,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     if (state.Current.PropertyState < StackFramePropertyState.Name)
                     {
                         KdlTokenType tokenType = reader.TokenType;
-                        if (tokenType == KdlTokenType.EndObject)
+                        if (tokenType == KdlTokenType.EndChildrenBlock)
                         {
                             break;
                         }
@@ -277,7 +277,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
                 KdlTokenType tokenType = reader.TokenType;
 
-                if (tokenType == KdlTokenType.EndObject)
+                if (tokenType == KdlTokenType.EndChildrenBlock)
                 {
                     break;
                 }

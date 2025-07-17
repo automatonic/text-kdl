@@ -511,8 +511,8 @@ namespace Automatonic.Text.Kdl.Serialization
 
                     break;
 
-                case KdlTokenType.StartObject:
-                    if (reader.TokenType != KdlTokenType.EndObject)
+                case KdlTokenType.StartChildrenBlock:
+                    if (reader.TokenType != KdlTokenType.EndChildrenBlock)
                     {
                         ThrowHelper.ThrowKdlException_SerializationConverterRead(this);
                     }

@@ -40,7 +40,7 @@ namespace Automatonic.Text.Kdl
             {
                 if (!_inObject || _tokenType == KdlTokenType.PropertyName)
                 {
-                    Debug.Assert(_tokenType != KdlTokenType.StartObject);
+                    Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
                     ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotWritePropertyWithinArray, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
                 }
             }
@@ -53,7 +53,7 @@ namespace Automatonic.Text.Kdl
             {
                 if (!_inObject || _tokenType == KdlTokenType.PropertyName)
                 {
-                    Debug.Assert(_tokenType != KdlTokenType.StartObject);
+                    Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
                     ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotWritePropertyWithinArray, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
                 }
                 UpdateBitStackOnStart(token);

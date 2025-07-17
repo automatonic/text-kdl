@@ -37,7 +37,8 @@ namespace Automatonic.Text.Kdl
         public static ValueTask<TValue?> DeserializeAsync<TValue>(
             Stream utf8Kdl,
             KdlSerializerOptions? options = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -72,7 +73,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static TValue? Deserialize<TValue>(
             Stream utf8Kdl,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             if (utf8Kdl is null)
             {
@@ -112,7 +114,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             Type returnType,
             KdlSerializerOptions? options = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -152,7 +155,8 @@ namespace Automatonic.Text.Kdl
         public static object? Deserialize(
             Stream utf8Kdl,
             Type returnType,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             if (utf8Kdl is null)
             {
@@ -189,7 +193,8 @@ namespace Automatonic.Text.Kdl
         public static ValueTask<TValue?> DeserializeAsync<TValue>(
             Stream utf8Kdl,
             KdlTypeInfo<TValue> kdlTypeInfo,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -224,7 +229,8 @@ namespace Automatonic.Text.Kdl
         public static ValueTask<object?> DeserializeAsync(
             Stream utf8Kdl,
             KdlTypeInfo kdlTypeInfo,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -255,9 +261,7 @@ namespace Automatonic.Text.Kdl
         /// <typeparamref name="TValue"/> is not compatible with the KDL,
         /// or when there is remaining data in the Stream.
         /// </exception>
-        public static TValue? Deserialize<TValue>(
-            Stream utf8Kdl,
-            KdlTypeInfo<TValue> kdlTypeInfo)
+        public static TValue? Deserialize<TValue>(Stream utf8Kdl, KdlTypeInfo<TValue> kdlTypeInfo)
         {
             if (utf8Kdl is null)
             {
@@ -286,9 +290,7 @@ namespace Automatonic.Text.Kdl
         /// The KDL is invalid,
         /// or when there is remaining data in the Stream.
         /// </exception>
-        public static object? Deserialize(
-            Stream utf8Kdl,
-            KdlTypeInfo kdlTypeInfo)
+        public static object? Deserialize(Stream utf8Kdl, KdlTypeInfo kdlTypeInfo)
         {
             if (utf8Kdl is null)
             {
@@ -334,7 +336,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             Type returnType,
             KdlSerializerContext context,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -380,7 +383,8 @@ namespace Automatonic.Text.Kdl
         public static object? Deserialize(
             Stream utf8Kdl,
             Type returnType,
-            KdlSerializerContext context)
+            KdlSerializerContext context
+        )
         {
             if (utf8Kdl is null)
             {
@@ -416,9 +420,15 @@ namespace Automatonic.Text.Kdl
         public static IAsyncEnumerable<TValue?> DeserializeAsyncEnumerable<TValue>(
             Stream utf8Kdl,
             KdlSerializerOptions? options = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return DeserializeAsyncEnumerable<TValue>(utf8Kdl, topLevelValues: false, options, cancellationToken);
+            return DeserializeAsyncEnumerable<TValue>(
+                utf8Kdl,
+                topLevelValues: false,
+                options,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -446,7 +456,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             bool topLevelValues,
             KdlSerializerOptions? options = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -454,7 +465,12 @@ namespace Automatonic.Text.Kdl
             }
 
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
-            return DeserializeAsyncEnumerableCore(utf8Kdl, kdlTypeInfo, topLevelValues, cancellationToken);
+            return DeserializeAsyncEnumerableCore(
+                utf8Kdl,
+                kdlTypeInfo,
+                topLevelValues,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -472,9 +488,15 @@ namespace Automatonic.Text.Kdl
         public static IAsyncEnumerable<TValue?> DeserializeAsyncEnumerable<TValue>(
             Stream utf8Kdl,
             KdlTypeInfo<TValue> kdlTypeInfo,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            return DeserializeAsyncEnumerable(utf8Kdl, kdlTypeInfo, topLevelValues: false, cancellationToken);
+            return DeserializeAsyncEnumerable(
+                utf8Kdl,
+                kdlTypeInfo,
+                topLevelValues: false,
+                cancellationToken
+            );
         }
 
         /// <summary>
@@ -500,7 +522,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             KdlTypeInfo<TValue> kdlTypeInfo,
             bool topLevelValues,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -513,14 +536,20 @@ namespace Automatonic.Text.Kdl
             }
 
             kdlTypeInfo.EnsureConfigured();
-            return DeserializeAsyncEnumerableCore(utf8Kdl, kdlTypeInfo, topLevelValues, cancellationToken);
+            return DeserializeAsyncEnumerableCore(
+                utf8Kdl,
+                kdlTypeInfo,
+                topLevelValues,
+                cancellationToken
+            );
         }
 
         private static IAsyncEnumerable<T?> DeserializeAsyncEnumerableCore<T>(
             Stream utf8Kdl,
             KdlTypeInfo<T> kdlTypeInfo,
             bool topLevelValues,
-            CancellationToken cancellationToken)
+            CancellationToken cancellationToken
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
 
@@ -529,20 +558,25 @@ namespace Automatonic.Text.Kdl
             if (topLevelValues)
             {
                 listTypeInfo = GetOrAddListTypeInfoForRootLevelValueMode(kdlTypeInfo);
-                readerOptions.AllowMultipleValues = true;
             }
             else
             {
                 listTypeInfo = GetOrAddListTypeInfoForArrayMode(kdlTypeInfo);
             }
 
-            return CreateAsyncEnumerableFromArray(utf8Kdl, listTypeInfo, readerOptions, cancellationToken);
+            return CreateAsyncEnumerableFromArray(
+                utf8Kdl,
+                listTypeInfo,
+                readerOptions,
+                cancellationToken
+            );
 
             static async IAsyncEnumerable<T?> CreateAsyncEnumerableFromArray(
                 Stream utf8Kdl,
                 KdlTypeInfo<List<T?>> listTypeInfo,
                 KdlReaderOptions readerOptions,
-                [EnumeratorCancellation] CancellationToken cancellationToken)
+                [EnumeratorCancellation] CancellationToken cancellationToken
+            )
             {
                 Debug.Assert(listTypeInfo.IsConfigured);
 
@@ -556,12 +590,15 @@ namespace Automatonic.Text.Kdl
                     bool success;
                     do
                     {
-                        bufferState = await bufferState.ReadFromStreamAsync(utf8Kdl, cancellationToken, fillBuffer: false).ConfigureAwait(false);
+                        bufferState = await bufferState
+                            .ReadFromStreamAsync(utf8Kdl, cancellationToken, fillBuffer: false)
+                            .ConfigureAwait(false);
                         success = listTypeInfo.ContinueDeserialize(
                             ref bufferState,
                             ref kdlReaderState,
                             ref readStack,
-                            out List<T?>? _);
+                            out List<T?>? _
+                        );
 
                         if (readStack.Current.ReturnValue is { } returnValue)
                         {
@@ -573,7 +610,6 @@ namespace Automatonic.Text.Kdl
 
                             list.Clear();
                         }
-
                     } while (!success);
                 }
                 finally
@@ -582,7 +618,9 @@ namespace Automatonic.Text.Kdl
                 }
             }
 
-            static KdlTypeInfo<List<T?>> GetOrAddListTypeInfoForArrayMode(KdlTypeInfo<T> elementTypeInfo)
+            static KdlTypeInfo<List<T?>> GetOrAddListTypeInfoForArrayMode(
+                KdlTypeInfo<T> elementTypeInfo
+            )
             {
                 if (elementTypeInfo._asyncEnumerableArrayTypeInfo != null)
                 {
@@ -601,11 +639,14 @@ namespace Automatonic.Text.Kdl
                 return listTypeInfo;
             }
 
-            static KdlTypeInfo<List<T?>> GetOrAddListTypeInfoForRootLevelValueMode(KdlTypeInfo<T> elementTypeInfo)
+            static KdlTypeInfo<List<T?>> GetOrAddListTypeInfoForRootLevelValueMode(
+                KdlTypeInfo<T> elementTypeInfo
+            )
             {
                 if (elementTypeInfo._asyncEnumerableRootLevelValueTypeInfo != null)
                 {
-                    return (KdlTypeInfo<List<T?>>)elementTypeInfo._asyncEnumerableRootLevelValueTypeInfo;
+                    return (KdlTypeInfo<List<T?>>)
+                        elementTypeInfo._asyncEnumerableRootLevelValueTypeInfo;
                 }
 
                 var converter = new RootLevelListConverter<T>(elementTypeInfo);

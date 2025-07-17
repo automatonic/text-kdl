@@ -2,10 +2,6 @@ using System.Buffers;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-#if !NET
-using System.Runtime.InteropServices;
-#endif
-
 namespace Automatonic.Text.Kdl
 {
     /// <summary>
@@ -88,9 +84,7 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         public int CurrentDepth => _currentDepth & KdlConstants.RemoveFlagsBitMask;
 
-        private KdlWriter()
-        {
-        }
+        private KdlWriter() { }
 
         /// <summary>
         /// Constructs a new <see cref="KdlWriter"/> instance with a specified <paramref name="bufferWriter"/>.
@@ -310,12 +304,21 @@ namespace Automatonic.Text.Kdl
 #if NET
                     _stream.Write(_arrayBufferWriter.WrittenSpan);
 #else
-                    Debug.Assert(_arrayBufferWriter.WrittenMemory.Length == _arrayBufferWriter.WrittenCount);
-                    bool result = MemoryMarshal.TryGetArray(_arrayBufferWriter.WrittenMemory, out ArraySegment<byte> underlyingBuffer);
+                    Debug.Assert(
+                        _arrayBufferWriter.WrittenMemory.Length == _arrayBufferWriter.WrittenCount
+                    );
+                    bool result = MemoryMarshal.TryGetArray(
+                        _arrayBufferWriter.WrittenMemory,
+                        out ArraySegment<byte> underlyingBuffer
+                    );
                     Debug.Assert(result);
                     Debug.Assert(underlyingBuffer.Offset == 0);
                     Debug.Assert(_arrayBufferWriter.WrittenCount == underlyingBuffer.Count);
-                    _stream.Write(underlyingBuffer.Array, underlyingBuffer.Offset, underlyingBuffer.Count);
+                    _stream.Write(
+                        underlyingBuffer.Array,
+                        underlyingBuffer.Offset,
+                        underlyingBuffer.Count
+                    );
 #endif
 
                     BytesCommitted += _arrayBufferWriter.WrittenCount;
@@ -422,14 +425,28 @@ namespace Automatonic.Text.Kdl
                     BytesPending = 0;
 
 #if NET
-                    await _stream.WriteAsync(_arrayBufferWriter.WrittenMemory, cancellationToken).ConfigureAwait(false);
+                    await _stream
+                        .WriteAsync(_arrayBufferWriter.WrittenMemory, cancellationToken)
+                        .ConfigureAwait(false);
 #else
-                    Debug.Assert(_arrayBufferWriter.WrittenMemory.Length == _arrayBufferWriter.WrittenCount);
-                    bool result = MemoryMarshal.TryGetArray(_arrayBufferWriter.WrittenMemory, out ArraySegment<byte> underlyingBuffer);
+                    Debug.Assert(
+                        _arrayBufferWriter.WrittenMemory.Length == _arrayBufferWriter.WrittenCount
+                    );
+                    bool result = MemoryMarshal.TryGetArray(
+                        _arrayBufferWriter.WrittenMemory,
+                        out ArraySegment<byte> underlyingBuffer
+                    );
                     Debug.Assert(result);
                     Debug.Assert(underlyingBuffer.Offset == 0);
                     Debug.Assert(_arrayBufferWriter.WrittenCount == underlyingBuffer.Count);
-                    await _stream.WriteAsync(underlyingBuffer.Array, underlyingBuffer.Offset, underlyingBuffer.Count, cancellationToken).ConfigureAwait(false);
+                    await _stream
+                        .WriteAsync(
+                            underlyingBuffer.Array,
+                            underlyingBuffer.Offset,
+                            underlyingBuffer.Count,
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false);
 #endif
 
                     BytesCommitted += _arrayBufferWriter.WrittenCount;
@@ -472,14 +489,20 @@ namespace Automatonic.Text.Kdl
         public void WriteStartObject()
         {
             WriteStart(KdlConstants.OpenBrace);
-            _tokenType = KdlTokenType.StartObject;
+            _tokenType = KdlTokenType.StartChildrenBlock;
         }
 
         private void WriteStart(byte token)
         {
             if (CurrentDepth >= _options.MaxDepth)
             {
-                ThrowHelper.ThrowInvalidOperationException(ExceptionResource.DepthTooLarge, _currentDepth, _options.MaxDepth, token: default, tokenType: default);
+                ThrowHelper.ThrowInvalidOperationException(
+                    ExceptionResource.DepthTooLarge,
+                    _currentDepth,
+                    _options.MaxDepth,
+                    token: default,
+                    tokenType: default
+                );
             }
 
             if (_options.IndentedOrNotSkipValidation)
@@ -497,7 +520,7 @@ namespace Automatonic.Text.Kdl
 
         private void WriteStartMinimized(byte token)
         {
-            if (_memory.Length - BytesPending < 2)  // 1 start token, and optionally, 1 list separator
+            if (_memory.Length - BytesPending < 2) // 1 start token, and optionally, 1 list separator
             {
                 Grow(2);
             }
@@ -538,19 +561,33 @@ namespace Automatonic.Text.Kdl
             {
                 if (_tokenType != KdlTokenType.PropertyName)
                 {
-                    Debug.Assert(_tokenType is not KdlTokenType.None and not KdlTokenType.StartArray);
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotStartObjectArrayWithoutProperty, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
+                    Debug.Assert(
+                        _tokenType is not KdlTokenType.None and not KdlTokenType.StartArray
+                    );
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotStartObjectArrayWithoutProperty,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
                 }
             }
             else
             {
                 Debug.Assert(_tokenType != KdlTokenType.PropertyName);
-                Debug.Assert(_tokenType != KdlTokenType.StartObject);
+                Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
 
                 // It is more likely for CurrentDepth to not equal 0 when writing valid KDL, so check that first to rely on short-circuiting and return quickly.
                 if (CurrentDepth == 0 && _tokenType != KdlTokenType.None)
                 {
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotStartObjectArrayAfterPrimitiveOrClose, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotStartObjectArrayAfterPrimitiveOrClose,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
                 }
             }
         }
@@ -560,7 +597,7 @@ namespace Automatonic.Text.Kdl
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
-            int minRequired = indent + 1;   // 1 start token
+            int minRequired = indent + 1; // 1 start token
             int maxRequired = minRequired + 3; // Optionally, 1 list separator and 1-2 bytes for new line
 
             if (_memory.Length - BytesPending < maxRequired)
@@ -575,7 +612,10 @@ namespace Automatonic.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            if (_tokenType is not KdlTokenType.PropertyName and not KdlTokenType.None || _commentAfterNoneOrPropertyName)
+            if (
+                _tokenType is not KdlTokenType.PropertyName and not KdlTokenType.None
+                || _commentAfterNoneOrPropertyName
+            )
             {
                 WriteNewLine(output);
                 WriteIndentation(output[BytesPending..], indent);
@@ -610,7 +650,7 @@ namespace Automatonic.Text.Kdl
         public void WriteStartObject(KdlEncodedText propertyName)
         {
             WriteStartHelper(propertyName.EncodedUtf8Bytes, KdlConstants.OpenBrace);
-            _tokenType = KdlTokenType.StartObject;
+            _tokenType = KdlTokenType.StartChildrenBlock;
         }
 
         private void WriteStartHelper(ReadOnlySpan<byte> utf8PropertyName, byte token)
@@ -672,7 +712,7 @@ namespace Automatonic.Text.Kdl
 
             _currentDepth &= KdlConstants.RemoveFlagsBitMask;
             _currentDepth++;
-            _tokenType = KdlTokenType.StartObject;
+            _tokenType = KdlTokenType.StartChildrenBlock;
         }
 
         private void WriteStartEscape(ReadOnlySpan<byte> utf8PropertyName, byte token)
@@ -705,20 +745,39 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStartEscapeProperty(ReadOnlySpan<byte> utf8PropertyName, byte token, int firstEscapeIndexProp)
+        private void WriteStartEscapeProperty(
+            ReadOnlySpan<byte> utf8PropertyName,
+            byte token,
+            int firstEscapeIndexProp
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8PropertyName.Length);
-            Debug.Assert(firstEscapeIndexProp >= 0 && firstEscapeIndexProp < utf8PropertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping
+                    >= utf8PropertyName.Length
+            );
+            Debug.Assert(
+                firstEscapeIndexProp >= 0 && firstEscapeIndexProp < utf8PropertyName.Length
+            );
 
             byte[]? propertyArray = null;
 
-            int length = KdlWriterHelper.GetMaxEscapedLength(utf8PropertyName.Length, firstEscapeIndexProp);
+            int length = KdlWriterHelper.GetMaxEscapedLength(
+                utf8PropertyName.Length,
+                firstEscapeIndexProp
+            );
 
-            Span<byte> escapedPropertyName = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (propertyArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> escapedPropertyName =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (propertyArray = ArrayPool<byte>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                utf8PropertyName,
+                escapedPropertyName,
+                firstEscapeIndexProp,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStartByOptions(escapedPropertyName[..written], token);
 
@@ -827,7 +886,7 @@ namespace Automatonic.Text.Kdl
 
             _currentDepth &= KdlConstants.RemoveFlagsBitMask;
             _currentDepth++;
-            _tokenType = KdlTokenType.StartObject;
+            _tokenType = KdlTokenType.StartChildrenBlock;
         }
 
         private void WriteStartEscape(ReadOnlySpan<char> propertyName, byte token)
@@ -860,20 +919,36 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStartEscapeProperty(ReadOnlySpan<char> propertyName, byte token, int firstEscapeIndexProp)
+        private void WriteStartEscapeProperty(
+            ReadOnlySpan<char> propertyName,
+            byte token,
+            int firstEscapeIndexProp
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length
+            );
             Debug.Assert(firstEscapeIndexProp >= 0 && firstEscapeIndexProp < propertyName.Length);
 
             char[]? propertyArray = null;
 
-            int length = KdlWriterHelper.GetMaxEscapedLength(propertyName.Length, firstEscapeIndexProp);
+            int length = KdlWriterHelper.GetMaxEscapedLength(
+                propertyName.Length,
+                firstEscapeIndexProp
+            );
 
-            Span<char> escapedPropertyName = length <= KdlConstants.StackallocCharThreshold ?
-                stackalloc char[KdlConstants.StackallocCharThreshold] :
-                (propertyArray = ArrayPool<char>.Shared.Rent(length));
+            Span<char> escapedPropertyName =
+                length <= KdlConstants.StackallocCharThreshold
+                    ? stackalloc char[KdlConstants.StackallocCharThreshold]
+                    : (propertyArray = ArrayPool<char>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                propertyName,
+                escapedPropertyName,
+                firstEscapeIndexProp,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStartByOptions(escapedPropertyName[..written], token);
 
@@ -904,7 +979,7 @@ namespace Automatonic.Text.Kdl
         public void WriteEndObject()
         {
             WriteEnd(KdlConstants.CloseBrace);
-            _tokenType = KdlTokenType.EndObject;
+            _tokenType = KdlTokenType.EndChildrenBlock;
         }
 
         private void WriteEnd(byte token)
@@ -961,7 +1036,13 @@ namespace Automatonic.Text.Kdl
         {
             if (_bitStack.CurrentDepth <= 0 || _tokenType == KdlTokenType.PropertyName)
             {
-                ThrowHelper.ThrowInvalidOperationException(ExceptionResource.MismatchedObjectArray, currentDepth: default, maxDepth: _options.MaxDepth, token, _tokenType);
+                ThrowHelper.ThrowInvalidOperationException(
+                    ExceptionResource.MismatchedObjectArray,
+                    currentDepth: default,
+                    maxDepth: _options.MaxDepth,
+                    token,
+                    _tokenType
+                );
             }
 
             if (token == KdlConstants.CloseBracket)
@@ -969,7 +1050,13 @@ namespace Automatonic.Text.Kdl
                 if (_inObject)
                 {
                     Debug.Assert(_tokenType != KdlTokenType.None);
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.MismatchedObjectArray, currentDepth: default, maxDepth: _options.MaxDepth, token, _tokenType);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.MismatchedObjectArray,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token,
+                        _tokenType
+                    );
                 }
             }
             else
@@ -978,7 +1065,13 @@ namespace Automatonic.Text.Kdl
 
                 if (!_inObject)
                 {
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.MismatchedObjectArray, currentDepth: default, maxDepth: _options.MaxDepth, token, _tokenType);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.MismatchedObjectArray,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token,
+                        _tokenType
+                    );
                 }
             }
 
@@ -988,7 +1081,7 @@ namespace Automatonic.Text.Kdl
         private void WriteEndIndented(byte token)
         {
             // Do not format/indent empty KDL object/array.
-            if (_tokenType is KdlTokenType.StartObject or KdlTokenType.StartArray)
+            if (_tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray)
             {
                 WriteEndMinimized(token);
             }
@@ -1131,6 +1224,7 @@ namespace Automatonic.Text.Kdl
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"BytesCommitted = {BytesCommitted} BytesPending = {BytesPending} CurrentDepth = {CurrentDepth}";
+        private string DebuggerDisplay =>
+            $"BytesCommitted = {BytesCommitted} BytesPending = {BytesPending} CurrentDepth = {CurrentDepth}";
     }
 }

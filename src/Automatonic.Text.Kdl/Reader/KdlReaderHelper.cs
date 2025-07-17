@@ -8,11 +8,12 @@ namespace Automatonic.Text.Kdl
     internal static partial class KdlReaderHelper
     {
         private const string SpecialCharacters = ". '/\"[]()\t\n\r\f\b\\\u0085\u2028\u2029";
-        private static readonly SearchValues<char> s_specialCharacters = SearchValues.Create(SpecialCharacters);
+        private static readonly SearchValues<char> s_specialCharacters = SearchValues.Create(
+            SpecialCharacters
+        );
 
         public static bool ContainsSpecialCharacters(this ReadOnlySpan<char> text) =>
             text.ContainsAny(s_specialCharacters);
-
 
         public static (int, int) CountNewLines(ReadOnlySpan<byte> data)
         {
@@ -37,7 +38,7 @@ namespace Automatonic.Text.Kdl
                     return KdlValueKind.Undefined;
                 case KdlTokenType.StartArray:
                     return KdlValueKind.Node;
-                case KdlTokenType.StartObject:
+                case KdlTokenType.StartChildrenBlock:
                     return KdlValueKind.Node;
                 case KdlTokenType.String:
                 case KdlTokenType.Number:
@@ -65,7 +66,8 @@ namespace Automatonic.Text.Kdl
         public static bool TryGetEscapedDateTime(ReadOnlySpan<byte> source, out DateTime value)
         {
             Debug.Assert(source.Length <= KdlConstants.MaximumEscapedDateTimeOffsetParseLength);
-            Span<byte> sourceUnescaped = stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
+            Span<byte> sourceUnescaped =
+                stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
 
             Unescape(source, sourceUnescaped, out int written);
             Debug.Assert(written > 0);
@@ -73,8 +75,10 @@ namespace Automatonic.Text.Kdl
             sourceUnescaped = sourceUnescaped[..written];
             Debug.Assert(!sourceUnescaped.IsEmpty);
 
-            if (KdlHelpers.IsValidUnescapedDateTimeOffsetParseLength(sourceUnescaped.Length)
-                && KdlHelpers.TryParseAsISO(sourceUnescaped, out DateTime tmp))
+            if (
+                KdlHelpers.IsValidUnescapedDateTimeOffsetParseLength(sourceUnescaped.Length)
+                && KdlHelpers.TryParseAsISO(sourceUnescaped, out DateTime tmp)
+            )
             {
                 value = tmp;
                 return true;
@@ -84,10 +88,14 @@ namespace Automatonic.Text.Kdl
             return false;
         }
 
-        public static bool TryGetEscapedDateTimeOffset(ReadOnlySpan<byte> source, out DateTimeOffset value)
+        public static bool TryGetEscapedDateTimeOffset(
+            ReadOnlySpan<byte> source,
+            out DateTimeOffset value
+        )
         {
             Debug.Assert(source.Length <= KdlConstants.MaximumEscapedDateTimeOffsetParseLength);
-            Span<byte> sourceUnescaped = stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
+            Span<byte> sourceUnescaped =
+                stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
 
             Unescape(source, sourceUnescaped, out int written);
             Debug.Assert(written > 0);
@@ -95,8 +103,10 @@ namespace Automatonic.Text.Kdl
             sourceUnescaped = sourceUnescaped[..written];
             Debug.Assert(!sourceUnescaped.IsEmpty);
 
-            if (KdlHelpers.IsValidUnescapedDateTimeOffsetParseLength(sourceUnescaped.Length)
-                && KdlHelpers.TryParseAsISO(sourceUnescaped, out DateTimeOffset tmp))
+            if (
+                KdlHelpers.IsValidUnescapedDateTimeOffsetParseLength(sourceUnescaped.Length)
+                && KdlHelpers.TryParseAsISO(sourceUnescaped, out DateTimeOffset tmp)
+            )
             {
                 value = tmp;
                 return true;
@@ -117,8 +127,10 @@ namespace Automatonic.Text.Kdl
             utf8Unescaped = utf8Unescaped[..written];
             Debug.Assert(!utf8Unescaped.IsEmpty);
 
-            if (utf8Unescaped.Length == KdlConstants.MaximumFormatGuidLength
-                && Utf8Parser.TryParse(utf8Unescaped, out Guid tmp, out _, 'D'))
+            if (
+                utf8Unescaped.Length == KdlConstants.MaximumFormatGuidLength
+                && Utf8Parser.TryParse(utf8Unescaped, out Guid tmp, out _, 'D')
+            )
             {
                 value = tmp;
                 return true;

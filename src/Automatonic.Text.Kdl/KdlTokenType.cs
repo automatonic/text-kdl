@@ -21,14 +21,24 @@ namespace Automatonic.Text.Kdl
         None,
 
         /// <summary>
-        ///   Indicates that the token type is the start of a KDL object.
+        ///   Indicates the beginning of a KDL type annotation.
         /// </summary>
-        StartObject,
+        StartTypeAnnotation,
 
         /// <summary>
-        ///   Indicates that the token type is the end of a KDL object.
+        ///   Indicates the end of a KDL type annotation.
         /// </summary>
-        EndObject,
+        EndTypeAnnotation,
+
+        /// <summary>
+        ///   Indicates that the token type is the start of a KDL node's children block.
+        /// </summary>
+        StartChildrenBlock,
+
+        /// <summary>
+        ///   Indicates that the token type is the end of a KDL node's children block.
+        /// </summary>
+        EndChildrenBlock,
 
         /// <summary>
         ///   Indicates that the token type is the start of a KDL array.

@@ -36,7 +36,7 @@ namespace Automatonic.Text.Kdl
             _readerOptions = state._readerOptions;
             if (_readerOptions.MaxDepth == 0)
             {
-                _readerOptions.MaxDepth = KdlReaderOptions.DefaultMaxDepth;  // If max depth is not set, revert to the default depth.
+                _readerOptions.MaxDepth = KdlReaderOptions.DefaultMaxDepth; // If max depth is not set, revert to the default depth.
             }
             _bitStack = state._bitStack;
 
@@ -68,7 +68,13 @@ namespace Automatonic.Text.Kdl
                     // Once we find a non-empty segment, we need to set current position to it.
                     // Therefore, track the next position in a copy before it gets advanced to the next segment.
                     SequencePosition previousNextPosition = _nextPosition;
-                    while (kdlData.TryGet(ref _nextPosition, out ReadOnlyMemory<byte> memory, advance: true))
+                    while (
+                        kdlData.TryGet(
+                            ref _nextPosition,
+                            out ReadOnlyMemory<byte> memory,
+                            advance: true
+                        )
+                    )
                     {
                         // _currentPosition should point to the segment right befor the segment that _nextPosition points to.
                         _currentPosition = previousNextPosition;
@@ -86,7 +92,9 @@ namespace Automatonic.Text.Kdl
                 //    Otherwise, we would end up skipping a segment (i.e. advance = false).
                 // If firstSegmentIsEmpty is false,
                 //    make sure to advance _nextPosition so that it is no longer the same as _currentPosition (i.e. advance = true).
-                _isLastSegment = !kdlData.TryGet(ref _nextPosition, out _, advance: !firstSegmentIsEmpty) && isFinalBlock; // Don't re-order to avoid short-circuiting
+                _isLastSegment =
+                    !kdlData.TryGet(ref _nextPosition, out _, advance: !firstSegmentIsEmpty)
+                    && isFinalBlock; // Don't re-order to avoid short-circuiting
 
                 Debug.Assert(!_nextPosition.Equals(_currentPosition));
 
@@ -110,9 +118,7 @@ namespace Automatonic.Text.Kdl
         ///   </para>
         /// </remarks>
         public KdlReader(ReadOnlySequence<byte> kdlData, KdlReaderOptions options = default)
-            : this(kdlData, isFinalBlock: true, new KdlReaderState(options))
-        {
-        }
+            : this(kdlData, isFinalBlock: true, new KdlReaderState(options)) { }
 
         private bool ReadMultiSegment()
         {
@@ -156,7 +162,7 @@ namespace Automatonic.Text.Kdl
                 goto Done;
             }
 
-            if (_tokenType == KdlTokenType.StartObject)
+            if (_tokenType == KdlTokenType.StartChildrenBlock)
             {
                 if (first == KdlConstants.CloseBrace)
                 {
@@ -166,7 +172,11 @@ namespace Automatonic.Text.Kdl
                 {
                     if (first != KdlConstants.Quote)
                     {
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyNotFound, first);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyNotFound,
+                            first
+                        );
                     }
 
                     long prevTotalConsumed = _totalConsumed;
@@ -179,7 +189,7 @@ namespace Automatonic.Text.Kdl
                     {
                         // roll back potential changes
                         _consumed = prevConsumed;
-                        _tokenType = KdlTokenType.StartObject;
+                        _tokenType = KdlTokenType.StartChildrenBlock;
                         _bytePositionInLine = prevPosition;
                         _lineNumber = prevLineNumber;
                         _totalConsumed = prevTotalConsumed;
@@ -230,14 +240,20 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ZeroDepthAtEnd);
             }
 
-            if (_readerOptions.CommentHandling == KdlCommentHandling.Allow && _tokenType == KdlTokenType.Comment)
+            if (
+                _readerOptions.CommentHandling == KdlCommentHandling.Allow
+                && _tokenType == KdlTokenType.Comment
+            )
             {
                 return false;
             }
 
-            if (_tokenType is not KdlTokenType.EndArray and not KdlTokenType.EndObject)
+            if (_tokenType is not KdlTokenType.EndArray and not KdlTokenType.EndChildrenBlock)
             {
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidEndOfKdlNonPrimitive);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    ExceptionResource.InvalidEndOfKdlNonPrimitive
+                );
             }
 
             return true;
@@ -334,7 +350,7 @@ namespace Automatonic.Text.Kdl
             if (first == KdlConstants.OpenBrace)
             {
                 _bitStack.SetFirstBit();
-                _tokenType = KdlTokenType.StartObject;
+                _tokenType = KdlTokenType.StartChildrenBlock;
                 ValueSpan = _buffer.Slice(_consumed, 1);
                 _consumed++;
                 _bytePositionInLine++;
@@ -366,7 +382,8 @@ namespace Automatonic.Text.Kdl
                     return false;
                 }
 
-                _isNotPrimitive = _tokenType is KdlTokenType.StartObject or KdlTokenType.StartArray;
+                _isNotPrimitive =
+                    _tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray;
                 // Intentionally fall out of the if-block to return true
             }
             return true;
@@ -398,8 +415,16 @@ namespace Automatonic.Text.Kdl
         {
             while (true)
             {
-                Debug.Assert((_trailingCommaBeforeComment && _readerOptions.CommentHandling == KdlCommentHandling.Allow) || !_trailingCommaBeforeComment);
-                Debug.Assert((_trailingCommaBeforeComment && marker != KdlConstants.Slash) || !_trailingCommaBeforeComment);
+                Debug.Assert(
+                    (
+                        _trailingCommaBeforeComment
+                        && _readerOptions.CommentHandling == KdlCommentHandling.Allow
+                    ) || !_trailingCommaBeforeComment
+                );
+                Debug.Assert(
+                    (_trailingCommaBeforeComment && marker != KdlConstants.Slash)
+                        || !_trailingCommaBeforeComment
+                );
                 _trailingCommaBeforeComment = false;
 
                 if (marker == KdlConstants.Quote)
@@ -457,15 +482,31 @@ namespace Automatonic.Text.Kdl
                                 {
                                     if (_consumed >= (uint)_buffer.Length)
                                     {
-                                        if (_isNotPrimitive && IsLastSpan && _tokenType != KdlTokenType.EndArray && _tokenType != KdlTokenType.EndObject)
+                                        if (
+                                            _isNotPrimitive
+                                            && IsLastSpan
+                                            && _tokenType != KdlTokenType.EndArray
+                                            && _tokenType != KdlTokenType.EndChildrenBlock
+                                        )
                                         {
-                                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidEndOfKdlNonPrimitive);
+                                            ThrowHelper.ThrowKdlReaderException(
+                                                ref this,
+                                                ExceptionResource.InvalidEndOfKdlNonPrimitive
+                                            );
                                         }
                                         if (!GetNextSpan())
                                         {
-                                            if (_isNotPrimitive && IsLastSpan && _tokenType != KdlTokenType.EndArray && _tokenType != KdlTokenType.EndObject)
+                                            if (
+                                                _isNotPrimitive
+                                                && IsLastSpan
+                                                && _tokenType != KdlTokenType.EndArray
+                                                && _tokenType != KdlTokenType.EndChildrenBlock
+                                            )
                                             {
-                                                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidEndOfKdlNonPrimitive);
+                                                ThrowHelper.ThrowKdlReaderException(
+                                                    ref this,
+                                                    ExceptionResource.InvalidEndOfKdlNonPrimitive
+                                                );
                                             }
                                             _currentPosition = copy;
                                             return false;
@@ -496,7 +537,11 @@ namespace Automatonic.Text.Kdl
                             }
                             break;
                     }
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfValueNotFound, marker);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.ExpectedStartOfValueNotFound,
+                        marker
+                    );
                 }
                 break;
             }
@@ -532,9 +577,17 @@ namespace Automatonic.Text.Kdl
             return true;
         }
 
-        private bool CheckLiteralMultiSegment(ReadOnlySpan<byte> span, ReadOnlySpan<byte> literal, out int consumed)
+        private bool CheckLiteralMultiSegment(
+            ReadOnlySpan<byte> span,
+            ReadOnlySpan<byte> literal,
+            out int consumed
+        )
         {
-            Debug.Assert(span.Length > 0 && span[0] == literal[0] && literal.Length <= KdlConstants.MaximumLiteralLength);
+            Debug.Assert(
+                span.Length > 0
+                    && span[0] == literal[0]
+                    && literal.Length <= KdlConstants.MaximumLiteralLength
+            );
 
             Span<byte> readSoFar = stackalloc byte[KdlConstants.MaximumLiteralLength];
             int written = 0;
@@ -591,8 +644,14 @@ namespace Automatonic.Text.Kdl
                     if (span.StartsWith(leftToMatch))
                     {
                         HasValueSequence = true;
-                        SequencePosition start = new SequencePosition(startPosition.GetObject(), startPosition.GetInteger() + startConsumed);
-                        SequencePosition end = new SequencePosition(_currentPosition.GetObject(), _currentPosition.GetInteger() + leftToMatch.Length);
+                        SequencePosition start = new SequencePosition(
+                            startPosition.GetObject(),
+                            startPosition.GetInteger() + startConsumed
+                        );
+                        SequencePosition end = new SequencePosition(
+                            _currentPosition.GetObject(),
+                            _currentPosition.GetInteger() + leftToMatch.Length
+                        );
                         ValueSequence = _sequence.Slice(start, end);
                         consumed = leftToMatch.Length;
                         return true;
@@ -662,7 +721,12 @@ namespace Automatonic.Text.Kdl
                     resource = ExceptionResource.ExpectedNull;
                     break;
             }
-            return ThrowHelper.GetKdlReaderException(ref this, resource, nextByte: default, bytes: span);
+            return ThrowHelper.GetKdlReaderException(
+                ref this,
+                resource,
+                nextByte: default,
+                bytes: span
+            );
         }
 
         private bool ConsumeNumberMultiSegment()
@@ -682,17 +746,23 @@ namespace Automatonic.Text.Kdl
                 // If there is no more data, and the KDL is not a single value, throw.
                 if (_isNotPrimitive)
                 {
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndOfDigitNotFound, _buffer[_consumed - 1]);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.ExpectedEndOfDigitNotFound,
+                        _buffer[_consumed - 1]
+                    );
                 }
             }
 
             // If there is more data and the KDL is not a single value, assert that there is an end of number delimiter.
             // Else, if either the KDL is a single value XOR if there is no more data, don't assert anything since there won't always be an end of number delimiter.
             Debug.Assert(
-                ((_consumed < _buffer.Length) &&
-                !_isNotPrimitive &&
-                KdlConstants.Delimiters.IndexOf(_buffer[_consumed]) >= 0)
-                || (_isNotPrimitive ^ (_consumed >= (uint)_buffer.Length)));
+                (
+                    (_consumed < _buffer.Length)
+                    && !_isNotPrimitive
+                    && KdlConstants.Delimiters.IndexOf(_buffer[_consumed]) >= 0
+                ) || (_isNotPrimitive ^ (_consumed >= (uint)_buffer.Length))
+            );
 
             return true;
         }
@@ -719,7 +789,11 @@ namespace Automatonic.Text.Kdl
             if (first <= KdlConstants.Space)
             {
                 SkipWhiteSpaceMultiSegment();
-                if (!HasMoreDataMultiSegment(ExceptionResource.ExpectedValueAfterPropertyNameNotFound))
+                if (
+                    !HasMoreDataMultiSegment(
+                        ExceptionResource.ExpectedValueAfterPropertyNameNotFound
+                    )
+                )
                 {
                     return false;
                 }
@@ -729,7 +803,11 @@ namespace Automatonic.Text.Kdl
             // The next character must be a key / value separator. Validate and skip.
             if (first != KdlConstants.KeyValueSeparator)
             {
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedSeparatorAfterPropertyNameNotFound, first);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    ExceptionResource.ExpectedSeparatorAfterPropertyNameNotFound,
+                    first
+                );
             }
 
             _consumed++;
@@ -774,8 +852,11 @@ namespace Automatonic.Text.Kdl
             {
                 if (IsLastSpan)
                 {
-                    _bytePositionInLine += localBuffer.Length + 1;  // Account for the start quote
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.EndOfStringNotFound);
+                    _bytePositionInLine += localBuffer.Length + 1; // Account for the start quote
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.EndOfStringNotFound
+                    );
                 }
                 return ConsumeStringNextSegment();
             }
@@ -797,7 +878,10 @@ namespace Automatonic.Text.Kdl
                     {
                         _bytePositionInLine += leftOver;
                         RollBackState(rollBackState, isError: true);
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.EndOfStringNotFound);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.EndOfStringNotFound
+                        );
                     }
                     RollBackState(rollBackState);
                     return false;
@@ -812,10 +896,13 @@ namespace Automatonic.Text.Kdl
                     byte foundByte = localBuffer[idx];
                     if (foundByte == KdlConstants.Quote)
                     {
-                        end = new SequencePosition(_currentPosition.GetObject(), _currentPosition.GetInteger() + idx);
-                        _bytePositionInLine += leftOver + idx + 1;  // Add 1 for the end quote of the string.
+                        end = new SequencePosition(
+                            _currentPosition.GetObject(),
+                            _currentPosition.GetInteger() + idx
+                        );
+                        _bytePositionInLine += leftOver + idx + 1; // Add 1 for the end quote of the string.
                         _totalConsumed += leftOver;
-                        _consumed = idx + 1;    // Add 1 for the end quote of the string.
+                        _consumed = idx + 1; // Add 1 for the end quote of the string.
                         ValueIsEscaped = false;
                         break;
                     }
@@ -849,13 +936,17 @@ namespace Automatonic.Text.Kdl
                                     if (index == -1)
                                     {
                                         RollBackState(rollBackState, isError: true);
-                                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidCharacterAfterEscapeWithinString, currentByte);
+                                        ThrowHelper.ThrowKdlReaderException(
+                                            ref this,
+                                            ExceptionResource.InvalidCharacterAfterEscapeWithinString,
+                                            currentByte
+                                        );
                                     }
 
                                     if (currentByte == 'u')
                                     {
                                         // Expecting 4 hex digits to follow the escaped 'u'
-                                        _bytePositionInLine++;  // move past the 'u'
+                                        _bytePositionInLine++; // move past the 'u'
 
                                         int numberOfHexDigits = 0;
                                         int j = idx + 1;
@@ -867,7 +958,11 @@ namespace Automatonic.Text.Kdl
                                                 if (!KdlReaderHelper.IsHexDigit(nextByte))
                                                 {
                                                     RollBackState(rollBackState, isError: true);
-                                                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidHexCharacterWithinString, nextByte);
+                                                    ThrowHelper.ThrowKdlReaderException(
+                                                        ref this,
+                                                        ExceptionResource.InvalidHexCharacterWithinString,
+                                                        nextByte
+                                                    );
                                                 }
                                                 numberOfHexDigits++;
                                                 _bytePositionInLine++;
@@ -884,7 +979,10 @@ namespace Automatonic.Text.Kdl
                                                 if (IsLastSpan)
                                                 {
                                                     RollBackState(rollBackState, isError: true);
-                                                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.EndOfStringNotFound);
+                                                    ThrowHelper.ThrowKdlReaderException(
+                                                        ref this,
+                                                        ExceptionResource.EndOfStringNotFound
+                                                    );
                                                 }
 
                                                 // We found less than 4 hex digits.
@@ -903,7 +1001,11 @@ namespace Automatonic.Text.Kdl
                                 else if (currentByte < KdlConstants.Space)
                                 {
                                     RollBackState(rollBackState, isError: true);
-                                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidCharacterWithinString, currentByte);
+                                    ThrowHelper.ThrowKdlReaderException(
+                                        ref this,
+                                        ExceptionResource.InvalidCharacterWithinString,
+                                        currentByte
+                                    );
                                 }
 
                                 _bytePositionInLine++;
@@ -914,7 +1016,10 @@ namespace Automatonic.Text.Kdl
                                 if (IsLastSpan)
                                 {
                                     RollBackState(rollBackState, isError: true);
-                                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.EndOfStringNotFound);
+                                    ThrowHelper.ThrowKdlReaderException(
+                                        ref this,
+                                        ExceptionResource.EndOfStringNotFound
+                                    );
                                 }
                                 RollBackState(rollBackState);
                                 return false;
@@ -926,10 +1031,13 @@ namespace Automatonic.Text.Kdl
                         }
 
                         Done:
-                        _bytePositionInLine++;  // Add 1 for the end quote of the string.
-                        _consumed = idx + 1;    // Add 1 for the end quote of the string.
+                        _bytePositionInLine++; // Add 1 for the end quote of the string.
+                        _consumed = idx + 1; // Add 1 for the end quote of the string.
                         _totalConsumed += leftOver;
-                        end = new SequencePosition(_currentPosition.GetObject(), _currentPosition.GetInteger() + idx);
+                        end = new SequencePosition(
+                            _currentPosition.GetObject(),
+                            _currentPosition.GetInteger() + idx
+                        );
                         break;
                     }
                 }
@@ -986,13 +1094,17 @@ namespace Automatonic.Text.Kdl
                         if (index == -1)
                         {
                             RollBackState(rollBackState, isError: true);
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidCharacterAfterEscapeWithinString, currentByte);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.InvalidCharacterAfterEscapeWithinString,
+                                currentByte
+                            );
                         }
 
                         if (currentByte == 'u')
                         {
                             // Expecting 4 hex digits to follow the escaped 'u'
-                            _bytePositionInLine++;  // move past the 'u'
+                            _bytePositionInLine++; // move past the 'u'
 
                             int numberOfHexDigits = 0;
                             int j = idx + 1;
@@ -1004,7 +1116,11 @@ namespace Automatonic.Text.Kdl
                                     if (!KdlReaderHelper.IsHexDigit(nextByte))
                                     {
                                         RollBackState(rollBackState, isError: true);
-                                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidHexCharacterWithinString, nextByte);
+                                        ThrowHelper.ThrowKdlReaderException(
+                                            ref this,
+                                            ExceptionResource.InvalidHexCharacterWithinString,
+                                            nextByte
+                                        );
                                     }
                                     numberOfHexDigits++;
                                     _bytePositionInLine++;
@@ -1021,7 +1137,10 @@ namespace Automatonic.Text.Kdl
                                     if (IsLastSpan)
                                     {
                                         RollBackState(rollBackState, isError: true);
-                                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.EndOfStringNotFound);
+                                        ThrowHelper.ThrowKdlReaderException(
+                                            ref this,
+                                            ExceptionResource.EndOfStringNotFound
+                                        );
                                     }
 
                                     // We found less than 4 hex digits.
@@ -1045,7 +1164,11 @@ namespace Automatonic.Text.Kdl
                     else if (currentByte < KdlConstants.Space)
                     {
                         RollBackState(rollBackState, isError: true);
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidCharacterWithinString, currentByte);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.InvalidCharacterWithinString,
+                            currentByte
+                        );
                     }
 
                     _bytePositionInLine++;
@@ -1056,7 +1179,10 @@ namespace Automatonic.Text.Kdl
                     if (IsLastSpan)
                     {
                         RollBackState(rollBackState, isError: true);
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.EndOfStringNotFound);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.EndOfStringNotFound
+                        );
                     }
                     RollBackState(rollBackState);
                     return false;
@@ -1076,16 +1202,19 @@ namespace Automatonic.Text.Kdl
             Done:
             if (HasValueSequence)
             {
-                _bytePositionInLine++;  // Add 1 for the end quote of the string.
-                _consumed = idx + 1;    // Add 1 for the end quote of the string.
+                _bytePositionInLine++; // Add 1 for the end quote of the string.
+                _consumed = idx + 1; // Add 1 for the end quote of the string.
                 _totalConsumed += leftOverFromConsumed;
-                end = new SequencePosition(_currentPosition.GetObject(), _currentPosition.GetInteger() + idx);
+                end = new SequencePosition(
+                    _currentPosition.GetObject(),
+                    _currentPosition.GetInteger() + idx
+                );
                 SequencePosition start = rollBackState.GetStartPosition(offset: 1); // Offset for the starting quote
                 ValueSequence = _sequence.Slice(start, end);
             }
             else
             {
-                _bytePositionInLine++;  // Add 1 for the end quote
+                _bytePositionInLine++; // Add 1 for the end quote
                 _consumed += idx + 2;
                 ValueSpan = data[..idx];
             }
@@ -1121,7 +1250,11 @@ namespace Automatonic.Text.Kdl
             consumed = 0;
             int i = 0;
 
-            ConsumeNumberResult signResult = ConsumeNegativeSignMultiSegment(ref data, ref i, rollBackState);
+            ConsumeNumberResult signResult = ConsumeNegativeSignMultiSegment(
+                ref data,
+                ref i,
+                rollBackState
+            );
             if (signResult == ConsumeNumberResult.NeedMoreData)
             {
                 RollBackState(rollBackState);
@@ -1135,7 +1268,11 @@ namespace Automatonic.Text.Kdl
 
             if (nextByte == '0')
             {
-                ConsumeNumberResult result = ConsumeZeroMultiSegment(ref data, ref i, rollBackState);
+                ConsumeNumberResult result = ConsumeZeroMultiSegment(
+                    ref data,
+                    ref i,
+                    rollBackState
+                );
                 if (result == ConsumeNumberResult.NeedMoreData)
                 {
                     RollBackState(rollBackState);
@@ -1167,7 +1304,11 @@ namespace Automatonic.Text.Kdl
                 if (nextByte is not (byte)'.' and not (byte)'E' and not (byte)'e')
                 {
                     RollBackState(rollBackState, isError: true);
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndOfDigitNotFound, nextByte);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.ExpectedEndOfDigitNotFound,
+                        nextByte
+                    );
                 }
             }
 
@@ -1177,7 +1318,11 @@ namespace Automatonic.Text.Kdl
             {
                 i++;
                 _bytePositionInLine++;
-                ConsumeNumberResult result = ConsumeDecimalDigitsMultiSegment(ref data, ref i, rollBackState);
+                ConsumeNumberResult result = ConsumeDecimalDigitsMultiSegment(
+                    ref data,
+                    ref i,
+                    rollBackState
+                );
                 if (result == ConsumeNumberResult.NeedMoreData)
                 {
                     RollBackState(rollBackState);
@@ -1193,7 +1338,11 @@ namespace Automatonic.Text.Kdl
                 if (nextByte is not (byte)'E' and not (byte)'e')
                 {
                     RollBackState(rollBackState, isError: true);
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedNextDigitEValueNotFound, nextByte);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.ExpectedNextDigitEValueNotFound,
+                        nextByte
+                    );
                 }
             }
 
@@ -1226,13 +1375,20 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(resultExponent == ConsumeNumberResult.OperationIncomplete);
 
             RollBackState(rollBackState, isError: true);
-            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndOfDigitNotFound, data[i]);
+            ThrowHelper.ThrowKdlReaderException(
+                ref this,
+                ExceptionResource.ExpectedEndOfDigitNotFound,
+                data[i]
+            );
 
             Done:
             if (HasValueSequence)
             {
                 SequencePosition start = rollBackState.GetStartPosition();
-                SequencePosition end = new SequencePosition(_currentPosition.GetObject(), _currentPosition.GetInteger() + i);
+                SequencePosition end = new SequencePosition(
+                    _currentPosition.GetObject(),
+                    _currentPosition.GetInteger() + i
+                );
                 ValueSequence = _sequence.Slice(start, end);
                 consumed = i;
             }
@@ -1244,7 +1400,11 @@ namespace Automatonic.Text.Kdl
             return true;
         }
 
-        private ConsumeNumberResult ConsumeNegativeSignMultiSegment(ref ReadOnlySpan<byte> data, scoped ref int i, scoped in PartialStateForRollback rollBackState)
+        private ConsumeNumberResult ConsumeNegativeSignMultiSegment(
+            ref ReadOnlySpan<byte> data,
+            scoped ref int i,
+            scoped in PartialStateForRollback rollBackState
+        )
         {
             Debug.Assert(i == 0);
             byte nextByte = data[i];
@@ -1258,14 +1418,20 @@ namespace Automatonic.Text.Kdl
                     if (IsLastSpan)
                     {
                         RollBackState(rollBackState, isError: true);
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.RequiredDigitNotFoundEndOfData
+                        );
                     }
                     if (!GetNextSpan())
                     {
                         if (IsLastSpan)
                         {
                             RollBackState(rollBackState, isError: true);
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.RequiredDigitNotFoundEndOfData
+                            );
                         }
                         return ConsumeNumberResult.NeedMoreData;
                     }
@@ -1280,13 +1446,21 @@ namespace Automatonic.Text.Kdl
                 if (!KdlHelpers.IsDigit(nextByte))
                 {
                     RollBackState(rollBackState, isError: true);
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundAfterSign, nextByte);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.RequiredDigitNotFoundAfterSign,
+                        nextByte
+                    );
                 }
             }
             return ConsumeNumberResult.OperationIncomplete;
         }
 
-        private ConsumeNumberResult ConsumeZeroMultiSegment(ref ReadOnlySpan<byte> data, scoped ref int i, scoped in PartialStateForRollback rollBackState)
+        private ConsumeNumberResult ConsumeZeroMultiSegment(
+            ref ReadOnlySpan<byte> data,
+            scoped ref int i,
+            scoped in PartialStateForRollback rollBackState
+        )
         {
             Debug.Assert(data[i] == (byte)'0');
             Debug.Assert(i is 0 or 1);
@@ -1334,15 +1508,22 @@ namespace Automatonic.Text.Kdl
             if (nextByte is not (byte)'.' and not (byte)'E' and not (byte)'e')
             {
                 RollBackState(rollBackState, isError: true);
-                ThrowHelper.ThrowKdlReaderException(ref this,
-                    KdlHelpers.IsInRangeInclusive(nextByte, '0', '9') ? ExceptionResource.InvalidLeadingZeroInNumber : ExceptionResource.ExpectedEndOfDigitNotFound,
-                    nextByte);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    KdlHelpers.IsInRangeInclusive(nextByte, '0', '9')
+                        ? ExceptionResource.InvalidLeadingZeroInNumber
+                        : ExceptionResource.ExpectedEndOfDigitNotFound,
+                    nextByte
+                );
             }
 
             return ConsumeNumberResult.OperationIncomplete;
         }
 
-        private ConsumeNumberResult ConsumeIntegerDigitsMultiSegment(ref ReadOnlySpan<byte> data, scoped ref int i)
+        private ConsumeNumberResult ConsumeIntegerDigitsMultiSegment(
+            ref ReadOnlySpan<byte> data,
+            scoped ref int i
+        )
         {
             byte nextByte = default;
             int counter = 0;
@@ -1405,7 +1586,6 @@ namespace Automatonic.Text.Kdl
                         break;
                     }
                 }
-
             }
             else
             {
@@ -1420,21 +1600,31 @@ namespace Automatonic.Text.Kdl
             return ConsumeNumberResult.OperationIncomplete;
         }
 
-        private ConsumeNumberResult ConsumeDecimalDigitsMultiSegment(ref ReadOnlySpan<byte> data, scoped ref int i, scoped in PartialStateForRollback rollBackState)
+        private ConsumeNumberResult ConsumeDecimalDigitsMultiSegment(
+            ref ReadOnlySpan<byte> data,
+            scoped ref int i,
+            scoped in PartialStateForRollback rollBackState
+        )
         {
             if (i >= data.Length)
             {
                 if (IsLastSpan)
                 {
                     RollBackState(rollBackState, isError: true);
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.RequiredDigitNotFoundEndOfData
+                    );
                 }
                 if (!GetNextSpan())
                 {
                     if (IsLastSpan)
                     {
                         RollBackState(rollBackState, isError: true);
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.RequiredDigitNotFoundEndOfData
+                        );
                     }
                     return ConsumeNumberResult.NeedMoreData;
                 }
@@ -1447,21 +1637,32 @@ namespace Automatonic.Text.Kdl
             if (!KdlHelpers.IsDigit(nextByte))
             {
                 RollBackState(rollBackState, isError: true);
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundAfterDecimal, nextByte);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    ExceptionResource.RequiredDigitNotFoundAfterDecimal,
+                    nextByte
+                );
             }
             i++;
             _bytePositionInLine++;
             return ConsumeIntegerDigitsMultiSegment(ref data, ref i);
         }
 
-        private ConsumeNumberResult ConsumeSignMultiSegment(ref ReadOnlySpan<byte> data, scoped ref int i, scoped in PartialStateForRollback rollBackState)
+        private ConsumeNumberResult ConsumeSignMultiSegment(
+            ref ReadOnlySpan<byte> data,
+            scoped ref int i,
+            scoped in PartialStateForRollback rollBackState
+        )
         {
             if (i >= data.Length)
             {
                 if (IsLastSpan)
                 {
                     RollBackState(rollBackState, isError: true);
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.RequiredDigitNotFoundEndOfData
+                    );
                 }
 
                 if (!GetNextSpan())
@@ -1469,7 +1670,10 @@ namespace Automatonic.Text.Kdl
                     if (IsLastSpan)
                     {
                         RollBackState(rollBackState, isError: true);
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.RequiredDigitNotFoundEndOfData
+                        );
                     }
                     return ConsumeNumberResult.NeedMoreData;
                 }
@@ -1489,7 +1693,10 @@ namespace Automatonic.Text.Kdl
                     if (IsLastSpan)
                     {
                         RollBackState(rollBackState, isError: true);
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.RequiredDigitNotFoundEndOfData
+                        );
                     }
 
                     if (!GetNextSpan())
@@ -1497,7 +1704,10 @@ namespace Automatonic.Text.Kdl
                         if (IsLastSpan)
                         {
                             RollBackState(rollBackState, isError: true);
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundEndOfData);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.RequiredDigitNotFoundEndOfData
+                            );
                         }
                         return ConsumeNumberResult.NeedMoreData;
                     }
@@ -1512,7 +1722,11 @@ namespace Automatonic.Text.Kdl
             if (!KdlHelpers.IsDigit(nextByte))
             {
                 RollBackState(rollBackState, isError: true);
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.RequiredDigitNotFoundAfterSign, nextByte);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    ExceptionResource.RequiredDigitNotFoundAfterSign,
+                    nextByte
+                );
             }
 
             return ConsumeNumberResult.OperationIncomplete;
@@ -1557,7 +1771,9 @@ namespace Automatonic.Text.Kdl
                 {
                     if (marker == KdlConstants.Slash)
                     {
-                        return SkipOrConsumeCommentMultiSegmentWithRollback() ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
+                        return SkipOrConsumeCommentMultiSegmentWithRollback()
+                            ? ConsumeTokenResult.Success
+                            : ConsumeTokenResult.NotEnoughDataRollBackState;
                     }
                     if (_tokenType == KdlTokenType.Comment)
                     {
@@ -1573,12 +1789,9 @@ namespace Automatonic.Text.Kdl
 
             if (_bitStack.CurrentDepth == 0)
             {
-                if (_readerOptions.AllowMultipleValues)
-                {
-                    return ReadFirstTokenMultiSegment(marker) ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
-                }
-
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndAfterSingleKdl, marker);
+                return ReadFirstTokenMultiSegment(marker)
+                    ? ConsumeTokenResult.Success
+                    : ConsumeTokenResult.NotEnoughDataRollBackState;
             }
 
             if (marker == KdlConstants.ListSeparator)
@@ -1592,7 +1805,10 @@ namespace Automatonic.Text.Kdl
                     {
                         _consumed--;
                         _bytePositionInLine--;
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyOrValueNotFound);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                        );
                     }
                     if (!GetNextSpan())
                     {
@@ -1600,7 +1816,10 @@ namespace Automatonic.Text.Kdl
                         {
                             _consumed--;
                             _bytePositionInLine--;
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyOrValueNotFound);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                            );
                         }
                         return ConsumeTokenResult.NotEnoughDataRollBackState;
                     }
@@ -1612,7 +1831,11 @@ namespace Automatonic.Text.Kdl
                 {
                     SkipWhiteSpaceMultiSegment();
                     // The next character must be a start of a property name or value.
-                    if (!HasMoreDataMultiSegment(ExceptionResource.ExpectedStartOfPropertyOrValueNotFound))
+                    if (
+                        !HasMoreDataMultiSegment(
+                            ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                        )
+                    )
                     {
                         return ConsumeTokenResult.NotEnoughDataRollBackState;
                     }
@@ -1621,10 +1844,15 @@ namespace Automatonic.Text.Kdl
 
                 TokenStartIndex = BytesConsumed;
 
-                if (_readerOptions.CommentHandling == KdlCommentHandling.Allow && first == KdlConstants.Slash)
+                if (
+                    _readerOptions.CommentHandling == KdlCommentHandling.Allow
+                    && first == KdlConstants.Slash
+                )
                 {
                     _trailingCommaBeforeComment = true;
-                    return SkipOrConsumeCommentMultiSegmentWithRollback() ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
+                    return SkipOrConsumeCommentMultiSegmentWithRollback()
+                        ? ConsumeTokenResult.Success
+                        : ConsumeTokenResult.NotEnoughDataRollBackState;
                 }
 
                 if (_inObject)
@@ -1638,11 +1866,20 @@ namespace Automatonic.Text.Kdl
                                 EndObject();
                                 return ConsumeTokenResult.Success;
                             }
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.TrailingCommaNotAllowedBeforeObjectEnd);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.TrailingCommaNotAllowedBeforeObjectEnd
+                            );
                         }
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyNotFound, first);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyNotFound,
+                            first
+                        );
                     }
-                    return ConsumePropertyNameMultiSegment() ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
+                    return ConsumePropertyNameMultiSegment()
+                        ? ConsumeTokenResult.Success
+                        : ConsumeTokenResult.NotEnoughDataRollBackState;
                 }
                 else
                 {
@@ -1653,9 +1890,14 @@ namespace Automatonic.Text.Kdl
                             EndArray();
                             return ConsumeTokenResult.Success;
                         }
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd
+                        );
                     }
-                    return ConsumeValueMultiSegment(first) ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
+                    return ConsumeValueMultiSegment(first)
+                        ? ConsumeTokenResult.Success
+                        : ConsumeTokenResult.NotEnoughDataRollBackState;
                 }
             }
             else if (marker == KdlConstants.CloseBrace)
@@ -1668,7 +1910,11 @@ namespace Automatonic.Text.Kdl
             }
             else
             {
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.FoundInvalidCharacter, marker);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    ExceptionResource.FoundInvalidCharacter,
+                    marker
+                );
             }
             return ConsumeTokenResult.Success;
         }
@@ -1680,7 +1926,7 @@ namespace Automatonic.Text.Kdl
 
             if (KdlReaderHelper.IsTokenTypePrimitive(_previousTokenType))
             {
-                _tokenType = _inObject ? KdlTokenType.StartObject : KdlTokenType.StartArray;
+                _tokenType = _inObject ? KdlTokenType.StartChildrenBlock : KdlTokenType.StartArray;
             }
             else
             {
@@ -1709,12 +1955,9 @@ namespace Automatonic.Text.Kdl
 
             if (_bitStack.CurrentDepth == 0 && _tokenType != KdlTokenType.None)
             {
-                if (_readerOptions.AllowMultipleValues)
-                {
-                    return ReadFirstTokenMultiSegment(first) ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
-                }
-
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndAfterSingleKdl, first);
+                return ReadFirstTokenMultiSegment(first)
+                    ? ConsumeTokenResult.Success
+                    : ConsumeTokenResult.NotEnoughDataRollBackState;
             }
 
             Debug.Assert(first != KdlConstants.Slash);
@@ -1724,9 +1967,17 @@ namespace Automatonic.Text.Kdl
             if (first == KdlConstants.ListSeparator)
             {
                 // A comma without some KDL value preceding it is invalid
-                if (_previousTokenType <= KdlTokenType.StartObject || _previousTokenType == KdlTokenType.StartArray || _trailingCommaBeforeComment)
+                if (
+                    _previousTokenType <= KdlTokenType.StartChildrenBlock
+                    || _previousTokenType == KdlTokenType.StartArray
+                    || _trailingCommaBeforeComment
+                )
                 {
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyOrValueAfterComment, first);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.ExpectedStartOfPropertyOrValueAfterComment,
+                        first
+                    );
                 }
 
                 _consumed++;
@@ -1738,7 +1989,10 @@ namespace Automatonic.Text.Kdl
                     {
                         _consumed--;
                         _bytePositionInLine--;
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyOrValueNotFound);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                        );
                     }
                     if (!GetNextSpan())
                     {
@@ -1746,7 +2000,10 @@ namespace Automatonic.Text.Kdl
                         {
                             _consumed--;
                             _bytePositionInLine--;
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyOrValueNotFound);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                            );
                         }
                         goto RollBack;
                     }
@@ -1758,7 +2015,11 @@ namespace Automatonic.Text.Kdl
                 {
                     SkipWhiteSpaceMultiSegment();
                     // The next character must be a start of a property name or value.
-                    if (!HasMoreDataMultiSegment(ExceptionResource.ExpectedStartOfPropertyOrValueNotFound))
+                    if (
+                        !HasMoreDataMultiSegment(
+                            ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                        )
+                    )
                     {
                         goto RollBack;
                     }
@@ -1791,10 +2052,17 @@ namespace Automatonic.Text.Kdl
                                 EndObject();
                                 goto Done;
                             }
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.TrailingCommaNotAllowedBeforeObjectEnd);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.TrailingCommaNotAllowedBeforeObjectEnd
+                            );
                         }
 
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyNotFound, first);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyNotFound,
+                            first
+                        );
                     }
                     if (ConsumePropertyNameMultiSegment())
                     {
@@ -1814,7 +2082,10 @@ namespace Automatonic.Text.Kdl
                             EndArray();
                             goto Done;
                         }
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd
+                        );
                     }
 
                     if (ConsumeValueMultiSegment(first))
@@ -1846,12 +2117,16 @@ namespace Automatonic.Text.Kdl
                     goto RollBack;
                 }
             }
-            else if (_tokenType == KdlTokenType.StartObject)
+            else if (_tokenType == KdlTokenType.StartChildrenBlock)
             {
                 Debug.Assert(first != KdlConstants.CloseBrace);
                 if (first != KdlConstants.Quote)
                 {
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyNotFound, first);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.ExpectedStartOfPropertyNotFound,
+                        first
+                    );
                 }
 
                 long prevTotalConsumed = _totalConsumed;
@@ -1862,7 +2137,7 @@ namespace Automatonic.Text.Kdl
                 {
                     // roll back potential changes
                     _consumed = prevConsumed;
-                    _tokenType = KdlTokenType.StartObject;
+                    _tokenType = KdlTokenType.StartChildrenBlock;
                     _bytePositionInLine = prevPosition;
                     _lineNumber = prevLineNumber;
                     _totalConsumed = prevTotalConsumed;
@@ -1889,13 +2164,17 @@ namespace Automatonic.Text.Kdl
             }
             else
             {
-                Debug.Assert(_tokenType is KdlTokenType.EndArray or KdlTokenType.EndObject);
+                Debug.Assert(_tokenType is KdlTokenType.EndArray or KdlTokenType.EndChildrenBlock);
                 if (_inObject)
                 {
                     Debug.Assert(first != KdlConstants.CloseBrace);
                     if (first != KdlConstants.Quote)
                     {
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyNotFound, first);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyNotFound,
+                            first
+                        );
                     }
 
                     if (ConsumePropertyNameMultiSegment())
@@ -2001,7 +2280,9 @@ namespace Automatonic.Text.Kdl
             return false;
         }
 
-        private ConsumeTokenResult ConsumeNextTokenUntilAfterAllCommentsAreSkippedMultiSegment(byte marker)
+        private ConsumeTokenResult ConsumeNextTokenUntilAfterAllCommentsAreSkippedMultiSegment(
+            byte marker
+        )
         {
             if (!SkipAllCommentsMultiSegment(ref marker))
             {
@@ -2010,7 +2291,7 @@ namespace Automatonic.Text.Kdl
 
             TokenStartIndex = BytesConsumed;
 
-            if (_tokenType == KdlTokenType.StartObject)
+            if (_tokenType == KdlTokenType.StartChildrenBlock)
             {
                 if (marker == KdlConstants.CloseBrace)
                 {
@@ -2020,7 +2301,11 @@ namespace Automatonic.Text.Kdl
                 {
                     if (marker != KdlConstants.Quote)
                     {
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyNotFound, marker);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyNotFound,
+                            marker
+                        );
                     }
 
                     long prevTotalConsumed = _totalConsumed;
@@ -2032,7 +2317,7 @@ namespace Automatonic.Text.Kdl
                     {
                         // roll back potential changes
                         _consumed = prevConsumed;
-                        _tokenType = KdlTokenType.StartObject;
+                        _tokenType = KdlTokenType.StartChildrenBlock;
                         _bytePositionInLine = prevPosition;
                         _lineNumber = prevLineNumber;
                         _totalConsumed = prevTotalConsumed;
@@ -2067,12 +2352,9 @@ namespace Automatonic.Text.Kdl
             }
             else if (_bitStack.CurrentDepth == 0)
             {
-                if (_readerOptions.AllowMultipleValues)
-                {
-                    return ReadFirstTokenMultiSegment(marker) ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
-                }
-
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedEndAfterSingleKdl, marker);
+                return ReadFirstTokenMultiSegment(marker)
+                    ? ConsumeTokenResult.Success
+                    : ConsumeTokenResult.NotEnoughDataRollBackState;
             }
             else if (marker == KdlConstants.ListSeparator)
             {
@@ -2085,7 +2367,10 @@ namespace Automatonic.Text.Kdl
                     {
                         _consumed--;
                         _bytePositionInLine--;
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyOrValueNotFound);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                        );
                     }
                     if (!GetNextSpan())
                     {
@@ -2093,7 +2378,10 @@ namespace Automatonic.Text.Kdl
                         {
                             _consumed--;
                             _bytePositionInLine--;
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyOrValueNotFound);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                            );
                         }
                         return ConsumeTokenResult.NotEnoughDataRollBackState;
                     }
@@ -2105,14 +2393,23 @@ namespace Automatonic.Text.Kdl
                 {
                     SkipWhiteSpaceMultiSegment();
                     // The next character must be a start of a property name or value.
-                    if (!HasMoreDataMultiSegment(ExceptionResource.ExpectedStartOfPropertyOrValueNotFound))
+                    if (
+                        !HasMoreDataMultiSegment(
+                            ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                        )
+                    )
                     {
                         return ConsumeTokenResult.NotEnoughDataRollBackState;
                     }
                     marker = _buffer[_consumed];
                 }
 
-                if (!SkipAllCommentsMultiSegment(ref marker, ExceptionResource.ExpectedStartOfPropertyOrValueNotFound))
+                if (
+                    !SkipAllCommentsMultiSegment(
+                        ref marker,
+                        ExceptionResource.ExpectedStartOfPropertyOrValueNotFound
+                    )
+                )
                 {
                     goto IncompleteRollback;
                 }
@@ -2130,12 +2427,21 @@ namespace Automatonic.Text.Kdl
                                 EndObject();
                                 goto Done;
                             }
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.TrailingCommaNotAllowedBeforeObjectEnd);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.TrailingCommaNotAllowedBeforeObjectEnd
+                            );
                         }
 
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ExpectedStartOfPropertyNotFound, marker);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.ExpectedStartOfPropertyNotFound,
+                            marker
+                        );
                     }
-                    return ConsumePropertyNameMultiSegment() ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
+                    return ConsumePropertyNameMultiSegment()
+                        ? ConsumeTokenResult.Success
+                        : ConsumeTokenResult.NotEnoughDataRollBackState;
                 }
                 else
                 {
@@ -2146,9 +2452,14 @@ namespace Automatonic.Text.Kdl
                             EndArray();
                             goto Done;
                         }
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd
+                        );
                     }
-                    return ConsumeValueMultiSegment(marker) ? ConsumeTokenResult.Success : ConsumeTokenResult.NotEnoughDataRollBackState;
+                    return ConsumeValueMultiSegment(marker)
+                        ? ConsumeTokenResult.Success
+                        : ConsumeTokenResult.NotEnoughDataRollBackState;
                 }
             }
             else if (marker == KdlConstants.CloseBrace)
@@ -2161,7 +2472,11 @@ namespace Automatonic.Text.Kdl
             }
             else
             {
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.FoundInvalidCharacter, marker);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    ExceptionResource.FoundInvalidCharacter,
+                    marker
+                );
             }
 
             Done:
@@ -2175,21 +2490,32 @@ namespace Automatonic.Text.Kdl
         private bool SkipOrConsumeCommentMultiSegmentWithRollback()
         {
             long prevTotalConsumed = BytesConsumed;
-            SequencePosition start = new SequencePosition(_currentPosition.GetObject(), _currentPosition.GetInteger() + _consumed);
+            SequencePosition start = new SequencePosition(
+                _currentPosition.GetObject(),
+                _currentPosition.GetInteger() + _consumed
+            );
             bool skipSucceeded = SkipCommentMultiSegment(out int tailBytesToIgnore);
 
             if (skipSucceeded)
             {
                 Debug.Assert(
-                    _readerOptions.CommentHandling is KdlCommentHandling.Allow or
-                    KdlCommentHandling.Skip);
+                    _readerOptions.CommentHandling
+                        is KdlCommentHandling.Allow
+                            or KdlCommentHandling.Skip
+                );
 
                 if (_readerOptions.CommentHandling == KdlCommentHandling.Allow)
                 {
-                    SequencePosition end = new SequencePosition(_currentPosition.GetObject(), _currentPosition.GetInteger() + _consumed);
+                    SequencePosition end = new SequencePosition(
+                        _currentPosition.GetObject(),
+                        _currentPosition.GetInteger() + _consumed
+                    );
 
                     ReadOnlySequence<byte> commentSequence = _sequence.Slice(start, end);
-                    commentSequence = commentSequence.Slice(2, commentSequence.Length - 2 - tailBytesToIgnore);
+                    commentSequence = commentSequence.Slice(
+                        2,
+                        commentSequence.Length - 2 - tailBytesToIgnore
+                    );
                     HasValueSequence = !commentSequence.IsSingleSegment;
 
                     if (HasValueSequence)
@@ -2236,14 +2562,20 @@ namespace Automatonic.Text.Kdl
             {
                 if (IsLastSpan)
                 {
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfDataWhileReadingComment);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.UnexpectedEndOfDataWhileReadingComment
+                    );
                 }
 
                 if (!GetNextSpan())
                 {
                     if (IsLastSpan)
                     {
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfDataWhileReadingComment);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.UnexpectedEndOfDataWhileReadingComment
+                        );
                     }
 
                     tailBytesToIgnore = 0;
@@ -2256,7 +2588,11 @@ namespace Automatonic.Text.Kdl
             byte marker = localBuffer[0];
             if (marker is not KdlConstants.Slash and not KdlConstants.Asterisk)
             {
-                ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.InvalidCharacterAtStartOfComment, marker);
+                ThrowHelper.ThrowKdlReaderException(
+                    ref this,
+                    ExceptionResource.InvalidCharacterAtStartOfComment,
+                    marker
+                );
             }
 
             bool multiLine = marker == KdlConstants.Asterisk;
@@ -2273,7 +2609,10 @@ namespace Automatonic.Text.Kdl
 
                     if (multiLine)
                     {
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfDataWhileReadingComment);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.UnexpectedEndOfDataWhileReadingComment
+                        );
                     }
 
                     return true;
@@ -2287,7 +2626,10 @@ namespace Automatonic.Text.Kdl
                     {
                         if (multiLine)
                         {
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfDataWhileReadingComment);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.UnexpectedEndOfDataWhileReadingComment
+                            );
                         }
 
                         return true;
@@ -2310,7 +2652,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private bool SkipSingleLineCommentMultiSegment(ReadOnlySpan<byte> localBuffer, out int tailBytesToSkip)
+        private bool SkipSingleLineCommentMultiSegment(
+            ReadOnlySpan<byte> localBuffer,
+            out int tailBytesToSkip
+        )
         {
             bool expectLF = false;
             int dangerousLineSeparatorBytesConsumed = 0;
@@ -2329,7 +2674,10 @@ namespace Automatonic.Text.Kdl
                     break;
                 }
 
-                int idx = FindLineSeparatorMultiSegment(localBuffer, ref dangerousLineSeparatorBytesConsumed);
+                int idx = FindLineSeparatorMultiSegment(
+                    localBuffer,
+                    ref dangerousLineSeparatorBytesConsumed
+                );
                 Debug.Assert(dangerousLineSeparatorBytesConsumed is >= 0 and <= 2);
 
                 if (idx != -1)
@@ -2402,19 +2750,29 @@ namespace Automatonic.Text.Kdl
             return true;
         }
 
-        private int FindLineSeparatorMultiSegment(ReadOnlySpan<byte> localBuffer, scoped ref int dangerousLineSeparatorBytesConsumed)
+        private int FindLineSeparatorMultiSegment(
+            ReadOnlySpan<byte> localBuffer,
+            scoped ref int dangerousLineSeparatorBytesConsumed
+        )
         {
             Debug.Assert(dangerousLineSeparatorBytesConsumed is >= 0 and <= 2);
 
             if (dangerousLineSeparatorBytesConsumed != 0)
             {
-                ThrowOnDangerousLineSeparatorMultiSegment(localBuffer, ref dangerousLineSeparatorBytesConsumed);
+                ThrowOnDangerousLineSeparatorMultiSegment(
+                    localBuffer,
+                    ref dangerousLineSeparatorBytesConsumed
+                );
 
                 if (dangerousLineSeparatorBytesConsumed != 0)
                 {
                     // this can only happen if localBuffer size is 1 and we have previously only consumed 1 byte
                     // or localBuffer is 0
-                    Debug.Assert(dangerousLineSeparatorBytesConsumed >= 1 && dangerousLineSeparatorBytesConsumed <= 2 && localBuffer.Length <= 1);
+                    Debug.Assert(
+                        dangerousLineSeparatorBytesConsumed >= 1
+                            && dangerousLineSeparatorBytesConsumed <= 2
+                            && localBuffer.Length <= 1
+                    );
                     return -1;
                 }
             }
@@ -2422,7 +2780,11 @@ namespace Automatonic.Text.Kdl
             int totalIdx = 0;
             while (true)
             {
-                int idx = localBuffer.IndexOfAny(KdlConstants.LineFeed, KdlConstants.CarriageReturn, KdlConstants.StartingByteOfNonStandardSeparator);
+                int idx = localBuffer.IndexOfAny(
+                    KdlConstants.LineFeed,
+                    KdlConstants.CarriageReturn,
+                    KdlConstants.StartingByteOfNonStandardSeparator
+                );
                 dangerousLineSeparatorBytesConsumed = 0;
 
                 if (idx == -1)
@@ -2440,7 +2802,10 @@ namespace Automatonic.Text.Kdl
                 totalIdx += p;
 
                 dangerousLineSeparatorBytesConsumed++;
-                ThrowOnDangerousLineSeparatorMultiSegment(localBuffer, ref dangerousLineSeparatorBytesConsumed);
+                ThrowOnDangerousLineSeparatorMultiSegment(
+                    localBuffer,
+                    ref dangerousLineSeparatorBytesConsumed
+                );
 
                 if (dangerousLineSeparatorBytesConsumed != 0)
                 {
@@ -2452,7 +2817,10 @@ namespace Automatonic.Text.Kdl
         }
 
         // assumes first byte (KdlConstants.UnexpectedEndOfLineSeparator) is already read
-        private void ThrowOnDangerousLineSeparatorMultiSegment(ReadOnlySpan<byte> localBuffer, scoped ref int dangerousLineSeparatorBytesConsumed)
+        private void ThrowOnDangerousLineSeparatorMultiSegment(
+            ReadOnlySpan<byte> localBuffer,
+            scoped ref int dangerousLineSeparatorBytesConsumed
+        )
         {
             Debug.Assert(dangerousLineSeparatorBytesConsumed is 1 or 2);
 
@@ -2490,7 +2858,10 @@ namespace Automatonic.Text.Kdl
                 byte lastByte = localBuffer[0];
                 if (lastByte is 0xA8 or 0xA9)
                 {
-                    ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfLineSeparator);
+                    ThrowHelper.ThrowKdlReaderException(
+                        ref this,
+                        ExceptionResource.UnexpectedEndOfLineSeparator
+                    );
                 }
                 else
                 {
@@ -2533,7 +2904,11 @@ namespace Automatonic.Text.Kdl
                     ignoreNextLfForLineTracking = false;
                 }
 
-                int idx = localBuffer.IndexOfAny(KdlConstants.Asterisk, KdlConstants.LineFeed, KdlConstants.CarriageReturn);
+                int idx = localBuffer.IndexOfAny(
+                    KdlConstants.Asterisk,
+                    KdlConstants.LineFeed,
+                    KdlConstants.CarriageReturn
+                );
 
                 if (idx != -1)
                 {
@@ -2572,14 +2947,20 @@ namespace Automatonic.Text.Kdl
                 {
                     if (IsLastSpan)
                     {
-                        ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfDataWhileReadingComment);
+                        ThrowHelper.ThrowKdlReaderException(
+                            ref this,
+                            ExceptionResource.UnexpectedEndOfDataWhileReadingComment
+                        );
                     }
 
                     if (!GetNextSpan())
                     {
                         if (IsLastSpan)
                         {
-                            ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.UnexpectedEndOfDataWhileReadingComment);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref this,
+                                ExceptionResource.UnexpectedEndOfDataWhileReadingComment
+                            );
                         }
                         else
                         {
@@ -2595,10 +2976,20 @@ namespace Automatonic.Text.Kdl
 
         private readonly PartialStateForRollback CaptureState()
         {
-            return new PartialStateForRollback(_totalConsumed, _bytePositionInLine, _consumed, _currentPosition);
+            return new PartialStateForRollback(
+                _totalConsumed,
+                _bytePositionInLine,
+                _consumed,
+                _currentPosition
+            );
         }
 
-        private readonly struct PartialStateForRollback(long totalConsumed, long bytePositionInLine, int consumed, SequencePosition currentPosition)
+        private readonly struct PartialStateForRollback(
+            long totalConsumed,
+            long bytePositionInLine,
+            int consumed,
+            SequencePosition currentPosition
+        )
         {
             public readonly long _prevTotalConsumed = totalConsumed;
             public readonly long _prevBytePositionInLine = bytePositionInLine;
@@ -2607,7 +2998,10 @@ namespace Automatonic.Text.Kdl
 
             public SequencePosition GetStartPosition(int offset = 0)
             {
-                return new SequencePosition(_prevCurrentPosition.GetObject(), _prevCurrentPosition.GetInteger() + _prevConsumed + offset);
+                return new SequencePosition(
+                    _prevCurrentPosition.GetObject(),
+                    _prevCurrentPosition.GetInteger() + _prevConsumed + offset
+                );
             }
         }
     }

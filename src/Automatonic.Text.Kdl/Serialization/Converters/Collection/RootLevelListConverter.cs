@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using Automatonic.Text.Kdl.Serialization.Metadata;
+﻿using Automatonic.Text.Kdl.Serialization.Metadata;
 
 namespace Automatonic.Text.Kdl.Serialization.Converters
 {
@@ -10,7 +9,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     internal sealed class RootLevelListConverter<T> : KdlResumableConverter<List<T?>>
     {
         private readonly KdlTypeInfo<T> _elementTypeInfo;
-        private protected sealed override ConverterStrategy GetDefaultConverterStrategy() => ConverterStrategy.Enumerable;
+
+        private protected sealed override ConverterStrategy GetDefaultConverterStrategy() =>
+            ConverterStrategy.Enumerable;
+
         internal override Type? ElementType => typeof(T);
 
         public RootLevelListConverter(KdlTypeInfo<T> elementTypeInfo)
@@ -19,10 +21,14 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             _elementTypeInfo = elementTypeInfo;
         }
 
-        internal override bool OnTryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out List<T?>? value)
+        internal override bool OnTryRead(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out List<T?>? value
+        )
         {
-            Debug.Assert(reader.AllowMultipleValues, "Can only be used by readers allowing trailing content.");
-
             KdlConverter<T> elementConverter = _elementTypeInfo.EffectiveConverter;
             state.Current.KdlPropertyInfo = _elementTypeInfo.PropertyInfoForTypeInfo;
             var results = (List<T?>?)state.Current.ReturnValue;
@@ -31,7 +37,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             {
                 if (state.Current.PropertyState < StackFramePropertyState.ReadValue)
                 {
-                    if (!reader.TryAdvanceToNextRootLevelValueWithOptionalReadAhead(elementConverter.RequiresReadAhead, out bool isAtEndOfStream))
+                    if (
+                        !reader.TryAdvanceToNextRootLevelValueWithOptionalReadAhead(
+                            elementConverter.RequiresReadAhead,
+                            out bool isAtEndOfStream
+                        )
+                    )
                     {
                         if (isAtEndOfStream)
                         {
@@ -50,7 +61,16 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 }
 
                 // Deserialize the next root-level KDL value.
-                if (!elementConverter.TryRead(ref reader, typeof(T), options, ref state, out T? element, out _))
+                if (
+                    !elementConverter.TryRead(
+                        ref reader,
+                        typeof(T),
+                        options,
+                        ref state,
+                        out T? element,
+                        out _
+                    )
+                )
                 {
                     value = default;
                     return false;

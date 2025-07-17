@@ -25,7 +25,10 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(
+            ReadOnlySpan<byte> utf8Kdl,
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             return ReadFromSpan(utf8Kdl, kdlTypeInfo);
@@ -52,7 +55,11 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(ReadOnlySpan<byte> utf8Kdl, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(
+            ReadOnlySpan<byte> utf8Kdl,
+            Type returnType,
+            KdlSerializerOptions? options = null
+        )
         {
             if (returnType is null)
             {
@@ -75,7 +82,10 @@ namespace Automatonic.Text.Kdl
         /// <typeparamref name="TValue"/> is not compatible with the KDL,
         /// or when there is remaining data in the buffer.
         /// </exception>
-        public static TValue? Deserialize<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static TValue? Deserialize<TValue>(
+            ReadOnlySpan<byte> utf8Kdl,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -130,7 +140,11 @@ namespace Automatonic.Text.Kdl
         /// The <see cref="KdlSerializerContext.GetTypeInfo(Type)"/> method on the provided <paramref name="context"/>
         /// did not return a compatible <see cref="KdlTypeInfo"/> for <paramref name="returnType"/>.
         /// </exception>
-        public static object? Deserialize(ReadOnlySpan<byte> utf8Kdl, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(
+            ReadOnlySpan<byte> utf8Kdl,
+            Type returnType,
+            KdlSerializerContext context
+        )
         {
             if (returnType is null)
             {
@@ -144,7 +158,11 @@ namespace Automatonic.Text.Kdl
             return ReadFromSpanAsObject(utf8Kdl, GetTypeInfo(context, returnType));
         }
 
-        private static TValue? ReadFromSpan<TValue>(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo<TValue> kdlTypeInfo, int? actualByteCount = null)
+        private static TValue? ReadFromSpan<TValue>(
+            ReadOnlySpan<byte> utf8Kdl,
+            KdlTypeInfo<TValue> kdlTypeInfo,
+            int? actualByteCount = null
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
 
@@ -155,13 +173,14 @@ namespace Automatonic.Text.Kdl
             state.Initialize(kdlTypeInfo);
 
             TValue? value = kdlTypeInfo.Deserialize(ref reader, ref state);
-
-            // The reader should have thrown if we have remaining bytes, unless AllowMultipleValues is true.
-            Debug.Assert(reader.BytesConsumed == (actualByteCount ?? utf8Kdl.Length) || reader.CurrentState.Options.AllowMultipleValues);
             return value;
         }
 
-        private static object? ReadFromSpanAsObject(ReadOnlySpan<byte> utf8Kdl, KdlTypeInfo kdlTypeInfo, int? actualByteCount = null)
+        private static object? ReadFromSpanAsObject(
+            ReadOnlySpan<byte> utf8Kdl,
+            KdlTypeInfo kdlTypeInfo,
+            int? actualByteCount = null
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
 
@@ -172,9 +191,6 @@ namespace Automatonic.Text.Kdl
             state.Initialize(kdlTypeInfo);
 
             object? value = kdlTypeInfo.DeserializeAsObject(ref reader, ref state);
-
-            // The reader should have thrown if we have remaining bytes, unless AllowMultipleValues is true.
-            Debug.Assert(reader.BytesConsumed == (actualByteCount ?? utf8Kdl.Length) || reader.CurrentState.Options.AllowMultipleValues);
             return value;
         }
     }

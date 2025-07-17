@@ -62,11 +62,7 @@ namespace Automatonic.Text.Kdl
 
         // When transcoding from UTF8 -> UTF16, the byte count threshold where we rent from the array pool before performing a normal alloc.
         public const long ArrayPoolMaxSizeBeforeUsingNormalAlloc =
-#if NET
             1024 * 1024 * 1024; // ArrayPool limit increased in .NET 6
-#else
-            1024 * 1024;
-#endif
 
         // The maximum number of characters allowed when writing raw UTF-16 KDL. This is the maximum length that we can guarantee can
         // be safely transcoded to UTF-8 and fit within an integer-length span, given the max expansion factor of a single character (3).

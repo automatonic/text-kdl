@@ -141,7 +141,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             DbRow row = _parsedData.Get(index);
 
-            CheckExpectedType(KdlTokenType.StartObject, row.TokenType);
+            CheckExpectedType(KdlTokenType.StartChildrenBlock, row.TokenType);
 
             return row.SizeOrLength;
         }
@@ -798,7 +798,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             switch (row.TokenType)
             {
-                case KdlTokenType.StartObject:
+                case KdlTokenType.StartChildrenBlock:
                     writer.WriteStartObject();
                     WriteComplexElement(index, writer);
                     return;
@@ -852,10 +852,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     case KdlTokenType.Null:
                         writer.WriteNullValue();
                         continue;
-                    case KdlTokenType.StartObject:
+                    case KdlTokenType.StartChildrenBlock:
                         writer.WriteStartObject();
                         continue;
-                    case KdlTokenType.EndObject:
+                    case KdlTokenType.EndChildrenBlock:
                         writer.WriteEndObject();
                         continue;
                     case KdlTokenType.StartArray:
@@ -963,7 +963,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 Debug.Assert(reader.TokenStartIndex <= int.MaxValue);
                 int tokenStart = (int)reader.TokenStartIndex;
 
-                if (tokenType == KdlTokenType.StartObject)
+                if (tokenType == KdlTokenType.StartChildrenBlock)
                 {
                     if (inArray)
                     {
@@ -977,9 +977,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     arrayItemsOrPropertyCount = 0;
                     numberOfRowsForMembers = 0;
                 }
-                else if (tokenType == KdlTokenType.EndObject)
+                else if (tokenType == KdlTokenType.EndChildrenBlock)
                 {
-                    int rowIndex = database.FindIndexOfFirstUnsetSizeOrLength(KdlTokenType.StartObject);
+                    int rowIndex = database.FindIndexOfFirstUnsetSizeOrLength(KdlTokenType.StartChildrenBlock);
 
                     numberOfRowsForValues++;
                     numberOfRowsForMembers++;

@@ -123,7 +123,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     }
                     else if (state.Current.CanContainMetadata)
                     {
-                        if (reader.TokenType != KdlTokenType.StartObject)
+                        if (reader.TokenType != KdlTokenType.StartChildrenBlock)
                         {
                             ThrowHelper.ThrowKdlException_DeserializeUnableToConvertValue(Type);
                         }
@@ -257,7 +257,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     // Array payload is nested inside a $values metadata property.
                     if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Values) != 0)
                     {
-                        if (reader.TokenType != KdlTokenType.EndObject)
+                        if (reader.TokenType != KdlTokenType.EndChildrenBlock)
                         {
                             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
                             if (options.AllowOutOfOrderMetadataProperties)
@@ -265,7 +265,7 @@ namespace Automatonic.Text.Kdl.Serialization
                                 Debug.Assert(KdlSerializer.IsMetadataPropertyName(reader.GetUnescapedSpan(), (state.Current.BaseKdlTypeInfo ?? kdlTypeInfo).PolymorphicTypeResolver), "should only be hit if metadata property.");
                                 bool result = reader.TrySkipPartial(reader.CurrentDepth - 1); // skip to the end of the object
                                 Debug.Assert(result, "Metadata reader must have buffered all contents.");
-                                Debug.Assert(reader.TokenType is KdlTokenType.EndObject);
+                                Debug.Assert(reader.TokenType is KdlTokenType.EndChildrenBlock);
                             }
                             else
                             {

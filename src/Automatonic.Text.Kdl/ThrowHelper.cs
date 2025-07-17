@@ -9,7 +9,8 @@ namespace Automatonic.Text.Kdl
     internal static partial class ThrowHelper
     {
         // If the exception source is this value, the serializer will re-throw as KdlException.
-        public const string ExceptionSourceValueToRethrowAsKdlException = "Automatonic.Text.Kdl.Rethrowable";
+        public const string ExceptionSourceValueToRethrowAsKdlException =
+            "Automatonic.Text.Kdl.Rethrowable";
 
         [DoesNotReturn]
         public static void ThrowArgumentOutOfRangeException_NewLine(string parameterName)
@@ -24,30 +25,46 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentOutOfRangeException_IndentSize(string parameterName, int minimumSize, int maximumSize)
+        public static void ThrowArgumentOutOfRangeException_IndentSize(
+            string parameterName,
+            int minimumSize,
+            int maximumSize
+        )
         {
-            throw GetArgumentOutOfRangeException(parameterName, Format(SR.InvalidIndentSize, minimumSize, maximumSize));
+            throw GetArgumentOutOfRangeException(
+                parameterName,
+                Format(SR.InvalidIndentSize, minimumSize, maximumSize)
+            );
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(string parameterName)
+        public static void ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(
+            string parameterName
+        )
         {
             throw GetArgumentOutOfRangeException(parameterName, SR.MaxDepthMustBePositive);
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentOutOfRangeException_KdlNumberExponentTooLarge(string parameterName)
+        public static void ThrowArgumentOutOfRangeException_KdlNumberExponentTooLarge(
+            string parameterName
+        )
         {
             throw GetArgumentOutOfRangeException(parameterName, SR.KdlNumberExponentTooLarge);
         }
 
-        private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(string parameterName, string message)
+        private static ArgumentOutOfRangeException GetArgumentOutOfRangeException(
+            string parameterName,
+            string message
+        )
         {
             return new ArgumentOutOfRangeException(parameterName, message);
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentOutOfRangeException_CommentEnumMustBeInRange(string parameterName)
+        public static void ThrowArgumentOutOfRangeException_CommentEnumMustBeInRange(
+            string parameterName
+        )
         {
             throw GetArgumentOutOfRangeException(parameterName, SR.CommentHandlingMustBeValid);
         }
@@ -59,15 +76,23 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(Type typeToConvert)
+        public static void ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(
+            Type typeToConvert
+        )
         {
-            throw new ArgumentOutOfRangeException(nameof(typeToConvert), Format(SR.SerializerConverterFactoryInvalidArgument, typeToConvert.FullName));
+            throw new ArgumentOutOfRangeException(
+                nameof(typeToConvert),
+                Format(SR.SerializerConverterFactoryInvalidArgument, typeToConvert.FullName)
+            );
         }
 
         [DoesNotReturn]
         public static void ThrowArgumentOutOfRangeException_NeedNonNegNum(string paramName)
         {
-            throw new ArgumentOutOfRangeException(paramName, SR.ArgumentOutOfRange_Generic_MustBeNonNegative);
+            throw new ArgumentOutOfRangeException(
+                paramName,
+                SR.ArgumentOutOfRange_Generic_MustBeNonNegative
+            );
         }
 
         [DoesNotReturn]
@@ -93,7 +118,9 @@ namespace Automatonic.Text.Kdl
             throw GetArgumentException(message);
         }
 
-        public static InvalidOperationException GetInvalidOperationException_CallFlushFirst(int _buffered)
+        public static InvalidOperationException GetInvalidOperationException_CallFlushFirst(
+            int _buffered
+        )
         {
             return GetInvalidOperationException(Format(SR.CallFlushToAvoidDataLoss, _buffered));
         }
@@ -135,7 +162,10 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentException(ReadOnlySpan<byte> propertyName, ReadOnlySpan<byte> value)
+        public static void ThrowArgumentException(
+            ReadOnlySpan<byte> propertyName,
+            ReadOnlySpan<byte> value
+        )
         {
             if (propertyName.Length > KdlConstants.MaxUnescapedTokenSize)
             {
@@ -149,7 +179,10 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentException(ReadOnlySpan<byte> propertyName, ReadOnlySpan<char> value)
+        public static void ThrowArgumentException(
+            ReadOnlySpan<byte> propertyName,
+            ReadOnlySpan<char> value
+        )
         {
             if (propertyName.Length > KdlConstants.MaxUnescapedTokenSize)
             {
@@ -163,7 +196,10 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentException(ReadOnlySpan<char> propertyName, ReadOnlySpan<byte> value)
+        public static void ThrowArgumentException(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<byte> value
+        )
         {
             if (propertyName.Length > KdlConstants.MaxCharacterTokenSize)
             {
@@ -177,7 +213,10 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowArgumentException(ReadOnlySpan<char> propertyName, ReadOnlySpan<char> value)
+        public static void ThrowArgumentException(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<char> value
+        )
         {
             if (propertyName.Length > KdlConstants.MaxCharacterTokenSize)
             {
@@ -191,7 +230,11 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationOrArgumentException(ReadOnlySpan<byte> propertyName, int currentDepth, int maxDepth)
+        public static void ThrowInvalidOperationOrArgumentException(
+            ReadOnlySpan<byte> propertyName,
+            int currentDepth,
+            int maxDepth
+        )
         {
             currentDepth &= KdlConstants.RemoveFlagsBitMask;
             if (currentDepth >= maxDepth)
@@ -221,7 +264,10 @@ namespace Automatonic.Text.Kdl
 
         private static InvalidOperationException GetInvalidOperationException(string message)
         {
-            return new InvalidOperationException(message) { Source = ExceptionSourceValueToRethrowAsKdlException };
+            return new InvalidOperationException(message)
+            {
+                Source = ExceptionSourceValueToRethrowAsKdlException,
+            };
         }
 
         [DoesNotReturn]
@@ -244,7 +290,11 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationOrArgumentException(ReadOnlySpan<char> propertyName, int currentDepth, int maxDepth)
+        public static void ThrowInvalidOperationOrArgumentException(
+            ReadOnlySpan<char> propertyName,
+            int currentDepth,
+            int maxDepth
+        )
         {
             currentDepth &= KdlConstants.RemoveFlagsBitMask;
             if (currentDepth >= maxDepth)
@@ -258,12 +308,16 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        public static InvalidOperationException GetInvalidOperationException_ExpectedArray(KdlTokenType tokenType)
+        public static InvalidOperationException GetInvalidOperationException_ExpectedArray(
+            KdlTokenType tokenType
+        )
         {
             return GetInvalidOperationException("array", tokenType);
         }
 
-        public static InvalidOperationException GetInvalidOperationException_ExpectedObject(KdlTokenType tokenType)
+        public static InvalidOperationException GetInvalidOperationException_ExpectedObject(
+            KdlTokenType tokenType
+        )
         {
             return GetInvalidOperationException("object", tokenType);
         }
@@ -287,13 +341,17 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_ExpectedPropertyName(KdlTokenType tokenType)
+        public static void ThrowInvalidOperationException_ExpectedPropertyName(
+            KdlTokenType tokenType
+        )
         {
             throw GetInvalidOperationException("propertyName", tokenType);
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException_ExpectedStringComparison(KdlTokenType tokenType)
+        public static void ThrowInvalidOperationException_ExpectedStringComparison(
+            KdlTokenType tokenType
+        )
         {
             throw GetInvalidOperationException(tokenType);
         }
@@ -310,12 +368,17 @@ namespace Automatonic.Text.Kdl
             throw GetInvalidOperationException(SR.CannotSkip);
         }
 
-        private static InvalidOperationException GetInvalidOperationException(string message, KdlTokenType tokenType)
+        private static InvalidOperationException GetInvalidOperationException(
+            string message,
+            KdlTokenType tokenType
+        )
         {
             return GetInvalidOperationException(Format(SR.InvalidCast, tokenType, message));
         }
 
-        private static InvalidOperationException GetInvalidOperationException(KdlTokenType tokenType)
+        private static InvalidOperationException GetInvalidOperationException(
+            KdlTokenType tokenType
+        )
         {
             return GetInvalidOperationException(Format(SR.InvalidComparison, tokenType));
         }
@@ -323,37 +386,60 @@ namespace Automatonic.Text.Kdl
         [DoesNotReturn]
         internal static void ThrowKdlElementWrongTypeException(
             KdlTokenType expectedType,
-            KdlTokenType actualType)
+            KdlTokenType actualType
+        )
         {
-            throw GetKdlElementWrongTypeException(expectedType.ToValueKind(), actualType.ToValueKind());
+            throw GetKdlElementWrongTypeException(
+                expectedType.ToValueKind(),
+                actualType.ToValueKind()
+            );
         }
 
         internal static InvalidOperationException GetKdlElementWrongTypeException(
             KdlValueKind expectedType,
-            KdlValueKind actualType)
+            KdlValueKind actualType
+        )
         {
             return GetInvalidOperationException(
-                Format(SR.KdlElementHasWrongType, expectedType, actualType));
+                Format(SR.KdlElementHasWrongType, expectedType, actualType)
+            );
         }
 
         internal static InvalidOperationException GetKdlElementWrongTypeException(
             string expectedTypeName,
-            KdlValueKind actualType)
+            KdlValueKind actualType
+        )
         {
             return GetInvalidOperationException(
-                Format(SR.KdlElementHasWrongType, expectedTypeName, actualType));
+                Format(SR.KdlElementHasWrongType, expectedTypeName, actualType)
+            );
         }
 
         [DoesNotReturn]
-        public static void ThrowKdlReaderException(ref KdlReader kdl, ExceptionResource resource, byte nextByte = default, ReadOnlySpan<byte> bytes = default)
+        public static void ThrowKdlReaderException(
+            ref KdlReader kdl,
+            ExceptionResource resource,
+            byte nextByte = default,
+            ReadOnlySpan<byte> bytes = default
+        )
         {
             throw GetKdlReaderException(ref kdl, resource, nextByte, bytes);
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static KdlException GetKdlReaderException(ref KdlReader kdl, ExceptionResource resource, byte nextByte, ReadOnlySpan<byte> bytes)
+        public static KdlException GetKdlReaderException(
+            ref KdlReader kdl,
+            ExceptionResource resource,
+            byte nextByte,
+            ReadOnlySpan<byte> bytes
+        )
         {
-            string message = GetResourceString(ref kdl, resource, nextByte, KdlHelpers.Utf8GetString(bytes));
+            string message = GetResourceString(
+                ref kdl,
+                resource,
+                nextByte,
+                KdlHelpers.Utf8GetString(bytes)
+            );
 
             long lineNumber = kdl.CurrentState._lineNumber;
             long bytePositionInLine = kdl.CurrentState._bytePositionInLine;
@@ -372,7 +458,12 @@ namespace Automatonic.Text.Kdl
 
         // This function will convert an ExceptionResource enum value to the resource string.
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static string GetResourceString(ref KdlReader kdl, ExceptionResource resource, byte nextByte, string characters)
+        private static string GetResourceString(
+            ref KdlReader kdl,
+            ExceptionResource resource,
+            byte nextByte,
+            string characters
+        )
         {
             string character = GetPrintableString(nextByte);
 
@@ -402,9 +493,6 @@ namespace Automatonic.Text.Kdl
                     break;
                 case ExceptionResource.RequiredDigitNotFoundEndOfData:
                     message = SR.RequiredDigitNotFoundEndOfData;
-                    break;
-                case ExceptionResource.ExpectedEndAfterSingleKdl:
-                    message = Format(SR.ExpectedEndAfterSingleKdl, character);
                     break;
                 case ExceptionResource.ExpectedEndOfDigitNotFound:
                     message = Format(SR.ExpectedEndOfDigitNotFound, character);
@@ -485,7 +573,9 @@ namespace Automatonic.Text.Kdl
                     message = Format(SR.InvalidLeadingZeroInNumber, character);
                     break;
                 default:
-                    Debug.Fail($"The ExceptionResource enum value: {resource} is not part of the switch. Add the appropriate case and exception message.");
+                    Debug.Fail(
+                        $"The ExceptionResource enum value: {resource} is not part of the switch. Add the appropriate case and exception message."
+                    );
                     break;
             }
 
@@ -493,7 +583,13 @@ namespace Automatonic.Text.Kdl
         }
 
         [DoesNotReturn]
-        public static void ThrowInvalidOperationException(ExceptionResource resource, int currentDepth, int maxDepth, byte token, KdlTokenType tokenType)
+        public static void ThrowInvalidOperationException(
+            ExceptionResource resource,
+            int currentDepth,
+            int maxDepth,
+            byte token,
+            KdlTokenType tokenType
+        )
         {
             throw GetInvalidOperationException(resource, currentDepth, maxDepth, token, tokenType);
         }
@@ -541,7 +637,9 @@ namespace Automatonic.Text.Kdl
         [DoesNotReturn]
         public static void ThrowInvalidOperationException_ReadInvalidUTF16(int charAsInt)
         {
-            throw GetInvalidOperationException(Format(SR.CannotReadInvalidUTF16, $"0x{charAsInt:X2}"));
+            throw GetInvalidOperationException(
+                Format(SR.CannotReadInvalidUTF16, $"0x{charAsInt:X2}")
+            );
         }
 
         [DoesNotReturn]
@@ -550,27 +648,40 @@ namespace Automatonic.Text.Kdl
             throw GetInvalidOperationException(SR.CannotReadIncompleteUTF16);
         }
 
-        public static InvalidOperationException GetInvalidOperationException_ReadInvalidUTF8(DecoderFallbackException? innerException = null)
+        public static InvalidOperationException GetInvalidOperationException_ReadInvalidUTF8(
+            DecoderFallbackException? innerException = null
+        )
         {
             return GetInvalidOperationException(SR.CannotTranscodeInvalidUtf8, innerException);
         }
 
-        public static ArgumentException GetArgumentException_ReadInvalidUTF16(EncoderFallbackException innerException)
+        public static ArgumentException GetArgumentException_ReadInvalidUTF16(
+            EncoderFallbackException innerException
+        )
         {
             return new ArgumentException(SR.CannotTranscodeInvalidUtf16, innerException);
         }
 
-        public static InvalidOperationException GetInvalidOperationException(string message, Exception? innerException)
+        public static InvalidOperationException GetInvalidOperationException(
+            string message,
+            Exception? innerException
+        )
         {
             InvalidOperationException ex = new InvalidOperationException(message, innerException)
             {
-                Source = ExceptionSourceValueToRethrowAsKdlException
+                Source = ExceptionSourceValueToRethrowAsKdlException,
             };
             return ex;
         }
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public static InvalidOperationException GetInvalidOperationException(ExceptionResource resource, int currentDepth, int maxDepth, byte token, KdlTokenType tokenType)
+        public static InvalidOperationException GetInvalidOperationException(
+            ExceptionResource resource,
+            int currentDepth,
+            int maxDepth,
+            byte token,
+            KdlTokenType tokenType
+        )
         {
             string message = GetResourceString(resource, currentDepth, maxDepth, token, tokenType);
             InvalidOperationException ex = GetInvalidOperationException(message);
@@ -586,19 +697,30 @@ namespace Automatonic.Text.Kdl
 
         // This function will convert an ExceptionResource enum value to the resource string.
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private static string GetResourceString(ExceptionResource resource, int currentDepth, int maxDepth, byte token, KdlTokenType tokenType)
+        private static string GetResourceString(
+            ExceptionResource resource,
+            int currentDepth,
+            int maxDepth,
+            byte token,
+            KdlTokenType tokenType
+        )
         {
             string message = "";
             switch (resource)
             {
                 case ExceptionResource.MismatchedObjectArray:
                     Debug.Assert(token is KdlConstants.CloseBracket or KdlConstants.CloseBrace);
-                    message = (tokenType == KdlTokenType.PropertyName) ?
-                        Format(SR.CannotWriteEndAfterProperty, (char)token) :
-                        Format(SR.MismatchedObjectArray, (char)token);
+                    message =
+                        (tokenType == KdlTokenType.PropertyName)
+                            ? Format(SR.CannotWriteEndAfterProperty, (char)token)
+                            : Format(SR.MismatchedObjectArray, (char)token);
                     break;
                 case ExceptionResource.DepthTooLarge:
-                    message = Format(SR.DepthTooLarge, currentDepth & KdlConstants.RemoveFlagsBitMask, maxDepth);
+                    message = Format(
+                        SR.DepthTooLarge,
+                        currentDepth & KdlConstants.RemoveFlagsBitMask,
+                        maxDepth
+                    );
                     break;
                 case ExceptionResource.CannotStartObjectArrayWithoutProperty:
                     message = Format(SR.CannotStartObjectArrayWithoutProperty, tokenType);
@@ -610,15 +732,18 @@ namespace Automatonic.Text.Kdl
                     message = Format(SR.CannotWriteValueWithinObject, tokenType);
                     break;
                 case ExceptionResource.CannotWritePropertyWithinArray:
-                    message = (tokenType == KdlTokenType.PropertyName) ?
-                        Format(SR.CannotWritePropertyAfterProperty) :
-                        Format(SR.CannotWritePropertyWithinArray, tokenType);
+                    message =
+                        (tokenType == KdlTokenType.PropertyName)
+                            ? Format(SR.CannotWritePropertyAfterProperty)
+                            : Format(SR.CannotWritePropertyWithinArray, tokenType);
                     break;
                 case ExceptionResource.CannotWriteValueAfterPrimitiveOrClose:
                     message = Format(SR.CannotWriteValueAfterPrimitiveOrClose, tokenType);
                     break;
                 default:
-                    Debug.Fail($"The ExceptionResource enum value: {resource} is not part of the switch. Add the appropriate case and exception message.");
+                    Debug.Fail(
+                        $"The ExceptionResource enum value: {resource} is not part of the switch. Add the appropriate case and exception message."
+                    );
                     break;
             }
 
@@ -680,11 +805,16 @@ namespace Automatonic.Text.Kdl
                     message = SR.FormatDecimal;
                     break;
                 default:
-                    Debug.Fail($"The NumericType enum value: {numericType} is not part of the switch. Add the appropriate case and exception message.");
+                    Debug.Fail(
+                        $"The NumericType enum value: {numericType} is not part of the switch. Add the appropriate case and exception message."
+                    );
                     break;
             }
 
-            throw new FormatException(message) { Source = ExceptionSourceValueToRethrowAsKdlException };
+            throw new FormatException(message)
+            {
+                Source = ExceptionSourceValueToRethrowAsKdlException,
+            };
         }
 
         [DoesNotReturn]
@@ -708,11 +838,16 @@ namespace Automatonic.Text.Kdl
                     message = SR.CannotDecodeInvalidBase64;
                     break;
                 default:
-                    Debug.Fail($"The DataType enum value: {dataType} is not part of the switch. Add the appropriate case and exception message.");
+                    Debug.Fail(
+                        $"The DataType enum value: {dataType} is not part of the switch. Add the appropriate case and exception message."
+                    );
                     break;
             }
 
-            throw new FormatException(message) { Source = ExceptionSourceValueToRethrowAsKdlException };
+            throw new FormatException(message)
+            {
+                Source = ExceptionSourceValueToRethrowAsKdlException,
+            };
         }
 
         [DoesNotReturn]
@@ -736,7 +871,9 @@ namespace Automatonic.Text.Kdl
         [DoesNotReturn]
         public static void ThrowInsufficientExecutionStackException_KdlElementDeepEqualsInsufficientExecutionStack()
         {
-            throw new InsufficientExecutionStackException(SR.KdlElementDeepEqualsInsufficientExecutionStack);
+            throw new InsufficientExecutionStackException(
+                SR.KdlElementDeepEqualsInsufficientExecutionStack
+            );
         }
     }
 
@@ -748,7 +885,6 @@ namespace Automatonic.Text.Kdl
         RequiredDigitNotFoundAfterDecimal,
         RequiredDigitNotFoundAfterSign,
         RequiredDigitNotFoundEndOfData,
-        ExpectedEndAfterSingleKdl,
         ExpectedEndOfDigitNotFound,
         ExpectedFalse,
         ExpectedNextDigitEValueNotFound,
@@ -800,7 +936,7 @@ namespace Automatonic.Text.Kdl
         Half,
         Single,
         Double,
-        Decimal
+        Decimal,
     }
 
     internal enum DataType

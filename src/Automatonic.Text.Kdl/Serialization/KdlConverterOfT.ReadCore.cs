@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace Automatonic.Text.Kdl.Serialization
 {
     public partial class KdlConverter<T>
@@ -8,7 +6,8 @@ namespace Automatonic.Text.Kdl.Serialization
             ref KdlReader reader,
             out T? value,
             KdlSerializerOptions options,
-            ref ReadStack state)
+            ref ReadStack state
+        )
         {
             try
             {
@@ -22,7 +21,6 @@ namespace Automatonic.Text.Kdl.Serialization
                         {
                             // This branch is hit when deserialization has completed in an earlier call
                             // but we're still processing trailing whitespace. Return the result stored in the state machine.
-                            Debug.Assert(!reader.AllowMultipleValues, "should not be entered by converters allowing multiple values.");
                             value = (T)result;
                         }
                         else
@@ -34,22 +32,14 @@ namespace Automatonic.Text.Kdl.Serialization
                     }
                 }
 
-                bool success = TryRead(ref reader, state.Current.KdlTypeInfo.Type, options, ref state, out value, out _);
-                if (success)
-                {
-                    if (!reader.AllowMultipleValues)
-                    {
-                        // Read any trailing whitespace. This will throw if KdlCommentHandling=Disallow.
-                        // Avoiding setting ReturnValue for the final block; reader.Read() returns 'false' even when this is the final block.
-                        if (!reader.Read() && !reader.IsFinalBlock)
-                        {
-                            // This method will re-enter if so set `ReturnValue` which will be returned during re-entry.
-                            state.Current.ReturnValue = value;
-                            success = false;
-                        }
-                    }
-                }
-
+                bool success = TryRead(
+                    ref reader,
+                    state.Current.KdlTypeInfo.Type,
+                    options,
+                    ref state,
+                    out value,
+                    out _
+                );
                 return success;
             }
             catch (Exception ex)
@@ -60,11 +50,13 @@ namespace Automatonic.Text.Kdl.Serialization
                         ThrowHelper.ReThrowWithPath(ref state, kdlReaderEx);
                         break;
 
-                    case FormatException when ex.Source == ThrowHelper.ExceptionSourceValueToRethrowAsKdlException:
+                    case FormatException
+                        when ex.Source == ThrowHelper.ExceptionSourceValueToRethrowAsKdlException:
                         ThrowHelper.ReThrowWithPath(ref state, reader, ex);
                         break;
 
-                    case InvalidOperationException when ex.Source == ThrowHelper.ExceptionSourceValueToRethrowAsKdlException:
+                    case InvalidOperationException
+                        when ex.Source == ThrowHelper.ExceptionSourceValueToRethrowAsKdlException:
                         ThrowHelper.ReThrowWithPath(ref state, reader, ex);
                         break;
 

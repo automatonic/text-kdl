@@ -17,7 +17,9 @@ namespace Automatonic.Text.Kdl
         public static ReadOnlySpan<byte> GetUnescapedSpan(this scoped ref KdlReader reader)
         {
             Debug.Assert(reader.TokenType is KdlTokenType.String or KdlTokenType.PropertyName);
-            ReadOnlySpan<byte> span = reader.HasValueSequence ? reader.ValueSequence.ToArray() : reader.ValueSpan;
+            ReadOnlySpan<byte> span = reader.HasValueSequence
+                ? reader.ValueSequence.ToArray()
+                : reader.ValueSpan;
             return reader.ValueIsEscaped ? KdlReaderHelper.GetUnescapedSpan(span) : span;
         }
 
@@ -30,7 +32,10 @@ namespace Automatonic.Text.Kdl
         /// <returns>True if the reader has been buffered with all required data.</returns>
         // AggressiveInlining used since this method is on a hot path and short. The AdvanceWithReadAhead method should not be inlined.
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool TryAdvanceWithOptionalReadAhead(this scoped ref KdlReader reader, bool requiresReadAhead)
+        public static bool TryAdvanceWithOptionalReadAhead(
+            this scoped ref KdlReader reader,
+            bool requiresReadAhead
+        )
         {
             // No read-ahead necessary if we're at the final block of KDL data.
             bool readAhead = requiresReadAhead && !reader.IsFinalBlock;
@@ -40,9 +45,12 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Attempts to read ahead to the next root-level KDL value, if it exists.
         /// </summary>
-        public static bool TryAdvanceToNextRootLevelValueWithOptionalReadAhead(this scoped ref KdlReader reader, bool requiresReadAhead, out bool isAtEndOfStream)
+        public static bool TryAdvanceToNextRootLevelValueWithOptionalReadAhead(
+            this scoped ref KdlReader reader,
+            bool requiresReadAhead,
+            out bool isAtEndOfStream
+        )
         {
-            Debug.Assert(reader.AllowMultipleValues, "only supported by readers that support multiple values.");
             Debug.Assert(reader.CurrentDepth == 0, "should only invoked for top-level values.");
 
             KdlReader checkpoint = reader;
@@ -80,7 +88,7 @@ namespace Automatonic.Text.Kdl
 
             // Perform the actual read-ahead.
             KdlTokenType tokenType = reader.TokenType;
-            if (tokenType is KdlTokenType.StartObject or KdlTokenType.StartArray)
+            if (tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray)
             {
                 // Attempt to skip to make sure we have all the data we need.
                 bool complete = reader.TrySkipPartial();
@@ -125,32 +133,35 @@ namespace Automatonic.Text.Kdl
         /// <paramref name="lowerBound"/> and <paramref name="upperBound"/>, inclusive.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsInRangeInclusive(uint value, uint lowerBound, uint upperBound)
-            => (value - lowerBound) <= (upperBound - lowerBound);
+        public static bool IsInRangeInclusive(uint value, uint lowerBound, uint upperBound) =>
+            (value - lowerBound) <= (upperBound - lowerBound);
 
         /// <summary>
         /// Returns <see langword="true"/> if <paramref name="value"/> is between
         /// <paramref name="lowerBound"/> and <paramref name="upperBound"/>, inclusive.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsInRangeInclusive(int value, int lowerBound, int upperBound)
-            => (uint)(value - lowerBound) <= (uint)(upperBound - lowerBound);
+        public static bool IsInRangeInclusive(int value, int lowerBound, int upperBound) =>
+            (uint)(value - lowerBound) <= (uint)(upperBound - lowerBound);
 
         /// <summary>
         /// Returns <see langword="true"/> if <paramref name="value"/> is between
         /// <paramref name="lowerBound"/> and <paramref name="upperBound"/>, inclusive.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsInRangeInclusive(long value, long lowerBound, long upperBound)
-            => (ulong)(value - lowerBound) <= (ulong)(upperBound - lowerBound);
+        public static bool IsInRangeInclusive(long value, long lowerBound, long upperBound) =>
+            (ulong)(value - lowerBound) <= (ulong)(upperBound - lowerBound);
 
         /// <summary>
         /// Returns <see langword="true"/> if <paramref name="value"/> is between
         /// <paramref name="lowerBound"/> and <paramref name="upperBound"/>, inclusive.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsInRangeInclusive(KdlTokenType value, KdlTokenType lowerBound, KdlTokenType upperBound)
-            => (value - lowerBound) <= (upperBound - lowerBound);
+        public static bool IsInRangeInclusive(
+            KdlTokenType value,
+            KdlTokenType lowerBound,
+            KdlTokenType upperBound
+        ) => (value - lowerBound) <= (upperBound - lowerBound);
 
         /// <summary>
         /// Returns <see langword="true"/> if <paramref name="value"/> is in the range [0..9].
@@ -213,19 +224,23 @@ namespace Automatonic.Text.Kdl
         public static bool TryLookupUtf8Key<TValue>(
             this Dictionary<string, TValue> dictionary,
             ReadOnlySpan<byte> utf8Key,
-            [MaybeNullWhen(false)] out TValue result)
+            [MaybeNullWhen(false)] out TValue result
+        )
         {
 #if NET9_0_OR_GREATER
-            Debug.Assert(dictionary.Comparer is IAlternateEqualityComparer<ReadOnlySpan<char>, string>);
+            Debug.Assert(
+                dictionary.Comparer is IAlternateEqualityComparer<ReadOnlySpan<char>, string>
+            );
 
             Dictionary<string, TValue>.AlternateLookup<ReadOnlySpan<char>> spanLookup =
                 dictionary.GetAlternateLookup<ReadOnlySpan<char>>();
 
             char[]? rentedBuffer = null;
 
-            Span<char> charBuffer = utf8Key.Length <= KdlConstants.StackallocCharThreshold ?
-                stackalloc char[KdlConstants.StackallocCharThreshold] :
-                (rentedBuffer = ArrayPool<char>.Shared.Rent(utf8Key.Length));
+            Span<char> charBuffer =
+                utf8Key.Length <= KdlConstants.StackallocCharThreshold
+                    ? stackalloc char[KdlConstants.StackallocCharThreshold]
+                    : (rentedBuffer = ArrayPool<char>.Shared.Rent(utf8Key.Length));
 
             int charsWritten = Encoding.UTF8.GetChars(utf8Key, charBuffer);
             Span<char> decodedKey = charBuffer[0..charsWritten];
@@ -250,7 +265,8 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         public static Dictionary<TKey, TValue> CreateDictionaryFromCollection<TKey, TValue>(
             IEnumerable<KeyValuePair<TKey, TValue>> collection,
-            IEqualityComparer<TKey> comparer)
+            IEqualityComparer<TKey> comparer
+        )
             where TKey : notnull
         {
 #if !NET
@@ -317,10 +333,19 @@ namespace Automatonic.Text.Kdl
         private const int IntegerRegexTimeoutMs = 200;
 
 #if NET
-        [GeneratedRegex(IntegerRegexPattern, RegexOptions.None, matchTimeoutMilliseconds: IntegerRegexTimeoutMs)]
+        [GeneratedRegex(
+            IntegerRegexPattern,
+            RegexOptions.None,
+            matchTimeoutMilliseconds: IntegerRegexTimeoutMs
+        )]
         private static partial Regex CreateIntegerRegex();
 #else
-        private static Regex CreateIntegerRegex() => new(IntegerRegexPattern, RegexOptions.Compiled, TimeSpan.FromMilliseconds(IntegerRegexTimeoutMs));
+        private static Regex CreateIntegerRegex() =>
+            new(
+                IntegerRegexPattern,
+                RegexOptions.Compiled,
+                TimeSpan.FromMilliseconds(IntegerRegexTimeoutMs)
+            );
 #endif
 
         /// <summary>
@@ -330,23 +355,29 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(left.Length > 0 && right.Length > 0);
 
-            ParseNumber(left,
+            ParseNumber(
+                left,
                 out bool leftIsNegative,
                 out ReadOnlySpan<byte> leftIntegral,
                 out ReadOnlySpan<byte> leftFractional,
-                out int leftExponent);
+                out int leftExponent
+            );
 
-            ParseNumber(right,
+            ParseNumber(
+                right,
                 out bool rightIsNegative,
                 out ReadOnlySpan<byte> rightIntegral,
                 out ReadOnlySpan<byte> rightFractional,
-                out int rightExponent);
+                out int rightExponent
+            );
 
             int nDigits;
-            if (leftIsNegative != rightIsNegative ||
-                leftExponent != rightExponent ||
-                (nDigits = leftIntegral.Length + leftFractional.Length) !=
-                            rightIntegral.Length + rightFractional.Length)
+            if (
+                leftIsNegative != rightIsNegative
+                || leftExponent != rightExponent
+                || (nDigits = leftIntegral.Length + leftFractional.Length)
+                    != rightIntegral.Length + rightFractional.Length
+            )
             {
                 return false;
             }
@@ -397,16 +428,17 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(leftFirst.Length == rightFirst.Length);
             Debug.Assert(leftMiddle.Length == rightMiddle.Length);
             Debug.Assert(leftLast.Length == rightLast.Length);
-            return leftFirst.SequenceEqual(rightFirst) &&
-                leftMiddle.SequenceEqual(rightMiddle) &&
-                leftLast.SequenceEqual(rightLast);
+            return leftFirst.SequenceEqual(rightFirst)
+                && leftMiddle.SequenceEqual(rightMiddle)
+                && leftLast.SequenceEqual(rightLast);
 
             static void ParseNumber(
                 ReadOnlySpan<byte> span,
                 out bool isNegative,
                 out ReadOnlySpan<byte> integral,
                 out ReadOnlySpan<byte> fractional,
-                out int exponent)
+                out int exponent
+            )
             {
                 // Parses a KDL number into its integral, fractional, and exponent parts.
                 // The returned components use a normal-form decimal representation:
@@ -432,7 +464,10 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    Debug.Assert(char.IsDigit((char)span[0]), "leading plus not allowed in valid KDL numbers.");
+                    Debug.Assert(
+                        char.IsDigit((char)span[0]),
+                        "leading plus not allowed in valid KDL numbers."
+                    );
                     neg = false;
                 }
 
@@ -469,7 +504,9 @@ namespace Automatonic.Text.Kdl
                 if (!Utf8Parser.TryParse(span[(i + 1)..], out exp, out _))
                 {
                     Debug.Assert(span.Length >= 10);
-                    ThrowHelper.ThrowArgumentOutOfRangeException_KdlNumberExponentTooLarge(nameof(exponent));
+                    ThrowHelper.ThrowArgumentOutOfRangeException_KdlNumberExponentTooLarge(
+                        nameof(exponent)
+                    );
                 }
 
                 Normalize: // Calculates the normal form of the number.

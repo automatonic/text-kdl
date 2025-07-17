@@ -38,7 +38,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlReadOnlyDocument Parse(ReadOnlyMemory<byte> utf8Kdl, KdlReadOnlyDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(
+            ReadOnlyMemory<byte> utf8Kdl,
+            KdlReadOnlyDocumentOptions options = default
+        )
         {
             return Parse(utf8Kdl, options.GetReaderOptions());
         }
@@ -68,7 +71,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlReadOnlyDocument Parse(ReadOnlySequence<byte> utf8Kdl, KdlReadOnlyDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(
+            ReadOnlySequence<byte> utf8Kdl,
+            KdlReadOnlyDocumentOptions options = default
+        )
         {
             KdlReaderOptions readerOptions = options.GetReaderOptions();
 
@@ -109,7 +115,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlReadOnlyDocument Parse(Stream utf8Kdl, KdlReadOnlyDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(
+            Stream utf8Kdl,
+            KdlReadOnlyDocumentOptions options = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -131,16 +140,23 @@ namespace Automatonic.Text.Kdl.RandomAccess
             }
         }
 
-        internal static KdlReadOnlyDocument ParseRented(PooledByteBufferWriter utf8Kdl, KdlReadOnlyDocumentOptions options = default)
+        internal static KdlReadOnlyDocument ParseRented(
+            PooledByteBufferWriter utf8Kdl,
+            KdlReadOnlyDocumentOptions options = default
+        )
         {
             return Parse(
                 utf8Kdl.WrittenMemory,
                 options.GetReaderOptions(),
                 extraRentedArrayPoolBytes: null,
-                extraPooledByteBufferWriter: utf8Kdl);
+                extraPooledByteBufferWriter: utf8Kdl
+            );
         }
 
-        internal static KdlReadOnlyDocument ParseValue(Stream utf8Kdl, KdlReadOnlyDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(
+            Stream utf8Kdl,
+            KdlReadOnlyDocumentOptions options
+        )
         {
             Debug.Assert(utf8Kdl != null);
 
@@ -157,7 +173,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             return ParseUnrented(owned.AsMemory(), options.GetReaderOptions());
         }
 
-        internal static KdlReadOnlyDocument ParseValue(ReadOnlySpan<byte> utf8Kdl, KdlReadOnlyDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(
+            ReadOnlySpan<byte> utf8Kdl,
+            KdlReadOnlyDocumentOptions options
+        )
         {
             byte[] owned = new byte[utf8Kdl.Length];
             utf8Kdl.CopyTo(owned);
@@ -165,7 +184,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             return ParseUnrented(owned.AsMemory(), options.GetReaderOptions());
         }
 
-        internal static KdlReadOnlyDocument ParseValue(string kdl, KdlReadOnlyDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(
+            string kdl,
+            KdlReadOnlyDocumentOptions options
+        )
         {
             Debug.Assert(kdl != null);
             return ParseValue(kdl.AsMemory(), options);
@@ -190,7 +212,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
         public static Task<KdlReadOnlyDocument> ParseAsync(
             Stream utf8Kdl,
             KdlReadOnlyDocumentOptions options = default,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -203,9 +226,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
         private static async Task<KdlReadOnlyDocument> ParseAsyncCore(
             Stream utf8Kdl,
             KdlReadOnlyDocumentOptions options = default,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            ArraySegment<byte> drained = await ReadToEndAsync(utf8Kdl, cancellationToken).ConfigureAwait(false);
+            ArraySegment<byte> drained = await ReadToEndAsync(utf8Kdl, cancellationToken)
+                .ConfigureAwait(false);
             Debug.Assert(drained.Array != null);
             try
             {
@@ -223,9 +248,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
         internal static async Task<KdlReadOnlyDocument> ParseAsyncCoreUnrented(
             Stream utf8Kdl,
             KdlReadOnlyDocumentOptions options = default,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
-            ArraySegment<byte> drained = await ReadToEndAsync(utf8Kdl, cancellationToken).ConfigureAwait(false);
+            ArraySegment<byte> drained = await ReadToEndAsync(utf8Kdl, cancellationToken)
+                .ConfigureAwait(false);
             Debug.Assert(drained.Array != null);
 
             byte[] owned = new byte[drained.Count];
@@ -257,7 +284,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlReadOnlyDocument Parse(ReadOnlyMemory<char> kdl, KdlReadOnlyDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(
+            ReadOnlyMemory<char> kdl,
+            KdlReadOnlyDocumentOptions options = default
+        )
         {
             ReadOnlySpan<char> kdlChars = kdl.Span;
             int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(kdlChars);
@@ -271,7 +301,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 return Parse(
                     utf8Bytes.AsMemory(0, actualByteCount),
                     options.GetReaderOptions(),
-                    utf8Bytes);
+                    utf8Bytes
+                );
             }
             catch
             {
@@ -282,7 +313,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             }
         }
 
-        internal static KdlReadOnlyDocument ParseValue(ReadOnlyMemory<char> kdl, KdlReadOnlyDocumentOptions options)
+        internal static KdlReadOnlyDocument ParseValue(
+            ReadOnlyMemory<char> kdl,
+            KdlReadOnlyDocumentOptions options
+        )
         {
             ReadOnlySpan<char> kdlChars = kdl.Span;
             int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(kdlChars);
@@ -321,7 +355,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ArgumentException">
         ///   <paramref name="options"/> contains unsupported options.
         /// </exception>
-        public static KdlReadOnlyDocument Parse(string kdl, KdlReadOnlyDocumentOptions options = default)
+        public static KdlReadOnlyDocument Parse(
+            string kdl,
+            KdlReadOnlyDocumentOptions options = default
+        )
         {
             if (kdl is null)
             {
@@ -369,7 +406,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static bool TryParseValue(ref KdlReader reader, [NotNullWhen(true)] out KdlReadOnlyDocument? document)
+        public static bool TryParseValue(
+            ref KdlReader reader,
+            [NotNullWhen(true)] out KdlReadOnlyDocument? document
+        )
         {
             return TryParseValue(ref reader, out document, shouldThrow: false, useArrayPools: true);
         }
@@ -411,7 +451,12 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// </exception>
         public static KdlReadOnlyDocument ParseValue(ref KdlReader reader)
         {
-            bool ret = TryParseValue(ref reader, out KdlReadOnlyDocument? document, shouldThrow: true, useArrayPools: true);
+            bool ret = TryParseValue(
+                ref reader,
+                out KdlReadOnlyDocument? document,
+                shouldThrow: true,
+                useArrayPools: true
+            );
 
             Debug.Assert(ret, "TryParseValue returned false with shouldThrow: true.");
             Debug.Assert(document != null, "null document returned with shouldThrow: true.");
@@ -422,7 +467,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ref KdlReader reader,
             [NotNullWhen(true)] out KdlReadOnlyDocument? document,
             bool shouldThrow,
-            bool useArrayPools)
+            bool useArrayPools
+        )
         {
             KdlReaderState state = reader.CurrentState;
             CheckSupportedOptions(state.Options, nameof(reader));
@@ -451,7 +497,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             {
                                 ThrowHelper.ThrowKdlReaderException(
                                     ref reader,
-                                    ExceptionResource.ExpectedKdlTokens);
+                                    ExceptionResource.ExpectedKdlTokens
+                                );
                             }
 
                             reader = restore;
@@ -466,7 +513,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 switch (reader.TokenType)
                 {
                     // Any of the "value start" states are acceptable.
-                    case KdlTokenType.StartObject:
+                    case KdlTokenType.StartChildrenBlock:
                     case KdlTokenType.StartArray:
                     {
                         long startingOffset = reader.TokenStartIndex;
@@ -477,7 +524,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             {
                                 ThrowHelper.ThrowKdlReaderException(
                                     ref reader,
-                                    ExceptionResource.ExpectedKdlTokens);
+                                    ExceptionResource.ExpectedKdlTokens
+                                );
                             }
 
                             reader = restore;
@@ -492,7 +540,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         {
                             valueSpan = reader.OriginalSpan.Slice(
                                 checked((int)startingOffset),
-                                checked((int)totalLength));
+                                checked((int)totalLength)
+                            );
                         }
                         else
                         {
@@ -500,8 +549,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         }
 
                         Debug.Assert(
-                            reader.TokenType is KdlTokenType.EndObject or
-                            KdlTokenType.EndArray);
+                            reader.TokenType
+                                is KdlTokenType.EndChildrenBlock
+                                    or KdlTokenType.EndArray
+                        );
 
                         break;
                     }
@@ -556,13 +607,19 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
                             Debug.Assert(
                                 readerSpan[(int)reader.TokenStartIndex] == (byte)'"',
-                                $"Calculated span starts with {readerSpan[(int)reader.TokenStartIndex]}");
+                                $"Calculated span starts with {readerSpan[(int)reader.TokenStartIndex]}"
+                            );
 
                             Debug.Assert(
-                                readerSpan[(int)reader.TokenStartIndex + payloadLength - 1] == (byte)'"',
-                                $"Calculated span ends with {readerSpan[(int)reader.TokenStartIndex + payloadLength - 1]}");
+                                readerSpan[(int)reader.TokenStartIndex + payloadLength - 1]
+                                    == (byte)'"',
+                                $"Calculated span ends with {readerSpan[(int)reader.TokenStartIndex + payloadLength - 1]}"
+                            );
 
-                            valueSpan = readerSpan.Slice((int)reader.TokenStartIndex, payloadLength);
+                            valueSpan = readerSpan.Slice(
+                                (int)reader.TokenStartIndex,
+                                payloadLength
+                            );
                         }
                         else
                         {
@@ -580,11 +637,13 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             valueSequence = sequence.Slice(reader.TokenStartIndex, payloadLength);
                             Debug.Assert(
                                 valueSequence.First.Span[0] == (byte)'"',
-                                $"Calculated sequence starts with {valueSequence.First.Span[0]}");
+                                $"Calculated sequence starts with {valueSequence.First.Span[0]}"
+                            );
 
                             Debug.Assert(
                                 valueSequence.ToArray()[payloadLength - 1] == (byte)'"',
-                                $"Calculated sequence ends with {valueSequence.ToArray()[payloadLength - 1]}");
+                                $"Calculated sequence ends with {valueSequence.ToArray()[payloadLength - 1]}"
+                            );
                         }
 
                         break;
@@ -600,7 +659,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             ThrowHelper.ThrowKdlReaderException(
                                 ref reader,
                                 ExceptionResource.ExpectedStartOfValueNotFound,
-                                displayByte);
+                                displayByte
+                            );
                         }
 
                         reader = restore;
@@ -691,11 +751,14 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlyMemory<byte> utf8Kdl,
             KdlReaderOptions readerOptions,
             byte[]? extraRentedArrayPoolBytes = null,
-            PooledByteBufferWriter? extraPooledByteBufferWriter = null)
+            PooledByteBufferWriter? extraPooledByteBufferWriter = null
+        )
         {
             ReadOnlySpan<byte> utf8KdlSpan = utf8Kdl.Span;
             var database = MetadataDb.CreateRented(utf8Kdl.Length, convertToAlloc: false);
-            var stack = new StackRowStack(KdlReadOnlyDocumentOptions.DefaultMaxDepth * StackRow.Size);
+            var stack = new StackRowStack(
+                KdlReadOnlyDocumentOptions.DefaultMaxDepth * StackRow.Size
+            );
 
             try
             {
@@ -711,19 +774,27 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 stack.Dispose();
             }
 
-            return new KdlReadOnlyDocument(utf8Kdl, database, extraRentedArrayPoolBytes, extraPooledByteBufferWriter);
+            return new KdlReadOnlyDocument(
+                utf8Kdl,
+                database,
+                extraRentedArrayPoolBytes,
+                extraPooledByteBufferWriter
+            );
         }
 
         private static KdlReadOnlyDocument ParseUnrented(
             ReadOnlyMemory<byte> utf8Kdl,
             KdlReaderOptions readerOptions,
-            KdlTokenType tokenType = KdlTokenType.None)
+            KdlTokenType tokenType = KdlTokenType.None
+        )
         {
             // These tokens should already have been processed.
             Debug.Assert(
-                tokenType is not KdlTokenType.Null and
-                not KdlTokenType.False and
-                not KdlTokenType.True);
+                tokenType
+                    is not KdlTokenType.Null
+                        and not KdlTokenType.False
+                        and not KdlTokenType.True
+            );
 
             ReadOnlySpan<byte> utf8KdlSpan = utf8Kdl.Span;
             MetadataDb database;
@@ -738,7 +809,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
             else
             {
                 database = MetadataDb.CreateRented(utf8Kdl.Length, convertToAlloc: true);
-                var stack = new StackRowStack(KdlReadOnlyDocumentOptions.DefaultMaxDepth * StackRow.Size);
+                var stack = new StackRowStack(
+                    KdlReadOnlyDocumentOptions.DefaultMaxDepth * StackRow.Size
+                );
                 try
                 {
                     Parse(utf8KdlSpan, readerOptions, ref database, ref stack);
@@ -765,7 +838,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 {
                     // Ask for 1 more than the length to avoid resizing later,
                     // which is unnecessary in the common case where the stream length doesn't change.
-                    long expectedLength = Math.Max(utf8Bom.Length, stream.Length - stream.Position) + 1;
+                    long expectedLength =
+                        Math.Max(utf8Bom.Length, stream.Length - stream.Position) + 1;
                     rented = ArrayPool<byte>.Shared.Rent(checked((int)expectedLength));
                 }
                 else
@@ -781,17 +855,16 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     // No need for checking for growth, the minimal rent sizes both guarantee it'll fit.
                     Debug.Assert(rented.Length >= utf8Bom.Length);
 
-                    lastRead = stream.Read(
-                        rented,
-                        written,
-                        utf8Bom.Length - written);
+                    lastRead = stream.Read(rented, written, utf8Bom.Length - written);
 
                     written += lastRead;
                 } while (lastRead > 0 && written < utf8Bom.Length);
 
                 // If we have 3 bytes, and they're the BOM, reset the write position to 0.
-                if (written == utf8Bom.Length &&
-                    utf8Bom.SequenceEqual(rented.AsSpan(0, utf8Bom.Length)))
+                if (
+                    written == utf8Bom.Length
+                    && utf8Bom.SequenceEqual(rented.AsSpan(0, utf8Bom.Length))
+                )
                 {
                     written = 0;
                 }
@@ -828,13 +901,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
         private static async
 #if NET
-            ValueTask<ArraySegment<byte>>
+        ValueTask<ArraySegment<byte>>
 #else
-            Task<ArraySegment<byte>>
+        Task<ArraySegment<byte>>
 #endif
-            ReadToEndAsync(
-            Stream stream,
-            CancellationToken cancellationToken)
+        ReadToEndAsync(Stream stream, CancellationToken cancellationToken)
         {
             int written = 0;
             byte[]? rented = null;
@@ -848,7 +919,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 {
                     // Ask for 1 more than the length to avoid resizing later,
                     // which is unnecessary in the common case where the stream length doesn't change.
-                    long expectedLength = Math.Max(utf8BomLength, stream.Length - stream.Position) + 1;
+                    long expectedLength =
+                        Math.Max(utf8BomLength, stream.Length - stream.Position) + 1;
                     rented = ArrayPool<byte>.Shared.Rent(checked((int)expectedLength));
                 }
                 else
@@ -864,22 +936,25 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     // No need for checking for growth, the minimal rent sizes both guarantee it'll fit.
                     Debug.Assert(rented.Length >= KdlConstants.Utf8Bom.Length);
 
-                    lastRead = await stream.ReadAsync(
+                    lastRead = await stream
+                        .ReadAsync(
 #if NET
-                        rented.AsMemory(written, utf8BomLength - written),
+                            rented.AsMemory(written, utf8BomLength - written),
 #else
-                        rented,
-                        written,
-                        utf8BomLength - written,
+                            rented, written, utf8BomLength - written,
 #endif
-                        cancellationToken).ConfigureAwait(false);
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false);
 
                     written += lastRead;
                 } while (lastRead > 0 && written < utf8BomLength);
 
                 // If we have 3 bytes, and they're the BOM, reset the write position to 0.
-                if (written == utf8BomLength &&
-                    KdlConstants.Utf8Bom.SequenceEqual(rented.AsSpan(0, utf8BomLength)))
+                if (
+                    written == utf8BomLength
+                    && KdlConstants.Utf8Bom.SequenceEqual(rented.AsSpan(0, utf8BomLength))
+                )
                 {
                     written = 0;
                 }
@@ -895,18 +970,17 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         ArrayPool<byte>.Shared.Return(toReturn, clearArray: true);
                     }
 
-                    lastRead = await stream.ReadAsync(
+                    lastRead = await stream
+                        .ReadAsync(
 #if NET
-                        rented.AsMemory(written),
+                            rented.AsMemory(written),
 #else
-                        rented,
-                        written,
-                        rented.Length - written,
+                            rented, written, rented.Length - written,
 #endif
-                        cancellationToken).ConfigureAwait(false);
+                            cancellationToken)
+                        .ConfigureAwait(false);
 
                     written += lastRead;
-
                 } while (lastRead > 0);
 
                 return new ArraySegment<byte>(rented, 0, written);

@@ -213,7 +213,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
             {
                 // StartArray or StartObject should have length -1, otherwise the length should not be -1.
                 Debug.Assert(
-                    (tokenType == KdlTokenType.StartArray || tokenType == KdlTokenType.StartObject) ==
+                    (tokenType == KdlTokenType.StartArray || tokenType == KdlTokenType.StartChildrenBlock) ==
                     (length == DbRow.UnknownSize));
 
                 if (Length >= _data.Length - DbRow.Size)
@@ -308,7 +308,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             internal readonly int FindIndexOfFirstUnsetSizeOrLength(KdlTokenType lookupType)
             {
-                Debug.Assert(lookupType is KdlTokenType.StartObject or KdlTokenType.StartArray);
+                Debug.Assert(lookupType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray);
                 return FindOpenElement(lookupType);
             }
 
@@ -358,10 +358,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
 #if DEBUG
                 DbRow end = Get(endIndex - DbRow.Size);
 
-                if (start.TokenType == KdlTokenType.StartObject)
+                if (start.TokenType == KdlTokenType.StartChildrenBlock)
                 {
                     Debug.Assert(
-                        end.TokenType == KdlTokenType.EndObject,
+                        end.TokenType == KdlTokenType.EndChildrenBlock,
                         $"StartObject paired with {end.TokenType}");
                 }
                 else if (start.TokenType == KdlTokenType.StartArray)

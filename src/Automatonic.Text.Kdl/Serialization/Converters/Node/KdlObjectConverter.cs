@@ -43,7 +43,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             switch (reader.TokenType)
             {
-                case KdlTokenType.StartObject:
+                case KdlTokenType.StartChildrenBlock:
                     return ReadObject(ref reader, options.GetNodeOptions());
                 case KdlTokenType.Null:
                     return null;

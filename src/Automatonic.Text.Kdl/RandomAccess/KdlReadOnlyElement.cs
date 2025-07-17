@@ -1586,9 +1586,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             KdlTokenType tokenType = TokenType;
 
-            if (tokenType != KdlTokenType.StartObject)
+            if (tokenType != KdlTokenType.StartChildrenBlock)
             {
-                ThrowHelper.ThrowKdlElementWrongTypeException(KdlTokenType.StartObject, tokenType);
+                ThrowHelper.ThrowKdlElementWrongTypeException(KdlTokenType.StartChildrenBlock, tokenType);
             }
 
             return new NodeEnumerator(this);
@@ -1641,7 +1641,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     return bool.FalseString;
                 case KdlTokenType.Number:
                 case KdlTokenType.StartArray:
-                case KdlTokenType.StartObject:
+                case KdlTokenType.StartChildrenBlock:
                 {
                     // null parent should have hit the None case
                     Debug.Assert(_parent != null);
@@ -1651,7 +1651,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     return GetString()!;
                 case KdlTokenType.Comment:
                 case KdlTokenType.EndArray:
-                case KdlTokenType.EndObject:
+                case KdlTokenType.EndChildrenBlock:
                 default:
                     Debug.Fail($"No handler for {nameof(KdlTokenType)}.{TokenType}");
                     return string.Empty;

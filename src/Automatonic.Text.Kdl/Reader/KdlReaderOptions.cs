@@ -29,7 +29,9 @@ namespace Automatonic.Text.Kdl
                 Debug.Assert(value >= 0);
                 if (value > KdlCommentHandling.Allow)
                 {
-                    ThrowHelper.ThrowArgumentOutOfRangeException_CommentEnumMustBeInRange(nameof(value));
+                    ThrowHelper.ThrowArgumentOutOfRangeException_CommentEnumMustBeInRange(
+                        nameof(value)
+                    );
                 }
 
                 _commentHandling = value;
@@ -52,7 +54,9 @@ namespace Automatonic.Text.Kdl
             {
                 if (value < 0)
                 {
-                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(nameof(value));
+                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(
+                        nameof(value)
+                    );
                 }
 
                 _maxDepth = value;
@@ -67,14 +71,5 @@ namespace Automatonic.Text.Kdl
         /// By default, it's set to false, and <exception cref="KdlException"/> is thrown if a trailing comma is encountered.
         /// </remarks>
         public bool AllowTrailingCommas { get; set; }
-
-        /// <summary>
-        /// Defines whether the <see cref="KdlReader"/> should tolerate
-        /// zero or more top-level KDL values that are whitespace separated.
-        /// </summary>
-        /// <remarks>
-        /// By default, it's set to false, and <exception cref="KdlException"/> is thrown if trailing content is encountered after the first top-level KDL value.
-        /// </remarks>
-        public bool AllowMultipleValues { get; set; }
     }
 }

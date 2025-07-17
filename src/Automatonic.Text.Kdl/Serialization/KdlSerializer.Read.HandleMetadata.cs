@@ -61,7 +61,7 @@ namespace Automatonic.Text.Kdl
 
                 if (state.Current.PropertyState < StackFramePropertyState.Name)
                 {
-                    if (reader.TokenType == KdlTokenType.EndObject)
+                    if (reader.TokenType == KdlTokenType.EndChildrenBlock)
                     {
                         // Read the entire object while parsing for metadata.
                         goto Done;
@@ -497,7 +497,7 @@ namespace Automatonic.Text.Kdl
                     Debug.Assert(state.Current.MetadataPropertyNames is MetadataPropertyName.None || state.Current.MetadataPropertyNames.HasFlag(MetadataPropertyName.Values));
                     break;
 
-                case KdlTokenType.EndObject:
+                case KdlTokenType.EndChildrenBlock:
                     if (state.Current.MetadataPropertyNames != MetadataPropertyName.Ref)
                     {
                         // Read the entire KDL object while parsing for metadata: for collection converters this is only legal for $ref nodes.

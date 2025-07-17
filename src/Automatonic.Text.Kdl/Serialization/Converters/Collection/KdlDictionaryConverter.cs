@@ -81,7 +81,7 @@ namespace Automatonic.Text.Kdl.Serialization
             {
                 // Fast path that avoids maintaining state variables and dealing with preserved references.
 
-                if (reader.TokenType != KdlTokenType.StartObject)
+                if (reader.TokenType != KdlTokenType.StartChildrenBlock)
                 {
                     ThrowHelper.ThrowKdlException_DeserializeUnableToConvertValue(Type);
                 }
@@ -101,7 +101,7 @@ namespace Automatonic.Text.Kdl.Serialization
                         // Read the key name.
                         reader.ReadWithVerify();
 
-                        if (reader.TokenType == KdlTokenType.EndObject)
+                        if (reader.TokenType == KdlTokenType.EndChildrenBlock)
                         {
                             break;
                         }
@@ -127,7 +127,7 @@ namespace Automatonic.Text.Kdl.Serialization
                         // Read the key name.
                         reader.ReadWithVerify();
 
-                        if (reader.TokenType == KdlTokenType.EndObject)
+                        if (reader.TokenType == KdlTokenType.EndChildrenBlock)
                         {
                             break;
                         }
@@ -151,7 +151,7 @@ namespace Automatonic.Text.Kdl.Serialization
                 // Slower path that supports continuation and reading metadata.
                 if (state.Current.ObjectState == StackFrameObjectState.None)
                 {
-                    if (reader.TokenType != KdlTokenType.StartObject)
+                    if (reader.TokenType != KdlTokenType.StartChildrenBlock)
                     {
                         ThrowHelper.ThrowKdlException_DeserializeUnableToConvertValue(Type);
                     }
@@ -234,7 +234,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     TKey key;
                     if (state.Current.PropertyState < StackFramePropertyState.Name)
                     {
-                        if (reader.TokenType == KdlTokenType.EndObject)
+                        if (reader.TokenType == KdlTokenType.EndChildrenBlock)
                         {
                             break;
                         }

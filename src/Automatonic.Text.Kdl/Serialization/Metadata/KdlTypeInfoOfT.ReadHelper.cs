@@ -10,12 +10,20 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         internal T? Deserialize(ref KdlReader reader, ref ReadStack state)
         {
             Debug.Assert(IsConfigured);
-            bool success = EffectiveConverter.ReadCore(ref reader, out T? result, Options, ref state);
+            bool success = EffectiveConverter.ReadCore(
+                ref reader,
+                out T? result,
+                Options,
+                ref state
+            );
             Debug.Assert(success, "Should only return false for async deserialization");
             return result;
         }
 
-        internal async ValueTask<T?> DeserializeAsync(Stream utf8Kdl, CancellationToken cancellationToken)
+        internal async ValueTask<T?> DeserializeAsync(
+            Stream utf8Kdl,
+            CancellationToken cancellationToken
+        )
         {
             Debug.Assert(IsConfigured);
             KdlSerializerOptions options = Options;
@@ -28,12 +36,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 while (true)
                 {
-                    bufferState = await bufferState.ReadFromStreamAsync(utf8Kdl, cancellationToken).ConfigureAwait(false);
+                    bufferState = await bufferState
+                        .ReadFromStreamAsync(utf8Kdl, cancellationToken)
+                        .ConfigureAwait(false);
                     bool success = ContinueDeserialize(
                         ref bufferState,
                         ref kdlReaderState,
                         ref readStack,
-                        out T? value);
+                        out T? value
+                    );
 
                     if (success)
                     {
@@ -65,7 +76,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                         ref bufferState,
                         ref kdlReaderState,
                         ref readStack,
-                        out T? value);
+                        out T? value
+                    );
 
                     if (success)
                     {
@@ -87,31 +99,39 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         internal KdlTypeInfo? _asyncEnumerableArrayTypeInfo;
         internal KdlTypeInfo? _asyncEnumerableRootLevelValueTypeInfo;
 
-        internal sealed override object? DeserializeAsObject(ref KdlReader reader, ref ReadStack state)
-            => Deserialize(ref reader, ref state);
+        internal sealed override object? DeserializeAsObject(
+            ref KdlReader reader,
+            ref ReadStack state
+        ) => Deserialize(ref reader, ref state);
 
-        internal sealed override async ValueTask<object?> DeserializeAsObjectAsync(Stream utf8Kdl, CancellationToken cancellationToken)
+        internal sealed override async ValueTask<object?> DeserializeAsObjectAsync(
+            Stream utf8Kdl,
+            CancellationToken cancellationToken
+        )
         {
             T? result = await DeserializeAsync(utf8Kdl, cancellationToken).ConfigureAwait(false);
             return result;
         }
 
-        internal sealed override object? DeserializeAsObject(Stream utf8Kdl)
-            => Deserialize(utf8Kdl);
+        internal sealed override object? DeserializeAsObject(Stream utf8Kdl) =>
+            Deserialize(utf8Kdl);
 
         internal bool ContinueDeserialize(
             ref ReadBufferState bufferState,
             ref KdlReaderState kdlReaderState,
             ref ReadStack readStack,
-            out T? value)
+            out T? value
+        )
         {
             var reader = new KdlReader(bufferState.Bytes, bufferState.IsFinalBlock, kdlReaderState);
-            bool success = EffectiveConverter.ReadCore(ref reader, out value, Options, ref readStack);
+            bool success = EffectiveConverter.ReadCore(
+                ref reader,
+                out value,
+                Options,
+                ref readStack
+            );
 
             Debug.Assert(reader.BytesConsumed <= bufferState.Bytes.Length);
-            Debug.Assert(!bufferState.IsFinalBlock || reader.AllowMultipleValues || reader.BytesConsumed == bufferState.Bytes.Length,
-                "The reader should have thrown if we have remaining bytes.");
-
             bufferState.AdvanceBuffer((int)reader.BytesConsumed);
             kdlReaderState = reader.CurrentState;
             return success;

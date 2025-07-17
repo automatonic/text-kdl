@@ -42,7 +42,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 case KdlTokenType.True:
                 case KdlTokenType.Number:
                     return ValueConverter.Read(ref reader, typeToConvert, options);
-                case KdlTokenType.StartObject:
+                case KdlTokenType.StartChildrenBlock:
                     return ObjectConverter.Read(ref reader, typeToConvert, options);
                 case KdlTokenType.StartArray:
                     return ArrayConverter.Read(ref reader, typeToConvert, options);

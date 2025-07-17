@@ -360,7 +360,7 @@ namespace Automatonic.Text.Kdl
                 switch (reader.TokenType)
                 {
                     // Any of the "value start" states are acceptable.
-                    case KdlTokenType.StartObject:
+                    case KdlTokenType.StartChildrenBlock:
                     case KdlTokenType.StartArray:
                         long startingOffset = reader.TokenStartIndex;
 
@@ -383,7 +383,7 @@ namespace Automatonic.Text.Kdl
                             valueSequence = sequence.Slice(startingOffset, totalLength);
                         }
 
-                        Debug.Assert(reader.TokenType is KdlTokenType.EndObject or KdlTokenType.EndArray);
+                        Debug.Assert(reader.TokenType is KdlTokenType.EndChildrenBlock or KdlTokenType.EndArray);
                         break;
 
                     // Single-token values

@@ -11,7 +11,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             DbRow row = _parsedData.Get(index);
 
-            CheckExpectedType(KdlTokenType.StartObject, row.TokenType);
+            CheckExpectedType(KdlTokenType.StartChildrenBlock, row.TokenType);
 
             // Only one row means it was EndObject.
             if (row.NumberOfRows == 1)
@@ -111,7 +111,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             DbRow row = _parsedData.Get(index);
 
-            CheckExpectedType(KdlTokenType.StartObject, row.TokenType);
+            CheckExpectedType(KdlTokenType.StartChildrenBlock, row.TokenType);
 
             // Only one row means it was EndObject.
             if (row.NumberOfRows == 1)
