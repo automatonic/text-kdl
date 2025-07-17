@@ -1,6 +1,4 @@
-﻿#if !BUILDING_SOURCE_GENERATOR
-using Automatonic.Text.Kdl.Serialization.Metadata;
-#endif
+﻿using Automatonic.Text.Kdl.Serialization.Metadata;
 
 namespace Automatonic.Text.Kdl.Serialization
 {
@@ -13,11 +11,7 @@ namespace Automatonic.Text.Kdl.Serialization
     /// </remarks>
     /// <param name="type">The type to generate source code for.</param>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-#if BUILDING_SOURCE_GENERATOR
-    internal
-#else
     public
-#endif
 #pragma warning disable CS9113 // Parameter is unread.
     sealed class KdlSerializableAttribute(Type type) : KdlAttribute
 #pragma warning restore CS9113 // Parameter is unread.

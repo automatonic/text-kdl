@@ -3,12 +3,7 @@ namespace Automatonic.Text.Kdl
     /// <summary>
     /// Determines the naming policy used to convert a string-based name to another format, such as a camel-casing format.
     /// </summary>
-#if BUILDING_SOURCE_GENERATOR
-    internal
-#else
-    public
-#endif
-    abstract class KdlNamingPolicy
+    public abstract class KdlNamingPolicy
     {
         /// <summary>
         /// Initializes a new instance of <see cref="KdlNamingPolicy"/>.

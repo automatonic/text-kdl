@@ -1,5 +1,6 @@
 using System.Buffers;
 using System.Buffers.Text;
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -111,23 +112,6 @@ namespace Automatonic.Text.Kdl
             return true;
         }
 
-#if !NET
-        /// <summary>
-        /// Returns <see langword="true"/> if <paramref name="value"/> is a valid Unicode scalar
-        /// value, i.e., is in [ U+0000..U+D7FF ], inclusive; or [ U+E000..U+10FFFF ], inclusive.
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static bool IsValidUnicodeScalar(uint value)
-        {
-            // By XORing the incoming value with 0xD800, surrogate code points
-            // are moved to the range [ U+0000..U+07FF ], and all valid scalar
-            // values are clustered into the single range [ U+0800..U+10FFFF ],
-            // which allows performing a single fast range check.
-
-            return IsInRangeInclusive(value ^ 0xD800U, 0x800U, 0x10FFFFU);
-        }
-#endif
-
         /// <summary>
         /// Returns <see langword="true"/> if <paramref name="value"/> is between
         /// <paramref name="lowerBound"/> and <paramref name="upperBound"/>, inclusive.
@@ -203,22 +187,7 @@ namespace Automatonic.Text.Kdl
         /// <returns></returns>
         public static string Utf8GetString(ReadOnlySpan<byte> bytes)
         {
-#if NET
             return Encoding.UTF8.GetString(bytes);
-#else
-            if (bytes.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            unsafe
-            {
-                fixed (byte* bytesPtr = bytes)
-                {
-                    return Encoding.UTF8.GetString(bytesPtr, bytes.Length);
-                }
-            }
-#endif
         }
 
         public static bool TryLookupUtf8Key<TValue>(
@@ -227,7 +196,6 @@ namespace Automatonic.Text.Kdl
             [MaybeNullWhen(false)] out TValue result
         )
         {
-#if NET9_0_OR_GREATER
             Debug.Assert(
                 dictionary.Comparer is IAlternateEqualityComparer<ReadOnlySpan<char>, string>
             );
@@ -254,10 +222,6 @@ namespace Automatonic.Text.Kdl
             }
 
             return success;
-#else
-            string key = Utf8GetString(utf8Key);
-            return dictionary.TryGetValue(key, out result);
-#endif
         }
 
         /// <summary>
@@ -269,36 +233,17 @@ namespace Automatonic.Text.Kdl
         )
             where TKey : notnull
         {
-#if !NET
-            var dictionary = new Dictionary<TKey, TValue>(comparer);
-
-            foreach (KeyValuePair<TKey, TValue> item in collection)
-            {
-                dictionary.Add(item.Key, item.Value);
-            }
-
-            return dictionary;
-#else
             return new Dictionary<TKey, TValue>(collection: collection, comparer);
-#endif
         }
 
         public static bool IsFinite(double value)
         {
-#if NET
             return double.IsFinite(value);
-#else
-            return !(double.IsNaN(value) || double.IsInfinity(value));
-#endif
         }
 
         public static bool IsFinite(float value)
         {
-#if NET
             return float.IsFinite(value);
-#else
-            return !(float.IsNaN(value) || float.IsInfinity(value));
-#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -310,7 +255,6 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-#if !NET8_0_OR_GREATER
         public static bool HasAllSet(this BitArray bitArray)
         {
             for (int i = 0; i < bitArray.Count; i++)
@@ -323,7 +267,6 @@ namespace Automatonic.Text.Kdl
 
             return true;
         }
-#endif
 
         /// <summary>
         /// Gets a Regex instance for recognizing integer representations of enums.
@@ -332,21 +275,12 @@ namespace Automatonic.Text.Kdl
         private const string IntegerRegexPattern = @"^\s*(?:\+|\-)?[0-9]+\s*$";
         private const int IntegerRegexTimeoutMs = 200;
 
-#if NET
         [GeneratedRegex(
             IntegerRegexPattern,
             RegexOptions.None,
             matchTimeoutMilliseconds: IntegerRegexTimeoutMs
         )]
         private static partial Regex CreateIntegerRegex();
-#else
-        private static Regex CreateIntegerRegex() =>
-            new(
-                IntegerRegexPattern,
-                RegexOptions.Compiled,
-                TimeSpan.FromMilliseconds(IntegerRegexTimeoutMs)
-            );
-#endif
 
         /// <summary>
         /// Compares two valid UTF-8 encoded KDL numbers for decimal equality.
@@ -563,43 +497,14 @@ namespace Automatonic.Text.Kdl
 
                 static int IndexOfLastLeadingZero(ReadOnlySpan<byte> span)
                 {
-#if NET
                     int firstNonZero = span.IndexOfAnyExcept((byte)'0');
                     return firstNonZero < 0 ? span.Length - 1 : firstNonZero - 1;
-#else
-                    for (int i = 0; i < span.Length; i++)
-                    {
-                        if (span[i] != '0')
-                        {
-                            return i - 1;
-                        }
-                    }
-
-                    return span.Length - 1;
-#endif
                 }
 
                 static int IndexOfFirstTrailingZero(ReadOnlySpan<byte> span)
                 {
-#if NET
                     int lastNonZero = span.LastIndexOfAnyExcept((byte)'0');
                     return lastNonZero == span.Length - 1 ? -1 : lastNonZero + 1;
-#else
-                    if (span.IsEmpty)
-                    {
-                        return -1;
-                    }
-
-                    for (int i = span.Length - 1; i >= 0; i--)
-                    {
-                        if (span[i] != '0')
-                        {
-                            return i == span.Length - 1 ? -1 : i + 1;
-                        }
-                    }
-
-                    return 0;
-#endif
                 }
             }
         }

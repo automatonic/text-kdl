@@ -1,8 +1,6 @@
 using System.Diagnostics;
-using System.Reflection;
-#if !BUILDING_SOURCE_GENERATOR
 using System.Diagnostics.CodeAnalysis;
-#endif
+using System.Reflection;
 
 namespace Automatonic.Text.Kdl.Reflection
 {
@@ -82,7 +80,6 @@ namespace Automatonic.Text.Kdl.Reflection
             return null;
         }
 
-#if !BUILDING_SOURCE_GENERATOR
         [UnconditionalSuppressMessage(
             "ReflectionAnalysis",
             "IL2070:UnrecognizedReflectionPattern",
@@ -91,7 +88,6 @@ namespace Automatonic.Text.Kdl.Reflection
                 + "may return fewer results when trimmed but it will return the 'interfaceType' "
                 + "if the type implemented it, even after trimming."
         )]
-#endif
         public static Type? GetCompatibleGenericInterface(this Type type, Type? interfaceType)
         {
             if (interfaceType is null)

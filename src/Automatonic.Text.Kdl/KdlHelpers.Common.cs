@@ -9,42 +9,6 @@ namespace Automatonic.Text.Kdl
 {
     internal static partial class KdlHelpers
     {
-#if !NET
-        /// <summary>
-        /// netstandard/netfx polyfill for Dictionary.TryAdd
-        /// </summary>
-        public static bool TryAdd<TKey, TValue>(
-            this Dictionary<TKey, TValue> dictionary,
-            TKey key,
-            TValue value
-        )
-            where TKey : notnull
-        {
-            if (!dictionary.ContainsKey(key))
-            {
-                dictionary[key] = value;
-                return true;
-            }
-
-            return false;
-        }
-
-        /// <summary>
-        /// netstandard/netfx polyfill for Queue.TryDequeue
-        /// </summary>
-        public static bool TryDequeue<T>(this Queue<T> queue, [NotNullWhen(true)] out T? result)
-        {
-            if (queue.Count > 0)
-            {
-                result = queue.Dequeue();
-                return true;
-            }
-
-            result = default;
-            return false;
-        }
-#endif
-
         internal static bool RequiresSpecialNumberHandlingOnWrite(KdlNumberHandling? handling)
         {
             return handling != null
@@ -63,7 +27,6 @@ namespace Automatonic.Text.Kdl
         internal static void StableSortByKey<T, TKey>(this List<T> items, Func<T, TKey> keySelector)
             where TKey : unmanaged, IComparable<TKey>
         {
-#if NET
             Span<T> span = CollectionsMarshal.AsSpan(items);
 
             // Tuples implement lexical ordering OOTB which can be used to encode stable sorting
@@ -80,18 +43,6 @@ namespace Automatonic.Text.Kdl
             }
 
             MemoryExtensions.Sort(keys, span);
-#else
-            T[] arrayCopy = items.ToArray();
-            (TKey, int)[] keys = new (TKey, int)[arrayCopy.Length];
-            for (int i = 0; i < keys.Length; i++)
-            {
-                keys[i] = (keySelector(arrayCopy[i]), i);
-            }
-
-            Array.Sort(keys, arrayCopy);
-            items.Clear();
-            items.AddRange(arrayCopy);
-#endif
         }
 
         /// <summary>

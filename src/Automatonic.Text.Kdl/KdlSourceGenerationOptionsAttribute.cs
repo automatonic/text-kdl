@@ -4,12 +4,7 @@
     /// Specifies compile-time source generator configuration when applied to <see cref="KdlSerializerContext"/> class declarations.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-#if BUILDING_SOURCE_GENERATOR
-    internal
-#else
-    public
-#endif
-    sealed class KdlSourceGenerationOptionsAttribute : KdlAttribute
+    public sealed class KdlSourceGenerationOptionsAttribute : KdlAttribute
     {
         /// <summary>
         /// Constructs a new <see cref="KdlSourceGenerationOptionsAttribute"/> instance.

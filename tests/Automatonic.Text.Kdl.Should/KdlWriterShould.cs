@@ -12,8 +12,10 @@ public class KdlWriterShould
         using var stream = new MemoryStream();
         using var writer = new KdlWriter(stream, options);
 
+        var utcNow = new DateTimeOffset(2000, 11, 22, 0, 0, 0, TimeSpan.Zero);
+
         writer.WriteStartObject();
-        writer.WriteString("date", DateTimeOffset.UtcNow);
+        writer.WriteString("date", utcNow);
         writer.WriteNumber("temp", 42);
         writer.WriteEndObject();
         writer.Flush();

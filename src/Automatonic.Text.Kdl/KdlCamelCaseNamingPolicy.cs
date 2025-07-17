@@ -9,7 +9,6 @@ namespace Automatonic.Text.Kdl
                 return name;
             }
 
-#if NET
             return string.Create(
                 name.Length,
                 name,
@@ -19,11 +18,6 @@ namespace Automatonic.Text.Kdl
                     FixCasing(chars);
                 }
             );
-#else
-            char[] chars = name.ToCharArray();
-            FixCasing(chars);
-            return new string(chars);
-#endif
         }
 
         private static void FixCasing(Span<char> chars)
