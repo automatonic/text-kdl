@@ -86,8 +86,7 @@ namespace Automatonic.Text.Kdl.Graph
 
             OrderedDictionary<KdlEntryKey, KdlElement?> dict = Dictionary;
 
-            if (!dict.TryAdd(propertyName, value, out int index)
-            )
+            if (!dict.TryAdd(propertyName, value, out int index))
             {
                 Debug.Assert(index >= 0);
                 KdlElement? replacedValue = dict.GetAt(index).Value;

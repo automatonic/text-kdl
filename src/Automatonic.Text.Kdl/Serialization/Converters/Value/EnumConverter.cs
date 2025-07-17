@@ -335,8 +335,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return success;
         }
 
-        private bool TryParseNamedEnum(ReadOnlySpan<char> source,
-            out T result)
+        private bool TryParseNamedEnum(ReadOnlySpan<char> source, out T result)
         {
             Dictionary<string, EnumFieldInfo>.AlternateLookup<ReadOnlySpan<char>> lookup =
                 _enumFieldInfoIndex.GetAlternateLookup<ReadOnlySpan<char>>();
@@ -359,8 +358,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 }
 
                 if (
-                    lookup.TryGetValue(next,
-                        out EnumFieldInfo? firstResult)
+                    lookup.TryGetValue(next, out EnumFieldInfo? firstResult)
                     && firstResult.GetMatchingField(next) is EnumFieldInfo match
                 )
                 {

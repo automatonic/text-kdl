@@ -676,6 +676,5 @@ namespace Automatonic.Text.Kdl
             DestinationTooShort:
             return false;
         }
-
     }
 }

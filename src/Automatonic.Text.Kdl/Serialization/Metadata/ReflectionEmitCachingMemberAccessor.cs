@@ -7,8 +7,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
     [method: RequiresUnreferencedCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
     internal sealed partial class ReflectionEmitCachingMemberAccessor() : MemberAccessor
     {
-        private readonly ReflectionEmitMemberAccessor _sourceAccessor =
-            new ReflectionEmitMemberAccessor();
+        private readonly ReflectionEmitMemberAccessor _sourceAccessor = new();
         private readonly Cache<(string id, Type declaringType, MemberInfo? member)> _cache = new(
             slidingExpiration: TimeSpan.FromMilliseconds(1000),
             evictionInterval: TimeSpan.FromMilliseconds(200)
