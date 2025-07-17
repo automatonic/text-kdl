@@ -21,7 +21,11 @@ namespace Automatonic.Text.Kdl.Schema
         /// <param name="type">The type for which to resolve a schema.</param>
         /// <param name="exporterOptions">The options object governing the export operation.</param>
         /// <returns>A KDL object containing the schema for <paramref name="type"/>.</returns>
-        public static KdlElement GetKdlSchemaAsNode(this KdlSerializerOptions options, Type type, KdlSchemaExporterOptions? exporterOptions = null)
+        public static KdlElement GetKdlSchemaAsNode(
+            this KdlSerializerOptions options,
+            Type type,
+            KdlSchemaExporterOptions? exporterOptions = null
+        )
         {
             if (options is null)
             {
@@ -44,7 +48,10 @@ namespace Automatonic.Text.Kdl.Schema
         /// <param name="typeInfo">The contract from which to resolve the KDL schema.</param>
         /// <param name="exporterOptions">The options object governing the export operation.</param>
         /// <returns>A KDL object containing the schema for <paramref name="typeInfo"/>.</returns>
-        public static KdlElement GetKdlSchemaAsNode(this KdlTypeInfo typeInfo, KdlSchemaExporterOptions? exporterOptions = null)
+        public static KdlElement GetKdlSchemaAsNode(
+            this KdlTypeInfo typeInfo,
+            KdlSchemaExporterOptions? exporterOptions = null
+        )
         {
             if (typeInfo is null)
             {
@@ -70,42 +77,59 @@ namespace Automatonic.Text.Kdl.Schema
             bool parentPolymorphicTypeContainsTypesWithoutDiscriminator = false,
             bool parentPolymorphicTypeIsNonNullable = false,
             KeyValuePair<string, KdlSchema>? typeDiscriminator = null,
-            bool cacheResult = true)
+            bool cacheResult = true
+        )
         {
             Debug.Assert(typeInfo.IsConfigured);
 
-            KdlSchemaExporterContext exporterContext = state.CreateContext(typeInfo, propertyInfo, parentPolymorphicTypeInfo);
+            KdlSchemaExporterContext exporterContext = state.CreateContext(
+                typeInfo,
+                propertyInfo,
+                parentPolymorphicTypeInfo
+            );
 
-            if (cacheResult && typeInfo.Kind is not KdlTypeInfoKind.None &&
-                state.TryGetExistingKdlPointer(exporterContext, out string? existingKdlPointer))
+            if (
+                cacheResult
+                && typeInfo.Kind is not KdlTypeInfoKind.None
+                && state.TryGetExistingKdlPointer(exporterContext, out string? existingKdlPointer)
+            )
             {
                 // The schema context has already been generated in the schema document, return a reference to it.
                 return CompleteSchema(ref state, new KdlSchema { Ref = existingKdlPointer });
             }
 
             KdlConverter effectiveConverter = customConverter ?? typeInfo.Converter;
-            KdlNumberHandling effectiveNumberHandling = customNumberHandling ?? typeInfo.NumberHandling ?? typeInfo.Options.NumberHandling;
+            KdlNumberHandling effectiveNumberHandling =
+                customNumberHandling ?? typeInfo.NumberHandling ?? typeInfo.Options.NumberHandling;
             if (effectiveConverter.GetSchema(effectiveNumberHandling) is { } schema)
             {
                 // A schema has been provided by the converter.
                 return CompleteSchema(ref state, schema);
             }
 
-            if (parentPolymorphicTypeInfo is null && typeInfo.PolymorphismOptions is { DerivedTypes.Count: > 0 } polyOptions)
+            if (
+                parentPolymorphicTypeInfo is null
+                && typeInfo.PolymorphismOptions is { DerivedTypes.Count: > 0 } polyOptions
+            )
             {
                 // This is the base type of a polymorphic type hierarchy. The schema for this type
                 // will include an "anyOf" property with the schemas for all derived types.
                 string typeDiscriminatorKey = polyOptions.TypeDiscriminatorPropertyName;
                 List<KdlDerivedType> derivedTypes = [.. polyOptions.DerivedTypes];
 
-                if (!typeInfo.Type.IsAbstract && !IsPolymorphicTypeThatSpecifiesItselfAsDerivedType(typeInfo))
+                if (
+                    !typeInfo.Type.IsAbstract
+                    && !IsPolymorphicTypeThatSpecifiesItselfAsDerivedType(typeInfo)
+                )
                 {
                     // For non-abstract base types that haven't been explicitly configured,
                     // add a trivial schema to the derived types since we should support it.
                     derivedTypes.Add(new KdlDerivedType(typeInfo.Type));
                 }
 
-                bool containsTypesWithoutDiscriminator = derivedTypes.Exists(static derivedTypes => derivedTypes.TypeDiscriminator is null);
+                bool containsTypesWithoutDiscriminator = derivedTypes.Exists(static derivedTypes =>
+                    derivedTypes.TypeDiscriminator is null
+                );
                 KdlSchemaType schemaType = KdlSchemaType.Any;
                 List<KdlSchema>? anyOf = new(derivedTypes.Count);
 
@@ -128,7 +152,9 @@ namespace Automatonic.Text.Kdl.Schema
                         derivedTypeDiscriminator = new(typeDiscriminatorKey, discriminatorSchema);
                     }
 
-                    KdlTypeInfo derivedTypeInfo = typeInfo.Options.GetTypeInfoInternal(derivedType.DerivedType);
+                    KdlTypeInfo derivedTypeInfo = typeInfo.Options.GetTypeInfoInternal(
+                        derivedType.DerivedType
+                    );
 
                     state.PushSchemaNode(anyOf.Count.ToString(CultureInfo.InvariantCulture));
                     KdlSchema derivedSchema = MapKdlSchemaCore(
@@ -137,8 +163,10 @@ namespace Automatonic.Text.Kdl.Schema
                         parentPolymorphicTypeInfo: typeInfo,
                         typeDiscriminator: derivedTypeDiscriminator,
                         parentPolymorphicTypeContainsTypesWithoutDiscriminator: containsTypesWithoutDiscriminator,
-                        parentPolymorphicTypeIsNonNullable: propertyInfo is { IsGetNullable: false, IsSetNullable: false },
-                        cacheResult: false);
+                        parentPolymorphicTypeIsNonNullable: propertyInfo
+                            is { IsGetNullable: false, IsSetNullable: false },
+                        cacheResult: false
+                    );
 
                     state.PopSchemaNode();
 
@@ -175,23 +203,36 @@ namespace Automatonic.Text.Kdl.Schema
                     }
                 }
 
-                return CompleteSchema(ref state, new()
-                {
-                    Type = schemaType,
-                    AnyOf = anyOf,
-                    // If all derived types have a discriminator, we can require it in the base schema.
-                    Required = containsTypesWithoutDiscriminator ? null : [typeDiscriminatorKey]
-                });
+                return CompleteSchema(
+                    ref state,
+                    new()
+                    {
+                        Type = schemaType,
+                        AnyOf = anyOf,
+                        // If all derived types have a discriminator, we can require it in the base schema.
+                        Required = containsTypesWithoutDiscriminator
+                            ? null
+                            : [typeDiscriminatorKey],
+                    }
+                );
             }
 
             if (effectiveConverter.NullableElementConverter is { } elementConverter)
             {
                 KdlTypeInfo elementTypeInfo = typeInfo.Options.GetTypeInfo(elementConverter.Type!);
-                schema = MapKdlSchemaCore(ref state, elementTypeInfo, customConverter: elementConverter, cacheResult: false);
+                schema = MapKdlSchemaCore(
+                    ref state,
+                    elementTypeInfo,
+                    customConverter: elementConverter,
+                    cacheResult: false
+                );
 
                 if (schema.Enum != null)
                 {
-                    Debug.Assert(elementTypeInfo.Type.IsEnum, "The enum keyword should only be populated by schemas for enum types.");
+                    Debug.Assert(
+                        elementTypeInfo.Type.IsEnum,
+                        "The enum keyword should only be populated by schemas for enum types."
+                    );
                     schema.Enum.Add("", null); // Append null to the enum array.
                 }
 
@@ -205,7 +246,8 @@ namespace Automatonic.Text.Kdl.Schema
                     List<string>? required = null;
                     KdlSchema? additionalProperties = null;
 
-                    KdlUnmappedMemberHandling effectiveUnmappedMemberHandling = typeInfo.UnmappedMemberHandling ?? typeInfo.Options.UnmappedMemberHandling;
+                    KdlUnmappedMemberHandling effectiveUnmappedMemberHandling =
+                        typeInfo.UnmappedMemberHandling ?? typeInfo.Options.UnmappedMemberHandling;
                     if (effectiveUnmappedMemberHandling is KdlUnmappedMemberHandling.Disallow)
                     {
                         additionalProperties = KdlSchema.CreateFalseSchema();
@@ -235,14 +277,18 @@ namespace Automatonic.Text.Kdl.Schema
                             property.KdlTypeInfo,
                             propertyInfo: property,
                             customConverter: property.EffectiveConverter,
-                            customNumberHandling: property.EffectiveNumberHandling);
+                            customNumberHandling: property.EffectiveNumberHandling
+                        );
 
                         state.PopSchemaNode();
 
                         if (property.AssociatedParameter is { HasDefaultValue: true } parameterInfo)
                         {
                             KdlSchema.EnsureMutable(ref propertySchema);
-                            propertySchema.DefaultValue = KdlSerializer.SerializeToNode(parameterInfo.DefaultValue, property.KdlTypeInfo);
+                            propertySchema.DefaultValue = KdlSerializer.SerializeToNode(
+                                parameterInfo.DefaultValue,
+                                property.KdlTypeInfo
+                            );
                             propertySchema.HasDefaultValue = true;
                         }
 
@@ -251,20 +297,27 @@ namespace Automatonic.Text.Kdl.Schema
                         // Mark as required if either the property is required or the associated constructor parameter is non-optional.
                         // While the latter implies the former in cases where the KdlSerializerOptions.RespectRequiredConstructorParameters
                         // setting has been enabled, for the case of the schema exporter we always mark non-optional constructor parameters as required.
-                        if (property is { IsRequired: true } or { AssociatedParameter.IsRequiredParameter: true })
+                        if (
+                            property
+                            is { IsRequired: true }
+                                or { AssociatedParameter.IsRequiredParameter: true }
+                        )
                         {
                             (required ??= []).Add(property.Name);
                         }
                     }
 
                     state.PopSchemaNode();
-                    return CompleteSchema(ref state, new()
-                    {
-                        Type = KdlSchemaType.Object,
-                        Properties = properties,
-                        Required = required,
-                        AdditionalProperties = additionalProperties,
-                    });
+                    return CompleteSchema(
+                        ref state,
+                        new()
+                        {
+                            Type = KdlSchemaType.Object,
+                            Properties = properties,
+                            Required = required,
+                            AdditionalProperties = additionalProperties,
+                        }
+                    );
 
                 case KdlTypeInfoKind.Enumerable:
                     Debug.Assert(typeInfo.ElementTypeInfo != null);
@@ -272,14 +325,21 @@ namespace Automatonic.Text.Kdl.Schema
                     if (typeDiscriminator is null)
                     {
                         state.PushSchemaNode(KdlSchema.ItemsPropertyName);
-                        KdlSchema items = MapKdlSchemaCore(ref state, typeInfo.ElementTypeInfo, customNumberHandling: effectiveNumberHandling);
+                        KdlSchema items = MapKdlSchemaCore(
+                            ref state,
+                            typeInfo.ElementTypeInfo,
+                            customNumberHandling: effectiveNumberHandling
+                        );
                         state.PopSchemaNode();
 
-                        return CompleteSchema(ref state, new()
-                        {
-                            Type = KdlSchemaType.Array,
-                            Items = items.IsTrue ? null : items,
-                        });
+                        return CompleteSchema(
+                            ref state,
+                            new()
+                            {
+                                Type = KdlSchemaType.Array,
+                                Items = items.IsTrue ? null : items,
+                            }
+                        );
                     }
                     else
                     {
@@ -293,27 +353,38 @@ namespace Automatonic.Text.Kdl.Schema
                         state.PushSchemaNode(ValuesKeyword);
                         state.PushSchemaNode(KdlSchema.ItemsPropertyName);
 
-                        KdlSchema items = MapKdlSchemaCore(ref state, typeInfo.ElementTypeInfo, customNumberHandling: effectiveNumberHandling);
+                        KdlSchema items = MapKdlSchemaCore(
+                            ref state,
+                            typeInfo.ElementTypeInfo,
+                            customNumberHandling: effectiveNumberHandling
+                        );
 
                         state.PopSchemaNode();
                         state.PopSchemaNode();
                         state.PopSchemaNode();
 
-                        return CompleteSchema(ref state, new()
-                        {
-                            Type = KdlSchemaType.Object,
-                            Properties =
-                            [
-                                typeDiscriminator.Value,
-                                new(ValuesKeyword,
-                                    new KdlSchema()
-                                    {
-                                        Type = KdlSchemaType.Array,
-                                        Items = items.IsTrue ? null : items,
-                                    }),
-                            ],
-                            Required = parentPolymorphicTypeContainsTypesWithoutDiscriminator ? [typeDiscriminator.Value.Key] : null,
-                        });
+                        return CompleteSchema(
+                            ref state,
+                            new()
+                            {
+                                Type = KdlSchemaType.Object,
+                                Properties =
+                                [
+                                    typeDiscriminator.Value,
+                                    new(
+                                        ValuesKeyword,
+                                        new KdlSchema()
+                                        {
+                                            Type = KdlSchemaType.Array,
+                                            Items = items.IsTrue ? null : items,
+                                        }
+                                    ),
+                                ],
+                                Required = parentPolymorphicTypeContainsTypesWithoutDiscriminator
+                                    ? [typeDiscriminator.Value.Key]
+                                    : null,
+                            }
+                        );
                     }
 
                 case KdlTypeInfoKind.Dictionary:
@@ -333,16 +404,23 @@ namespace Automatonic.Text.Kdl.Schema
                     }
 
                     state.PushSchemaNode(KdlSchema.AdditionalPropertiesPropertyName);
-                    KdlSchema valueSchema = MapKdlSchemaCore(ref state, typeInfo.ElementTypeInfo, customNumberHandling: effectiveNumberHandling);
+                    KdlSchema valueSchema = MapKdlSchemaCore(
+                        ref state,
+                        typeInfo.ElementTypeInfo,
+                        customNumberHandling: effectiveNumberHandling
+                    );
                     state.PopSchemaNode();
 
-                    return CompleteSchema(ref state, new()
-                    {
-                        Type = KdlSchemaType.Object,
-                        Properties = dictProps,
-                        Required = dictRequired,
-                        AdditionalProperties = valueSchema.IsTrue ? null : valueSchema,
-                    });
+                    return CompleteSchema(
+                        ref state,
+                        new()
+                        {
+                            Type = KdlSchemaType.Object,
+                            Properties = dictProps,
+                            Required = dictRequired,
+                            AdditionalProperties = valueSchema.IsTrue ? null : valueSchema,
+                        }
+                    );
 
                 default:
                     Debug.Assert(typeInfo.Kind is KdlTypeInfoKind.None);
@@ -357,9 +435,12 @@ namespace Automatonic.Text.Kdl.Schema
                     // A schema is marked as nullable if either
                     // 1. We have a schema for a property where either the getter or setter are marked as nullable.
                     // 2. We have a schema for a reference type, unless we're explicitly treating null-oblivious types as non-nullable.
-                    bool isNullableSchema = propertyInfo != null
-                        ? propertyInfo.IsGetNullable || propertyInfo.IsSetNullable
-                        : typeInfo.CanBeNull && !parentPolymorphicTypeIsNonNullable && !state.ExporterOptions.TreatNullObliviousAsNonNullable;
+                    bool isNullableSchema =
+                        propertyInfo != null
+                            ? propertyInfo.IsGetNullable || propertyInfo.IsSetNullable
+                            : typeInfo.CanBeNull
+                                && !parentPolymorphicTypeIsNonNullable
+                                && !state.ExporterOptions.TreatNullObliviousAsNonNullable;
 
                     if (isNullableSchema)
                     {
@@ -402,7 +483,10 @@ namespace Automatonic.Text.Kdl.Schema
             return false;
         }
 
-        private readonly ref struct GenerationState(KdlSerializerOptions options, KdlSchemaExporterOptions exporterOptions)
+        private readonly ref struct GenerationState(
+            KdlSerializerOptions options,
+            KdlSchemaExporterOptions exporterOptions
+        )
         {
             private readonly List<string> _currentPath = [];
             private readonly Dictionary<(KdlTypeInfo, KdlPropertyInfo?), string[]> _generated = [];
@@ -430,11 +514,21 @@ namespace Automatonic.Text.Kdl.Schema
             /// <summary>
             /// Registers the current schema node generation context; if it has already been generated return a KDL pointer to its location.
             /// </summary>
-            public bool TryGetExistingKdlPointer(in KdlSchemaExporterContext context, [NotNullWhen(true)] out string? existingKdlPointer)
+            public bool TryGetExistingKdlPointer(
+                in KdlSchemaExporterContext context,
+                [NotNullWhen(true)] out string? existingKdlPointer
+            )
             {
-                (KdlTypeInfo TypeInfo, KdlPropertyInfo? PropertyInfo) key = (context.TypeInfo, context.PropertyInfo);
+                (KdlTypeInfo TypeInfo, KdlPropertyInfo? PropertyInfo) key = (
+                    context.TypeInfo,
+                    context.PropertyInfo
+                );
 #if NET
-                ref string[]? pathToSchema = ref CollectionsMarshal.GetValueRefOrAddDefault(_generated, key, out bool exists);
+                ref string[]? pathToSchema = ref CollectionsMarshal.GetValueRefOrAddDefault(
+                    _generated,
+                    key,
+                    out bool exists
+                );
 #else
                 bool exists = _generated.TryGetValue(key, out string[]? pathToSchema);
 #endif
@@ -452,9 +546,18 @@ namespace Automatonic.Text.Kdl.Schema
                 return false;
             }
 
-            public KdlSchemaExporterContext CreateContext(KdlTypeInfo typeInfo, KdlPropertyInfo? propertyInfo, KdlTypeInfo? baseTypeInfo)
+            public KdlSchemaExporterContext CreateContext(
+                KdlTypeInfo typeInfo,
+                KdlPropertyInfo? propertyInfo,
+                KdlTypeInfo? baseTypeInfo
+            )
             {
-                return new KdlSchemaExporterContext(typeInfo, propertyInfo, baseTypeInfo, [.. _currentPath]);
+                return new KdlSchemaExporterContext(
+                    typeInfo,
+                    propertyInfo,
+                    baseTypeInfo,
+                    [.. _currentPath]
+                );
             }
 
             private static string FormatKdlPointer(ReadOnlySpan<string> path)
@@ -495,8 +598,7 @@ namespace Automatonic.Text.Kdl.Schema
                         }
 
                         span = span[(pos + 1)..];
-                    }
-                    while (!span.IsEmpty);
+                    } while (!span.IsEmpty);
                 }
 
                 return sb.ToString();

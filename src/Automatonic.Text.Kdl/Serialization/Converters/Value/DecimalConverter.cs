@@ -7,7 +7,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         public DecimalConverter() => IsInternalConverterForNumberType = true;
 
-        public override decimal Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override decimal Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetDecimal();
         }
@@ -17,21 +21,36 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteNumberValue(value);
         }
 
-        internal override decimal ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override decimal ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetDecimalWithQuotes();
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, decimal value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            decimal value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             writer.WritePropertyName(value);
         }
 
-        internal override decimal ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal override decimal ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
-            if (reader.TokenType == KdlTokenType.String &&
-                (KdlNumberHandling.AllowReadingFromString & handling) != 0)
+            if (
+                reader.TokenType == KdlTokenType.String
+                && (KdlNumberHandling.AllowReadingFromString & handling) != 0
+            )
             {
                 return reader.GetDecimalWithQuotes();
             }
@@ -39,7 +58,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return reader.GetDecimal();
         }
 
-        internal override void WriteNumberWithCustomHandling(KdlWriter writer, decimal value, KdlNumberHandling handling)
+        internal override void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            decimal value,
+            KdlNumberHandling handling
+        )
         {
             if ((KdlNumberHandling.WriteAsString & handling) != 0)
             {

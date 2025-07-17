@@ -61,36 +61,40 @@ namespace Automatonic.Text.Kdl
         public const int MaxExpansionFactorWhileTranscoding = 3;
 
         // When transcoding from UTF8 -> UTF16, the byte count threshold where we rent from the array pool before performing a normal alloc.
-        public const long ArrayPoolMaxSizeBeforeUsingNormalAlloc =
-            1024 * 1024 * 1024; // ArrayPool limit increased in .NET 6
+        public const long ArrayPoolMaxSizeBeforeUsingNormalAlloc = 1024 * 1024 * 1024; // ArrayPool limit increased in .NET 6
 
         // The maximum number of characters allowed when writing raw UTF-16 KDL. This is the maximum length that we can guarantee can
         // be safely transcoded to UTF-8 and fit within an integer-length span, given the max expansion factor of a single character (3).
         public const int MaxUtf16RawValueLength = int.MaxValue / MaxExpansionFactorWhileTranscoding;
 
-        public const int MaxEscapedTokenSize = 1_000_000_000;   // Max size for already escaped value.
-        public const int MaxUnescapedTokenSize = MaxEscapedTokenSize / MaxExpansionFactorWhileEscaping;  // 166_666_666 bytes
-        public const int MaxCharacterTokenSize = MaxEscapedTokenSize / MaxExpansionFactorWhileEscaping; // 166_666_666 characters
+        public const int MaxEscapedTokenSize = 1_000_000_000; // Max size for already escaped value.
+        public const int MaxUnescapedTokenSize =
+            MaxEscapedTokenSize / MaxExpansionFactorWhileEscaping; // 166_666_666 bytes
+        public const int MaxCharacterTokenSize =
+            MaxEscapedTokenSize / MaxExpansionFactorWhileEscaping; // 166_666_666 characters
 
         public const int MaximumFormatBooleanLength = 5;
-        public const int MaximumFormatInt64Length = 20;   // 19 + sign (i.e. -9223372036854775808)
-        public const int MaximumFormatUInt32Length = 10;  // i.e. 4294967295
-        public const int MaximumFormatUInt64Length = 20;  // i.e. 18446744073709551615
-        public const int MaximumFormatDoubleLength = 128;  // default (i.e. 'G'), using 128 (rather than say 32) to be future-proof.
-        public const int MaximumFormatSingleLength = 128;  // default (i.e. 'G'), using 128 (rather than say 32) to be future-proof.
+        public const int MaximumFormatInt64Length = 20; // 19 + sign (i.e. -9223372036854775808)
+        public const int MaximumFormatUInt32Length = 10; // i.e. 4294967295
+        public const int MaximumFormatUInt64Length = 20; // i.e. 18446744073709551615
+        public const int MaximumFormatDoubleLength = 128; // default (i.e. 'G'), using 128 (rather than say 32) to be future-proof.
+        public const int MaximumFormatSingleLength = 128; // default (i.e. 'G'), using 128 (rather than say 32) to be future-proof.
         public const int MaximumFormatDecimalLength = 31; // default (i.e. 'G')
-        public const int MaximumFormatGuidLength = 36;    // default (i.e. 'D'), 8 + 4 + 4 + 4 + 12 + 4 for the hyphens (e.g. 094ffa0a-0442-494d-b452-04003fa755cc)
-        public const int MaximumEscapedGuidLength = MaxExpansionFactorWhileEscaping * MaximumFormatGuidLength;
-        public const int MaximumFormatDateTimeLength = 27;    // StandardFormat 'O', e.g. 2017-06-12T05:30:45.7680000
-        public const int MaximumFormatDateTimeOffsetLength = 33;  // StandardFormat 'O', e.g. 2017-06-12T05:30:45.7680000-07:00
+        public const int MaximumFormatGuidLength = 36; // default (i.e. 'D'), 8 + 4 + 4 + 4 + 12 + 4 for the hyphens (e.g. 094ffa0a-0442-494d-b452-04003fa755cc)
+        public const int MaximumEscapedGuidLength =
+            MaxExpansionFactorWhileEscaping * MaximumFormatGuidLength;
+        public const int MaximumFormatDateTimeLength = 27; // StandardFormat 'O', e.g. 2017-06-12T05:30:45.7680000
+        public const int MaximumFormatDateTimeOffsetLength = 33; // StandardFormat 'O', e.g. 2017-06-12T05:30:45.7680000-07:00
         public const int MaxDateTimeUtcOffsetHours = 14; // The UTC offset portion of a TimeSpan or DateTime can be no more than 14 hours and no less than -14 hours.
-        public const int DateTimeNumFractionDigits = 7;  // TimeSpan and DateTime formats allow exactly up to many digits for specifying the fraction after the seconds.
-        public const int MaxDateTimeFraction = 9_999_999;  // The largest fraction expressible by TimeSpan and DateTime formats
+        public const int DateTimeNumFractionDigits = 7; // TimeSpan and DateTime formats allow exactly up to many digits for specifying the fraction after the seconds.
+        public const int MaxDateTimeFraction = 9_999_999; // The largest fraction expressible by TimeSpan and DateTime formats
         public const int DateTimeParseNumFractionDigits = 16; // The maximum number of fraction digits the Kdl DateTime parser allows
-        public const int MaximumDateTimeOffsetParseLength = MaximumFormatDateTimeOffsetLength +
-            (DateTimeParseNumFractionDigits - DateTimeNumFractionDigits); // Like StandardFormat 'O' for DateTimeOffset, but allowing 9 additional (up to 16) fraction digits.
+        public const int MaximumDateTimeOffsetParseLength =
+            MaximumFormatDateTimeOffsetLength
+            + (DateTimeParseNumFractionDigits - DateTimeNumFractionDigits); // Like StandardFormat 'O' for DateTimeOffset, but allowing 9 additional (up to 16) fraction digits.
         public const int MinimumDateTimeParseLength = 10; // YYYY-MM-DD
-        public const int MaximumEscapedDateTimeOffsetParseLength = MaxExpansionFactorWhileEscaping * MaximumDateTimeOffsetParseLength;
+        public const int MaximumEscapedDateTimeOffsetParseLength =
+            MaxExpansionFactorWhileEscaping * MaximumDateTimeOffsetParseLength;
 
         public const int MaximumLiteralLength = 5; // Must be able to fit null, true, & false.
 
@@ -117,6 +121,5 @@ namespace Automatonic.Text.Kdl
         public const int DefaultIndentSize = 2;
         public const int MinimumIndentSize = 0;
         public const int MaximumIndentSize = 127; // If this value is changed, the impact on the options masking used in the KdlWriterOptions struct must be checked carefully.
-
     }
 }

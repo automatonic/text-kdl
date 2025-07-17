@@ -203,9 +203,23 @@ namespace Automatonic.Text.Kdl
             // For performance, avoid obtaining actual byte count unless memory usage is higher than the threshold.
             Span<byte> utf8Kdl =
                 // Use stack memory
-                kdl.Length <= (KdlConstants.StackallocByteThreshold / KdlConstants.MaxExpansionFactorWhileTranscoding) ? stackalloc byte[KdlConstants.StackallocByteThreshold] :
+                kdl.Length
+                <= (
+                    KdlConstants.StackallocByteThreshold
+                    / KdlConstants.MaxExpansionFactorWhileTranscoding
+                )
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                :
                 // Use a pooled array
-                kdl.Length <= (KdlConstants.ArrayPoolMaxSizeBeforeUsingNormalAlloc / KdlConstants.MaxExpansionFactorWhileTranscoding) ? tempArray = ArrayPool<byte>.Shared.Rent(kdl.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) :
+                kdl.Length
+                <= (
+                    KdlConstants.ArrayPoolMaxSizeBeforeUsingNormalAlloc
+                    / KdlConstants.MaxExpansionFactorWhileTranscoding
+                )
+                    ? tempArray = ArrayPool<byte>.Shared.Rent(
+                        kdl.Length * KdlConstants.MaxExpansionFactorWhileTranscoding
+                    )
+                :
                 // Use a normal alloc since the pool would create a normal alloc anyway based on the threshold (per current implementation)
                 // and by using a normal alloc we can avoid the Clear().
                 new byte[KdlReaderHelper.GetUtf8ByteCount(kdl)];

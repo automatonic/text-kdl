@@ -7,7 +7,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         public Int32Converter() => IsInternalConverterForNumberType = true;
 
-        public override int Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override int Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetInt32();
         }
@@ -18,21 +22,36 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteNumberValue((long)value);
         }
 
-        internal override int ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override int ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetInt32WithQuotes();
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, int value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            int value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             writer.WritePropertyName(value);
         }
 
-        internal override int ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal override int ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
-            if (reader.TokenType == KdlTokenType.String &&
-                (KdlNumberHandling.AllowReadingFromString & handling) != 0)
+            if (
+                reader.TokenType == KdlTokenType.String
+                && (KdlNumberHandling.AllowReadingFromString & handling) != 0
+            )
             {
                 return reader.GetInt32WithQuotes();
             }
@@ -40,7 +59,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return reader.GetInt32();
         }
 
-        internal override void WriteNumberWithCustomHandling(KdlWriter writer, int value, KdlNumberHandling handling)
+        internal override void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            int value,
+            KdlNumberHandling handling
+        )
         {
             if ((KdlNumberHandling.WriteAsString & handling) != 0)
             {

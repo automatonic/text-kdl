@@ -10,7 +10,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     /// </summary>
     internal abstract class KdlPrimitiveConverter<T> : KdlConverter<T>
     {
-        public sealed override void WriteAsPropertyName(KdlWriter writer, [DisallowNull] T value, KdlSerializerOptions options)
+        public sealed override void WriteAsPropertyName(
+            KdlWriter writer,
+            [DisallowNull] T value,
+            KdlSerializerOptions options
+        )
         {
             if (value is null)
             {
@@ -20,7 +24,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             WriteAsPropertyNameCore(writer, value, options, isWritingExtensionDataProperty: false);
         }
 
-        public sealed override T ReadAsPropertyName(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public sealed override T ReadAsPropertyName(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType != KdlTokenType.PropertyName)
             {
@@ -30,27 +38,45 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return ReadAsPropertyNameCore(ref reader, typeToConvert, options);
         }
 
-        private protected static KdlSchema GetSchemaForNumericType(KdlSchemaType schemaType, KdlNumberHandling numberHandling, bool isIeeeFloatingPoint = false)
+        private protected static KdlSchema GetSchemaForNumericType(
+            KdlSchemaType schemaType,
+            KdlNumberHandling numberHandling,
+            bool isIeeeFloatingPoint = false
+        )
         {
             Debug.Assert(schemaType is KdlSchemaType.Integer or KdlSchemaType.Number);
             Debug.Assert(!isIeeeFloatingPoint || schemaType is KdlSchemaType.Number);
 #if NET
-            Debug.Assert(isIeeeFloatingPoint == (typeof(T) == typeof(double) || typeof(T) == typeof(float) || typeof(T) == typeof(Half)));
+            Debug.Assert(
+                isIeeeFloatingPoint
+                    == (
+                        typeof(T) == typeof(double)
+                        || typeof(T) == typeof(float)
+                        || typeof(T) == typeof(Half)
+                    )
+            );
 #endif
             string? pattern = null;
 
-            if ((numberHandling & (KdlNumberHandling.AllowReadingFromString | KdlNumberHandling.WriteAsString)) != 0)
+            if (
+                (
+                    numberHandling
+                    & (KdlNumberHandling.AllowReadingFromString | KdlNumberHandling.WriteAsString)
+                ) != 0
+            )
             {
-                pattern = schemaType is KdlSchemaType.Integer
-                    ? @"^-?(?:0|[1-9]\d*)$"
-                    : isIeeeFloatingPoint
-                        ? @"^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$"
-                        : @"^-?(?:0|[1-9]\d*)(?:\.\d+)?$";
+                pattern =
+                    schemaType is KdlSchemaType.Integer ? @"^-?(?:0|[1-9]\d*)$"
+                    : isIeeeFloatingPoint ? @"^-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?$"
+                    : @"^-?(?:0|[1-9]\d*)(?:\.\d+)?$";
 
                 schemaType |= KdlSchemaType.String;
             }
 
-            if (isIeeeFloatingPoint && (numberHandling & KdlNumberHandling.AllowNamedFloatingPointLiterals) != 0)
+            if (
+                isIeeeFloatingPoint
+                && (numberHandling & KdlNumberHandling.AllowNamedFloatingPointLiterals) != 0
+            )
             {
                 return new KdlSchema
                 {
@@ -59,7 +85,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         new KdlSchema { Type = schemaType, Pattern = pattern },
                         //TECHDEBT
                         //new KdlSchema { Enum = [(KdlVertex)"NaN", (KdlVertex)"Infinity", (KdlVertex)"-Infinity"] },
-                    ]
+                    ],
                 };
             }
 

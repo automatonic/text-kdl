@@ -26,13 +26,21 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsValidDateTimeOffsetParseLength(int length)
         {
-            return IsInRangeInclusive(length, KdlConstants.MinimumDateTimeParseLength, KdlConstants.MaximumEscapedDateTimeOffsetParseLength);
+            return IsInRangeInclusive(
+                length,
+                KdlConstants.MinimumDateTimeParseLength,
+                KdlConstants.MaximumEscapedDateTimeOffsetParseLength
+            );
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static bool IsValidUnescapedDateTimeOffsetParseLength(int length)
         {
-            return IsInRangeInclusive(length, KdlConstants.MinimumDateTimeParseLength, KdlConstants.MaximumDateTimeOffsetParseLength);
+            return IsInRangeInclusive(
+                length,
+                KdlConstants.MinimumDateTimeParseLength,
+                KdlConstants.MaximumDateTimeOffsetParseLength
+            );
         }
 
         /// <summary>
@@ -82,8 +90,13 @@ namespace Automatonic.Text.Kdl
                 return false;
             }
 
-            if (parseData.OffsetToken is KdlConstants.UtcOffsetToken or // Same as specifying an offset of "+00:00", except that DateTime's Kind gets set to UTC rather than Local
-                KdlConstants.Plus or KdlConstants.Hyphen)
+            if (
+                parseData.OffsetToken
+                is KdlConstants.UtcOffsetToken
+                    or // Same as specifying an offset of "+00:00", except that DateTime's Kind gets set to UTC rather than Local
+                    KdlConstants.Plus
+                    or KdlConstants.Hyphen
+            )
             {
                 return TryCreateDateTimeOffset(ref parseData, out value);
             }
@@ -95,9 +108,11 @@ namespace Automatonic.Text.Kdl
 #if NET
         public static bool TryParseAsIso(ReadOnlySpan<byte> source, out DateOnly value)
         {
-            if (TryParseDateTimeOffset(source, out DateTimeParseData parseData) &&
-                parseData.IsCalendarDateOnly &&
-                TryCreateDateTime(parseData, DateTimeKind.Unspecified, out DateTime dateTime))
+            if (
+                TryParseDateTimeOffset(source, out DateTimeParseData parseData)
+                && parseData.IsCalendarDateOnly
+                && TryCreateDateTime(parseData, DateTimeKind.Unspecified, out DateTime dateTime)
+            )
             {
                 value = DateOnly.FromDateTime(dateTime);
                 return true;
@@ -135,7 +150,10 @@ namespace Automatonic.Text.Kdl
         /// Spaces are not permitted.
         /// </remarks>
         /// <returns>"true" if successfully parsed.</returns>
-        private static bool TryParseDateTimeOffset(ReadOnlySpan<byte> source, out DateTimeParseData parseData)
+        private static bool TryParseDateTimeOffset(
+            ReadOnlySpan<byte> source,
+            out DateTimeParseData parseData
+        )
         {
             parseData = default;
 
@@ -168,10 +186,12 @@ namespace Automatonic.Text.Kdl
                 parseData.Year = (int)((digit1 * 1000) + (digit2 * 100) + (digit3 * 10) + digit4);
             }
 
-            if (source[4] != KdlConstants.Hyphen
+            if (
+                source[4] != KdlConstants.Hyphen
                 || !TryGetNextTwoDigits(source.Slice(start: 5, length: 2), ref parseData.Month)
                 || source[7] != KdlConstants.Hyphen
-                || !TryGetNextTwoDigits(source.Slice(start: 8, length: 2), ref parseData.Day))
+                || !TryGetNextTwoDigits(source.Slice(start: 8, length: 2), ref parseData.Day)
+            )
             {
                 return false;
             }
@@ -226,9 +246,12 @@ namespace Automatonic.Text.Kdl
             }
 
             // Parse THH:MM (e.g. "T10:32")
-            if (source[10] != KdlConstants.TimePrefix || source[13] != KdlConstants.Colon
+            if (
+                source[10] != KdlConstants.TimePrefix
+                || source[13] != KdlConstants.Colon
                 || !TryGetNextTwoDigits(source.Slice(start: 11, length: 2), ref parseData.Hour)
-                || !TryGetNextTwoDigits(source.Slice(start: 14, length: 2), ref parseData.Minute))
+                || !TryGetNextTwoDigits(source.Slice(start: 14, length: 2), ref parseData.Minute)
+            )
             {
                 return false;
             }
@@ -260,8 +283,10 @@ namespace Automatonic.Text.Kdl
             }
 
             // Try reading the seconds
-            if (source.Length < 19
-                || !TryGetNextTwoDigits(source.Slice(start: 17, length: 2), ref parseData.Second))
+            if (
+                source.Length < 19
+                || !TryGetNextTwoDigits(source.Slice(start: 17, length: 2), ref parseData.Second)
+            )
             {
                 return false;
             }
@@ -302,7 +327,10 @@ namespace Automatonic.Text.Kdl
             // Parse fraction. This value should never be greater than 9_999_999
             {
                 int numDigitsRead = 0;
-                int fractionEnd = Math.Min(sourceIndex + KdlConstants.DateTimeParseNumFractionDigits, source.Length);
+                int fractionEnd = Math.Min(
+                    sourceIndex + KdlConstants.DateTimeParseNumFractionDigits,
+                    source.Length
+                );
 
                 while (sourceIndex < fractionEnd && IsDigit(curByte = source[sourceIndex]))
                 {
@@ -351,8 +379,10 @@ namespace Automatonic.Text.Kdl
             static bool ParseOffset(ref DateTimeParseData parseData, ReadOnlySpan<byte> offsetData)
             {
                 // Parse the hours for the offset
-                if (offsetData.Length < 2
-                    || !TryGetNextTwoDigits(offsetData[..2], ref parseData.OffsetHours))
+                if (
+                    offsetData.Length < 2
+                    || !TryGetNextTwoDigits(offsetData[..2], ref parseData.OffsetHours)
+                )
                 {
                     return false;
                 }
@@ -366,9 +396,11 @@ namespace Automatonic.Text.Kdl
                 }
 
                 // Ensure we have enough for ":mm"
-                if (offsetData.Length != 5
+                if (
+                    offsetData.Length != 5
                     || offsetData[2] != KdlConstants.Colon
-                    || !TryGetNextTwoDigits(offsetData[3..], ref parseData.OffsetMinutes))
+                    || !TryGetNextTwoDigits(offsetData[3..], ref parseData.OffsetMinutes)
+                )
                 {
                     return false;
                 }
@@ -400,7 +432,11 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Overflow-safe DateTimeOffset factory.
         /// </summary>
-        private static bool TryCreateDateTimeOffset(DateTime dateTime, ref DateTimeParseData parseData, out DateTimeOffset value)
+        private static bool TryCreateDateTimeOffset(
+            DateTime dateTime,
+            ref DateTimeParseData parseData,
+            out DateTimeOffset value
+        )
         {
             if (((uint)parseData.OffsetHours) > KdlConstants.MaxDateTimeUtcOffsetHours)
             {
@@ -414,13 +450,18 @@ namespace Automatonic.Text.Kdl
                 return false;
             }
 
-            if (parseData.OffsetHours == KdlConstants.MaxDateTimeUtcOffsetHours && parseData.OffsetMinutes != 0)
+            if (
+                parseData.OffsetHours == KdlConstants.MaxDateTimeUtcOffsetHours
+                && parseData.OffsetMinutes != 0
+            )
             {
                 value = default;
                 return false;
             }
 
-            long offsetTicks = ((((long)parseData.OffsetHours) * 3600) + (((long)parseData.OffsetMinutes) * 60)) * TimeSpan.TicksPerSecond;
+            long offsetTicks =
+                ((((long)parseData.OffsetHours) * 3600) + (((long)parseData.OffsetMinutes) * 60))
+                * TimeSpan.TicksPerSecond;
             if (parseData.OffsetNegative)
             {
                 offsetTicks = -offsetTicks;
@@ -428,7 +469,10 @@ namespace Automatonic.Text.Kdl
 
             try
             {
-                value = new DateTimeOffset(ticks: dateTime.Ticks, offset: new TimeSpan(ticks: offsetTicks));
+                value = new DateTimeOffset(
+                    ticks: dateTime.Ticks,
+                    offset: new TimeSpan(ticks: offsetTicks)
+                );
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -444,9 +488,14 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Overflow-safe DateTimeOffset factory.
         /// </summary>
-        private static bool TryCreateDateTimeOffset(ref DateTimeParseData parseData, out DateTimeOffset value)
+        private static bool TryCreateDateTimeOffset(
+            ref DateTimeParseData parseData,
+            out DateTimeOffset value
+        )
         {
-            if (!TryCreateDateTime(parseData, kind: DateTimeKind.Unspecified, out DateTime dateTime))
+            if (
+                !TryCreateDateTime(parseData, kind: DateTimeKind.Unspecified, out DateTime dateTime)
+            )
             {
                 value = default;
                 return false;
@@ -464,7 +513,10 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Overflow-safe DateTimeOffset/Local time conversion factory.
         /// </summary>
-        private static bool TryCreateDateTimeOffsetInterpretingDataAsLocalTime(DateTimeParseData parseData, out DateTimeOffset value)
+        private static bool TryCreateDateTimeOffsetInterpretingDataAsLocalTime(
+            DateTimeParseData parseData,
+            out DateTimeOffset value
+        )
         {
             if (!TryCreateDateTime(parseData, DateTimeKind.Local, out DateTime dateTime))
             {
@@ -490,7 +542,11 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Overflow-safe DateTime factory.
         /// </summary>
-        private static bool TryCreateDateTime(DateTimeParseData parseData, DateTimeKind kind, out DateTime value)
+        private static bool TryCreateDateTime(
+            DateTimeParseData parseData,
+            DateTimeKind kind,
+            out DateTime value
+        )
         {
             if (parseData.Year == 0)
             {
@@ -507,7 +563,10 @@ namespace Automatonic.Text.Kdl
             }
 
             uint dayMinusOne = ((uint)parseData.Day) - 1;
-            if (dayMinusOne >= 28 && dayMinusOne >= DateTime.DaysInMonth(parseData.Year, parseData.Month))
+            if (
+                dayMinusOne >= 28
+                && dayMinusOne >= DateTime.DaysInMonth(parseData.Year, parseData.Month)
+            )
             {
                 value = default;
                 return false;
@@ -535,9 +594,18 @@ namespace Automatonic.Text.Kdl
 
             Debug.Assert(parseData.Fraction is >= 0 and <= KdlConstants.MaxDateTimeFraction); // All of our callers to date parse the fraction from fixed 7-digit fields so this value is trusted.
 
-            ReadOnlySpan<int> days = DateTime.IsLeapYear(parseData.Year) ? DaysToMonth366 : DaysToMonth365;
+            ReadOnlySpan<int> days = DateTime.IsLeapYear(parseData.Year)
+                ? DaysToMonth366
+                : DaysToMonth365;
             int yearMinusOne = parseData.Year - 1;
-            int totalDays = (yearMinusOne * 365) + (yearMinusOne / 4) - (yearMinusOne / 100) + (yearMinusOne / 400) + days[parseData.Month - 1] + parseData.Day - 1;
+            int totalDays =
+                (yearMinusOne * 365)
+                + (yearMinusOne / 4)
+                - (yearMinusOne / 100)
+                + (yearMinusOne / 400)
+                + days[parseData.Month - 1]
+                + parseData.Day
+                - 1;
             long ticks = totalDays * TimeSpan.TicksPerDay;
             int totalSeconds = (parseData.Hour * 3600) + (parseData.Minute * 60) + parseData.Second;
             ticks += totalSeconds * TimeSpan.TicksPerSecond;
@@ -546,7 +614,9 @@ namespace Automatonic.Text.Kdl
             return true;
         }
 
-        private static ReadOnlySpan<int> DaysToMonth365 => [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
-        private static ReadOnlySpan<int> DaysToMonth366 => [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
+        private static ReadOnlySpan<int> DaysToMonth365 =>
+            [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
+        private static ReadOnlySpan<int> DaysToMonth366 =>
+            [0, 31, 60, 91, 121, 152, 182, 213, 244, 274, 305, 335, 366];
     }
 }

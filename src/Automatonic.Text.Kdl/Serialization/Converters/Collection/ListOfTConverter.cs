@@ -12,7 +12,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             ((TCollection)state.Current.ReturnValue!).Add(value);
         }
 
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             if (state.ParentProperty?.TryGetPrePopulatedValue(ref state) == true)
             {
@@ -21,13 +25,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
             if (state.Current.KdlTypeInfo.CreateObject == null)
             {
-                ThrowHelper.ThrowNotSupportedException_SerializationNotSupported(state.Current.KdlTypeInfo.Type);
+                ThrowHelper.ThrowNotSupportedException_SerializationNotSupported(
+                    state.Current.KdlTypeInfo.Type
+                );
             }
 
             state.Current.ReturnValue = state.Current.KdlTypeInfo.CreateObject();
         }
 
-        protected override bool OnWriteResume(KdlWriter writer, TCollection value, KdlSerializerOptions options, ref WriteStack state)
+        protected override bool OnWriteResume(
+            KdlWriter writer,
+            TCollection value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             List<TElement> list = value;
 

@@ -16,9 +16,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <summary>
         /// Creates an empty <see cref="KdlPolymorphismOptions"/> instance.
         /// </summary>
-        public KdlPolymorphismOptions()
-        {
-        }
+        public KdlPolymorphismOptions() { }
 
         /// <summary>
         /// Gets the list of derived types supported in the current polymorphic type configuration.
@@ -81,31 +79,45 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         internal KdlTypeInfo? DeclaringTypeInfo { get; set; }
 
-        private sealed class DerivedTypeList(KdlPolymorphismOptions parent) : ConfigurationList<KdlDerivedType>
+        private sealed class DerivedTypeList(KdlPolymorphismOptions parent)
+            : ConfigurationList<KdlDerivedType>
         {
             private readonly KdlPolymorphismOptions _parent = parent;
 
             public override bool IsReadOnly => _parent.DeclaringTypeInfo?.IsReadOnly == true;
-            protected override void OnCollectionModifying() => _parent.DeclaringTypeInfo?.VerifyMutable();
+
+            protected override void OnCollectionModifying() =>
+                _parent.DeclaringTypeInfo?.VerifyMutable();
         }
 
         internal static KdlPolymorphismOptions? CreateFromAttributeDeclarations(Type baseType)
         {
             KdlPolymorphismOptions? options = null;
 
-            if (baseType.GetCustomAttribute<KdlPolymorphicAttribute>(inherit: false) is KdlPolymorphicAttribute polymorphicAttribute)
+            if (
+                baseType.GetCustomAttribute<KdlPolymorphicAttribute>(inherit: false)
+                is KdlPolymorphicAttribute polymorphicAttribute
+            )
             {
                 options = new()
                 {
-                    IgnoreUnrecognizedTypeDiscriminators = polymorphicAttribute.IgnoreUnrecognizedTypeDiscriminators,
+                    IgnoreUnrecognizedTypeDiscriminators =
+                        polymorphicAttribute.IgnoreUnrecognizedTypeDiscriminators,
                     UnknownDerivedTypeHandling = polymorphicAttribute.UnknownDerivedTypeHandling,
-                    TypeDiscriminatorPropertyName = polymorphicAttribute.TypeDiscriminatorPropertyName,
+                    TypeDiscriminatorPropertyName =
+                        polymorphicAttribute.TypeDiscriminatorPropertyName,
                 };
             }
 
-            foreach (KdlDerivedTypeAttribute attr in baseType.GetCustomAttributes<KdlDerivedTypeAttribute>(inherit: false))
+            foreach (
+                KdlDerivedTypeAttribute attr in baseType.GetCustomAttributes<KdlDerivedTypeAttribute>(
+                    inherit: false
+                )
+            )
             {
-                (options ??= new()).DerivedTypes.Add(new KdlDerivedType(attr.DerivedType, attr.TypeDiscriminator));
+                (options ??= new()).DerivedTypes.Add(
+                    new KdlDerivedType(attr.DerivedType, attr.TypeDiscriminator)
+                );
             }
 
             return options;

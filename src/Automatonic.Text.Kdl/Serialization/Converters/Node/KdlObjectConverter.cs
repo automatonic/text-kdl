@@ -8,9 +8,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class KdlObjectConverter : KdlConverter<KdlNode?>
     {
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfo(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        )
         {
-            kdlTypeInfo.CreateObjectForExtensionDataProperty = () => new KdlNode(options.GetNodeOptions());
+            kdlTypeInfo.CreateObjectForExtensionDataProperty = () =>
+                new KdlNode(options.GetNodeOptions());
         }
 
         internal override void ReadElementAndSetProperty(
@@ -18,9 +22,17 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             string propertyName,
             ref KdlReader reader,
             KdlSerializerOptions options,
-            scoped ref ReadStack state)
+            scoped ref ReadStack state
+        )
         {
-            bool success = KdlVertexConverter.Instance.TryRead(ref reader, typeof(KdlElement), options, ref state, out KdlElement? value, out _);
+            bool success = KdlVertexConverter.Instance.TryRead(
+                ref reader,
+                typeof(KdlElement),
+                options,
+                ref state,
+                out KdlElement? value,
+                out _
+            );
             Debug.Assert(success); // Node converters are not resumable.
 
             Debug.Assert(obj is KdlNode);
@@ -39,7 +51,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             value.WriteTo(writer, options);
         }
 
-        public override KdlNode? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlNode? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             switch (reader.TokenType)
             {
@@ -60,6 +76,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return node;
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.Object };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.Object };
     }
 }

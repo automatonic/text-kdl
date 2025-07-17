@@ -7,7 +7,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         public DoubleConverter() => IsInternalConverterForNumberType = true;
 
-        public override double Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override double Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetDouble();
         }
@@ -17,18 +21,31 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteNumberValue(value);
         }
 
-        internal override double ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override double ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetDoubleWithQuotes();
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, double value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            double value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             writer.WritePropertyName(value);
         }
 
-        internal override double ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal override double ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType == KdlTokenType.String)
             {
@@ -45,7 +62,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return reader.GetDouble();
         }
 
-        internal override void WriteNumberWithCustomHandling(KdlWriter writer, double value, KdlNumberHandling handling)
+        internal override void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            double value,
+            KdlNumberHandling handling
+        )
         {
             if ((KdlNumberHandling.WriteAsString & handling) != 0)
             {
@@ -62,6 +83,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling numberHandling) =>
-                GetSchemaForNumericType(KdlSchemaType.Number, numberHandling, isIeeeFloatingPoint: true);
+            GetSchemaForNumericType(
+                KdlSchemaType.Number,
+                numberHandling,
+                isIeeeFloatingPoint: true
+            );
     }
 }

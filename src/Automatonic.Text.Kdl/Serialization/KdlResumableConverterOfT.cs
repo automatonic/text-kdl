@@ -11,7 +11,11 @@ namespace Automatonic.Text.Kdl.Serialization
     {
         public override bool HandleNull => false;
 
-        public sealed override T? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public sealed override T? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (options is null)
             {

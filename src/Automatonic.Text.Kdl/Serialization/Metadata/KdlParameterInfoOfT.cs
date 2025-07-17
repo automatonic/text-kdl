@@ -12,7 +12,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         public new KdlPropertyInfo<T> MatchingProperty { get; }
         public new T? EffectiveDefaultValue { get; }
 
-        public KdlParameterInfo(KdlParameterInfoValues parameterInfoValues, KdlPropertyInfo<T> matchingPropertyInfo)
+        public KdlParameterInfo(
+            KdlParameterInfoValues parameterInfoValues,
+            KdlPropertyInfo<T> matchingPropertyInfo
+        )
             : base(parameterInfoValues, matchingPropertyInfo)
         {
             Debug.Assert(parameterInfoValues.ParameterType == typeof(T));

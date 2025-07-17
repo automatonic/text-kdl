@@ -15,14 +15,22 @@ namespace Automatonic.Text.Kdl.Graph
         private readonly KdlTypeInfo<TValue> _kdlTypeInfo;
         private KdlValueKind? _valueKind;
 
-        public KdlValueCustomized(TValue value, KdlTypeInfo<TValue> kdlTypeInfo, KdlElementOptions? options = null) : base(value, options)
+        public KdlValueCustomized(
+            TValue value,
+            KdlTypeInfo<TValue> kdlTypeInfo,
+            KdlElementOptions? options = null
+        )
+            : base(value, options)
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
             _kdlTypeInfo = kdlTypeInfo;
         }
 
-        private protected override KdlValueKind GetValueKindCore() => _valueKind ??= ComputeValueKind();
-        internal override KdlElement DeepCloneCore() => KdlSerializer.SerializeToNode(Value, _kdlTypeInfo)!;
+        private protected override KdlValueKind GetValueKindCore() =>
+            _valueKind ??= ComputeValueKind();
+
+        internal override KdlElement DeepCloneCore() =>
+            KdlSerializer.SerializeToNode(Value, _kdlTypeInfo)!;
 
         public override void WriteTo(KdlWriter writer, KdlSerializerOptions? options = null)
         {
@@ -47,7 +55,11 @@ namespace Automatonic.Text.Kdl.Graph
         /// </summary>
         private KdlValueKind ComputeValueKind()
         {
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(options: default, KdlSerializerOptions.BufferSizeDefault, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                options: default,
+                KdlSerializerOptions.BufferSizeDefault,
+                out PooledByteBufferWriter output
+            );
             try
             {
                 WriteTo(writer);

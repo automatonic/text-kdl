@@ -12,10 +12,13 @@ namespace Automatonic.Text.Kdl.Graph
     /// </summary>
     public abstract partial class KdlValue : KdlElement
     {
-        internal const string CreateUnreferencedCodeMessage = "Creating KdlValue instances with non-primitive types is not compatible with trimming. It can result in non-primitive types being serialized, which may have their members trimmed.";
-        internal const string CreateDynamicCodeMessage = "Creating KdlValue instances with non-primitive types requires generating code at runtime.";
+        internal const string CreateUnreferencedCodeMessage =
+            "Creating KdlValue instances with non-primitive types is not compatible with trimming. It can result in non-primitive types being serialized, which may have their members trimmed.";
+        internal const string CreateDynamicCodeMessage =
+            "Creating KdlValue instances with non-primitive types requires generating code at runtime.";
 
-        private protected KdlValue(KdlElementOptions? options) : base(options) { }
+        private protected KdlValue(KdlElementOptions? options)
+            : base(options) { }
 
         /// <summary>
         ///   Tries to obtain the current KDL value and returns a value that indicates whether the operation succeeded.
@@ -44,7 +47,10 @@ namespace Automatonic.Text.Kdl.Graph
         /// <param name="value">The value to create.</param>
         /// <param name="options">Options to control the behavior.</param>
         /// <returns>The new instance of the <see cref="KdlValue"/> class that contains the specified value.</returns>
-        [RequiresUnreferencedCode(CreateUnreferencedCodeMessage + " Use the overload that takes a KdlTypeInfo, or make sure all of the required types are preserved.")]
+        [RequiresUnreferencedCode(
+            CreateUnreferencedCodeMessage
+                + " Use the overload that takes a KdlTypeInfo, or make sure all of the required types are preserved."
+        )]
         [RequiresDynamicCode(CreateDynamicCodeMessage)]
         public static KdlValue? Create<T>(T? value, KdlElementOptions? options = null)
         {
@@ -78,7 +84,11 @@ namespace Automatonic.Text.Kdl.Graph
         /// <param name="kdlTypeInfo">The <see cref="KdlTypeInfo"/> that will be used to serialize the value.</param>
         /// <param name="options">Options to control the behavior.</param>
         /// <returns>The new instance of the <see cref="KdlValue"/> class that contains the specified value.</returns>
-        public static KdlValue? Create<T>(T? value, KdlTypeInfo<T> kdlTypeInfo, KdlElementOptions? options = null)
+        public static KdlValue? Create<T>(
+            T? value,
+            KdlTypeInfo<T> kdlTypeInfo,
+            KdlElementOptions? options = null
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -97,7 +107,10 @@ namespace Automatonic.Text.Kdl.Graph
 
             kdlTypeInfo.EnsureConfigured();
 
-            if (value is KdlReadOnlyElement element && kdlTypeInfo.EffectiveConverter.IsInternalConverter)
+            if (
+                value is KdlReadOnlyElement element
+                && kdlTypeInfo.EffectiveConverter.IsInternalConverter
+            )
             {
                 return CreateFromElement(ref element, options);
             }
@@ -113,8 +126,14 @@ namespace Automatonic.Text.Kdl.Graph
             }
 
             // Fall back to slow path that converts the nodes to KdlElement.
-            KdlReadOnlyElement thisElement = ToKdlElement(this, out KdlReadOnlyDocument? thisDocument);
-            KdlReadOnlyElement otherElement = ToKdlElement(otherNode, out KdlReadOnlyDocument? otherDocument);
+            KdlReadOnlyElement thisElement = ToKdlElement(
+                this,
+                out KdlReadOnlyDocument? thisDocument
+            );
+            KdlReadOnlyElement otherElement = ToKdlElement(
+                otherNode,
+                out KdlReadOnlyDocument? otherDocument
+            );
             try
             {
                 return KdlReadOnlyElement.DeepEquals(thisElement, otherElement);
@@ -125,7 +144,10 @@ namespace Automatonic.Text.Kdl.Graph
                 otherDocument?.Dispose();
             }
 
-            static KdlReadOnlyElement ToKdlElement(KdlElement vertex, out KdlReadOnlyDocument? backingDocument)
+            static KdlReadOnlyElement ToKdlElement(
+                KdlElement vertex,
+                out KdlReadOnlyDocument? backingDocument
+            )
             {
                 if (vertex.UnderlyingReadOnlyElement is { } element)
                 {
@@ -136,7 +158,8 @@ namespace Automatonic.Text.Kdl.Graph
                 KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
                     options: default,
                     KdlSerializerOptions.BufferSizeDefault,
-                    out PooledByteBufferWriter output);
+                    out PooledByteBufferWriter output
+                );
 
                 try
                 {
@@ -160,14 +183,20 @@ namespace Automatonic.Text.Kdl.Graph
             Parent?.GetPath(ref path, this);
         }
 
-        internal static KdlValue CreateFromTypeInfo<T>(T value, KdlTypeInfo<T> kdlTypeInfo, KdlElementOptions? options = null)
+        internal static KdlValue CreateFromTypeInfo<T>(
+            T value,
+            KdlTypeInfo<T> kdlTypeInfo,
+            KdlElementOptions? options = null
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
             Debug.Assert(value != null);
 
-            if (KdlValue<T>.TypeIsSupportedPrimitive &&
-                kdlTypeInfo is { EffectiveConverter.IsInternalConverter: true } &&
-                (kdlTypeInfo.EffectiveNumberHandling & KdlNumberHandling.WriteAsString) is 0)
+            if (
+                KdlValue<T>.TypeIsSupportedPrimitive
+                && kdlTypeInfo is { EffectiveConverter.IsInternalConverter: true }
+                && (kdlTypeInfo.EffectiveNumberHandling & KdlNumberHandling.WriteAsString) is 0
+            )
             {
                 // If the type is using the built-in converter for a known primitive,
                 // switch to the more efficient KdlValuePrimitive<T> implementation.
@@ -177,7 +206,10 @@ namespace Automatonic.Text.Kdl.Graph
             return new KdlValueCustomized<T>(value, kdlTypeInfo, options);
         }
 
-        internal static KdlValue? CreateFromElement(ref readonly KdlReadOnlyElement element, KdlElementOptions? options = null)
+        internal static KdlValue? CreateFromElement(
+            ref readonly KdlReadOnlyElement element,
+            KdlElementOptions? options = null
+        )
         {
             switch (element.ValueKind)
             {

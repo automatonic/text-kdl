@@ -26,7 +26,10 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>(this KdlReadOnlyDocument document, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(
+            this KdlReadOnlyDocument document,
+            KdlSerializerOptions? options = null
+        )
         {
             if (document is null)
             {
@@ -57,7 +60,11 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(this KdlReadOnlyDocument document, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(
+            this KdlReadOnlyDocument document,
+            Type returnType,
+            KdlSerializerOptions? options = null
+        )
         {
             if (document is null)
             {
@@ -90,7 +97,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="KdlException">
         /// <typeparamref name="TValue" /> is not compatible with the KDL.
         /// </exception>
-        public static TValue? Deserialize<TValue>(this KdlReadOnlyDocument document, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static TValue? Deserialize<TValue>(
+            this KdlReadOnlyDocument document,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (document is null)
             {
@@ -119,7 +129,10 @@ namespace Automatonic.Text.Kdl
         ///
         /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static object? Deserialize(this KdlReadOnlyDocument document, KdlTypeInfo kdlTypeInfo)
+        public static object? Deserialize(
+            this KdlReadOnlyDocument document,
+            KdlTypeInfo kdlTypeInfo
+        )
         {
             if (document is null)
             {
@@ -171,7 +184,11 @@ namespace Automatonic.Text.Kdl
         /// The <see cref="KdlSerializerContext.GetTypeInfo(Type)"/> method of the provided
         /// <paramref name="context"/> returns <see langword="null"/> for the type to convert.
         /// </exception>
-        public static object? Deserialize(this KdlReadOnlyDocument document, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(
+            this KdlReadOnlyDocument document,
+            Type returnType,
+            KdlSerializerContext context
+        )
         {
             if (document is null)
             {

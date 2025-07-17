@@ -10,10 +10,15 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         private const int MaximumVersionLength = 43; // 2147483647.2147483647.2147483647.2147483647
 
-        private const int MaximumEscapedVersionLength = KdlConstants.MaxExpansionFactorWhileEscaping * MaximumVersionLength;
+        private const int MaximumEscapedVersionLength =
+            KdlConstants.MaxExpansionFactorWhileEscaping * MaximumVersionLength;
 #endif
 
-        public override Version? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override Version? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType is KdlTokenType.Null)
             {
@@ -33,7 +38,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             Debug.Assert(reader.TokenType is KdlTokenType.PropertyName or KdlTokenType.String);
 
 #if NET
-            if (!KdlHelpers.IsInRangeInclusive(reader.ValueLength, MinimumVersionLength, MaximumEscapedVersionLength))
+            if (
+                !KdlHelpers.IsInRangeInclusive(
+                    reader.ValueLength,
+                    MinimumVersionLength,
+                    MaximumEscapedVersionLength
+                )
+            )
             {
                 ThrowHelper.ThrowFormatException(DataType.Version);
             }
@@ -57,7 +68,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
 #else
             string? versionString = reader.GetString();
-            if (!string.IsNullOrEmpty(versionString) && (!char.IsDigit(versionString[0]) || !char.IsDigit(versionString[versionString.Length - 1])))
+            if (
+                !string.IsNullOrEmpty(versionString)
+                && (
+                    !char.IsDigit(versionString[0])
+                    || !char.IsDigit(versionString[versionString.Length - 1])
+                )
+            )
             {
                 // Since leading and trailing whitespaces are forbidden throughout Automatonic.Text.Kdl converters
                 // we need to make sure that our input doesn't have them,
@@ -96,12 +113,21 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 #endif
         }
 
-        internal override Version ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override Version ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return ReadCore(ref reader);
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, Version value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            Version value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             if (value is null)
             {

@@ -38,9 +38,7 @@ namespace Automatonic.Text.Kdl.Graph
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static KdlElement? Parse(
-            ref KdlReader reader,
-            KdlElementOptions? nodeOptions = null)
+        public static KdlElement? Parse(ref KdlReader reader, KdlElementOptions? nodeOptions = null)
         {
             KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(ref reader);
             return KdlVertexConverter.Create(element, nodeOptions);
@@ -64,7 +62,8 @@ namespace Automatonic.Text.Kdl.Graph
         public static KdlElement? Parse(
             string kdl,
             KdlElementOptions? nodeOptions = null,
-            KdlReadOnlyDocumentOptions documentOptions = default)
+            KdlReadOnlyDocumentOptions documentOptions = default
+        )
         {
             if (kdl is null)
             {
@@ -90,7 +89,8 @@ namespace Automatonic.Text.Kdl.Graph
         public static KdlElement? Parse(
             ReadOnlySpan<byte> utf8Kdl,
             KdlElementOptions? nodeOptions = null,
-            KdlReadOnlyDocumentOptions documentOptions = default)
+            KdlReadOnlyDocumentOptions documentOptions = default
+        )
         {
             KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(utf8Kdl, documentOptions);
             return KdlVertexConverter.Create(element, nodeOptions);
@@ -112,7 +112,8 @@ namespace Automatonic.Text.Kdl.Graph
         public static KdlElement? Parse(
             Stream utf8Kdl,
             KdlElementOptions? nodeOptions = null,
-            KdlReadOnlyDocumentOptions documentOptions = default)
+            KdlReadOnlyDocumentOptions documentOptions = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -141,14 +142,17 @@ namespace Automatonic.Text.Kdl.Graph
             Stream utf8Kdl,
             KdlElementOptions? nodeOptions = null,
             KdlReadOnlyDocumentOptions documentOptions = default,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(utf8Kdl));
             }
 
-            KdlReadOnlyDocument document = await KdlReadOnlyDocument.ParseAsyncCoreUnrented(utf8Kdl, documentOptions, cancellationToken).ConfigureAwait(false);
+            KdlReadOnlyDocument document = await KdlReadOnlyDocument
+                .ParseAsyncCoreUnrented(utf8Kdl, documentOptions, cancellationToken)
+                .ConfigureAwait(false);
             return KdlVertexConverter.Create(document.RootElement, nodeOptions);
         }
     }

@@ -6,7 +6,9 @@ namespace Automatonic.Text.Kdl.Serialization
     /// <summary>
     /// Provides metadata about a set of types that is relevant to KDL serialization.
     /// </summary>
-    public abstract partial class KdlSerializerContext : IKdlTypeInfoResolver, IBuiltInKdlTypeInfoResolver
+    public abstract partial class KdlSerializerContext
+        : IKdlTypeInfoResolver,
+            IBuiltInKdlTypeInfoResolver
     {
         private KdlSerializerOptions? _options;
 
@@ -52,24 +54,27 @@ namespace Automatonic.Text.Kdl.Serialization
 
             KdlSerializerOptions? generatedSerializerOptions = GeneratedSerializerOptions;
 
-            return
-                generatedSerializerOptions is not null &&
+            return generatedSerializerOptions is not null
+                &&
                 // Guard against unsupported features
-                options.Converters.Count == 0 &&
-                options.Encoder is null &&
+                options.Converters.Count == 0
+                && options.Encoder is null
+                &&
                 // Disallow custom number handling we'd need to honor when writing.
                 // AllowReadingFromString and Strict are fine since there's no action to take when writing.
-                !KdlHelpers.RequiresSpecialNumberHandlingOnWrite(options.NumberHandling) &&
-                options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Unspecified &&
-
+                !KdlHelpers.RequiresSpecialNumberHandlingOnWrite(options.NumberHandling)
+                && options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Unspecified
+                &&
                 // Ensure options values are consistent with expected defaults.
-                options.DefaultIgnoreCondition == generatedSerializerOptions.DefaultIgnoreCondition &&
-                options.RespectNullableAnnotations == generatedSerializerOptions.RespectNullableAnnotations &&
-                options.IgnoreReadOnlyFields == generatedSerializerOptions.IgnoreReadOnlyFields &&
-                options.IgnoreReadOnlyProperties == generatedSerializerOptions.IgnoreReadOnlyProperties &&
-                options.IncludeFields == generatedSerializerOptions.IncludeFields &&
-                options.PropertyNamingPolicy == generatedSerializerOptions.PropertyNamingPolicy &&
-                options.DictionaryKeyPolicy is null;
+                options.DefaultIgnoreCondition == generatedSerializerOptions.DefaultIgnoreCondition
+                && options.RespectNullableAnnotations
+                    == generatedSerializerOptions.RespectNullableAnnotations
+                && options.IgnoreReadOnlyFields == generatedSerializerOptions.IgnoreReadOnlyFields
+                && options.IgnoreReadOnlyProperties
+                    == generatedSerializerOptions.IgnoreReadOnlyProperties
+                && options.IncludeFields == generatedSerializerOptions.IncludeFields
+                && options.PropertyNamingPolicy == generatedSerializerOptions.PropertyNamingPolicy
+                && options.DictionaryKeyPolicy is null;
         }
 
         /// <summary>

@@ -1,7 +1,6 @@
 using System.Buffers;
 using System.Diagnostics;
 
-
 namespace Automatonic.Text.Kdl
 {
     public sealed partial class KdlWriter
@@ -54,7 +53,11 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(
+                output[BytesPending..],
+                value,
+                out int bytesWritten
+            );
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;
@@ -66,7 +69,8 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
             // 2 quotes, and optionally, 1 list separator and 1-2 bytes for new line
-            int maxRequired = indent + KdlConstants.MaximumFormatDateTimeOffsetLength + 3 + _newLineLength;
+            int maxRequired =
+                indent + KdlConstants.MaximumFormatDateTimeOffsetLength + 3 + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -92,7 +96,11 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(
+                output[BytesPending..],
+                value,
+                out int bytesWritten
+            );
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;

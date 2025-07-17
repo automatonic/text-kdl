@@ -63,7 +63,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentException">
         /// Thrown when the specified value is too large or if it contains invalid UTF-16 characters.
         /// </exception>
-        public static KdlEncodedText Encode(ReadOnlySpan<char> value, JavaScriptEncoder? encoder = null)
+        public static KdlEncodedText Encode(
+            ReadOnlySpan<char> value,
+            JavaScriptEncoder? encoder = null
+        )
         {
             if (value.Length == 0)
             {
@@ -73,16 +76,20 @@ namespace Automatonic.Text.Kdl
             return TranscodeAndEncode(value, encoder);
         }
 
-        private static KdlEncodedText TranscodeAndEncode(ReadOnlySpan<char> value, JavaScriptEncoder? encoder)
+        private static KdlEncodedText TranscodeAndEncode(
+            ReadOnlySpan<char> value,
+            JavaScriptEncoder? encoder
+        )
         {
             KdlWriterHelper.ValidateValue(value);
 
             int expectedByteCount = KdlReaderHelper.GetUtf8ByteCount(value);
 
             byte[]? array = null;
-            Span<byte> utf8Bytes = expectedByteCount <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (array = ArrayPool<byte>.Shared.Rent(expectedByteCount));
+            Span<byte> utf8Bytes =
+                expectedByteCount <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (array = ArrayPool<byte>.Shared.Rent(expectedByteCount));
 
             // Since GetUtf8ByteCount above already throws on invalid input, the transcoding
             // to UTF-8 is guaranteed to succeed here. Therefore, there's no need for a try-catch-finally block.
@@ -110,7 +117,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentException">
         /// Thrown when the specified value is too large or if it contains invalid UTF-8 bytes.
         /// </exception>
-        public static KdlEncodedText Encode(ReadOnlySpan<byte> utf8Value, JavaScriptEncoder? encoder = null)
+        public static KdlEncodedText Encode(
+            ReadOnlySpan<byte> utf8Value,
+            JavaScriptEncoder? encoder = null
+        )
         {
             if (utf8Value.Length == 0)
             {
@@ -121,7 +131,10 @@ namespace Automatonic.Text.Kdl
             return EncodeHelper(utf8Value, encoder);
         }
 
-        private static KdlEncodedText EncodeHelper(ReadOnlySpan<byte> utf8Value, JavaScriptEncoder? encoder)
+        private static KdlEncodedText EncodeHelper(
+            ReadOnlySpan<byte> utf8Value,
+            JavaScriptEncoder? encoder
+        )
         {
             int idx = KdlWriterHelper.NeedsEscaping(utf8Value, encoder);
 
@@ -177,8 +190,7 @@ namespace Automatonic.Text.Kdl
         /// <returns>
         /// Returns the underlying UTF-16 encoded string.
         /// </returns>
-        public override string ToString()
-            => _value ?? string.Empty;
+        public override string ToString() => _value ?? string.Empty;
 
         /// <summary>
         /// Returns the hash code for this <see cref="KdlEncodedText"/>.
@@ -186,7 +198,6 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Returns 0 on a default instance of <see cref="KdlEncodedText"/>.
         /// </remarks>
-        public override int GetHashCode()
-            => _value == null ? 0 : _value.GetHashCode();
+        public override int GetHashCode() => _value == null ? 0 : _value.GetHashCode();
     }
 }

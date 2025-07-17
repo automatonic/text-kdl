@@ -25,6 +25,10 @@ namespace Automatonic.Text.Kdl.Schema
         /// <summary>
         /// Defines a callback that is invoked for every schema that is generated within the type graph.
         /// </summary>
-        public Func<KdlSchemaExporterContext, KdlElement, KdlElement>? TransformSchemaNode { get; init; }
+        public Func<
+            KdlSchemaExporterContext,
+            KdlElement,
+            KdlElement
+        >? TransformSchemaNode { get; init; }
     }
 }

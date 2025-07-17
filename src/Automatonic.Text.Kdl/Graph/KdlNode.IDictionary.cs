@@ -42,7 +42,8 @@ namespace Automatonic.Text.Kdl.Graph
         /// <exception cref="ArgumentNullException">
         ///   The property name of <paramref name="property"/> is <see langword="null"/>.
         /// </exception>
-        public void Add(KeyValuePair<KdlEntryKey, KdlElement?> property) => Add(property.Key, property.Value);
+        public void Add(KeyValuePair<KdlEntryKey, KdlElement?> property) =>
+            Add(property.Key, property.Value);
 
         /// <summary>
         ///   Determines whether the <see cref="KdlNode"/> contains an element with the specified property name.
@@ -102,8 +103,9 @@ namespace Automatonic.Text.Kdl.Graph
         /// <returns>
         ///   <see langword="true"/> if the <see cref="KdlNode"/> contains an element with the property name; otherwise, <see langword="false"/>.
         /// </returns>
-        bool ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.Contains(KeyValuePair<KdlEntryKey, KdlElement?> item) =>
-            ((IDictionary<KdlEntryKey, KdlElement?>)Dictionary).Contains(item);
+        bool ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.Contains(
+            KeyValuePair<KdlEntryKey, KdlElement?> item
+        ) => ((IDictionary<KdlEntryKey, KdlElement?>)Dictionary).Contains(item);
 
         /// <summary>
         ///   Copies the elements of the <see cref="KdlNode"/> to an array of type KeyValuePair starting at the specified array index.
@@ -122,8 +124,10 @@ namespace Automatonic.Text.Kdl.Graph
         ///   The number of elements in the source ICollection is greater than the available space from <paramref name="index"/>
         ///   to the end of the destination <paramref name="array"/>.
         /// </exception>
-        void ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.CopyTo(KeyValuePair<KdlEntryKey, KdlElement?>[] array, int index) =>
-            ((IDictionary<KdlEntryKey, KdlElement?>)Dictionary).CopyTo(array, index);
+        void ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.CopyTo(
+            KeyValuePair<KdlEntryKey, KdlElement?>[] array,
+            int index
+        ) => ((IDictionary<KdlEntryKey, KdlElement?>)Dictionary).CopyTo(array, index);
 
         /// <summary>
         ///   Returns an enumerator that iterates through the <see cref="KdlNode"/>.
@@ -131,7 +135,8 @@ namespace Automatonic.Text.Kdl.Graph
         /// <returns>
         ///   An enumerator that iterates through the <see cref="KdlNode"/>.
         /// </returns>
-        public IEnumerator<KeyValuePair<KdlEntryKey, KdlElement?>> GetEnumerator() => Dictionary.GetEnumerator();
+        public IEnumerator<KeyValuePair<KdlEntryKey, KdlElement?>> GetEnumerator() =>
+            Dictionary.GetEnumerator();
 
         /// <summary>
         ///   Removes a key and value from the <see cref="KdlNode"/>.
@@ -142,7 +147,9 @@ namespace Automatonic.Text.Kdl.Graph
         /// <returns>
         ///   <see langword="true"/> if the element is successfully removed; otherwise, <see langword="false"/>.
         /// </returns>
-        bool ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.Remove(KeyValuePair<KdlEntryKey, KdlElement?> item) => Remove(item.Key);
+        bool ICollection<KeyValuePair<KdlEntryKey, KdlElement?>>.Remove(
+            KeyValuePair<KdlEntryKey, KdlElement?> item
+        ) => Remove(item.Key);
 
         /// <summary>
         ///   Gets a collection containing the property names in the <see cref="KdlNode"/>.
@@ -168,7 +175,10 @@ namespace Automatonic.Text.Kdl.Graph
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="key"/> is <see langword="null"/>.
         /// </exception>
-        bool IDictionary<KdlEntryKey, KdlElement?>.TryGetValue(KdlEntryKey key, out KdlElement? kdlVertex)
+        bool IDictionary<KdlEntryKey, KdlElement?>.TryGetValue(
+            KdlEntryKey key,
+            out KdlElement? kdlVertex
+        )
         {
             if (key is null)
             {
@@ -185,7 +195,10 @@ namespace Automatonic.Text.Kdl.Graph
 
         private OrderedDictionary<KdlEntryKey, KdlElement?> InitializeDictionary()
         {
-            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out KdlReadOnlyElement? kdlElement);
+            GetUnderlyingRepresentation(
+                out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary,
+                out KdlReadOnlyElement? kdlElement
+            );
 
             if (dictionary is null)
             {
@@ -195,7 +208,10 @@ namespace Automatonic.Text.Kdl.Graph
                 {
                     foreach (IKdlEntry jElementProperty in kdlElement.Value.EnumerateNode())
                     {
-                        KdlElement? node = KdlVertexConverter.Create(jElementProperty.Value, Options);
+                        KdlElement? node = KdlVertexConverter.Create(
+                            jElementProperty.Value,
+                            Options
+                        );
                         if (node != null)
                         {
                             node.Parent = this;
@@ -214,8 +230,15 @@ namespace Automatonic.Text.Kdl.Graph
             return dictionary;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        private static OrderedDictionary<KdlEntryKey, KdlElement?> CreateDictionary(KdlElementOptions? options, int capacity = 0)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Style",
+            "IDE0060:Remove unused parameter",
+            Justification = "<Pending>"
+        )]
+        private static OrderedDictionary<KdlEntryKey, KdlElement?> CreateDictionary(
+            KdlElementOptions? options,
+            int capacity = 0
+        )
         {
             //TECHDEBT: Need a key comparer
             // StringComparer comparer = options?.PropertyNameCaseInsensitive ?? false
@@ -230,7 +253,10 @@ namespace Automatonic.Text.Kdl.Graph
         /// Provides a coherent view of the underlying representation of the current node.
         /// The kdlElement value should be consumed if and only if dictionary value is null.
         /// </summary>
-        private void GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out KdlReadOnlyElement? kdlElement)
+        private void GetUnderlyingRepresentation(
+            out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary,
+            out KdlReadOnlyElement? kdlElement
+        )
         {
             // Because KdlElement cannot be read atomically there might be torn reads,
             // however the order of read/write operations guarantees that that's only
@@ -241,6 +267,7 @@ namespace Automatonic.Text.Kdl.Graph
         }
 
         public void Clear() => throw new NotImplementedException();
+
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

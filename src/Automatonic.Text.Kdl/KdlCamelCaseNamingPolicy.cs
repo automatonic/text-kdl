@@ -10,11 +10,15 @@ namespace Automatonic.Text.Kdl
             }
 
 #if NET
-            return string.Create(name.Length, name, (chars, name) =>
-            {
-                name.CopyTo(chars);
-                FixCasing(chars);
-            });
+            return string.Create(
+                name.Length,
+                name,
+                (chars, name) =>
+                {
+                    name.CopyTo(chars);
+                    FixCasing(chars);
+                }
+            );
 #else
             char[] chars = name.ToCharArray();
             FixCasing(chars);

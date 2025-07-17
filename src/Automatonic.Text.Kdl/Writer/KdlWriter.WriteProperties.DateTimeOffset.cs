@@ -136,20 +136,36 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapeProperty(ReadOnlySpan<char> propertyName, DateTimeOffset value, int firstEscapeIndexProp)
+        private void WriteStringEscapeProperty(
+            ReadOnlySpan<char> propertyName,
+            DateTimeOffset value,
+            int firstEscapeIndexProp
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length
+            );
             Debug.Assert(firstEscapeIndexProp >= 0 && firstEscapeIndexProp < propertyName.Length);
 
             char[]? propertyArray = null;
 
-            int length = KdlWriterHelper.GetMaxEscapedLength(propertyName.Length, firstEscapeIndexProp);
+            int length = KdlWriterHelper.GetMaxEscapedLength(
+                propertyName.Length,
+                firstEscapeIndexProp
+            );
 
-            Span<char> escapedPropertyName = length <= KdlConstants.StackallocCharThreshold ?
-                stackalloc char[KdlConstants.StackallocCharThreshold] :
-                (propertyArray = ArrayPool<char>.Shared.Rent(length));
+            Span<char> escapedPropertyName =
+                length <= KdlConstants.StackallocCharThreshold
+                    ? stackalloc char[KdlConstants.StackallocCharThreshold]
+                    : (propertyArray = ArrayPool<char>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                propertyName,
+                escapedPropertyName,
+                firstEscapeIndexProp,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStringByOptions(escapedPropertyName[..written], value);
 
@@ -159,20 +175,39 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapeProperty(ReadOnlySpan<byte> utf8PropertyName, DateTimeOffset value, int firstEscapeIndexProp)
+        private void WriteStringEscapeProperty(
+            ReadOnlySpan<byte> utf8PropertyName,
+            DateTimeOffset value,
+            int firstEscapeIndexProp
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8PropertyName.Length);
-            Debug.Assert(firstEscapeIndexProp >= 0 && firstEscapeIndexProp < utf8PropertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping
+                    >= utf8PropertyName.Length
+            );
+            Debug.Assert(
+                firstEscapeIndexProp >= 0 && firstEscapeIndexProp < utf8PropertyName.Length
+            );
 
             byte[]? propertyArray = null;
 
-            int length = KdlWriterHelper.GetMaxEscapedLength(utf8PropertyName.Length, firstEscapeIndexProp);
+            int length = KdlWriterHelper.GetMaxEscapedLength(
+                utf8PropertyName.Length,
+                firstEscapeIndexProp
+            );
 
-            Span<byte> escapedPropertyName = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (propertyArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> escapedPropertyName =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (propertyArray = ArrayPool<byte>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                utf8PropertyName,
+                escapedPropertyName,
+                firstEscapeIndexProp,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStringByOptions(escapedPropertyName[..written], value);
 
@@ -208,13 +243,24 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringMinimized(ReadOnlySpan<char> escapedPropertyName, DateTimeOffset value)
+        private void WriteStringMinimized(
+            ReadOnlySpan<char> escapedPropertyName,
+            DateTimeOffset value
+        )
         {
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - KdlConstants.MaximumFormatDateTimeOffsetLength - 6);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - KdlConstants.MaximumFormatDateTimeOffsetLength
+                        - 6
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for date, and 1 colon => escapedPropertyName.Length + KdlConstants.MaximumFormatDateTimeOffsetLength + 5
             // Optionally, 1 list separator, and up to 3x growth when transcoding
-            int maxRequired = (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + KdlConstants.MaximumFormatDateTimeOffsetLength + 6;
+            int maxRequired =
+                (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + KdlConstants.MaximumFormatDateTimeOffsetLength
+                + 6;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -236,17 +282,28 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(
+                output[BytesPending..],
+                value,
+                out int bytesWritten
+            );
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;
         }
 
-        private void WriteStringMinimized(ReadOnlySpan<byte> escapedPropertyName, DateTimeOffset value)
+        private void WriteStringMinimized(
+            ReadOnlySpan<byte> escapedPropertyName,
+            DateTimeOffset value
+        )
         {
-            Debug.Assert(escapedPropertyName.Length < int.MaxValue - KdlConstants.MaximumFormatDateTimeOffsetLength - 6);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < int.MaxValue - KdlConstants.MaximumFormatDateTimeOffsetLength - 6
+            );
 
-            int minRequired = escapedPropertyName.Length + KdlConstants.MaximumFormatDateTimeOffsetLength + 5; // 2 quotes for property name, 2 quotes for date, and 1 colon
+            int minRequired =
+                escapedPropertyName.Length + KdlConstants.MaximumFormatDateTimeOffsetLength + 5; // 2 quotes for property name, 2 quotes for date, and 1 colon
             int maxRequired = minRequired + 1; // Optionally, 1 list separator
 
             if (_memory.Length - BytesPending < maxRequired)
@@ -270,22 +327,41 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(
+                output[BytesPending..],
+                value,
+                out int bytesWritten
+            );
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;
         }
 
-        private void WriteStringIndented(ReadOnlySpan<char> escapedPropertyName, DateTimeOffset value)
+        private void WriteStringIndented(
+            ReadOnlySpan<char> escapedPropertyName,
+            DateTimeOffset value
+        )
         {
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - indent - KdlConstants.MaximumFormatDateTimeOffsetLength - 7 - _newLineLength);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - indent
+                        - KdlConstants.MaximumFormatDateTimeOffsetLength
+                        - 7
+                        - _newLineLength
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for date, 1 colon, and 1 space => escapedPropertyName.Length + KdlConstants.MaximumFormatDateTimeOffsetLength + 6
             // Optionally, 1 list separator, 1-2 bytes for new line, and up to 3x growth when transcoding
-            int maxRequired = indent + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + KdlConstants.MaximumFormatDateTimeOffsetLength + 7 + _newLineLength;
+            int maxRequired =
+                indent
+                + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + KdlConstants.MaximumFormatDateTimeOffsetLength
+                + 7
+                + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -319,20 +395,38 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(
+                output[BytesPending..],
+                value,
+                out int bytesWritten
+            );
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;
         }
 
-        private void WriteStringIndented(ReadOnlySpan<byte> escapedPropertyName, DateTimeOffset value)
+        private void WriteStringIndented(
+            ReadOnlySpan<byte> escapedPropertyName,
+            DateTimeOffset value
+        )
         {
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
-            Debug.Assert(escapedPropertyName.Length < int.MaxValue - indent - KdlConstants.MaximumFormatDateTimeOffsetLength - 7 - _newLineLength);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < int.MaxValue
+                        - indent
+                        - KdlConstants.MaximumFormatDateTimeOffsetLength
+                        - 7
+                        - _newLineLength
+            );
 
-            int minRequired = indent + escapedPropertyName.Length + KdlConstants.MaximumFormatDateTimeOffsetLength + 6; // 2 quotes for property name, 2 quotes for date, 1 colon, and 1 space
+            int minRequired =
+                indent
+                + escapedPropertyName.Length
+                + KdlConstants.MaximumFormatDateTimeOffsetLength
+                + 6; // 2 quotes for property name, 2 quotes for date, 1 colon, and 1 space
             int maxRequired = minRequired + 1 + _newLineLength; // Optionally, 1 list separator and 1-2 bytes for new line
 
             if (_memory.Length - BytesPending < maxRequired)
@@ -368,7 +462,11 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            KdlWriterHelper.WriteDateTimeOffsetTrimmed(output[BytesPending..], value, out int bytesWritten);
+            KdlWriterHelper.WriteDateTimeOffsetTrimmed(
+                output[BytesPending..],
+                value,
+                out int bytesWritten
+            );
             BytesPending += bytesWritten;
 
             output[BytesPending++] = KdlConstants.Quote;

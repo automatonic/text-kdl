@@ -5,7 +5,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 {
     internal sealed partial class ReflectionEmitCachingMemberAccessor
     {
-        private sealed class Cache<TKey>(TimeSpan slidingExpiration, TimeSpan evictionInterval) where TKey : notnull
+        private sealed class Cache<TKey>(TimeSpan slidingExpiration, TimeSpan evictionInterval)
+            where TKey : notnull
         {
             private int _evictLock;
             private long _lastEvictedTicks = DateTime.UtcNow.Ticks; // timestamp of latest eviction operation.
@@ -13,13 +14,14 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             private readonly long _slidingExpirationTicks = slidingExpiration.Ticks; // max timespan allowed for cache entries to remain inactive.
             private readonly ConcurrentDictionary<TKey, CacheEntry> _cache = new();
 
-            public TValue GetOrAdd<TValue>(TKey key, Func<TKey, TValue> valueFactory) where TValue : class?
+            public TValue GetOrAdd<TValue>(TKey key, Func<TKey, TValue> valueFactory)
+                where TValue : class?
             {
-                CacheEntry entry = _cache.GetOrAdd(
-                    key,
+                CacheEntry entry = _cache.GetOrAdd(key,
 #if NET
                     static (TKey key, Func<TKey, TValue> valueFactory) => new(valueFactory(key)),
-                    valueFactory);
+                    valueFactory
+                );
 #else
                     key => new(valueFactory(key)));
 #endif
@@ -53,7 +55,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 foreach (KeyValuePair<TKey, CacheEntry> kvp in _cache)
                 {
-                    if (utcNowTicks - Volatile.Read(ref kvp.Value.LastUsedTicks) >= _slidingExpirationTicks)
+                    if (
+                        utcNowTicks - Volatile.Read(ref kvp.Value.LastUsedTicks)
+                        >= _slidingExpirationTicks
+                    )
                     {
                         _cache.TryRemove(kvp.Key, out _);
                     }

@@ -17,7 +17,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             value.WriteTo(writer, options);
         }
 
-        public override KdlValue? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlValue? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType is KdlTokenType.Null)
             {

@@ -10,7 +10,10 @@ namespace Automatonic.Text.Kdl
     /// </summary>
     public struct KdlWriterOptions
     {
-        private static readonly string s_alternateNewLine = Environment.NewLine.Length == 2 ? KdlConstants.NewLineLineFeed : KdlConstants.NewLineCarriageReturnLineFeed;
+        private static readonly string s_alternateNewLine =
+            Environment.NewLine.Length == 2
+                ? KdlConstants.NewLineLineFeed
+                : KdlConstants.NewLineCarriageReturnLineFeed;
 
         internal const int DefaultMaxDepth = 1000;
 
@@ -50,7 +53,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="value"/> contains an invalid character.</exception>
         public char IndentCharacter
         {
-            readonly get => (_optionsMask & IndentCharacterBit) != 0 ? KdlConstants.TabIndentCharacter : KdlConstants.DefaultIndentCharacter;
+            readonly get =>
+                (_optionsMask & IndentCharacterBit) != 0
+                    ? KdlConstants.TabIndentCharacter
+                    : KdlConstants.DefaultIndentCharacter;
             set
             {
                 KdlWriterHelper.ValidateIndentCharacter(value);
@@ -76,18 +82,20 @@ namespace Automatonic.Text.Kdl
             set
             {
                 KdlWriterHelper.ValidateIndentSize(value);
-                _optionsMask = (_optionsMask & ~IndentSizeMask) | (EncodeIndentSize(value) << OptionsBitCount);
+                _optionsMask =
+                    (_optionsMask & ~IndentSizeMask) | (EncodeIndentSize(value) << OptionsBitCount);
             }
         }
 
         // Encoding is applied by swapping 0 with the default value to ensure default(KdlWriterOptions) instances are well-defined.
         // As this operation is symmetrical, it can also be used to decode.
-        private static int EncodeIndentSize(int value) => value switch
-        {
-            0 => KdlConstants.DefaultIndentSize,
-            KdlConstants.DefaultIndentSize => 0,
-            _ => value
-        };
+        private static int EncodeIndentSize(int value) =>
+            value switch
+            {
+                0 => KdlConstants.DefaultIndentSize,
+                KdlConstants.DefaultIndentSize => 0,
+                _ => value,
+            };
 
         /// <summary>
         /// Gets or sets the maximum depth allowed when writing KDL, with the default (i.e. 0) indicating a max depth of 1000.
@@ -105,7 +113,9 @@ namespace Automatonic.Text.Kdl
             {
                 if (value < 0)
                 {
-                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(nameof(value));
+                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(
+                        nameof(value)
+                    );
                 }
 
                 _maxDepth = value;
@@ -152,7 +162,8 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         public string NewLine
         {
-            readonly get => (_optionsMask & NewLineBit) != 0 ? s_alternateNewLine : Environment.NewLine;
+            readonly get =>
+                (_optionsMask & NewLineBit) != 0 ? s_alternateNewLine : Environment.NewLine;
             set
             {
                 KdlWriterHelper.ValidateNewLine(value);
@@ -167,7 +178,8 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        internal readonly bool IndentedOrNotSkipValidation => (_optionsMask & (IndentBit | SkipValidationBit)) != SkipValidationBit;  // Equivalent to: Indented || !SkipValidation;
+        internal readonly bool IndentedOrNotSkipValidation =>
+            (_optionsMask & (IndentBit | SkipValidationBit)) != SkipValidationBit; // Equivalent to: Indented || !SkipValidation;
 
         private const int OptionsBitCount = 4;
         private const int IndentBit = 1;

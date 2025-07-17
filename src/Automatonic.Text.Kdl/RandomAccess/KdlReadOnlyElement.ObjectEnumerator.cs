@@ -21,7 +21,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 _curIdx = -1;
 
                 Debug.Assert(target.TokenType == KdlTokenType.StartChildrenBlock);
-                _endIdxOrVersion = target._parent.GetEndIndex(_target._idx, includeEndElement: false);
+                _endIdxOrVersion = target._parent.GetEndIndex(
+                    _target._idx,
+                    includeEndElement: false
+                );
             }
 
             /// <inheritdoc />
@@ -62,7 +65,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
             readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
-            readonly IEnumerator<IKdlEntry> IEnumerable<IKdlEntry>.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator<IKdlEntry> IEnumerable<IKdlEntry>.GetEnumerator() =>
+                GetEnumerator();
 
             /// <inheritdoc />
             public void Dispose()

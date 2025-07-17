@@ -9,18 +9,32 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ValidatePropertyNameAndDepth(ReadOnlySpan<char> propertyName)
         {
-            if (propertyName.Length > KdlConstants.MaxCharacterTokenSize || CurrentDepth >= _options.MaxDepth)
+            if (
+                propertyName.Length > KdlConstants.MaxCharacterTokenSize
+                || CurrentDepth >= _options.MaxDepth
+            )
             {
-                ThrowHelper.ThrowInvalidOperationOrArgumentException(propertyName, _currentDepth, _options.MaxDepth);
+                ThrowHelper.ThrowInvalidOperationOrArgumentException(
+                    propertyName,
+                    _currentDepth,
+                    _options.MaxDepth
+                );
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void ValidatePropertyNameAndDepth(ReadOnlySpan<byte> utf8PropertyName)
         {
-            if (utf8PropertyName.Length > KdlConstants.MaxUnescapedTokenSize || CurrentDepth >= _options.MaxDepth)
+            if (
+                utf8PropertyName.Length > KdlConstants.MaxUnescapedTokenSize
+                || CurrentDepth >= _options.MaxDepth
+            )
             {
-                ThrowHelper.ThrowInvalidOperationOrArgumentException(utf8PropertyName, _currentDepth, _options.MaxDepth);
+                ThrowHelper.ThrowInvalidOperationOrArgumentException(
+                    utf8PropertyName,
+                    _currentDepth,
+                    _options.MaxDepth
+                );
             }
         }
 
@@ -41,7 +55,13 @@ namespace Automatonic.Text.Kdl
                 if (!_inObject || _tokenType == KdlTokenType.PropertyName)
                 {
                     Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotWritePropertyWithinArray, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotWritePropertyWithinArray,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
                 }
             }
         }
@@ -54,7 +74,13 @@ namespace Automatonic.Text.Kdl
                 if (!_inObject || _tokenType == KdlTokenType.PropertyName)
                 {
                     Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotWritePropertyWithinArray, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotWritePropertyWithinArray,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
                 }
                 UpdateBitStackOnStart(token);
             }
@@ -134,11 +160,15 @@ namespace Automatonic.Text.Kdl
 
         private void WritePropertyNameMinimized(ReadOnlySpan<char> escapedPropertyName, byte token)
         {
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - 5);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - 5
+            );
 
             // All ASCII, 2 quotes, 1 colon, and 1 start token => escapedPropertyName.Length + 4
             // Optionally, 1 list separator, and up to 3x growth when transcoding
-            int maxRequired = (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + 5;
+            int maxRequired =
+                (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + 5;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -165,11 +195,21 @@ namespace Automatonic.Text.Kdl
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - indent - 6 - _newLineLength);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - indent
+                        - 6
+                        - _newLineLength
+            );
 
             // All ASCII, 2 quotes, 1 colon, 1 space, and 1 start token => indent + escapedPropertyName.Length + 5
             // Optionally, 1 list separator, 1-2 bytes for new line, and up to 3x growth when transcoding
-            int maxRequired = indent + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + 6 + _newLineLength;
+            int maxRequired =
+                indent
+                + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + 6
+                + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -207,7 +247,11 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void TranscodeAndWrite(ReadOnlySpan<char> escapedPropertyName, Span<byte> output)
         {
-            OperationStatus status = KdlWriterHelper.ToUtf8(escapedPropertyName, output[BytesPending..], out int written);
+            OperationStatus status = KdlWriterHelper.ToUtf8(
+                escapedPropertyName,
+                output[BytesPending..],
+                out int written
+            );
             Debug.Assert(status == OperationStatus.Done);
             BytesPending += written;
         }

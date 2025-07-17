@@ -12,17 +12,30 @@ namespace Automatonic.Text.Kdl.Graph
         private readonly KdlConverter<TValue> _converter;
         private readonly KdlValueKind _valueKind;
 
-        public KdlValuePrimitive(TValue value, KdlConverter<TValue> converter, KdlElementOptions? options) : base(value, options)
+        public KdlValuePrimitive(
+            TValue value,
+            KdlConverter<TValue> converter,
+            KdlElementOptions? options
+        )
+            : base(value, options)
         {
-            Debug.Assert(TypeIsSupportedPrimitive, $"The type {typeof(TValue)} is not a supported primitive.");
-            Debug.Assert(converter is { IsInternalConverter: true, ConverterStrategy: ConverterStrategy.Value });
+            Debug.Assert(
+                TypeIsSupportedPrimitive,
+                $"The type {typeof(TValue)} is not a supported primitive."
+            );
+            Debug.Assert(
+                converter
+                    is { IsInternalConverter: true, ConverterStrategy: ConverterStrategy.Value }
+            );
 
             _converter = converter;
             _valueKind = DetermineValueKind(value);
         }
 
         private protected override KdlValueKind GetValueKindCore() => _valueKind;
-        internal override KdlElement DeepCloneCore() => new KdlValuePrimitive<TValue>(Value, _converter, Options);
+
+        internal override KdlElement DeepCloneCore() =>
+            new KdlValuePrimitive<TValue>(Value, _converter, Options);
 
         internal override bool DeepEqualsCore(KdlElement otherNode)
         {

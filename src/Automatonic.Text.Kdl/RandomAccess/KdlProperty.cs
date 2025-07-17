@@ -139,8 +139,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay
-            => Value.ValueKind == KdlValueKind.Undefined ? "<Undefined>" : $"\"{ToString()}\"";
+        private string DebuggerDisplay =>
+            Value.ValueKind == KdlValueKind.Undefined ? "<Undefined>" : $"\"{ToString()}\"";
 
         public KdlEntryKey Key => KdlEntryKey.ForProperty(_name ?? Value.GetPropertyName());
     }

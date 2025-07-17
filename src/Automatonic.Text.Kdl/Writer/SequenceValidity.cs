@@ -46,6 +46,6 @@ namespace System.Buffers.Text
         /// [ ED A0 ] is an invalid UTF-8 sequence (sequence is never well-formed anywhere in UTF-8 string).
         /// [ DE00 ] is an invalid UTF-16 sequence (code unit cannot appear at start of sequence).
         /// </remarks>
-        Invalid = 3
+        Invalid = 3,
     }
 }

@@ -11,10 +11,21 @@ namespace Automatonic.Text.Kdl
         [ThreadStatic]
         private static ThreadLocalState? t_threadLocalState;
 
-        public static KdlWriter RentWriterAndBuffer(KdlSerializerOptions options, out PooledByteBufferWriter bufferWriter) =>
-            RentWriterAndBuffer(options.GetWriterOptions(), options.DefaultBufferSize, out bufferWriter);
+        public static KdlWriter RentWriterAndBuffer(
+            KdlSerializerOptions options,
+            out PooledByteBufferWriter bufferWriter
+        ) =>
+            RentWriterAndBuffer(
+                options.GetWriterOptions(),
+                options.DefaultBufferSize,
+                out bufferWriter
+            );
 
-        public static KdlWriter RentWriterAndBuffer(KdlWriterOptions options, int defaultBufferSize, out PooledByteBufferWriter bufferWriter)
+        public static KdlWriter RentWriterAndBuffer(
+            KdlWriterOptions options,
+            int defaultBufferSize,
+            out PooledByteBufferWriter bufferWriter
+        )
         {
             ThreadLocalState state = t_threadLocalState ??= new();
             KdlWriter writer;
@@ -38,7 +49,10 @@ namespace Automatonic.Text.Kdl
             return writer;
         }
 
-        public static KdlWriter RentWriter(KdlSerializerOptions options, IBufferWriter<byte> bufferWriter)
+        public static KdlWriter RentWriter(
+            KdlSerializerOptions options,
+            IBufferWriter<byte> bufferWriter
+        )
         {
             ThreadLocalState state = t_threadLocalState ??= new();
             KdlWriter writer;
@@ -58,7 +72,10 @@ namespace Automatonic.Text.Kdl
             return writer;
         }
 
-        public static void ReturnWriterAndBuffer(KdlWriter writer, PooledByteBufferWriter bufferWriter)
+        public static void ReturnWriterAndBuffer(
+            KdlWriter writer,
+            PooledByteBufferWriter bufferWriter
+        )
         {
             Debug.Assert(t_threadLocalState != null);
             ThreadLocalState state = t_threadLocalState;
@@ -67,7 +84,14 @@ namespace Automatonic.Text.Kdl
             bufferWriter.ClearAndReturnBuffers();
 
             int rentedWriters = --state.RentedWriters;
-            Debug.Assert(rentedWriters == 0 == (ReferenceEquals(state.BufferWriter, bufferWriter) && ReferenceEquals(state.Writer, writer)));
+            Debug.Assert(
+                rentedWriters
+                    == 0
+                    == (
+                        ReferenceEquals(state.BufferWriter, bufferWriter)
+                        && ReferenceEquals(state.Writer, writer)
+                    )
+            );
         }
 
         public static void ReturnWriter(KdlWriter writer)

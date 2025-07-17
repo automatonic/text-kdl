@@ -8,6 +8,5 @@ namespace Automatonic.Text.Kdl.Serialization
 #else
     public
 #endif
-    abstract class KdlAttribute : Attribute
-    { }
+    abstract class KdlAttribute : Attribute { }
 }

@@ -10,11 +10,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
     [RequiresUnreferencedCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
     internal sealed class ReflectionEmitMemberAccessor : MemberAccessor
     {
-        public ReflectionEmitMemberAccessor()
-        {
-        }
+        public ReflectionEmitMemberAccessor() { }
 
-        public override Func<object>? CreateParameterlessConstructor(Type type, ConstructorInfo? constructorInfo)
+        public override Func<object>? CreateParameterlessConstructor(
+            Type type,
+            ConstructorInfo? constructorInfo
+        )
         {
             Debug.Assert(type != null);
             Debug.Assert(constructorInfo is null || constructorInfo.GetParameters().Length == 0);
@@ -34,7 +35,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 KdlTypeInfo.ObjectType,
                 Type.EmptyTypes,
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
@@ -64,8 +66,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return CreateDelegate<Func<object>>(dynamicMethod);
         }
 
-        public override Func<object[], T> CreateParameterizedConstructor<T>(ConstructorInfo constructor) =>
-            CreateDelegate<Func<object[], T>>(CreateParameterizedConstructor(constructor));
+        public override Func<object[], T> CreateParameterizedConstructor<T>(
+            ConstructorInfo constructor
+        ) => CreateDelegate<Func<object[], T>>(CreateParameterizedConstructor(constructor));
 
         private static DynamicMethod CreateParameterizedConstructor(ConstructorInfo constructor)
         {
@@ -83,7 +86,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 type,
                 [typeof(object[])],
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
@@ -103,12 +107,38 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return dynamicMethod;
         }
 
-        public override KdlTypeInfo.ParameterizedConstructorDelegate<T, TArg0, TArg1, TArg2, TArg3>?
-            CreateParameterizedConstructor<T, TArg0, TArg1, TArg2, TArg3>(ConstructorInfo constructor) =>
-            CreateDelegate<KdlTypeInfo.ParameterizedConstructorDelegate<T, TArg0, TArg1, TArg2, TArg3>>(
-                CreateParameterizedConstructor(constructor, typeof(TArg0), typeof(TArg1), typeof(TArg2), typeof(TArg3)));
+        public override KdlTypeInfo.ParameterizedConstructorDelegate<
+            T,
+            TArg0,
+            TArg1,
+            TArg2,
+            TArg3
+        >? CreateParameterizedConstructor<T, TArg0, TArg1, TArg2, TArg3>(
+            ConstructorInfo constructor
+        ) =>
+            CreateDelegate<KdlTypeInfo.ParameterizedConstructorDelegate<
+                T,
+                TArg0,
+                TArg1,
+                TArg2,
+                TArg3
+            >>(
+                CreateParameterizedConstructor(
+                    constructor,
+                    typeof(TArg0),
+                    typeof(TArg1),
+                    typeof(TArg2),
+                    typeof(TArg3)
+                )
+            );
 
-        private static DynamicMethod? CreateParameterizedConstructor(ConstructorInfo constructor, Type parameterType1, Type parameterType2, Type parameterType3, Type parameterType4)
+        private static DynamicMethod? CreateParameterizedConstructor(
+            ConstructorInfo constructor,
+            Type parameterType1,
+            Type parameterType2,
+            Type parameterType3,
+            Type parameterType4
+        )
         {
             Type? type = constructor.DeclaringType;
 
@@ -124,7 +154,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 type,
                 [parameterType1, parameterType2, parameterType3, parameterType4],
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
@@ -139,8 +170,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                         1 => OpCodes.Ldarg_1,
                         2 => OpCodes.Ldarg_2,
                         3 => OpCodes.Ldarg_3,
-                        _ => throw new InvalidOperationException()
-                    });
+                        _ => throw new InvalidOperationException(),
+                    }
+                );
             }
 
             generator.Emit(OpCodes.Newobj, constructor);
@@ -149,21 +181,30 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return dynamicMethod;
         }
 
-        public override Action<TCollection, object?> CreateAddMethodDelegate<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TCollection>() =>
-            CreateDelegate<Action<TCollection, object?>>(CreateAddMethodDelegate(typeof(TCollection)));
+        public override Action<TCollection, object?> CreateAddMethodDelegate<
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] TCollection
+        >() =>
+            CreateDelegate<Action<TCollection, object?>>(
+                CreateAddMethodDelegate(typeof(TCollection))
+            );
 
         private static DynamicMethod CreateAddMethodDelegate(
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)] Type collectionType)
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicMethods)]
+                Type collectionType
+        )
         {
             // We verified this won't be null when we created the converter that calls this method.
-            MethodInfo realMethod = (collectionType.GetMethod("Push") ?? collectionType.GetMethod("Enqueue"))!;
+            MethodInfo realMethod = (
+                collectionType.GetMethod("Push") ?? collectionType.GetMethod("Enqueue")
+            )!;
 
             var dynamicMethod = new DynamicMethod(
                 realMethod.Name,
                 typeof(void),
                 [collectionType, KdlTypeInfo.ObjectType],
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
@@ -175,20 +216,35 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return dynamicMethod;
         }
 
-        public override Func<IEnumerable<TElement>, TCollection> CreateImmutableEnumerableCreateRangeDelegate<TCollection, TElement>() =>
+        public override Func<
+            IEnumerable<TElement>,
+            TCollection
+        > CreateImmutableEnumerableCreateRangeDelegate<TCollection, TElement>() =>
             CreateDelegate<Func<IEnumerable<TElement>, TCollection>>(
-                CreateImmutableEnumerableCreateRangeDelegate(typeof(TCollection), typeof(TElement), typeof(IEnumerable<TElement>)));
+                CreateImmutableEnumerableCreateRangeDelegate(
+                    typeof(TCollection),
+                    typeof(TElement),
+                    typeof(IEnumerable<TElement>)
+                )
+            );
 
-        private static DynamicMethod CreateImmutableEnumerableCreateRangeDelegate(Type collectionType, Type elementType, Type enumerableType)
+        private static DynamicMethod CreateImmutableEnumerableCreateRangeDelegate(
+            Type collectionType,
+            Type elementType,
+            Type enumerableType
+        )
         {
-            MethodInfo realMethod = collectionType.GetImmutableEnumerableCreateRangeMethod(elementType);
+            MethodInfo realMethod = collectionType.GetImmutableEnumerableCreateRangeMethod(
+                elementType
+            );
 
             var dynamicMethod = new DynamicMethod(
                 realMethod.Name,
                 collectionType,
                 [enumerableType],
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
@@ -199,20 +255,38 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return dynamicMethod;
         }
 
-        public override Func<IEnumerable<KeyValuePair<TKey, TValue>>, TCollection> CreateImmutableDictionaryCreateRangeDelegate<TCollection, TKey, TValue>() =>
+        public override Func<
+            IEnumerable<KeyValuePair<TKey, TValue>>,
+            TCollection
+        > CreateImmutableDictionaryCreateRangeDelegate<TCollection, TKey, TValue>() =>
             CreateDelegate<Func<IEnumerable<KeyValuePair<TKey, TValue>>, TCollection>>(
-                CreateImmutableDictionaryCreateRangeDelegate(typeof(TCollection), typeof(TKey), typeof(TValue), typeof(IEnumerable<KeyValuePair<TKey, TValue>>)));
+                CreateImmutableDictionaryCreateRangeDelegate(
+                    typeof(TCollection),
+                    typeof(TKey),
+                    typeof(TValue),
+                    typeof(IEnumerable<KeyValuePair<TKey, TValue>>)
+                )
+            );
 
-        private static DynamicMethod CreateImmutableDictionaryCreateRangeDelegate(Type collectionType, Type keyType, Type valueType, Type enumerableType)
+        private static DynamicMethod CreateImmutableDictionaryCreateRangeDelegate(
+            Type collectionType,
+            Type keyType,
+            Type valueType,
+            Type enumerableType
+        )
         {
-            MethodInfo realMethod = collectionType.GetImmutableDictionaryCreateRangeMethod(keyType, valueType);
+            MethodInfo realMethod = collectionType.GetImmutableDictionaryCreateRangeMethod(
+                keyType,
+                valueType
+            );
 
             var dynamicMethod = new DynamicMethod(
                 realMethod.Name,
                 collectionType,
                 [enumerableType],
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
@@ -223,10 +297,17 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return dynamicMethod;
         }
 
-        public override Func<object, TProperty> CreatePropertyGetter<TProperty>(PropertyInfo propertyInfo) =>
-            CreateDelegate<Func<object, TProperty>>(CreatePropertyGetter(propertyInfo, typeof(TProperty)));
+        public override Func<object, TProperty> CreatePropertyGetter<TProperty>(
+            PropertyInfo propertyInfo
+        ) =>
+            CreateDelegate<Func<object, TProperty>>(
+                CreatePropertyGetter(propertyInfo, typeof(TProperty))
+            );
 
-        private static DynamicMethod CreatePropertyGetter(PropertyInfo propertyInfo, Type runtimePropertyType)
+        private static DynamicMethod CreatePropertyGetter(
+            PropertyInfo propertyInfo,
+            Type runtimePropertyType
+        )
         {
             MethodInfo? realMethod = propertyInfo.GetMethod;
             Debug.Assert(realMethod != null);
@@ -236,7 +317,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             Type declaredPropertyType = propertyInfo.PropertyType;
 
-            DynamicMethod dynamicMethod = CreateGetterMethod(propertyInfo.Name, runtimePropertyType);
+            DynamicMethod dynamicMethod = CreateGetterMethod(
+                propertyInfo.Name,
+                runtimePropertyType
+            );
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
             generator.Emit(OpCodes.Ldarg_0);
@@ -269,10 +353,17 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return dynamicMethod;
         }
 
-        public override Action<object, TProperty> CreatePropertySetter<TProperty>(PropertyInfo propertyInfo) =>
-            CreateDelegate<Action<object, TProperty>>(CreatePropertySetter(propertyInfo, typeof(TProperty)));
+        public override Action<object, TProperty> CreatePropertySetter<TProperty>(
+            PropertyInfo propertyInfo
+        ) =>
+            CreateDelegate<Action<object, TProperty>>(
+                CreatePropertySetter(propertyInfo, typeof(TProperty))
+            );
 
-        private static DynamicMethod CreatePropertySetter(PropertyInfo propertyInfo, Type runtimePropertyType)
+        private static DynamicMethod CreatePropertySetter(
+            PropertyInfo propertyInfo,
+            Type runtimePropertyType
+        )
         {
             MethodInfo? realMethod = propertyInfo.SetMethod;
             Debug.Assert(realMethod != null);
@@ -282,11 +373,17 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             Type declaredPropertyType = propertyInfo.PropertyType;
 
-            DynamicMethod dynamicMethod = CreateSetterMethod(propertyInfo.Name, runtimePropertyType);
+            DynamicMethod dynamicMethod = CreateSetterMethod(
+                propertyInfo.Name,
+                runtimePropertyType
+            );
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
             generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(declaringType.IsValueType ? OpCodes.Unbox : OpCodes.Castclass, declaringType);
+            generator.Emit(
+                declaringType.IsValueType ? OpCodes.Unbox : OpCodes.Castclass,
+                declaringType
+            );
             generator.Emit(OpCodes.Ldarg_1);
 
             // declaredPropertyType: Type of the property
@@ -308,7 +405,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         }
 
         public override Func<object, TProperty> CreateFieldGetter<TProperty>(FieldInfo fieldInfo) =>
-            CreateDelegate<Func<object, TProperty>>(CreateFieldGetter(fieldInfo, typeof(TProperty)));
+            CreateDelegate<Func<object, TProperty>>(
+                CreateFieldGetter(fieldInfo, typeof(TProperty))
+            );
 
         private static DynamicMethod CreateFieldGetter(FieldInfo fieldInfo, Type runtimeFieldType)
         {
@@ -322,10 +421,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             generator.Emit(OpCodes.Ldarg_0);
             generator.Emit(
-                declaringType.IsValueType
-                    ? OpCodes.Unbox
-                    : OpCodes.Castclass,
-                declaringType);
+                declaringType.IsValueType ? OpCodes.Unbox : OpCodes.Castclass,
+                declaringType
+            );
             generator.Emit(OpCodes.Ldfld, fieldInfo);
 
             // declaredFieldType: Type of the field
@@ -341,8 +439,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return dynamicMethod;
         }
 
-        public override Action<object, TProperty> CreateFieldSetter<TProperty>(FieldInfo fieldInfo) =>
-            CreateDelegate<Action<object, TProperty>>(CreateFieldSetter(fieldInfo, typeof(TProperty)));
+        public override Action<object, TProperty> CreateFieldSetter<TProperty>(
+            FieldInfo fieldInfo
+        ) =>
+            CreateDelegate<Action<object, TProperty>>(
+                CreateFieldSetter(fieldInfo, typeof(TProperty))
+            );
 
         private static DynamicMethod CreateFieldSetter(FieldInfo fieldInfo, Type runtimeFieldType)
         {
@@ -355,7 +457,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             ILGenerator generator = dynamicMethod.GetILGenerator();
 
             generator.Emit(OpCodes.Ldarg_0);
-            generator.Emit(declaringType.IsValueType ? OpCodes.Unbox : OpCodes.Castclass, declaringType);
+            generator.Emit(
+                declaringType.IsValueType ? OpCodes.Unbox : OpCodes.Castclass,
+                declaringType
+            );
             generator.Emit(OpCodes.Ldarg_1);
 
             // declaredFieldType: Type of the field
@@ -378,7 +483,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 memberType,
                 [KdlTypeInfo.ObjectType],
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
         private static DynamicMethod CreateSetterMethod(string memberName, Type memberType) =>
             new(
@@ -386,11 +492,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 typeof(void),
                 [KdlTypeInfo.ObjectType, memberType],
                 typeof(ReflectionEmitMemberAccessor).Module,
-                skipVisibility: true);
+                skipVisibility: true
+            );
 
         [return: NotNullIfNotNull(nameof(method))]
-        private static T? CreateDelegate<T>(DynamicMethod? method) where T : Delegate =>
-            (T?)method?.CreateDelegate(typeof(T));
+        private static T? CreateDelegate<T>(DynamicMethod? method)
+            where T : Delegate => (T?)method?.CreateDelegate(typeof(T));
     }
 }
 #endif

@@ -5,7 +5,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
 {
     public sealed partial class KdlReadOnlyDocument
     {
-        internal bool TryGetNamedPropertyValue(int index, ReadOnlySpan<char> propertyName, out KdlReadOnlyElement value)
+        internal bool TryGetNamedPropertyValue(
+            int index,
+            ReadOnlySpan<char> propertyName,
+            out KdlReadOnlyElement value
+        )
         {
             CheckNotDisposed();
 
@@ -30,11 +34,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 int len = KdlReaderHelper.GetUtf8FromText(propertyName, utf8Name);
                 utf8Name = utf8Name[..len];
 
-                return TryGetNamedPropertyValue(
-                    startIndex,
-                    endIndex,
-                    utf8Name,
-                    out value);
+                return TryGetNamedPropertyValue(startIndex, endIndex, utf8Name, out value);
             }
 
             // Unescaping the property name will make the string shorter (or the same)
@@ -83,7 +83,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             startIndex,
                             passedIndex + DbRow.Size,
                             utf8Name,
-                            out value);
+                            out value
+                        );
                     }
                     finally
                     {
@@ -105,7 +106,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
             return false;
         }
 
-        internal bool TryGetNamedPropertyValue(int index, ReadOnlySpan<byte> propertyName, out KdlReadOnlyElement value)
+        internal bool TryGetNamedPropertyValue(
+            int index,
+            ReadOnlySpan<byte> propertyName,
+            out KdlReadOnlyElement value
+        )
         {
             CheckNotDisposed();
 
@@ -122,18 +127,15 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             int endIndex = checked((row.NumberOfRows * DbRow.Size) + index);
 
-            return TryGetNamedPropertyValue(
-                index + DbRow.Size,
-                endIndex,
-                propertyName,
-                out value);
+            return TryGetNamedPropertyValue(index + DbRow.Size, endIndex, propertyName, out value);
         }
 
         private bool TryGetNamedPropertyValue(
             int startIndex,
             int endIndex,
             ReadOnlySpan<byte> propertyName,
-            out KdlReadOnlyElement value)
+            out KdlReadOnlyElement value
+        )
         {
             ReadOnlySpan<byte> documentSpan = _utf8Kdl.Span;
             Span<byte> utf8UnescapedStack = stackalloc byte[KdlConstants.StackallocByteThreshold];
@@ -160,7 +162,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 row = _parsedData.Get(index);
                 Debug.Assert(row.TokenType == KdlTokenType.PropertyName);
 
-                ReadOnlySpan<byte> currentPropertyName = documentSpan.Slice(row.Location, row.SizeOrLength);
+                ReadOnlySpan<byte> currentPropertyName = documentSpan.Slice(
+                    row.Location,
+                    row.SizeOrLength
+                );
 
                 if (row.HasComplexChildren)
                 {
@@ -172,8 +177,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         Debug.Assert(idx >= 0);
 
                         // If everything up to where the property name has a backslash matches, keep going.
-                        if (propertyName.Length > idx &&
-                            currentPropertyName[..idx].SequenceEqual(propertyName[..idx]))
+                        if (
+                            propertyName.Length > idx
+                            && currentPropertyName[..idx].SequenceEqual(propertyName[..idx])
+                        )
                         {
                             int remaining = currentPropertyName.Length - idx;
                             int written = 0;
@@ -181,12 +188,18 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
                             try
                             {
-                                Span<byte> utf8Unescaped = remaining <= utf8UnescapedStack.Length ?
-                                    utf8UnescapedStack :
-                                    (rented = ArrayPool<byte>.Shared.Rent(remaining));
+                                Span<byte> utf8Unescaped =
+                                    remaining <= utf8UnescapedStack.Length
+                                        ? utf8UnescapedStack
+                                        : (rented = ArrayPool<byte>.Shared.Rent(remaining));
 
                                 // Only unescape the part we haven't processed.
-                                KdlReaderHelper.Unescape(currentPropertyName[idx..], utf8Unescaped, 0, out written);
+                                KdlReaderHelper.Unescape(
+                                    currentPropertyName[idx..],
+                                    utf8Unescaped,
+                                    0,
+                                    out written
+                                );
 
                                 // If the unescaped remainder matches the input remainder, it's a match.
                                 if (utf8Unescaped[..written].SequenceEqual(propertyName[idx..]))

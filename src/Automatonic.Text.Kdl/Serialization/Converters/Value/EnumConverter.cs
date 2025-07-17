@@ -17,7 +17,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         // Odd type codes are conveniently signed types (for enum backing types).
         private static readonly bool s_isSignedEnum = ((int)s_enumTypeCode % 2) == 1;
-        private static readonly bool s_isFlagsEnum = typeof(T).IsDefined(typeof(FlagsAttribute), inherit: false);
+        private static readonly bool s_isFlagsEnum = typeof(T).IsDefined(
+            typeof(FlagsAttribute),
+            inherit: false
+        );
 
         private readonly EnumConverterOptions _converterOptions; // Do not rename (legacy schema generation)
         private readonly KdlNamingPolicy? _namingPolicy; // Do not rename (legacy schema generation)
@@ -50,7 +53,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         // Since multiple threads can add to the cache, a few more values might be added.
         private const int NameCacheSizeSoftLimit = 64;
 
-        public EnumConverter(EnumConverterOptions converterOptions, KdlNamingPolicy? namingPolicy, KdlSerializerOptions options)
+        public EnumConverter(
+            EnumConverterOptions converterOptions,
+            KdlNamingPolicy? namingPolicy,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(EnumConverterFactory.Helpers.IsSupportedTypeCode(s_enumTypeCode));
 
@@ -80,7 +87,14 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 {
                     if (fieldInfo.Kind is EnumFieldNameKind.NamingPolicy)
                     {
-                        AddToEnumFieldIndex(new EnumFieldInfo(fieldInfo.Key, EnumFieldNameKind.Default, fieldInfo.OriginalName, fieldInfo.OriginalName));
+                        AddToEnumFieldIndex(
+                            new EnumFieldInfo(
+                                fieldInfo.Key,
+                                EnumFieldNameKind.Default,
+                                fieldInfo.OriginalName,
+                                fieldInfo.OriginalName
+                            )
+                        );
                     }
                 }
             }
@@ -96,18 +110,24 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        public override T Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override T Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             switch (reader.TokenType)
             {
-                case KdlTokenType.String when (_converterOptions & EnumConverterOptions.AllowStrings) != 0:
+                case KdlTokenType.String
+                    when (_converterOptions & EnumConverterOptions.AllowStrings) != 0:
                     if (TryParseEnumFromString(ref reader, out T result))
                     {
                         return result;
                     }
                     break;
 
-                case KdlTokenType.Number when (_converterOptions & EnumConverterOptions.AllowNumbers) != 0:
+                case KdlTokenType.Number
+                    when (_converterOptions & EnumConverterOptions.AllowNumbers) != 0:
                     switch (s_enumTypeCode)
                     {
                         case TypeCode.Int32 when reader.TryGetInt32(out int int32):
@@ -183,7 +203,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        internal override T ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override T ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             // NB KdlSerializerOptions.DictionaryKeyPolicy is ignored on deserialization.
             // This is true for all converters that implement dictionary key serialization.
@@ -196,12 +220,21 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return result;
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, T value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            T value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
-            KdlNamingPolicy? dictionaryKeyPolicy = options.DictionaryKeyPolicy is { } dkp && dkp != _namingPolicy ? dkp : null;
+            KdlNamingPolicy? dictionaryKeyPolicy =
+                options.DictionaryKeyPolicy is { } dkp && dkp != _namingPolicy ? dkp : null;
             ulong key = ConvertToUInt64(value);
 
-            if (dictionaryKeyPolicy is null && _nameCacheForWriting.TryGetValue(key, out KdlEncodedText formatted))
+            if (
+                dictionaryKeyPolicy is null
+                && _nameCacheForWriting.TryGetValue(key, out KdlEncodedText formatted)
+            )
             {
                 writer.WritePropertyName(formatted);
                 return;
@@ -209,9 +242,15 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
             if (IsDefinedValueOrCombinationOfValues(key))
             {
-                Debug.Assert(s_isFlagsEnum || dictionaryKeyPolicy != null, "Should only be entered by flags enums or dictionary key policy.");
+                Debug.Assert(
+                    s_isFlagsEnum || dictionaryKeyPolicy != null,
+                    "Should only be entered by flags enums or dictionary key policy."
+                );
                 string stringValue = FormatEnumAsString(key, value, dictionaryKeyPolicy);
-                if (dictionaryKeyPolicy is null && _nameCacheForWriting.Count < NameCacheSizeSoftLimit)
+                if (
+                    dictionaryKeyPolicy is null
+                    && _nameCacheForWriting.Count < NameCacheSizeSoftLimit
+                )
                 {
                     // Only attempt to cache if there is no dictionary key policy.
                     formatted = KdlEncodedText.Encode(stringValue, options.Encoder);
@@ -246,15 +285,17 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             char[]? rentedBuffer = null;
             bool success;
 
-            Span<char> charBuffer = bufferLength <= KdlConstants.StackallocCharThreshold
-                ? stackalloc char[KdlConstants.StackallocCharThreshold]
-                : (rentedBuffer = ArrayPool<char>.Shared.Rent(bufferLength));
+            Span<char> charBuffer =
+                bufferLength <= KdlConstants.StackallocCharThreshold
+                    ? stackalloc char[KdlConstants.StackallocCharThreshold]
+                    : (rentedBuffer = ArrayPool<char>.Shared.Rent(bufferLength));
 
             int charsWritten = reader.CopyString(charBuffer);
             charBuffer = charBuffer[..charsWritten];
 #if NET9_0_OR_GREATER
             ReadOnlySpan<char> source = charBuffer.Trim();
-            ConcurrentDictionary<string, ulong>.AlternateLookup<ReadOnlySpan<char>> lookup = _nameCacheForReading.GetAlternateLookup<ReadOnlySpan<char>>();
+            ConcurrentDictionary<string, ulong>.AlternateLookup<ReadOnlySpan<char>> lookup =
+                _nameCacheForReading.GetAlternateLookup<ReadOnlySpan<char>>();
 #else
             string source = ((ReadOnlySpan<char>)charBuffer).Trim().ToString();
             ConcurrentDictionary<string, ulong> lookup = _nameCacheForReading;
@@ -308,7 +349,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             out T result)
         {
 #if NET9_0_OR_GREATER
-            Dictionary<string, EnumFieldInfo>.AlternateLookup<ReadOnlySpan<char>> lookup = _enumFieldInfoIndex.GetAlternateLookup<ReadOnlySpan<char>>();
+            Dictionary<string, EnumFieldInfo>.AlternateLookup<ReadOnlySpan<char>> lookup =
+                _enumFieldInfoIndex.GetAlternateLookup<ReadOnlySpan<char>>();
             ReadOnlySpan<char> rest = source;
 #else
             Dictionary<string, EnumFieldInfo> lookup = _enumFieldInfoIndex;
@@ -331,14 +373,16 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     rest = rest[(i + 1)..].TrimStart();
                 }
 
-                if (lookup.TryGetValue(
+                if (
+                    lookup.TryGetValue(
 #if NET9_0_OR_GREATER
                         next,
 #else
                         next.ToString(),
 #endif
-                        out EnumFieldInfo? firstResult) &&
-                    firstResult.GetMatchingField(next) is EnumFieldInfo match)
+                        out EnumFieldInfo? firstResult)
+                    && firstResult.GetMatchingField(next) is EnumFieldInfo match
+                )
                 {
                     key |= match.Key;
                     continue;
@@ -346,7 +390,6 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
                 result = default;
                 return false;
-
             } while (!rest.IsEmpty);
 
             result = ConvertFromUInt64(key);
@@ -357,16 +400,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             switch (s_enumTypeCode)
             {
-                case TypeCode.Int32 or TypeCode.UInt32:
+                case TypeCode.Int32
+                or TypeCode.UInt32:
                     return Unsafe.As<T, uint>(ref value);
-                case TypeCode.Int64 or TypeCode.UInt64:
+                case TypeCode.Int64
+                or TypeCode.UInt64:
                     return Unsafe.As<T, ulong>(ref value);
-                case TypeCode.Int16 or TypeCode.UInt16:
+                case TypeCode.Int16
+                or TypeCode.UInt16:
                     return Unsafe.As<T, ushort>(ref value);
                 default:
                     Debug.Assert(s_enumTypeCode is TypeCode.SByte or TypeCode.Byte);
                     return Unsafe.As<T, byte>(ref value);
-            };
+            }
+            ;
         }
 
         private static long ConvertToInt64(T value)
@@ -383,22 +430,26 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 default:
                     Debug.Assert(s_enumTypeCode is TypeCode.SByte);
                     return Unsafe.As<T, sbyte>(ref value);
-            };
+            }
+            ;
         }
 
         private static T ConvertFromUInt64(ulong value)
         {
             switch (s_enumTypeCode)
             {
-                case TypeCode.Int32 or TypeCode.UInt32:
+                case TypeCode.Int32
+                or TypeCode.UInt32:
                     uint uintValue = (uint)value;
                     return Unsafe.As<uint, T>(ref uintValue);
 
-                case TypeCode.Int64 or TypeCode.UInt64:
+                case TypeCode.Int64
+                or TypeCode.UInt64:
                     ulong ulongValue = value;
                     return Unsafe.As<ulong, T>(ref ulongValue);
 
-                case TypeCode.Int16 or TypeCode.UInt16:
+                case TypeCode.Int16
+                or TypeCode.UInt16:
                     ushort ushortValue = (ushort)value;
                     return Unsafe.As<ushort, T>(ref ushortValue);
 
@@ -406,7 +457,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     Debug.Assert(s_enumTypeCode is TypeCode.SByte or TypeCode.Byte);
                     byte byteValue = (byte)value;
                     return Unsafe.As<byte, T>(ref byteValue);
-            };
+            }
+            ;
         }
 
         /// <summary>
@@ -414,14 +466,21 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         /// </summary>
         private string FormatEnumAsString(ulong key, T value, KdlNamingPolicy? dictionaryKeyPolicy)
         {
-            Debug.Assert(IsDefinedValueOrCombinationOfValues(key), "must only be invoked against valid enum values.");
             Debug.Assert(
-                s_isFlagsEnum || (dictionaryKeyPolicy is not null && Enum.IsDefined(typeof(T), value)),
-                "must either be a flag type or computing a dictionary key policy.");
+                IsDefinedValueOrCombinationOfValues(key),
+                "must only be invoked against valid enum values."
+            );
+            Debug.Assert(
+                s_isFlagsEnum
+                    || (dictionaryKeyPolicy is not null && Enum.IsDefined(typeof(T), value)),
+                "must either be a flag type or computing a dictionary key policy."
+            );
 
             if (s_isFlagsEnum)
             {
-                using ValueStringBuilder sb = new(stackalloc char[KdlConstants.StackallocCharThreshold]);
+                using ValueStringBuilder sb = new(
+                    stackalloc char[KdlConstants.StackallocCharThreshold]
+                );
                 ulong remainingBits = key;
 
                 foreach (EnumFieldInfo enumField in _enumFieldInfo)
@@ -431,7 +490,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     {
                         remainingBits &= ~fieldKey;
                         string name = dictionaryKeyPolicy is not null
-                            ? ResolveAndValidateKdlName(enumField.OriginalName, dictionaryKeyPolicy, enumField.Kind)
+                            ? ResolveAndValidateKdlName(
+                                enumField.OriginalName,
+                                dictionaryKeyPolicy,
+                                enumField.Kind
+                            )
                             : enumField.KdlName;
 
                         if (sb.Length > 0)
@@ -448,7 +511,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     }
                 }
 
-                Debug.Assert(remainingBits == 0 && sb.Length > 0, "unexpected remaining bits or empty string.");
+                Debug.Assert(
+                    remainingBits == 0 && sb.Length > 0,
+                    "unexpected remaining bits or empty string."
+                );
                 return sb.ToString();
             }
             else
@@ -460,7 +526,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     // Search for an exact match and apply the key policy.
                     if (enumField.Key == key)
                     {
-                        return ResolveAndValidateKdlName(enumField.OriginalName, dictionaryKeyPolicy, enumField.Kind);
+                        return ResolveAndValidateKdlName(
+                            enumField.OriginalName,
+                            dictionaryKeyPolicy,
+                            enumField.Kind
+                        );
                     }
                 }
 
@@ -542,11 +612,16 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             Debug.Assert(names.Length == values.Length);
 
             Dictionary<string, string>? enumMemberAttributes = null;
-            foreach (FieldInfo field in typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static))
+            foreach (
+                FieldInfo field in typeof(T).GetFields(BindingFlags.Public | BindingFlags.Static)
+            )
             {
                 if (field.GetCustomAttribute<KdlStringEnumMemberNameAttribute>() is { } attribute)
                 {
-                    (enumMemberAttributes ??= new(StringComparer.Ordinal)).Add(field.Name, attribute.Name);
+                    (enumMemberAttributes ??= new(StringComparer.Ordinal)).Add(
+                        field.Name,
+                        attribute.Name
+                    );
                 }
             }
 
@@ -558,14 +633,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 ulong key = ConvertToUInt64(value);
                 EnumFieldNameKind kind;
 
-                if (enumMemberAttributes != null && enumMemberAttributes.TryGetValue(originalName, out string? attributeName))
+                if (
+                    enumMemberAttributes != null
+                    && enumMemberAttributes.TryGetValue(originalName, out string? attributeName)
+                )
                 {
                     originalName = attributeName;
                     kind = EnumFieldNameKind.Attribute;
                 }
                 else
                 {
-                    kind = namingPolicy != null ? EnumFieldNameKind.NamingPolicy : EnumFieldNameKind.Default;
+                    kind =
+                        namingPolicy != null
+                            ? EnumFieldNameKind.NamingPolicy
+                            : EnumFieldNameKind.Default;
                 }
 
                 string kdlName = ResolveAndValidateKdlName(originalName, namingPolicy, kind);
@@ -575,7 +656,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return enumFields;
         }
 
-        private static string ResolveAndValidateKdlName(string name, KdlNamingPolicy? namingPolicy, EnumFieldNameKind kind)
+        private static string ResolveAndValidateKdlName(
+            string name,
+            KdlNamingPolicy? namingPolicy,
+            EnumFieldNameKind kind
+        )
         {
             if (kind is not EnumFieldNameKind.Attribute && namingPolicy is not null)
             {
@@ -584,18 +669,30 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 name = namingPolicy.ConvertName(name);
             }
 
-            if (string.IsNullOrEmpty(name) || char.IsWhiteSpace(name[0]) || char.IsWhiteSpace(name[^1]) ||
-                (s_isFlagsEnum && name.AsSpan().IndexOf(',') >= 0))
+            if (
+                string.IsNullOrEmpty(name)
+                || char.IsWhiteSpace(name[0])
+                || char.IsWhiteSpace(name[^1])
+                || (s_isFlagsEnum && name.AsSpan().IndexOf(',') >= 0)
+            )
             {
                 // Reject null or empty strings or strings with leading or trailing whitespace.
                 // In the case of flags additionally reject strings containing commas.
-                ThrowHelper.ThrowInvalidOperationException_UnsupportedEnumIdentifier(typeof(T), name);
+                ThrowHelper.ThrowInvalidOperationException_UnsupportedEnumIdentifier(
+                    typeof(T),
+                    name
+                );
             }
 
             return name;
         }
 
-        private sealed class EnumFieldInfo(ulong key, EnumFieldNameKind kind, string originalName, string kdlName)
+        private sealed class EnumFieldInfo(
+            ulong key,
+            EnumFieldNameKind kind,
+            string originalName,
+            string kdlName
+        )
         {
             private List<EnumFieldInfo>? _conflictingFields;
             public EnumFieldNameKind Kind { get; } = kind;
@@ -609,9 +706,15 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             /// </summary>
             public void AppendConflictingField(EnumFieldInfo other)
             {
-                Debug.Assert(KdlName.Equals(other.KdlName, StringComparison.OrdinalIgnoreCase), "The conflicting entry must be equal up to case insensitivity.");
+                Debug.Assert(
+                    KdlName.Equals(other.KdlName, StringComparison.OrdinalIgnoreCase),
+                    "The conflicting entry must be equal up to case insensitivity."
+                );
 
-                if (Kind is EnumFieldNameKind.Default || KdlName.Equals(other.KdlName, StringComparison.Ordinal))
+                if (
+                    Kind is EnumFieldNameKind.Default
+                    || KdlName.Equals(other.KdlName, StringComparison.Ordinal)
+                )
                 {
                     // Silently discard if the preceding entry is the default or has identical name.
                     return;
@@ -622,7 +725,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 // Walk the existing list to ensure we do not add duplicates.
                 foreach (EnumFieldInfo conflictingField in conflictingFields)
                 {
-                    if (conflictingField.Kind is EnumFieldNameKind.Default || conflictingField.KdlName.Equals(other.KdlName, StringComparison.Ordinal))
+                    if (
+                        conflictingField.Kind is EnumFieldNameKind.Default
+                        || conflictingField.KdlName.Equals(other.KdlName, StringComparison.Ordinal)
+                    )
                     {
                         return;
                     }
@@ -633,7 +739,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
             public EnumFieldInfo? GetMatchingField(ReadOnlySpan<char> input)
             {
-                Debug.Assert(input.Equals(KdlName.AsSpan(), StringComparison.OrdinalIgnoreCase), "Must equal the field name up to case insensitivity.");
+                Debug.Assert(
+                    input.Equals(KdlName.AsSpan(), StringComparison.OrdinalIgnoreCase),
+                    "Must equal the field name up to case insensitivity."
+                );
 
                 if (Kind is EnumFieldNameKind.Default || input.SequenceEqual(KdlName.AsSpan()))
                 {
@@ -646,7 +755,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     Debug.Assert(conflictingFields.Count > 0);
                     foreach (EnumFieldInfo matchingField in conflictingFields)
                     {
-                        if (matchingField.Kind is EnumFieldNameKind.Default || input.SequenceEqual(matchingField.KdlName.AsSpan()))
+                        if (
+                            matchingField.Kind is EnumFieldNameKind.Default
+                            || input.SequenceEqual(matchingField.KdlName.AsSpan())
+                        )
                         {
                             return matchingField;
                         }

@@ -130,7 +130,9 @@ namespace Automatonic.Text.Kdl.Graph
                 return "$";
             }
 
-            var path = new ValueStringBuilder(stackalloc char[KdlConstants.StackallocCharThreshold]);
+            var path = new ValueStringBuilder(
+                stackalloc char[KdlConstants.StackallocCharThreshold]
+            );
             path.Append('$');
             GetPath(ref path, null);
             return path.ToString();
@@ -205,12 +207,18 @@ namespace Automatonic.Text.Kdl.Graph
 
         private protected virtual KdlElement? GetItem(int index)
         {
-            ThrowHelper.ThrowInvalidOperationException_ElementWrongType(nameof(KdlNode), nameof(KdlNode));
+            ThrowHelper.ThrowInvalidOperationException_ElementWrongType(
+                nameof(KdlNode),
+                nameof(KdlNode)
+            );
             return null;
         }
 
         private protected virtual void SetItem(int index, KdlElement? node) =>
-            ThrowHelper.ThrowInvalidOperationException_ElementWrongType(nameof(KdlNode), nameof(KdlNode));
+            ThrowHelper.ThrowInvalidOperationException_ElementWrongType(
+                nameof(KdlNode),
+                nameof(KdlNode)
+            );
 
         /// <summary>
         ///   Gets or sets the element with the specified property name.
@@ -309,7 +317,11 @@ namespace Automatonic.Text.Kdl.Graph
         /// <param name="value">Value that replaces this node.</param>
         [RequiresUnreferencedCode(KdlValue.CreateUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlValue.CreateDynamicCodeMessage)]
-        [SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
+        [SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "<Pending>"
+        )]
         [SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
         public void ReplaceWith<T>(T value)
         {

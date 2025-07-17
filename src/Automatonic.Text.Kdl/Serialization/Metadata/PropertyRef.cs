@@ -9,7 +9,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
     /// PropertyRefs use byte sequence equality, so equal KDL strings with alternate encodings or casings are not equal.
     /// Used as a first-level cache for property lookups before falling back to UTF decoding and string comparison.
     /// </summary>
-    internal readonly struct PropertyRef(ulong key, KdlPropertyInfo? info, byte[] utf8PropertyName) : IEquatable<PropertyRef>
+    internal readonly struct PropertyRef(ulong key, KdlPropertyInfo? info, byte[] utf8PropertyName)
+        : IEquatable<PropertyRef>
     {
         // The length of the property name embedded in the key (in bytes).
         // The key is a ulong (8 bytes) containing the first 7 bytes of the property name
@@ -32,14 +33,20 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         public readonly byte[] Utf8PropertyName = utf8PropertyName;
 
         public bool Equals(PropertyRef other) => Equals(other.Utf8PropertyName, other.Key);
+
         public override bool Equals(object? obj) => obj is PropertyRef other && Equals(other);
+
         public override int GetHashCode() => Key.GetHashCode();
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public bool Equals(ReadOnlySpan<byte> propertyName, ulong key)
         {
             // If the property name is less than 8 bytes, it is embedded in the key so no further comparison is necessary.
-            return key == Key && (propertyName.Length <= PropertyNameKeyLength || propertyName.SequenceEqual(Utf8PropertyName));
+            return key == Key
+                && (
+                    propertyName.Length <= PropertyNameKeyLength
+                    || propertyName.SequenceEqual(Utf8PropertyName)
+                );
         }
 
         /// <summary>
@@ -72,10 +79,20 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     key |= Unsafe.ReadUnaligned<uint>(ref reference);
                     goto OddLength;
                 case 6:
-                    key |= Unsafe.ReadUnaligned<uint>(ref reference) | ((ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4)) << 32);
+                    key |=
+                        Unsafe.ReadUnaligned<uint>(ref reference)
+                        | (
+                            (ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4))
+                            << 32
+                        );
                     goto ComputedKey;
                 case 7:
-                    key |= Unsafe.ReadUnaligned<uint>(ref reference) | ((ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4)) << 32);
+                    key |=
+                        Unsafe.ReadUnaligned<uint>(ref reference)
+                        | (
+                            (ulong)Unsafe.ReadUnaligned<ushort>(ref Unsafe.Add(ref reference, 4))
+                            << 32
+                        );
                     goto OddLength;
                 default:
                     key |= Unsafe.ReadUnaligned<ulong>(ref reference) & 0x00ffffffffffffffL;
@@ -95,16 +112,47 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 const int BitsInByte = 8;
                 Debug.Assert(
                     // Verify embedded property name.
-                    (name.Length < 1 || name[0] == ((key & ((ulong)0xFF << (BitsInByte * 0))) >> (BitsInByte * 0))) &&
-                    (name.Length < 2 || name[1] == ((key & ((ulong)0xFF << (BitsInByte * 1))) >> (BitsInByte * 1))) &&
-                    (name.Length < 3 || name[2] == ((key & ((ulong)0xFF << (BitsInByte * 2))) >> (BitsInByte * 2))) &&
-                    (name.Length < 4 || name[3] == ((key & ((ulong)0xFF << (BitsInByte * 3))) >> (BitsInByte * 3))) &&
-                    (name.Length < 5 || name[4] == ((key & ((ulong)0xFF << (BitsInByte * 4))) >> (BitsInByte * 4))) &&
-                    (name.Length < 6 || name[5] == ((key & ((ulong)0xFF << (BitsInByte * 5))) >> (BitsInByte * 5))) &&
-                    (name.Length < 7 || name[6] == ((key & ((ulong)0xFF << (BitsInByte * 6))) >> (BitsInByte * 6))) &&
-                    // Verify embedded length.
-                    (key & ((ulong)0xFF << (BitsInByte * 7))) >> (BitsInByte * 7) == (byte)name.Length,
-                    "Embedded bytes not as expected");
+                    (
+                        name.Length < 1
+                        || name[0]
+                            == ((key & ((ulong)0xFF << (BitsInByte * 0))) >> (BitsInByte * 0))
+                    )
+                        && (
+                            name.Length < 2
+                            || name[1]
+                                == ((key & ((ulong)0xFF << (BitsInByte * 1))) >> (BitsInByte * 1))
+                        )
+                        && (
+                            name.Length < 3
+                            || name[2]
+                                == ((key & ((ulong)0xFF << (BitsInByte * 2))) >> (BitsInByte * 2))
+                        )
+                        && (
+                            name.Length < 4
+                            || name[3]
+                                == ((key & ((ulong)0xFF << (BitsInByte * 3))) >> (BitsInByte * 3))
+                        )
+                        && (
+                            name.Length < 5
+                            || name[4]
+                                == ((key & ((ulong)0xFF << (BitsInByte * 4))) >> (BitsInByte * 4))
+                        )
+                        && (
+                            name.Length < 6
+                            || name[5]
+                                == ((key & ((ulong)0xFF << (BitsInByte * 5))) >> (BitsInByte * 5))
+                        )
+                        && (
+                            name.Length < 7
+                            || name[6]
+                                == ((key & ((ulong)0xFF << (BitsInByte * 6))) >> (BitsInByte * 6))
+                        )
+                        &&
+                        // Verify embedded length.
+                        (key & ((ulong)0xFF << (BitsInByte * 7))) >> (BitsInByte * 7)
+                            == (byte)name.Length,
+                    "Embedded bytes not as expected"
+                );
             }
 #endif
             return key;

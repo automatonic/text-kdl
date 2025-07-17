@@ -72,6 +72,7 @@ namespace Automatonic.Text.Kdl
 
         // Serialization state for the child value serialized by the current frame.
         public PolymorphicSerializationState PolymorphicSerializationState;
+
         // Holds the entered polymorphic type info and acts as an LRU cache for element/field serializations.
         public KdlTypeInfo? PolymorphicTypeInfo;
 
@@ -104,7 +105,9 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         public readonly KdlTypeInfo GetNestedKdlTypeInfo()
         {
-            return PolymorphicSerializationState is PolymorphicSerializationState.PolymorphicReEntryStarted
+            return
+                PolymorphicSerializationState
+                is PolymorphicSerializationState.PolymorphicReEntryStarted
                 ? PolymorphicTypeInfo!
                 : KdlPropertyInfo!.KdlTypeInfo;
         }
@@ -112,7 +115,10 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Configures the next stack frame for a polymorphic converter.
         /// </summary>
-        public KdlTypeInfo InitializePolymorphicReEntry(Type runtimeType, KdlSerializerOptions options)
+        public KdlTypeInfo InitializePolymorphicReEntry(
+            Type runtimeType,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(PolymorphicSerializationState == PolymorphicSerializationState.None);
 
@@ -123,7 +129,10 @@ namespace Automatonic.Text.Kdl
                 // To determine the contract for an object value:
                 // 1. Find the KdlTypeInfo for the runtime type with fallback to the nearest ancestor, if not available.
                 // 2. If the resolved type is deriving from a polymorphic type, use the contract of the polymorphic type instead.
-                KdlTypeInfo typeInfo = options.GetTypeInfoInternal(runtimeType, fallBackToNearestAncestorType: true);
+                KdlTypeInfo typeInfo = options.GetTypeInfoInternal(
+                    runtimeType,
+                    fallBackToNearestAncestorType: true
+                );
                 PolymorphicTypeInfo = typeInfo.AncestorPolymorphicType ?? typeInfo;
             }
 
@@ -136,7 +145,11 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         public KdlConverter InitializePolymorphicReEntry(KdlTypeInfo derivedKdlTypeInfo)
         {
-            Debug.Assert(PolymorphicSerializationState is PolymorphicSerializationState.None or PolymorphicSerializationState.PolymorphicReEntryStarted);
+            Debug.Assert(
+                PolymorphicSerializationState
+                    is PolymorphicSerializationState.None
+                        or PolymorphicSerializationState.PolymorphicReEntryStarted
+            );
 
             PolymorphicTypeInfo = derivedKdlTypeInfo;
             PolymorphicSerializationState = PolymorphicSerializationState.PolymorphicReEntryStarted;
@@ -148,7 +161,10 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         public KdlConverter ResumePolymorphicReEntry()
         {
-            Debug.Assert(PolymorphicSerializationState == PolymorphicSerializationState.PolymorphicReEntrySuspended);
+            Debug.Assert(
+                PolymorphicSerializationState
+                    == PolymorphicSerializationState.PolymorphicReEntrySuspended
+            );
             Debug.Assert(PolymorphicTypeInfo is not null);
             PolymorphicSerializationState = PolymorphicSerializationState.PolymorphicReEntryStarted;
             return PolymorphicTypeInfo.Converter;
@@ -159,10 +175,13 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         public void ExitPolymorphicConverter(bool success)
         {
-            PolymorphicSerializationState = success ? PolymorphicSerializationState.None : PolymorphicSerializationState.PolymorphicReEntrySuspended;
+            PolymorphicSerializationState = success
+                ? PolymorphicSerializationState.None
+                : PolymorphicSerializationState.PolymorphicReEntrySuspended;
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly string DebuggerDisplay => $"ConverterStrategy.{KdlTypeInfo?.Converter.ConverterStrategy}, {KdlTypeInfo?.Type.Name}";
+        private readonly string DebuggerDisplay =>
+            $"ConverterStrategy.{KdlTypeInfo?.Converter.ConverterStrategy}, {KdlTypeInfo?.Type.Name}";
     }
 }

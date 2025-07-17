@@ -29,6 +29,7 @@ namespace Automatonic.Text.Kdl
         /// Records the KdlReader Depth at the start of the current value.
         /// </summary>
         public int OriginalDepth;
+
 #if DEBUG
         /// <summary>
         /// Records the KdlReader TokenType at the start of the current value.
@@ -54,8 +55,8 @@ namespace Automatonic.Text.Kdl
         public KdlTypeInfo? PolymorphicKdlTypeInfo;
 
         // Gets the initial KdlTypeInfo metadata used when deserializing the current value.
-        public readonly KdlTypeInfo BaseKdlTypeInfo
-            => PolymorphicSerializationState == PolymorphicSerializationState.PolymorphicReEntryStarted
+        public readonly KdlTypeInfo BaseKdlTypeInfo =>
+            PolymorphicSerializationState == PolymorphicSerializationState.PolymorphicReEntryStarted
                 ? PolymorphicKdlTypeInfo!
                 : KdlTypeInfo;
 
@@ -153,12 +154,16 @@ namespace Automatonic.Text.Kdl
 
                 if (!RequiredPropertiesSet.HasAllSet())
                 {
-                    ThrowHelper.ThrowKdlException_KdlRequiredPropertyMissing(typeInfo, RequiredPropertiesSet);
+                    ThrowHelper.ThrowKdlException_KdlRequiredPropertyMissing(
+                        typeInfo,
+                        RequiredPropertiesSet
+                    );
                 }
             }
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private readonly string DebuggerDisplay => $"ConverterStrategy.{KdlTypeInfo?.Converter.ConverterStrategy}, {KdlTypeInfo?.Type.Name}";
+        private readonly string DebuggerDisplay =>
+            $"ConverterStrategy.{KdlTypeInfo?.Converter.ConverterStrategy}, {KdlTypeInfo?.Type.Name}";
     }
 }

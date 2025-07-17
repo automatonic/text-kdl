@@ -25,7 +25,8 @@ namespace Automatonic.Text.Kdl
         public static void Serialize<TValue>(
             KdlWriter writer,
             TValue value,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             if (writer is null)
             {
@@ -59,7 +60,8 @@ namespace Automatonic.Text.Kdl
             KdlWriter writer,
             object? value,
             Type inputType,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             if (writer is null)
             {
@@ -81,7 +83,11 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentNullException">
         ///   <paramref name="writer"/> or <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static void Serialize<TValue>(KdlWriter writer, TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static void Serialize<TValue>(
+            KdlWriter writer,
+            TValue value,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (writer is null)
             {
@@ -144,7 +150,12 @@ namespace Automatonic.Text.Kdl
         /// The <see cref="KdlSerializerContext.GetTypeInfo(Type)"/> method of the provided
         /// <paramref name="context"/> returns <see langword="null"/> for the type to convert.
         /// </exception>
-        public static void Serialize(KdlWriter writer, object? value, Type inputType, KdlSerializerContext context)
+        public static void Serialize(
+            KdlWriter writer,
+            object? value,
+            Type inputType,
+            KdlSerializerContext context
+        )
         {
             if (writer is null)
             {

@@ -28,16 +28,21 @@ namespace Automatonic.Text.Kdl
             return ConvertNameCore(_separator, _lowercase, name.AsSpan());
         }
 
-        private static string ConvertNameCore(char separator, bool lowercase, ReadOnlySpan<char> chars)
+        private static string ConvertNameCore(
+            char separator,
+            bool lowercase,
+            ReadOnlySpan<char> chars
+        )
         {
             char[]? rentedBuffer = null;
 
             // While we can't predict the expansion factor of the resultant string,
             // start with a buffer that is at least 20% larger than the input.
             int initialBufferLength = (int)(1.2 * chars.Length);
-            Span<char> destination = initialBufferLength <= KdlConstants.StackallocCharThreshold
-                ? stackalloc char[KdlConstants.StackallocCharThreshold]
-                : (rentedBuffer = ArrayPool<char>.Shared.Rent(initialBufferLength));
+            Span<char> destination =
+                initialBufferLength <= KdlConstants.StackallocCharThreshold
+                    ? stackalloc char[KdlConstants.StackallocCharThreshold]
+                    : (rentedBuffer = ArrayPool<char>.Shared.Rent(initialBufferLength));
 
             SeparatorState state = SeparatorState.NotStarted;
             int charsWritten = 0;

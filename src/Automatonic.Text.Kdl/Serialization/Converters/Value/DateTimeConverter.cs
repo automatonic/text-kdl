@@ -5,7 +5,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class DateTimeConverter : KdlPrimitiveConverter<DateTime>
     {
-        public override DateTime Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override DateTime Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetDateTime();
         }
@@ -15,17 +19,27 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteStringValue(value);
         }
 
-        internal override DateTime ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override DateTime ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetDateTimeNoValidation();
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, DateTime value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            DateTime value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             writer.WritePropertyName(value);
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.String, Format = "date-time" };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.String, Format = "date-time" };
     }
 }

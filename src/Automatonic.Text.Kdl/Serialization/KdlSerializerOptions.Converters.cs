@@ -32,8 +32,12 @@ namespace Automatonic.Text.Kdl
         /// There is no compatible <see cref="Automatonic.Text.Kdl.Serialization.KdlConverter"/>
         /// for <paramref name="typeToConvert"/> or its serializable members.
         /// </exception>
-        [RequiresUnreferencedCode("Getting a converter for a type may require reflection which depends on unreferenced code.")]
-        [RequiresDynamicCode("Getting a converter for a type may require reflection which depends on runtime code generation.")]
+        [RequiresUnreferencedCode(
+            "Getting a converter for a type may require reflection which depends on unreferenced code."
+        )]
+        [RequiresDynamicCode(
+            "Getting a converter for a type may require reflection which depends on runtime code generation."
+        )]
         public KdlConverter GetConverter(Type typeToConvert)
         {
             if (typeToConvert is null)
@@ -59,7 +63,11 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         internal KdlConverter GetConverterInternal(Type typeToConvert)
         {
-            KdlTypeInfo kdlTypeInfo = GetTypeInfoInternal(typeToConvert, ensureConfigured: false, resolveIfMutable: true);
+            KdlTypeInfo kdlTypeInfo = GetTypeInfoInternal(
+                typeToConvert,
+                ensureConfigured: false,
+                resolveIfMutable: true
+            );
             return kdlTypeInfo.Converter;
         }
 
@@ -90,7 +98,10 @@ namespace Automatonic.Text.Kdl
             return converter;
         }
 
-        internal static void CheckConverterNullabilityIsSameAsPropertyType(KdlConverter converter, Type propertyType)
+        internal static void CheckConverterNullabilityIsSameAsPropertyType(
+            KdlConverter converter,
+            Type propertyType
+        )
         {
             // User has indicated that either:
             //   a) a non-nullable-struct handling converter should handle a nullable struct type or
@@ -100,10 +111,16 @@ namespace Automatonic.Text.Kdl
             //
             // We also throw to avoid passing an invalid argument to setters for nullable struct properties,
             // which would cause an InvalidProgramException when the generated IL is invoked.
-            if (propertyType.IsValueType && converter.IsValueType &&
-                (propertyType.IsNullableOfT() ^ converter.Type!.IsNullableOfT()))
+            if (
+                propertyType.IsValueType
+                && converter.IsValueType
+                && (propertyType.IsNullableOfT() ^ converter.Type!.IsNullableOfT())
+            )
             {
-                ThrowHelper.ThrowInvalidOperationException_ConverterCanConvertMultipleTypes(propertyType, converter);
+                ThrowHelper.ThrowInvalidOperationException_ConverterCanConvertMultipleTypes(
+                    propertyType,
+                    converter
+                );
             }
         }
     }

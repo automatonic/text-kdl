@@ -16,24 +16,39 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             if (IsValueType)
             {
                 state.Current.ReturnValue = collection;
-            };
+            }
+            ;
         }
 
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             base.CreateCollection(ref reader, ref state, options);
             TCollection returnValue = (TCollection)state.Current.ReturnValue!;
             if (returnValue.IsReadOnly)
             {
                 state.Current.ReturnValue = null; // clear out for more accurate KdlPath reporting.
-                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(Type, ref reader, ref state);
+                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(
+                    Type,
+                    ref reader,
+                    ref state
+                );
             }
         }
 
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfo(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        )
         {
             // Deserialize as HashSet<TElement> for interface types that support it.
-            if (kdlTypeInfo.CreateObject is null && Type.IsAssignableFrom(typeof(HashSet<TElement>)))
+            if (
+                kdlTypeInfo.CreateObject is null
+                && Type.IsAssignableFrom(typeof(HashSet<TElement>))
+            )
             {
                 Debug.Assert(Type.IsInterface);
                 kdlTypeInfo.CreateObject = () => new HashSet<TElement>();

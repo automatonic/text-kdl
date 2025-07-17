@@ -6,16 +6,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         private readonly string? _errorMessage = errorMessage;
 
-        public string ErrorMessage => _errorMessage ?? string.Format(SR.SerializeTypeInstanceNotSupported, typeof(T).FullName);
+        public string ErrorMessage =>
+            _errorMessage
+            ?? string.Format(SR.SerializeTypeInstanceNotSupported, typeof(T).FullName);
 
-        public override T Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options) =>
-            throw new NotSupportedException(ErrorMessage);
+        public override T Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        ) => throw new NotSupportedException(ErrorMessage);
 
         public override void Write(KdlWriter writer, T value, KdlSerializerOptions options) =>
             throw new NotSupportedException(ErrorMessage);
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
-            new()
-            { Comment = "Unsupported .NET type", Not = KdlSchema.CreateTrueSchema() };
+            new() { Comment = "Unsupported .NET type", Not = KdlSchema.CreateTrueSchema() };
     }
 }

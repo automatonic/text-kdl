@@ -41,10 +41,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             /// </summary>
             internal bool HasComplexChildren => _sizeOrLengthUnion < 0;
 
-            internal int NumberOfRows =>
-                _numberOfRowsAndTypeUnion & 0x0FFFFFFF; // Number of rows that the current KDL element occupies within the database
+            internal int NumberOfRows => _numberOfRowsAndTypeUnion & 0x0FFFFFFF; // Number of rows that the current KDL element occupies within the database
 
-            internal KdlTokenType TokenType => (KdlTokenType)(unchecked((uint)_numberOfRowsAndTypeUnion) >> 28);
+            internal KdlTokenType TokenType =>
+                (KdlTokenType)(unchecked((uint)_numberOfRowsAndTypeUnion) >> 28);
 
             internal const int UnknownSize = -1;
 

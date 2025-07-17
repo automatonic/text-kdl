@@ -6,7 +6,9 @@ namespace Automatonic.Text.Kdl.Serialization
     /// </summary>
     internal abstract class KdlObjectConverter<T> : KdlResumableConverter<T>
     {
-        private protected sealed override ConverterStrategy GetDefaultConverterStrategy() => ConverterStrategy.Object;
+        private protected sealed override ConverterStrategy GetDefaultConverterStrategy() =>
+            ConverterStrategy.Object;
+
         internal override bool CanPopulate => true;
     }
 }

@@ -18,11 +18,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         internal override Type? KeyType => Converter.KeyType;
         internal override Type? ElementType => Converter.ElementType;
-        internal override KdlConverter? NullableElementConverter => Converter.NullableElementConverter;
+        internal override KdlConverter? NullableElementConverter =>
+            Converter.NullableElementConverter;
         public override bool HandleNull { get; }
 
         internal override bool ConstructorIsParameterized => Converter.ConstructorIsParameterized;
-        internal override bool SupportsCreateObjectDelegate => Converter.SupportsCreateObjectDelegate;
+        internal override bool SupportsCreateObjectDelegate =>
+            Converter.SupportsCreateObjectDelegate;
         internal override bool CanHaveMetadata => Converter.CanHaveMetadata;
 
         internal override bool CanPopulate => Converter.CanPopulate;
@@ -41,18 +43,32 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             HandleNull = converter.HandleNullOnWrite;
         }
 
-        internal override bool OnTryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out T? value)
-             => Converter.OnTryRead(ref reader, typeToConvert, options, ref state, out value);
+        internal override bool OnTryRead(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out T? value
+        ) => Converter.OnTryRead(ref reader, typeToConvert, options, ref state, out value);
 
-        internal override bool OnTryWrite(KdlWriter writer, T value, KdlSerializerOptions options, ref WriteStack state)
+        internal override bool OnTryWrite(
+            KdlWriter writer,
+            T value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
-            Debug.Assert(kdlTypeInfo is KdlTypeInfo<T> typeInfo && typeInfo.SerializeHandler != null);
+            Debug.Assert(
+                kdlTypeInfo is KdlTypeInfo<T> typeInfo && typeInfo.SerializeHandler != null
+            );
 
-            if (!state.SupportContinuation &&
-                kdlTypeInfo.CanUseSerializeHandler &&
-                !KdlHelpers.RequiresSpecialNumberHandlingOnWrite(state.Current.NumberHandling) &&
-                !state.CurrentContainsMetadata) // Do not use the fast path if state needs to write metadata.
+            if (
+                !state.SupportContinuation
+                && kdlTypeInfo.CanUseSerializeHandler
+                && !KdlHelpers.RequiresSpecialNumberHandlingOnWrite(state.Current.NumberHandling)
+                && !state.CurrentContainsMetadata
+            ) // Do not use the fast path if state needs to write metadata.
             {
                 ((KdlTypeInfo<T>)kdlTypeInfo).SerializeHandler!(writer, value);
                 return true;
@@ -61,10 +77,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return Converter.OnTryWrite(writer, value, options, ref state);
         }
 
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
-            => Converter.ConfigureKdlTypeInfo(kdlTypeInfo, options);
+        internal override void ConfigureKdlTypeInfo(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        ) => Converter.ConfigureKdlTypeInfo(kdlTypeInfo, options);
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling numberHandling)
-            => Converter.GetSchema(numberHandling);
+        internal override KdlSchema? GetSchema(KdlNumberHandling numberHandling) =>
+            Converter.GetSchema(numberHandling);
     }
 }

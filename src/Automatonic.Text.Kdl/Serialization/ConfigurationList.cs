@@ -8,13 +8,16 @@ namespace Automatonic.Text.Kdl.Serialization
     /// </summary>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     [DebuggerTypeProxy(typeof(ConfigurationList<>.ConfigurationListDebugView))]
-    internal abstract class ConfigurationList<TItem>(IEnumerable<TItem>? source = null) : IList<TItem>
+    internal abstract class ConfigurationList<TItem>(IEnumerable<TItem>? source = null)
+        : IList<TItem>
     {
         protected readonly List<TItem> _list = source is null ? [] : [.. source];
 
         public abstract bool IsReadOnly { get; }
         protected abstract void OnCollectionModifying();
+
         protected virtual void OnCollectionModified() { }
+
         protected virtual void ValidateAddedValue(TItem item) { }
 
         public TItem this[int index]

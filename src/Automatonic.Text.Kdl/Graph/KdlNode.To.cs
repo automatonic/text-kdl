@@ -19,7 +19,11 @@
                 defaultBufferSize = options.DefaultBufferSize;
             }
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(writerOptions, defaultBufferSize, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                writerOptions,
+                defaultBufferSize,
+                out PooledByteBufferWriter output
+            );
             try
             {
                 WriteTo(writer, options);
@@ -52,7 +56,11 @@
                 }
             }
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(new KdlWriterOptions { Indented = true }, KdlSerializerOptions.BufferSizeDefault, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                new KdlWriterOptions { Indented = true },
+                KdlSerializerOptions.BufferSizeDefault,
+                out PooledByteBufferWriter output
+            );
             try
             {
                 WriteTo(writer);

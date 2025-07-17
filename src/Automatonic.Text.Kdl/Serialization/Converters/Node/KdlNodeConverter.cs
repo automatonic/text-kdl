@@ -17,11 +17,18 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         private static KdlValueConverter? s_valueConverter;
 
         public static KdlVertexConverter Instance => s_nodeConverter ??= new KdlVertexConverter();
-        public static KdlArrayConverter ArrayConverter => s_arrayConverter ??= new KdlArrayConverter();
-        public static KdlObjectConverter ObjectConverter => s_objectConverter ??= new KdlObjectConverter();
-        public static KdlValueConverter ValueConverter => s_valueConverter ??= new KdlValueConverter();
+        public static KdlArrayConverter ArrayConverter =>
+            s_arrayConverter ??= new KdlArrayConverter();
+        public static KdlObjectConverter ObjectConverter =>
+            s_objectConverter ??= new KdlObjectConverter();
+        public static KdlValueConverter ValueConverter =>
+            s_valueConverter ??= new KdlValueConverter();
 
-        public override void Write(KdlWriter writer, KdlElement? value, KdlSerializerOptions options)
+        public override void Write(
+            KdlWriter writer,
+            KdlElement? value,
+            KdlSerializerOptions options
+        )
         {
             if (value is null)
             {
@@ -33,7 +40,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        public override KdlElement? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlElement? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             switch (reader.TokenType)
             {

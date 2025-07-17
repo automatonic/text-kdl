@@ -53,7 +53,10 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>(ref KdlReader reader, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(
+            ref KdlReader reader,
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             return Read<TValue>(ref reader, kdlTypeInfo);
@@ -106,7 +109,11 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(ref KdlReader reader, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(
+            ref KdlReader reader,
+            Type returnType,
+            KdlSerializerOptions? options = null
+        )
         {
             if (returnType is null)
             {
@@ -156,7 +163,10 @@ namespace Automatonic.Text.Kdl
         ///     Hence, <see cref="KdlReaderOptions.AllowTrailingCommas"/>, <see cref="KdlReaderOptions.MaxDepth"/>, and <see cref="KdlReaderOptions.CommentHandling"/> are used while reading.
         ///   </para>
         /// </remarks>
-        public static TValue? Deserialize<TValue>(ref KdlReader reader, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static TValue? Deserialize<TValue>(
+            ref KdlReader reader,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -265,7 +275,11 @@ namespace Automatonic.Text.Kdl
         ///     Hence, <see cref="KdlReaderOptions.AllowTrailingCommas"/>, <see cref="KdlReaderOptions.MaxDepth"/>, and <see cref="KdlReaderOptions.CommentHandling"/> are used while reading.
         ///   </para>
         /// </remarks>
-        public static object? Deserialize(ref KdlReader reader, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(
+            ref KdlReader reader,
+            Type returnType,
+            KdlSerializerContext context
+        )
         {
             if (returnType is null)
             {
@@ -329,7 +343,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static KdlReader GetReaderScopedToNextValue(ref KdlReader reader, scoped ref ReadStack state)
+        private static KdlReader GetReaderScopedToNextValue(
+            ref KdlReader reader,
+            scoped ref ReadStack state
+        )
         {
             // Advances the provided reader, validating that it is pointing to a complete KDL value.
             // If successful, returns a new KdlReader that is scoped to the next value, reusing existing buffers.
@@ -351,7 +368,10 @@ namespace Automatonic.Text.Kdl
                     {
                         if (!reader.Read())
                         {
-                            ThrowHelper.ThrowKdlReaderException(ref reader, ExceptionResource.ExpectedOneCompleteToken);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref reader,
+                                ExceptionResource.ExpectedOneCompleteToken
+                            );
                         }
                         break;
                     }
@@ -366,7 +386,10 @@ namespace Automatonic.Text.Kdl
 
                         if (!reader.TrySkip())
                         {
-                            ThrowHelper.ThrowKdlReaderException(ref reader, ExceptionResource.NotEnoughData);
+                            ThrowHelper.ThrowKdlReaderException(
+                                ref reader,
+                                ExceptionResource.NotEnoughData
+                            );
                         }
 
                         long totalLength = reader.BytesConsumed - startingOffset;
@@ -376,14 +399,19 @@ namespace Automatonic.Text.Kdl
                         {
                             valueSpan = reader.OriginalSpan.Slice(
                                 checked((int)startingOffset),
-                                checked((int)totalLength));
+                                checked((int)totalLength)
+                            );
                         }
                         else
                         {
                             valueSequence = sequence.Slice(startingOffset, totalLength);
                         }
 
-                        Debug.Assert(reader.TokenType is KdlTokenType.EndChildrenBlock or KdlTokenType.EndArray);
+                        Debug.Assert(
+                            reader.TokenType
+                                is KdlTokenType.EndChildrenBlock
+                                    or KdlTokenType.EndArray
+                        );
                         break;
 
                     // Single-token values
@@ -417,13 +445,19 @@ namespace Automatonic.Text.Kdl
 
                             Debug.Assert(
                                 readerSpan[(int)reader.TokenStartIndex] == (byte)'"',
-                                $"Calculated span starts with {readerSpan[(int)reader.TokenStartIndex]}");
+                                $"Calculated span starts with {readerSpan[(int)reader.TokenStartIndex]}"
+                            );
 
                             Debug.Assert(
-                                readerSpan[(int)reader.TokenStartIndex + payloadLength - 1] == (byte)'"',
-                                $"Calculated span ends with {readerSpan[(int)reader.TokenStartIndex + payloadLength - 1]}");
+                                readerSpan[(int)reader.TokenStartIndex + payloadLength - 1]
+                                    == (byte)'"',
+                                $"Calculated span ends with {readerSpan[(int)reader.TokenStartIndex + payloadLength - 1]}"
+                            );
 
-                            valueSpan = readerSpan.Slice((int)reader.TokenStartIndex, payloadLength);
+                            valueSpan = readerSpan.Slice(
+                                (int)reader.TokenStartIndex,
+                                payloadLength
+                            );
                         }
                         else
                         {
@@ -431,14 +465,19 @@ namespace Automatonic.Text.Kdl
                                 ? reader.ValueSequence.Length + 2
                                 : reader.ValueSpan.Length + 2;
 
-                            valueSequence = originalSequence.Slice(reader.TokenStartIndex, payloadLength);
+                            valueSequence = originalSequence.Slice(
+                                reader.TokenStartIndex,
+                                payloadLength
+                            );
                             Debug.Assert(
                                 valueSequence.First.Span[0] == (byte)'"',
-                                $"Calculated sequence starts with {valueSequence.First.Span[0]}");
+                                $"Calculated sequence starts with {valueSequence.First.Span[0]}"
+                            );
 
                             Debug.Assert(
                                 valueSequence.ToArray()[payloadLength - 1] == (byte)'"',
-                                $"Calculated sequence ends with {valueSequence.ToArray()[payloadLength - 1]}");
+                                $"Calculated sequence ends with {valueSequence.ToArray()[payloadLength - 1]}"
+                            );
                         }
 
                         break;
@@ -451,7 +490,8 @@ namespace Automatonic.Text.Kdl
                         ThrowHelper.ThrowKdlReaderException(
                             ref reader,
                             ExceptionResource.ExpectedStartOfValueNotFound,
-                            displayByte);
+                            displayByte
+                        );
 
                         break;
                 }

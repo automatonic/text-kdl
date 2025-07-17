@@ -21,14 +21,10 @@ namespace Automatonic.Text.Kdl
         // Value copied from Array.MaxLength in System.Private.CoreLib/src/libraries/System.Private.CoreLib/src/System/Array.cs.
         public const int MaximumBufferSize = 0X7FFFFFC7;
 
-        private PooledByteBufferWriter() =>
-#if NET
-            // Ensure we are in sync with the Array.MaxLength implementation.
-            Debug.Assert(MaximumBufferSize == Array.MaxLength);
-#endif
+        private PooledByteBufferWriter() { }
 
-
-        public PooledByteBufferWriter(int initialCapacity) : this()
+        public PooledByteBufferWriter(int initialCapacity)
+            : this()
         {
             Debug.Assert(initialCapacity > 0);
 
@@ -36,7 +32,8 @@ namespace Automatonic.Text.Kdl
             _index = 0;
         }
 
-        public PooledByteBufferWriter(int initialCapacity, Stream stream) : this(initialCapacity) => _stream = stream;
+        public PooledByteBufferWriter(int initialCapacity, Stream stream)
+            : this(initialCapacity) => _stream = stream;
 
         public ReadOnlyMemory<byte> WrittenMemory
         {
@@ -183,7 +180,9 @@ namespace Automatonic.Text.Kdl
                     newSize = currentLength + sizeHint;
                     if ((uint)newSize > MaximumBufferSize)
                     {
-                        ThrowHelper.ThrowOutOfMemoryException_BufferMaximumSizeExceeded((uint)newSize);
+                        ThrowHelper.ThrowOutOfMemoryException_BufferMaximumSizeExceeded(
+                            (uint)newSize
+                        );
                     }
                 }
 
@@ -204,14 +203,18 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(_rentedBuffer.Length - _index >= sizeHint);
         }
 
-        public override async ValueTask<FlushResult> FlushAsync(CancellationToken cancellationToken = default)
+        public override async ValueTask<FlushResult> FlushAsync(
+            CancellationToken cancellationToken = default
+        )
         {
             Debug.Assert(_stream is not null);
 #if NET
             await _stream.WriteAsync(WrittenMemory, cancellationToken).ConfigureAwait(false);
 #else
             Debug.Assert(_rentedBuffer != null);
-            await _stream.WriteAsync(_rentedBuffer, 0, _index, cancellationToken).ConfigureAwait(false);
+            await _stream
+                .WriteAsync(_rentedBuffer, 0, _index, cancellationToken)
+                .ConfigureAwait(false);
 #endif
             Clear();
 
@@ -224,7 +227,9 @@ namespace Automatonic.Text.Kdl
         // This type is used internally in KdlSerializer to help buffer and flush bytes to the underlying Stream.
         // It's only pretending to be a PipeWriter and doesn't need Complete or CancelPendingFlush for the internal usage.
         public override void CancelPendingFlush() => throw new NotImplementedException();
-        public override void Complete(Exception? exception = null) => throw new NotImplementedException();
+
+        public override void Complete(Exception? exception = null) =>
+            throw new NotImplementedException();
     }
 
     internal static partial class ThrowHelper

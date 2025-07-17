@@ -8,22 +8,42 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     /// Implementation of <cref>KdlObjectConverter{T}</cref> that supports the deserialization
     /// of KDL objects using parameterized constructors.
     /// </summary>
-    internal class LargeObjectWithParameterizedConstructorConverter<T> : ObjectWithParameterizedConstructorConverter<T> where T : notnull
+    internal class LargeObjectWithParameterizedConstructorConverter<T>
+        : ObjectWithParameterizedConstructorConverter<T>
+        where T : notnull
     {
-        protected sealed override bool ReadAndCacheConstructorArgument(scoped ref ReadStack state, ref KdlReader reader, KdlParameterInfo kdlParameterInfo)
+        protected sealed override bool ReadAndCacheConstructorArgument(
+            scoped ref ReadStack state,
+            ref KdlReader reader,
+            KdlParameterInfo kdlParameterInfo
+        )
         {
             Debug.Assert(kdlParameterInfo.ShouldDeserialize);
 
-            bool success = kdlParameterInfo.EffectiveConverter.TryReadAsObject(ref reader, kdlParameterInfo.ParameterType, kdlParameterInfo.Options, ref state, out object? arg);
+            bool success = kdlParameterInfo.EffectiveConverter.TryReadAsObject(
+                ref reader,
+                kdlParameterInfo.ParameterType,
+                kdlParameterInfo.Options,
+                ref state,
+                out object? arg
+            );
 
             if (success && !(arg == null && kdlParameterInfo.IgnoreNullTokensOnRead))
             {
-                if (arg == null && !kdlParameterInfo.IsNullable && kdlParameterInfo.Options.RespectNullableAnnotations)
+                if (
+                    arg == null
+                    && !kdlParameterInfo.IsNullable
+                    && kdlParameterInfo.Options.RespectNullableAnnotations
+                )
                 {
-                    ThrowHelper.ThrowKdlException_ConstructorParameterDisallowNull(kdlParameterInfo.Name, state.Current.KdlTypeInfo.Type);
+                    ThrowHelper.ThrowKdlException_ConstructorParameterDisallowNull(
+                        kdlParameterInfo.Name,
+                        state.Current.KdlTypeInfo.Type
+                    );
                 }
 
-                ((object[])state.Current.CtorArgumentState!.Arguments)[kdlParameterInfo.Position] = arg!;
+                ((object[])state.Current.CtorArgumentState!.Arguments)[kdlParameterInfo.Position] =
+                    arg!;
             }
 
             return success;
@@ -37,7 +57,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             object[] arguments = (object[])frame.CtorArgumentState.Arguments;
             frame.CtorArgumentState.Arguments = null!;
 
-            Func<object[], T> createObject = (Func<object[], T>)frame.KdlTypeInfo.CreateObjectWithArgs;
+            Func<object[], T> createObject =
+                (Func<object[], T>)frame.KdlTypeInfo.CreateObjectWithArgs;
 
             object obj = createObject(arguments);
 
@@ -45,7 +66,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return obj;
         }
 
-        protected sealed override void InitializeConstructorArgumentCaches(ref ReadStack state, KdlSerializerOptions options)
+        protected sealed override void InitializeConstructorArgumentCaches(
+            ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             KdlTypeInfo typeInfo = state.Current.KdlTypeInfo;
 

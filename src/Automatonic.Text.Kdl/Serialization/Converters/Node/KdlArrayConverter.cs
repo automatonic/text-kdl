@@ -18,7 +18,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             value.WriteTo(writer, options);
         }
 
-        public override KdlNode? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlNode? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             switch (reader.TokenType)
             {
@@ -38,6 +42,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return new KdlNode(kroElement, options);
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.Array };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.Array };
     }
 }

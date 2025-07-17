@@ -76,17 +76,24 @@
         }
 
         /// <inheritdoc />
-        KeyValuePair<KdlEntryKey, KdlElement?> IList<KeyValuePair<KdlEntryKey, KdlElement?>>.this[int index]
+        KeyValuePair<KdlEntryKey, KdlElement?> IList<KeyValuePair<KdlEntryKey, KdlElement?>>.this[
+            int index
+        ]
         {
             get => GetAt(index);
             set => SetAt(index, value.Key, value.Value);
         }
 
         /// <inheritdoc />
-        int IList<KeyValuePair<KdlEntryKey, KdlElement?>>.IndexOf(KeyValuePair<KdlEntryKey, KdlElement?> item) => ((IList<KeyValuePair<KdlEntryKey, KdlElement?>>)Dictionary).IndexOf(item);
+        int IList<KeyValuePair<KdlEntryKey, KdlElement?>>.IndexOf(
+            KeyValuePair<KdlEntryKey, KdlElement?> item
+        ) => ((IList<KeyValuePair<KdlEntryKey, KdlElement?>>)Dictionary).IndexOf(item);
 
         /// <inheritdoc />
-        void IList<KeyValuePair<KdlEntryKey, KdlElement?>>.Insert(int index, KeyValuePair<KdlEntryKey, KdlElement?> item) => Insert(index, item.Key, item.Value);
+        void IList<KeyValuePair<KdlEntryKey, KdlElement?>>.Insert(
+            int index,
+            KeyValuePair<KdlEntryKey, KdlElement?> item
+        ) => Insert(index, item.Key, item.Value);
 
         /// <inheritdoc />
         void IList<KeyValuePair<KdlEntryKey, KdlElement?>>.RemoveAt(int index)

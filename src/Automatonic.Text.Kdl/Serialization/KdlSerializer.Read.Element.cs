@@ -23,7 +23,10 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>(this KdlReadOnlyElement element, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(
+            this KdlReadOnlyElement element,
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             ReadOnlySpan<byte> utf8Kdl = element.GetRawValue().Span;
@@ -49,7 +52,11 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(this KdlReadOnlyElement element, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(
+            this KdlReadOnlyElement element,
+            Type returnType,
+            KdlSerializerOptions? options = null
+        )
         {
             if (returnType is null)
             {
@@ -78,7 +85,10 @@ namespace Automatonic.Text.Kdl
         /// There is no compatible <see cref="Automatonic.Text.Kdl.Serialization.KdlConverter"/>
         /// for <typeparamref name="TValue"/> or its serializable members.
         /// </exception>
-        public static TValue? Deserialize<TValue>(this KdlReadOnlyElement element, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static TValue? Deserialize<TValue>(
+            this KdlReadOnlyElement element,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -143,7 +153,11 @@ namespace Automatonic.Text.Kdl
         /// The <see cref="KdlSerializerContext.GetTypeInfo(Type)"/> method of the provided
         /// <paramref name="context"/> returns <see langword="null"/> for the type to convert.
         /// </exception>
-        public static object? Deserialize(this KdlReadOnlyElement element, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(
+            this KdlReadOnlyElement element,
+            Type returnType,
+            KdlSerializerContext context
+        )
         {
             if (returnType is null)
             {

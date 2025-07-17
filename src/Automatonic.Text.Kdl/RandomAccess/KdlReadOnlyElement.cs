@@ -10,7 +10,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
     /// </summary>
     /// <remarks>
     /// This is apparently borrowed from HTML/XML where an "Element" is everything within the start/end tag. This is distinct from
-    /// "Node" in that is the top level structure of KDL and "node" is the graph theory API that we have aliased as "DocumentNode" to differentiate the semantics. 
+    /// "Node" in that is the top level structure of KDL and "node" is the graph theory API that we have aliased as "DocumentNode" to differentiate the semantics.
     /// </remarks>
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public readonly partial struct KdlReadOnlyElement
@@ -31,6 +31,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private KdlTokenType TokenType => _parent?.GetKdlTokenType(_idx) ?? KdlTokenType.None;
+
         /// <summary>
         ///   The <see cref="KdlValueKind"/> that the value is.
         /// </summary>
@@ -303,7 +304,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="ObjectDisposedException">
         ///   The parent <see cref="KdlReadOnlyDocument"/> has been disposed.
         /// </exception>
-        public bool TryGetProperty(ReadOnlySpan<byte> utf8PropertyName, out KdlReadOnlyElement value)
+        public bool TryGetProperty(
+            ReadOnlySpan<byte> utf8PropertyName,
+            out KdlReadOnlyElement value
+        )
         {
             CheckValidInstance();
 
@@ -331,10 +335,14 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             KdlTokenType type = TokenType;
 
-            return
-                type == KdlTokenType.True || (type != KdlTokenType.False && ThrowKdlElementWrongTypeException(type));
+            return type == KdlTokenType.True
+                || (type != KdlTokenType.False && ThrowKdlElementWrongTypeException(type));
 
-            static bool ThrowKdlElementWrongTypeException(KdlTokenType actualType) => throw ThrowHelper.GetKdlElementWrongTypeException(nameof(Boolean), actualType.ToValueKind());
+            static bool ThrowKdlElementWrongTypeException(KdlTokenType actualType) =>
+                throw ThrowHelper.GetKdlElementWrongTypeException(
+                    nameof(Boolean),
+                    actualType.ToValueKind()
+                );
         }
 
         /// <summary>
@@ -1257,11 +1265,16 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             switch (kind)
             {
-                case KdlValueKind.Null or KdlValueKind.False or KdlValueKind.True:
+                case KdlValueKind.Null
+                or KdlValueKind.False
+                or KdlValueKind.True:
                     return true;
 
                 case KdlValueKind.Number:
-                    return KdlHelpers.AreEqualKdlNumbers(element1.GetRawValue().Span, element2.GetRawValue().Span);
+                    return KdlHelpers.AreEqualKdlNumbers(
+                        element1.GetRawValue().Span,
+                        element2.GetRawValue().Span
+                    );
 
                 case KdlValueKind.String:
                     if (element2.ValueIsEscaped)
@@ -1269,7 +1282,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         if (element1.ValueIsEscaped)
                         {
                             // Need to unescape and compare both inputs.
-                            return KdlReaderHelper.UnescapeAndCompareBothInputs(element1.ValueSpan, element2.ValueSpan);
+                            return KdlReaderHelper.UnescapeAndCompareBothInputs(
+                                element1.ValueSpan,
+                                element2.ValueSpan
+                            );
                         }
 
                         // Swap values so that unescaping is handled by the LHS.
@@ -1326,7 +1342,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         if (!NameEquals(prop1, prop2))
                         {
                             // We have our first mismatch, fall back to unordered comparison.
-                            return UnorderedObjectDeepEquals(objectEnumerator1, objectEnumerator2, remainingProps: count);
+                            return UnorderedObjectDeepEquals(
+                                objectEnumerator1,
+                                objectEnumerator2,
+                                remainingProps: count
+                            );
                         }
 
                         if (!DeepEquals(prop1.Value, prop2.Value))
@@ -1340,7 +1360,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     Debug.Assert(!objectEnumerator2.MoveNext());
                     return true;
 
-                    static bool UnorderedObjectDeepEquals(NodeEnumerator objectEnumerator1, NodeEnumerator objectEnumerator2, int remainingProps)
+                    static bool UnorderedObjectDeepEquals(
+                        NodeEnumerator objectEnumerator1,
+                        NodeEnumerator objectEnumerator2,
+                        int remainingProps
+                    )
                     {
                         // KdlElement objects allow duplicate property names, which is optional per the KDL RFC.
                         // Even though this implementation of equality does not take property ordering into account,
@@ -1349,12 +1373,20 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         // or last occurrence of a repeated property name is used. It also simplifies the implementation
                         // and keeps it at O(n + m) complexity.
 
-                        Dictionary<string, ValueQueue<KdlReadOnlyElement>> properties2 = new(capacity: remainingProps, StringComparer.Ordinal);
+                        Dictionary<string, ValueQueue<KdlReadOnlyElement>> properties2 = new(
+                            capacity: remainingProps,
+                            StringComparer.Ordinal
+                        );
                         do
                         {
                             IKdlEntry prop2 = objectEnumerator2.Current;
 #if NET
-                            ref ValueQueue<KdlReadOnlyElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop2.Name, out bool _);
+                            ref ValueQueue<KdlReadOnlyElement> values =
+                                ref CollectionsMarshal.GetValueRefOrAddDefault(
+                                    properties2,
+                                    prop2.Name,
+                                    out bool _
+                                );
 #else
                             properties2.TryGetValue(prop2.Name, out ValueQueue<KdlElement> values);
 #endif
@@ -1362,26 +1394,36 @@ namespace Automatonic.Text.Kdl.RandomAccess
 #if !NET
                             properties2[prop2.Name] = values;
 #endif
-                        }
-                        while (objectEnumerator2.MoveNext());
+                        } while (objectEnumerator2.MoveNext());
 
                         do
                         {
                             IKdlEntry prop = objectEnumerator1.Current;
 #if NET
-                            ref ValueQueue<KdlReadOnlyElement> values = ref CollectionsMarshal.GetValueRefOrAddDefault(properties2, prop.Name, out bool exists);
+                            ref ValueQueue<KdlReadOnlyElement> values =
+                                ref CollectionsMarshal.GetValueRefOrAddDefault(
+                                    properties2,
+                                    prop.Name,
+                                    out bool exists
+                                );
 #else
-                            bool exists = properties2.TryGetValue(prop.Name, out ValueQueue<KdlElement> values);
+                            bool exists = properties2.TryGetValue(
+                                prop.Name,
+                                out ValueQueue<KdlElement> values
+                            );
 #endif
-                            if (!exists || !values.TryDequeue(out KdlReadOnlyElement value) || !DeepEquals(prop.Value, value))
+                            if (
+                                !exists
+                                || !values.TryDequeue(out KdlReadOnlyElement value)
+                                || !DeepEquals(prop.Value, value)
+                            )
                             {
                                 return false;
                             }
 #if !NET
                             properties2[prop.Name] = values;
 #endif
-                        }
-                        while (objectEnumerator1.MoveNext());
+                        } while (objectEnumerator1.MoveNext());
 
                         return true;
                     }
@@ -1393,7 +1435,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             if (left.NameIsEscaped)
                             {
                                 // Need to unescape and compare both inputs.
-                                return KdlReaderHelper.UnescapeAndCompareBothInputs(left.NameSpan, right.NameSpan);
+                                return KdlReaderHelper.UnescapeAndCompareBothInputs(
+                                    left.NameSpan,
+                                    right.NameSpan
+                                );
                             }
 
                             // Swap values so that unescaping is handled by the LHS
@@ -1489,7 +1534,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
             return TextEqualsHelper(text, isPropertyName: false);
         }
 
-        internal bool TextEqualsHelper(ReadOnlySpan<byte> utf8Text, bool isPropertyName, bool shouldUnescape)
+        internal bool TextEqualsHelper(
+            ReadOnlySpan<byte> utf8Text,
+            bool isPropertyName,
+            bool shouldUnescape
+        )
         {
             CheckValidInstance();
 
@@ -1588,7 +1637,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             if (tokenType != KdlTokenType.StartChildrenBlock)
             {
-                ThrowHelper.ThrowKdlElementWrongTypeException(KdlTokenType.StartChildrenBlock, tokenType);
+                ThrowHelper.ThrowKdlElementWrongTypeException(
+                    KdlTokenType.StartChildrenBlock,
+                    tokenType
+                );
             }
 
             return new NodeEnumerator(this);

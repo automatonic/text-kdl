@@ -9,14 +9,19 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
     /// </summary>
     public abstract class KdlParameterInfo
     {
-        internal KdlParameterInfo(KdlParameterInfoValues parameterInfoValues, KdlPropertyInfo matchingProperty)
+        internal KdlParameterInfo(
+            KdlParameterInfoValues parameterInfoValues,
+            KdlPropertyInfo matchingProperty
+        )
         {
             Debug.Assert(matchingProperty.PropertyType == parameterInfoValues.ParameterType);
 
             Position = parameterInfoValues.Position;
             Name = parameterInfoValues.Name;
             HasDefaultValue = parameterInfoValues.HasDefaultValue;
-            DefaultValue = parameterInfoValues.HasDefaultValue ? parameterInfoValues.DefaultValue : null;
+            DefaultValue = parameterInfoValues.HasDefaultValue
+                ? parameterInfoValues.DefaultValue
+                : null;
             MatchingProperty = matchingProperty;
             IsMemberInitializer = parameterInfoValues.IsMemberInitializer;
         }
@@ -92,9 +97,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             get
             {
                 // Use delayed initialization to ensure that reflection dependencies are pay-for-play.
-                Debug.Assert(MatchingProperty.DeclaringTypeInfo != null, "Declaring type metadata must have already been configured.");
+                Debug.Assert(
+                    MatchingProperty.DeclaringTypeInfo != null,
+                    "Declaring type metadata must have already been configured."
+                );
                 ICustomAttributeProvider? parameterInfo = _attributeProvider;
-                if (parameterInfo is null && MatchingProperty.DeclaringTypeInfo.ConstructorAttributeProvider is MethodBase ctorInfo)
+                if (
+                    parameterInfo is null
+                    && MatchingProperty.DeclaringTypeInfo.ConstructorAttributeProvider
+                        is MethodBase ctorInfo
+                )
                 {
                     ParameterInfo[] parameters = ctorInfo.GetParameters();
                     if (Position < parameters.Length)

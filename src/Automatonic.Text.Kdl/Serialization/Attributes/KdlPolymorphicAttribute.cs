@@ -3,7 +3,11 @@
     /// <summary>
     /// When placed on a type, indicates that the type should be serialized polymorphically.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = false, Inherited = false)]
+    [AttributeUsage(
+        AttributeTargets.Class | AttributeTargets.Interface,
+        AllowMultiple = false,
+        Inherited = false
+    )]
     public sealed class KdlPolymorphicAttribute : KdlAttribute
     {
         /// <summary>

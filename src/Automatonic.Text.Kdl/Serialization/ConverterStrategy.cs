@@ -15,18 +15,22 @@ namespace Automatonic.Text.Kdl
         /// Default value; only used by <see cref="KdlConverterFactory"/>.
         /// </summary>
         None = 0x0,
+
         /// <summary>
         /// Objects with properties.
         /// </summary>
         Object = 0x1,
+
         /// <summary>
         /// Simple values or user-provided custom converters.
         /// </summary>
         Value = 0x2,
+
         /// <summary>
         /// Enumerable collections except dictionaries.
         /// </summary>
         Enumerable = 0x8,
+
         /// <summary>
         /// Dictionary types.
         /// </summary>

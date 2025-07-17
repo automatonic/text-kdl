@@ -37,7 +37,9 @@ namespace Automatonic.Text.Kdl.Serialization
 
         public ReadBufferState(int initialBufferSize)
         {
-            _buffer = ArrayPool<byte>.Shared.Rent(Math.Max(initialBufferSize, KdlConstants.Utf8Bom.Length));
+            _buffer = ArrayPool<byte>.Shared.Rent(
+                Math.Max(initialBufferSize, KdlConstants.Utf8Bom.Length)
+            );
             _maxCount = _count = _offset = 0;
             _isFirstBlock = true;
             _isFinalBlock = false;
@@ -55,22 +57,30 @@ namespace Automatonic.Text.Kdl.Serialization
         public readonly async ValueTask<ReadBufferState> ReadFromStreamAsync(
             Stream utf8Kdl,
             CancellationToken cancellationToken,
-            bool fillBuffer = true)
+            bool fillBuffer = true
+        )
         {
             // Since mutable structs don't work well with async state machines,
             // make all updates on a copy which is returned once complete.
             ReadBufferState bufferState = this;
 
-            int minBufferCount = fillBuffer || _unsuccessfulReadCount > UnsuccessfulReadCountThreshold ? bufferState._buffer.Length : 0;
+            int minBufferCount =
+                fillBuffer || _unsuccessfulReadCount > UnsuccessfulReadCountThreshold
+                    ? bufferState._buffer.Length
+                    : 0;
             do
             {
-                int bytesRead = await utf8Kdl.ReadAsync(
+                int bytesRead = await utf8Kdl
+                    .ReadAsync(
 #if NET
-                    bufferState._buffer.AsMemory(bufferState._count),
+                        bufferState._buffer.AsMemory(bufferState._count),
 #else
-                    bufferState._buffer, bufferState._count, bufferState._buffer.Length - bufferState._count,
+                        bufferState._buffer,
+                        bufferState._count,
+                        bufferState._buffer.Length - bufferState._count,
 #endif
-                    cancellationToken).ConfigureAwait(false);
+                        cancellationToken)
+                    .ConfigureAwait(false);
 
                 if (bytesRead == 0)
                 {
@@ -79,8 +89,7 @@ namespace Automatonic.Text.Kdl.Serialization
                 }
 
                 bufferState._count += bytesRead;
-            }
-            while (bufferState._count < minBufferCount);
+            } while (bufferState._count < minBufferCount);
 
             bufferState.ProcessReadBytes();
             return bufferState;
@@ -109,8 +118,7 @@ namespace Automatonic.Text.Kdl.Serialization
                 }
 
                 _count += bytesRead;
-            }
-            while (_count < _buffer.Length);
+            } while (_count < _buffer.Length);
 
             ProcessReadBytes();
         }
@@ -133,7 +141,9 @@ namespace Automatonic.Text.Kdl.Serialization
                     // We have less than half the buffer available, double the buffer size.
                     byte[] oldBuffer = _buffer;
                     int oldMaxCount = _maxCount;
-                    byte[] newBuffer = ArrayPool<byte>.Shared.Rent((_buffer.Length < (int.MaxValue / 2)) ? _buffer.Length * 2 : int.MaxValue);
+                    byte[] newBuffer = ArrayPool<byte>.Shared.Rent(
+                        (_buffer.Length < (int.MaxValue / 2)) ? _buffer.Length * 2 : int.MaxValue
+                    );
 
                     // Copy the unprocessed data to the new buffer while shifting the processed bytes.
                     Buffer.BlockCopy(oldBuffer, _offset + bytesConsumed, newBuffer, 0, _count);

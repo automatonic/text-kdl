@@ -21,7 +21,10 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static KdlElement? SerializeToNode<TValue>(TValue value, KdlSerializerOptions? options = null)
+        public static KdlElement? SerializeToNode<TValue>(
+            TValue value,
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             return WriteNode(value, kdlTypeInfo);
@@ -46,7 +49,11 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static KdlElement? SerializeToNode(object? value, Type inputType, KdlSerializerOptions? options = null)
+        public static KdlElement? SerializeToNode(
+            object? value,
+            Type inputType,
+            KdlSerializerOptions? options = null
+        )
         {
             ValidateInputType(value, inputType);
             KdlTypeInfo typeInfo = GetTypeInfo(options, inputType);
@@ -63,7 +70,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentNullException">
         /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlElement? SerializeToNode<TValue>(TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static KdlElement? SerializeToNode<TValue>(
+            TValue value,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -115,7 +125,11 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentNullException">
         /// <paramref name="inputType"/> or <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlElement? SerializeToNode(object? value, Type inputType, KdlSerializerContext context)
+        public static KdlElement? SerializeToNode(
+            object? value,
+            Type inputType,
+            KdlSerializerContext context
+        )
         {
             if (context is null)
             {
@@ -127,17 +141,27 @@ namespace Automatonic.Text.Kdl
             return WriteNodeAsObject(value, kdlTypeInfo);
         }
 
-        private static KdlElement? WriteNode<TValue>(in TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
+        private static KdlElement? WriteNode<TValue>(
+            in TValue value,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
             KdlSerializerOptions options = kdlTypeInfo.Options;
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                kdlTypeInfo.Options,
+                out PooledByteBufferWriter output
+            );
 
             try
             {
                 kdlTypeInfo.Serialize(writer, value);
-                return KdlElement.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
+                return KdlElement.Parse(
+                    output.WrittenMemory.Span,
+                    options.GetNodeOptions(),
+                    options.GetDocumentOptions()
+                );
             }
             finally
             {
@@ -150,12 +174,19 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(kdlTypeInfo.IsConfigured);
             KdlSerializerOptions options = kdlTypeInfo.Options;
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                kdlTypeInfo.Options,
+                out PooledByteBufferWriter output
+            );
 
             try
             {
                 kdlTypeInfo.SerializeAsObject(writer, value);
-                return KdlElement.Parse(output.WrittenMemory.Span, options.GetNodeOptions(), options.GetDocumentOptions());
+                return KdlElement.Parse(
+                    output.WrittenMemory.Span,
+                    options.GetNodeOptions(),
+                    options.GetDocumentOptions()
+                );
             }
             finally
             {

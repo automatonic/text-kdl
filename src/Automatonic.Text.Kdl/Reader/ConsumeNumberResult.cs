@@ -10,11 +10,13 @@ namespace Automatonic.Text.Kdl
         /// Reached a valid end of number and hence no action is required.
         /// </summary>
         Success,
+
         /// <summary>
         /// Successfully processed a portion of the number and need to
         /// read to the next region of the number.
         /// </summary>
         OperationIncomplete,
+
         /// <summary>
         /// Observed incomplete data.
         /// Return false if we have more data to follow. Otherwise throw.

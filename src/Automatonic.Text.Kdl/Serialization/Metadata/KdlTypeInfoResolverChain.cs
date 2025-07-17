@@ -2,12 +2,18 @@
 {
     using System.Text;
 
-    internal class KdlTypeInfoResolverChain : ConfigurationList<IKdlTypeInfoResolver>, IKdlTypeInfoResolver, IBuiltInKdlTypeInfoResolver
+    internal class KdlTypeInfoResolverChain
+        : ConfigurationList<IKdlTypeInfoResolver>,
+            IKdlTypeInfoResolver,
+            IBuiltInKdlTypeInfoResolver
     {
-        public KdlTypeInfoResolverChain() : base(null) { }
+        public KdlTypeInfoResolverChain()
+            : base(null) { }
+
         public override bool IsReadOnly => true;
-        protected override void OnCollectionModifying()
-            => ThrowHelper.ThrowInvalidOperationException_TypeInfoResolverChainImmutable();
+
+        protected override void OnCollectionModifying() =>
+            ThrowHelper.ThrowInvalidOperationException_TypeInfoResolverChainImmutable();
 
         public KdlTypeInfo? GetTypeInfo(Type type, KdlSerializerOptions options)
         {
@@ -27,7 +33,8 @@
         {
             switch (resolver)
             {
-                case null or EmptyKdlTypeInfoResolver:
+                case null
+                or EmptyKdlTypeInfoResolver:
                     break;
 
                 case KdlTypeInfoResolverChain otherChain:

@@ -34,13 +34,16 @@ namespace Automatonic.Text.Kdl.RandomAccess
             MetadataDb parsedData,
             byte[]? extraRentedArrayPoolBytes = null,
             PooledByteBufferWriter? extraPooledByteBufferWriter = null,
-            bool isDisposable = true)
+            bool isDisposable = true
+        )
         {
             Debug.Assert(!utf8Kdl.IsEmpty);
 
             // Both rented values better be null if we're not disposable.
-            Debug.Assert(isDisposable ||
-                (extraRentedArrayPoolBytes == null && extraPooledByteBufferWriter == null));
+            Debug.Assert(
+                isDisposable
+                    || (extraRentedArrayPoolBytes == null && extraPooledByteBufferWriter == null)
+            );
 
             // Both rented values can't be specified.
             Debug.Assert(extraRentedArrayPoolBytes == null || extraPooledByteBufferWriter == null);
@@ -66,7 +69,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             if (_extraRentedArrayPoolBytes != null)
             {
-                byte[]? extraRentedBytes = Interlocked.Exchange<byte[]?>(ref _extraRentedArrayPoolBytes, null);
+                byte[]? extraRentedBytes = Interlocked.Exchange<byte[]?>(
+                    ref _extraRentedArrayPoolBytes,
+                    null
+                );
 
                 if (extraRentedBytes != null)
                 {
@@ -78,7 +84,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
             }
             else if (_extraPooledByteBufferWriter != null)
             {
-                PooledByteBufferWriter? extraBufferWriter = Interlocked.Exchange<PooledByteBufferWriter?>(ref _extraPooledByteBufferWriter, null);
+                PooledByteBufferWriter? extraBufferWriter =
+                    Interlocked.Exchange<PooledByteBufferWriter?>(
+                        ref _extraPooledByteBufferWriter,
+                        null
+                    );
                 extraBufferWriter?.Dispose();
             }
         }
@@ -190,7 +200,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
             }
 
             Debug.Fail(
-                $"Ran out of database searching for array index {arrayIndex} from {currentIndex} when length was {arrayLength}");
+                $"Ran out of database searching for array index {arrayIndex} from {currentIndex} when length was {arrayLength}"
+            );
             throw new IndexOutOfRangeException();
         }
 
@@ -306,12 +317,19 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             byte[]? otherUtf8TextArray = null;
 
-            int length = checked(otherText.Length * KdlConstants.MaxExpansionFactorWhileTranscoding);
-            Span<byte> otherUtf8Text = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (otherUtf8TextArray = ArrayPool<byte>.Shared.Rent(length));
+            int length = checked(
+                otherText.Length * KdlConstants.MaxExpansionFactorWhileTranscoding
+            );
+            Span<byte> otherUtf8Text =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (otherUtf8TextArray = ArrayPool<byte>.Shared.Rent(length));
 
-            OperationStatus status = KdlWriterHelper.ToUtf8(otherText, otherUtf8Text, out int written);
+            OperationStatus status = KdlWriterHelper.ToUtf8(
+                otherText,
+                otherUtf8Text,
+                out int written
+            );
             Debug.Assert(status != OperationStatus.DestinationTooSmall);
             bool result;
             if (status == OperationStatus.InvalidData)
@@ -321,7 +339,12 @@ namespace Automatonic.Text.Kdl.RandomAccess
             else
             {
                 Debug.Assert(status == OperationStatus.Done);
-                result = TextEquals(index, otherUtf8Text[..written], isPropertyName, shouldUnescape: true);
+                result = TextEquals(
+                    index,
+                    otherUtf8Text[..written],
+                    isPropertyName,
+                    shouldUnescape: true
+                );
             }
 
             if (otherUtf8TextArray != null)
@@ -333,7 +356,12 @@ namespace Automatonic.Text.Kdl.RandomAccess
             return result;
         }
 
-        internal bool TextEquals(int index, ReadOnlySpan<byte> otherUtf8Text, bool isPropertyName, bool shouldUnescape)
+        internal bool TextEquals(
+            int index,
+            ReadOnlySpan<byte> otherUtf8Text,
+            bool isPropertyName,
+            bool shouldUnescape
+        )
         {
             CheckNotDisposed();
 
@@ -343,19 +371,26 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             CheckExpectedType(
                 isPropertyName ? KdlTokenType.PropertyName : KdlTokenType.String,
-                row.TokenType);
+                row.TokenType
+            );
 
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (otherUtf8Text.Length > segment.Length || (!shouldUnescape && otherUtf8Text.Length != segment.Length))
+            if (
+                otherUtf8Text.Length > segment.Length
+                || (!shouldUnescape && otherUtf8Text.Length != segment.Length)
+            )
             {
                 return false;
             }
 
             if (row.HasComplexChildren && shouldUnescape)
             {
-                if (otherUtf8Text.Length < segment.Length / KdlConstants.MaxExpansionFactorWhileEscaping)
+                if (
+                    otherUtf8Text.Length
+                    < segment.Length / KdlConstants.MaxExpansionFactorWhileEscaping
+                )
                 {
                     return false;
                 }
@@ -422,8 +457,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out sbyte tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out sbyte tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -444,8 +481,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out byte tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out byte tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -466,8 +505,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out short tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out short tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -488,8 +529,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out ushort tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out ushort tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -510,8 +553,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out int tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out int tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -532,8 +577,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out uint tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out uint tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -554,8 +601,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out long tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out long tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -576,8 +625,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out ulong tmp, out int consumed) &&
-                consumed == segment.Length)
+            if (
+                Utf8Parser.TryParse(segment, out ulong tmp, out int consumed)
+                && consumed == segment.Length
+            )
             {
                 value = tmp;
                 return true;
@@ -598,8 +649,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out double tmp, out int bytesConsumed) &&
-                segment.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(segment, out double tmp, out int bytesConsumed)
+                && segment.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -620,8 +673,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out float tmp, out int bytesConsumed) &&
-                segment.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(segment, out float tmp, out int bytesConsumed)
+                && segment.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -642,8 +697,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> data = _utf8Kdl.Span;
             ReadOnlySpan<byte> segment = data.Slice(row.Location, row.SizeOrLength);
 
-            if (Utf8Parser.TryParse(segment, out decimal tmp, out int bytesConsumed) &&
-                segment.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(segment, out decimal tmp, out int bytesConsumed)
+                && segment.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -748,8 +805,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             Debug.Assert(segment.IndexOf(KdlConstants.BackSlash) == -1);
 
-            if (segment.Length == KdlConstants.MaximumFormatGuidLength
-                && Utf8Parser.TryParse(segment, out Guid tmp, out _, 'D'))
+            if (
+                segment.Length == KdlConstants.MaximumFormatGuidLength
+                && Utf8Parser.TryParse(segment, out Guid tmp, out _, 'D')
+            )
             {
                 value = tmp;
                 return true;
@@ -777,20 +836,18 @@ namespace Automatonic.Text.Kdl.RandomAccess
             MetadataDb newDb = _parsedData.CopySegment(index, endIndex);
             ReadOnlyMemory<byte> segmentCopy = GetRawValue(index, includeQuotes: true).ToArray();
 
-            KdlReadOnlyDocument newDocument =
-                new KdlReadOnlyDocument(
-                    segmentCopy,
-                    newDb,
-                    extraRentedArrayPoolBytes: null,
-                    extraPooledByteBufferWriter: null,
-                    isDisposable: false);
+            KdlReadOnlyDocument newDocument = new KdlReadOnlyDocument(
+                segmentCopy,
+                newDb,
+                extraRentedArrayPoolBytes: null,
+                extraPooledByteBufferWriter: null,
+                isDisposable: false
+            );
 
             return newDocument.RootElement;
         }
 
-        internal void WriteElementTo(
-            int index,
-            KdlWriter writer)
+        internal void WriteElementTo(int index, KdlWriter writer)
         {
             CheckNotDisposed();
 
@@ -841,7 +898,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         WriteString(row, writer);
                         continue;
                     case KdlTokenType.Number:
-                        writer.WriteNumberValue(_utf8Kdl.Slice(row.Location, row.SizeOrLength).Span);
+                        writer.WriteNumberValue(
+                            _utf8Kdl.Slice(row.Location, row.SizeOrLength).Span
+                        );
                         continue;
                     case KdlTokenType.True:
                         writer.WriteBooleanValue(value: true);
@@ -942,7 +1001,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
             ReadOnlySpan<byte> utf8KdlSpan,
             KdlReaderOptions readerOptions,
             ref MetadataDb database,
-            ref StackRowStack stack)
+            ref StackRowStack stack
+        )
         {
             bool inArray = false;
             int arrayItemsOrPropertyCount = 0;
@@ -952,7 +1012,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
             KdlReader reader = new KdlReader(
                 utf8KdlSpan,
                 isFinalBlock: true,
-                new KdlReaderState(options: readerOptions));
+                new KdlReaderState(options: readerOptions)
+            );
 
             while (reader.Read())
             {
@@ -979,7 +1040,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 }
                 else if (tokenType == KdlTokenType.EndChildrenBlock)
                 {
-                    int rowIndex = database.FindIndexOfFirstUnsetSizeOrLength(KdlTokenType.StartChildrenBlock);
+                    int rowIndex = database.FindIndexOfFirstUnsetSizeOrLength(
+                        KdlTokenType.StartChildrenBlock
+                    );
 
                     numberOfRowsForValues++;
                     numberOfRowsForMembers++;
@@ -1010,7 +1073,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 }
                 else if (tokenType == KdlTokenType.EndArray)
                 {
-                    int rowIndex = database.FindIndexOfFirstUnsetSizeOrLength(KdlTokenType.StartArray);
+                    int rowIndex = database.FindIndexOfFirstUnsetSizeOrLength(
+                        KdlTokenType.StartArray
+                    );
 
                     numberOfRowsForValues++;
                     numberOfRowsForMembers++;
@@ -1110,9 +1175,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
             }
         }
 
-        private static void CheckSupportedOptions(
-            KdlReaderOptions readerOptions,
-            string paramName)
+        private static void CheckSupportedOptions(KdlReaderOptions readerOptions, string paramName)
         {
             // Since these are coming from a valid instance of KdlReader, the KdlReaderOptions must already be valid
             Debug.Assert(readerOptions.CommentHandling is >= 0 and <= KdlCommentHandling.Allow);

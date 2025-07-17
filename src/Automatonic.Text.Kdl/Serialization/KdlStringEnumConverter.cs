@@ -20,35 +20,49 @@ namespace Automatonic.Text.Kdl.Serialization
     /// True to allow undefined enum values. When true, if an enum value isn't
     /// defined it will output as a number rather than a string.
     /// </param>
-    public class KdlStringEnumConverter<TEnum>(KdlNamingPolicy? namingPolicy = null, bool allowIntegerValues = true) : KdlConverterFactory
+    public class KdlStringEnumConverter<TEnum>(
+        KdlNamingPolicy? namingPolicy = null,
+        bool allowIntegerValues = true
+    ) : KdlConverterFactory
         where TEnum : struct, Enum
     {
         private readonly KdlNamingPolicy? _namingPolicy = namingPolicy;
         private readonly EnumConverterOptions _converterOptions = allowIntegerValues
-                ? EnumConverterOptions.AllowNumbers | EnumConverterOptions.AllowStrings
-                : EnumConverterOptions.AllowStrings;
+            ? EnumConverterOptions.AllowNumbers | EnumConverterOptions.AllowStrings
+            : EnumConverterOptions.AllowStrings;
 
         /// <summary>
         /// Constructor. Creates the <see cref="KdlStringEnumConverter"/> with the
         /// default naming policy and allows integer values.
         /// </summary>
-        public KdlStringEnumConverter() : this(namingPolicy: null, allowIntegerValues: true)
+        public KdlStringEnumConverter()
+            : this(namingPolicy: null, allowIntegerValues: true)
         {
             // An empty constructor is needed for construction via attributes
         }
 
         /// <inheritdoc />
-        public sealed override bool CanConvert(Type typeToConvert) => typeToConvert == typeof(TEnum);
+        public sealed override bool CanConvert(Type typeToConvert) =>
+            typeToConvert == typeof(TEnum);
 
         /// <inheritdoc />
-        public sealed override KdlConverter? CreateConverter(Type typeToConvert, KdlSerializerOptions options)
+        public sealed override KdlConverter? CreateConverter(
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (typeToConvert != typeof(TEnum))
             {
-                ThrowHelper.ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(typeToConvert);
+                ThrowHelper.ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(
+                    typeToConvert
+                );
             }
 
-            return EnumConverterFactory.Helpers.Create<TEnum>(_converterOptions, options, _namingPolicy);
+            return EnumConverterFactory.Helpers.Create<TEnum>(
+                _converterOptions,
+                options,
+                _namingPolicy
+            );
         }
     }
 
@@ -69,20 +83,25 @@ namespace Automatonic.Text.Kdl.Serialization
     /// defined it will output as a number rather than a string.
     /// </param>
     [RequiresDynamicCode(
-        "KdlStringEnumConverter cannot be statically analyzed and requires runtime code generation. " +
-        "Applications should use the generic KdlStringEnumConverter<TEnum> instead.")]
-    public class KdlStringEnumConverter(KdlNamingPolicy? namingPolicy = null, bool allowIntegerValues = true) : KdlConverterFactory
+        "KdlStringEnumConverter cannot be statically analyzed and requires runtime code generation. "
+            + "Applications should use the generic KdlStringEnumConverter<TEnum> instead."
+    )]
+    public class KdlStringEnumConverter(
+        KdlNamingPolicy? namingPolicy = null,
+        bool allowIntegerValues = true
+    ) : KdlConverterFactory
     {
         private readonly KdlNamingPolicy? _namingPolicy = namingPolicy;
         private readonly EnumConverterOptions _converterOptions = allowIntegerValues
-                ? EnumConverterOptions.AllowNumbers | EnumConverterOptions.AllowStrings
-                : EnumConverterOptions.AllowStrings;
+            ? EnumConverterOptions.AllowNumbers | EnumConverterOptions.AllowStrings
+            : EnumConverterOptions.AllowStrings;
 
         /// <summary>
         /// Constructor. Creates the <see cref="KdlStringEnumConverter"/> with the
         /// default naming policy and allows integer values.
         /// </summary>
-        public KdlStringEnumConverter() : this(namingPolicy: null, allowIntegerValues: true)
+        public KdlStringEnumConverter()
+            : this(namingPolicy: null, allowIntegerValues: true)
         {
             // An empty constructor is needed for construction via attributes
         }
@@ -94,14 +113,24 @@ namespace Automatonic.Text.Kdl.Serialization
         }
 
         /// <inheritdoc />
-        public sealed override KdlConverter CreateConverter(Type typeToConvert, KdlSerializerOptions options)
+        public sealed override KdlConverter CreateConverter(
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (!typeToConvert.IsEnum)
             {
-                ThrowHelper.ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(typeToConvert);
+                ThrowHelper.ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(
+                    typeToConvert
+                );
             }
 
-            return EnumConverterFactory.Create(typeToConvert, _converterOptions, _namingPolicy, options);
+            return EnumConverterFactory.Create(
+                typeToConvert,
+                _converterOptions,
+                _namingPolicy,
+                options
+            );
         }
     }
 }

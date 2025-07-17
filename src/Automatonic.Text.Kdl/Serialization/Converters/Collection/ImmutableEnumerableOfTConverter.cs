@@ -15,17 +15,30 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         internal sealed override bool CanHaveMetadata => false;
 
         internal override bool SupportsCreateObjectDelegate => false;
-        protected sealed override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+
+        protected sealed override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             state.Current.ReturnValue = new List<TElement>();
         }
 
         internal sealed override bool IsConvertibleCollection => true;
-        protected sealed override void ConvertCollection(ref ReadStack state, KdlSerializerOptions options)
+
+        protected sealed override void ConvertCollection(
+            ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             KdlTypeInfo typeInfo = state.Current.KdlTypeInfo;
 
-            Func<IEnumerable<TElement>, TCollection>? creator = (Func<IEnumerable<TElement>, TCollection>?)typeInfo.CreateObjectWithArgs;
+            Func<IEnumerable<TElement>, TCollection>? creator = (Func<
+                IEnumerable<TElement>,
+                TCollection
+            >?)
+                typeInfo.CreateObjectWithArgs;
             Debug.Assert(creator != null);
             state.Current.ReturnValue = creator((List<TElement>)state.Current.ReturnValue!);
         }

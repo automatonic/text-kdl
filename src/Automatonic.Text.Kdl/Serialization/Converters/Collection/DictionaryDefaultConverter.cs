@@ -16,7 +16,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             KdlWriter writer,
             TDictionary value,
             KdlSerializerOptions options,
-            ref WriteStack state)
+            ref WriteStack state
+        )
         {
             IEnumerator<KeyValuePair<TKey, TValue>> enumerator;
             if (state.Current.CollectionEnumerator == null)
@@ -31,7 +32,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
             else
             {
-                enumerator = (IEnumerator<KeyValuePair<TKey, TValue>>)state.Current.CollectionEnumerator;
+                enumerator =
+                    (IEnumerator<KeyValuePair<TKey, TValue>>)state.Current.CollectionEnumerator;
             }
 
             KdlTypeInfo typeInfo = state.Current.KdlTypeInfo;
@@ -49,7 +51,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 {
                     state.Current.PropertyState = StackFramePropertyState.Name;
                     TKey key = enumerator.Current.Key;
-                    _keyConverter.WriteAsPropertyNameCore(writer, key, options, state.Current.IsWritingExtensionDataProperty);
+                    _keyConverter.WriteAsPropertyNameCore(
+                        writer,
+                        key,
+                        options,
+                        state.Current.IsWritingExtensionDataProperty
+                    );
                 }
 
                 TValue element = enumerator.Current.Value;

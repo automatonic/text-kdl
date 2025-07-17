@@ -41,6 +41,6 @@
         /// This behavior is not defined by the KDL specification. Altering the default number handling can potentially produce KDL that cannot be parsed by other KDL implementations.
         /// </remarks>
         /// </summary>
-        AllowNamedFloatingPointLiterals = 0x4
+        AllowNamedFloatingPointLiterals = 0x4,
     }
 }

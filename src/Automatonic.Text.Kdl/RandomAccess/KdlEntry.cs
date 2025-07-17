@@ -1,4 +1,3 @@
-
 namespace Automatonic.Text.Kdl.RandomAccess
 {
     /// <summary>

@@ -11,7 +11,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         public HalfConverter() => IsInternalConverterForNumberType = true;
 
-        public override Half Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override Half Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType != KdlTokenType.Number)
             {
@@ -33,9 +37,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             byte[]? rentedByteBuffer = null;
             int bufferLength = reader.ValueLength;
 
-            Span<byte> byteBuffer = bufferLength <= KdlConstants.StackallocByteThreshold
-                ? stackalloc byte[KdlConstants.StackallocByteThreshold]
-                : (rentedByteBuffer = ArrayPool<byte>.Shared.Rent(bufferLength));
+            Span<byte> byteBuffer =
+                bufferLength <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (rentedByteBuffer = ArrayPool<byte>.Shared.Rent(bufferLength));
 
             int written = reader.CopyValue(byteBuffer);
             byteBuffer = byteBuffer[..written];
@@ -62,20 +67,33 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteRawValue(buffer[..written]);
         }
 
-        internal override Half ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override Half ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return ReadCore(ref reader);
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, Half value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            Half value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             Span<byte> buffer = stackalloc byte[MaxFormatLength];
             Format(buffer, value, out int written);
             writer.WritePropertyName(buffer[..written]);
         }
 
-        internal override Half ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal override Half ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType == KdlTokenType.String)
             {
@@ -102,7 +120,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return Read(ref reader, Type, options);
         }
 
-        internal override void WriteNumberWithCustomHandling(KdlWriter writer, Half value, KdlNumberHandling handling)
+        internal override void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            Half value,
+            KdlNumberHandling handling
+        )
         {
             if ((KdlNumberHandling.WriteAsString & handling) != 0)
             {
@@ -126,7 +148,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling numberHandling) =>
-            GetSchemaForNumericType(KdlSchemaType.Number, numberHandling, isIeeeFloatingPoint: true);
+            GetSchemaForNumericType(
+                KdlSchemaType.Number,
+                numberHandling,
+                isIeeeFloatingPoint: true
+            );
 
         private static bool TryGetFloatingPointConstant(ref KdlReader reader, out Half value)
         {
@@ -158,21 +184,34 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         private static bool TryParse(ReadOnlySpan<byte> buffer, out Half result)
         {
-            bool success = Half.TryParse(buffer, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out result);
+            bool success = Half.TryParse(
+                buffer,
+                NumberStyles.Float | NumberStyles.AllowThousands,
+                CultureInfo.InvariantCulture,
+                out result
+            );
 
             // Half.TryParse is more lax with floating-point literals than other S.T.Kdl floating-point types
             // e.g: it parses "naN" successfully. Only succeed with the exact match.
-            return success &&
-                (!Half.IsNaN(result) || buffer.SequenceEqual(KdlConstants.NaNValue)) &&
-                (!Half.IsPositiveInfinity(result) || buffer.SequenceEqual(KdlConstants.PositiveInfinityValue)) &&
-                (!Half.IsNegativeInfinity(result) || buffer.SequenceEqual(KdlConstants.NegativeInfinityValue));
+            return success
+                && (!Half.IsNaN(result) || buffer.SequenceEqual(KdlConstants.NaNValue))
+                && (
+                    !Half.IsPositiveInfinity(result)
+                    || buffer.SequenceEqual(KdlConstants.PositiveInfinityValue)
+                )
+                && (
+                    !Half.IsNegativeInfinity(result)
+                    || buffer.SequenceEqual(KdlConstants.NegativeInfinityValue)
+                );
         }
 
-        private static void Format(
-            Span<byte> destination,
-            Half value, out int written)
+        private static void Format(Span<byte> destination, Half value, out int written)
         {
-            bool formattedSuccessfully = value.TryFormat(destination, out written, provider: CultureInfo.InvariantCulture);
+            bool formattedSuccessfully = value.TryFormat(
+                destination,
+                out written,
+                provider: CultureInfo.InvariantCulture
+            );
             Debug.Assert(formattedSuccessfully);
         }
     }

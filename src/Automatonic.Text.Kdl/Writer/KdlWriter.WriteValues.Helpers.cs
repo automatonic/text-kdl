@@ -15,8 +15,16 @@ namespace Automatonic.Text.Kdl
             {
                 if (_tokenType != KdlTokenType.PropertyName)
                 {
-                    Debug.Assert(_tokenType is not KdlTokenType.None and not KdlTokenType.StartArray);
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotWriteValueWithinObject, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
+                    Debug.Assert(
+                        _tokenType is not KdlTokenType.None and not KdlTokenType.StartArray
+                    );
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotWriteValueWithinObject,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
                 }
             }
             else
@@ -26,7 +34,13 @@ namespace Automatonic.Text.Kdl
                 // It is more likely for CurrentDepth to not equal 0 when writing valid KDL, so check that first to rely on short-circuiting and return quickly.
                 if (CurrentDepth == 0 && _tokenType != KdlTokenType.None)
                 {
-                    ThrowHelper.ThrowInvalidOperationException(ExceptionResource.CannotWriteValueAfterPrimitiveOrClose, currentDepth: default, maxDepth: _options.MaxDepth, token: default, _tokenType);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotWriteValueAfterPrimitiveOrClose,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
                 }
             }
         }
@@ -35,7 +49,12 @@ namespace Automatonic.Text.Kdl
         private void Base64EncodeAndWrite(ReadOnlySpan<byte> bytes, Span<byte> output)
         {
             Span<byte> destination = output[BytesPending..];
-            OperationStatus status = Base64.EncodeToUtf8(bytes, destination, out int consumed, out int written);
+            OperationStatus status = Base64.EncodeToUtf8(
+                bytes,
+                destination,
+                out int consumed,
+                out int written
+            );
             Debug.Assert(status == OperationStatus.Done);
             Debug.Assert(consumed == bytes.Length);
             BytesPending += written;

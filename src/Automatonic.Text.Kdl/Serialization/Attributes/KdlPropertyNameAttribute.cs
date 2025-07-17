@@ -11,7 +11,6 @@ namespace Automatonic.Text.Kdl.Serialization
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public sealed class KdlPropertyNameAttribute(string name) : KdlAttribute
     {
-
         /// <summary>
         /// The name of the property.
         /// </summary>

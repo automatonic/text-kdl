@@ -23,7 +23,5 @@ namespace Automatonic.Text.Kdl.Serialization
     /// an <see cref="InvalidOperationException"/> is thrown during the first serialization or deserialization of that type.
     /// </remarks>
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
-    public sealed class KdlExtensionDataAttribute : KdlAttribute
-    {
-    }
+    public sealed class KdlExtensionDataAttribute : KdlAttribute { }
 }

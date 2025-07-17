@@ -27,7 +27,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// Provides a mechanism to initialize metadata for properties and fields of the class or struct.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public Func<KdlSerializerContext, KdlPropertyInfo[]>? PropertyMetadataInitializer { get; init; }
+        public Func<
+            KdlSerializerContext,
+            KdlPropertyInfo[]
+        >? PropertyMetadataInitializer { get; init; }
 
         /// <summary>
         /// Provides a mechanism to initialize metadata for a parameterized constructor of the class or struct to be used when deserializing.

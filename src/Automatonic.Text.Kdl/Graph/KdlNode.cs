@@ -16,8 +16,6 @@ namespace Automatonic.Text.Kdl.Graph
     [DebuggerTypeProxy(typeof(DebugView))]
     public sealed partial class KdlNode : KdlElement
     {
-
-
         private KdlReadOnlyElement? _kdlElement;
 
         internal override KdlReadOnlyElement? UnderlyingReadOnlyElement => _kdlElement;
@@ -26,7 +24,8 @@ namespace Automatonic.Text.Kdl.Graph
         ///   Initializes a new instance of the <see cref="KdlNode"/> class that is empty.
         /// </summary>
         /// <param name="options">Options to control the behavior.</param>
-        public KdlNode(KdlElementOptions? options = null) : base(options) { }
+        public KdlNode(KdlElementOptions? options = null)
+            : base(options) { }
 
         //TECHDEBT: May want these for argument inflow?
         /// <summary>
@@ -84,10 +83,20 @@ namespace Automatonic.Text.Kdl.Graph
         /// </summary>
         /// <param name="properties">The properties to be added.</param>
         /// <param name="options">Options to control the behavior.</param>
-        public KdlNode(IEnumerable<KeyValuePair<KdlEntryKey, KdlElement?>> properties, KdlElementOptions? options = null) : this(options)
+        public KdlNode(
+            IEnumerable<KeyValuePair<KdlEntryKey, KdlElement?>> properties,
+            KdlElementOptions? options = null
+        )
+            : this(options)
         {
-            int capacity = properties is ICollection<KeyValuePair<KdlEntryKey, KdlElement?>> propertiesCollection ? propertiesCollection.Count : 0;
-            OrderedDictionary<KdlEntryKey, KdlElement?> dictionary = CreateDictionary(options, capacity);
+            int capacity = properties
+                is ICollection<KeyValuePair<KdlEntryKey, KdlElement?>> propertiesCollection
+                ? propertiesCollection.Count
+                : 0;
+            OrderedDictionary<KdlEntryKey, KdlElement?> dictionary = CreateDictionary(
+                options,
+                capacity
+            );
 
             foreach (KeyValuePair<KdlEntryKey, KdlElement?> node in properties)
             {
@@ -98,14 +107,15 @@ namespace Automatonic.Text.Kdl.Graph
             _dictionary = dictionary;
         }
 
-
-
         private protected override KdlValueKind GetValueKindCore() => KdlValueKind.Node;
 
         internal override KdlElement DeepCloneCore()
         {
             //TECHDEBT: unify these as well
-            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out var kdlElement);
+            GetUnderlyingRepresentation(
+                out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary,
+                out var kdlElement
+            );
 
             if (dictionary is null)
             {
@@ -114,10 +124,7 @@ namespace Automatonic.Text.Kdl.Graph
                     : new KdlNode(Options);
             }
 
-            var kdlNode = new KdlNode(Options)
-            {
-                _dictionary = CreateDictionary(Options, Count)
-            };
+            var kdlNode = new KdlNode(Options) { _dictionary = CreateDictionary(Options, Count) };
 
             foreach (KeyValuePair<KdlEntryKey, KdlElement?> item in dictionary)
             {
@@ -160,7 +167,6 @@ namespace Automatonic.Text.Kdl.Graph
             }
         }
 
-
         /// <summary>
         ///   Initializes a new instance of the <see cref="KdlNode"/> class that contains items from the specified <see cref="KdlReadOnlyElement"/>.
         /// </summary>
@@ -178,11 +184,14 @@ namespace Automatonic.Text.Kdl.Graph
             {
                 KdlValueKind.Null => null,
                 KdlValueKind.Node => new KdlNode(element, options),
-                _ => throw new InvalidOperationException(string.Format(SR.NodeElementWrongType, nameof(KdlValueKind.Node))),
+                _ => throw new InvalidOperationException(
+                    string.Format(SR.NodeElementWrongType, nameof(KdlValueKind.Node))
+                ),
             };
         }
 
-        internal KdlNode(KdlReadOnlyElement element, KdlElementOptions? options = null) : base(options)
+        internal KdlNode(KdlReadOnlyElement element, KdlElementOptions? options = null)
+            : base(options)
         {
             Debug.Assert(element.ValueKind == KdlValueKind.Node);
             _kdlElement = element;
@@ -202,7 +211,6 @@ namespace Automatonic.Text.Kdl.Graph
             KdlElement? nodeToAdd = ConvertFromValue(value, Options);
             Add(nodeToAdd);
         }
-
 
         internal override void GetPath(ref ValueStringBuilder path, KdlElement? child)
         {
@@ -234,7 +242,10 @@ namespace Automatonic.Text.Kdl.Graph
                 ThrowHelper.ThrowArgumentNullException(nameof(writer));
             }
 
-            GetUnderlyingRepresentation(out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary, out KdlReadOnlyElement? kdlElement);
+            GetUnderlyingRepresentation(
+                out OrderedDictionary<KdlEntryKey, KdlElement?>? dictionary,
+                out KdlReadOnlyElement? kdlElement
+            );
 
             if (dictionary is null && kdlElement.HasValue)
             {
@@ -267,7 +278,10 @@ namespace Automatonic.Text.Kdl.Graph
         {
             //TECHDEBT: Need to differentiate between cases. this may be true with properties
             //But may be avoided if only items?
-            Debug.Assert(_dictionary != null, "Cannot have detachable nodes without a materialized dictionary.");
+            Debug.Assert(
+                _dictionary != null,
+                "Cannot have detachable nodes without a materialized dictionary."
+            );
             if (item != null)
             {
                 item.Parent = null;

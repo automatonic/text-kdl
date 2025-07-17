@@ -70,7 +70,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// Defines the core property lookup logic for a given unescaped UTF-8 encoded property name.
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal KdlPropertyInfo? GetProperty(ReadOnlySpan<byte> propertyName, ref ReadStackFrame frame, out byte[] utf8PropertyName)
+        internal KdlPropertyInfo? GetProperty(
+            ReadOnlySpan<byte> propertyName,
+            ref ReadStackFrame frame,
+            out byte[] utf8PropertyName
+        )
         {
             Debug.Assert(IsConfigured);
 
@@ -139,8 +143,13 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
 
             // No cached item was found. Try the main dictionary which has all of the properties.
-            if (PropertyIndex.TryLookupUtf8Key(propertyName, out KdlPropertyInfo? info) &&
-                (!Options.PropertyNameCaseInsensitive || propertyName.SequenceEqual(info.NameAsUtf8Bytes)))
+            if (
+                PropertyIndex.TryLookupUtf8Key(propertyName, out KdlPropertyInfo? info)
+                && (
+                    !Options.PropertyNameCaseInsensitive
+                    || propertyName.SequenceEqual(info.NameAsUtf8Bytes)
+                )
+            )
             {
                 // We have an exact match in UTF8 encoding.
                 utf8PropertyName = info.NameAsUtf8Bytes;
@@ -155,7 +164,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             // inclusion to the UTF-8 cache once deserialization is complete.
 
             ref PropertyRefCacheBuilder? cacheBuilder = ref frame.PropertyRefCacheBuilder;
-            if ((cacheBuilder?.TotalCount ?? utf8PropertyCache.Length) < PropertyRefCacheBuilder.MaxCapacity)
+            if (
+                (cacheBuilder?.TotalCount ?? utf8PropertyCache.Length)
+                < PropertyRefCacheBuilder.MaxCapacity
+            )
             {
                 (cacheBuilder ??= new(utf8PropertyCache)).TryAdd(new(key, info, utf8PropertyName));
             }

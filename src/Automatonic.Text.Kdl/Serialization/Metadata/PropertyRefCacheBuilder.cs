@@ -17,6 +17,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         public readonly PropertyRef[] OriginalCache = originalCache;
         public int Count => _propertyRefs.Count;
         public int TotalCount => OriginalCache.Length + _propertyRefs.Count;
+
         public PropertyRef[] ToArray() => [.. OriginalCache, .. _propertyRefs];
 
         public void TryAdd(PropertyRef propertyRef)

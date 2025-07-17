@@ -16,8 +16,7 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Writes the <see cref="int"/> using the default <see cref="StandardFormat"/> (that is, 'G'), for example: 32767.
         /// </remarks>
-        public void WriteNumberValue(int value)
-            => WriteNumberValue((long)value);
+        public void WriteNumberValue(int value) => WriteNumberValue((long)value);
 
         /// <summary>
         /// Writes the <see cref="long"/> value (as a KDL number) as an element of a KDL array.
@@ -65,7 +64,11 @@ namespace Automatonic.Text.Kdl
                 output[BytesPending++] = KdlConstants.ListSeparator;
             }
 
-            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(
+                value,
+                output[BytesPending..],
+                out int bytesWritten
+            );
             Debug.Assert(result);
             BytesPending += bytesWritten;
         }
@@ -99,7 +102,11 @@ namespace Automatonic.Text.Kdl
                 BytesPending += indent;
             }
 
-            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(
+                value,
+                output[BytesPending..],
+                out int bytesWritten
+            );
             Debug.Assert(result);
             BytesPending += bytesWritten;
         }

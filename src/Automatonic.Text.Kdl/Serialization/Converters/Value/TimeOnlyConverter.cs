@@ -8,9 +8,14 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         private const int MinimumTimeOnlyFormatLength = 3; // h:m
         private const int MaximumTimeOnlyFormatLength = 16; // hh:mm:ss.fffffff
-        private const int MaximumEscapedTimeOnlyFormatLength = KdlConstants.MaxExpansionFactorWhileEscaping * MaximumTimeOnlyFormatLength;
+        private const int MaximumEscapedTimeOnlyFormatLength =
+            KdlConstants.MaxExpansionFactorWhileEscaping * MaximumTimeOnlyFormatLength;
 
-        public override TimeOnly Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override TimeOnly Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType != KdlTokenType.String)
             {
@@ -20,7 +25,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return ReadCore(ref reader);
         }
 
-        internal override TimeOnly ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override TimeOnly ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return ReadCore(ref reader);
@@ -30,7 +39,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             Debug.Assert(reader.TokenType is KdlTokenType.String or KdlTokenType.PropertyName);
 
-            if (!KdlHelpers.IsInRangeInclusive(reader.ValueLength, MinimumTimeOnlyFormatLength, MaximumEscapedTimeOnlyFormatLength))
+            if (
+                !KdlHelpers.IsInRangeInclusive(
+                    reader.ValueLength,
+                    MinimumTimeOnlyFormatLength,
+                    MaximumEscapedTimeOnlyFormatLength
+                )
+            )
             {
                 ThrowHelper.ThrowFormatException(DataType.TimeOnly);
             }
@@ -49,14 +64,23 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
             byte firstChar = source[0];
             int firstSeparator = source.IndexOfAny((byte)'.', (byte)':');
-            if (!KdlHelpers.IsDigit(firstChar) || firstSeparator < 0 || source[firstSeparator] == (byte)'.')
+            if (
+                !KdlHelpers.IsDigit(firstChar)
+                || firstSeparator < 0
+                || source[firstSeparator] == (byte)'.'
+            )
             {
                 // Note: Utf8Parser.TryParse permits leading whitespace, negative values
                 // and numbers of days so we need to exclude these cases here.
                 ThrowHelper.ThrowFormatException(DataType.TimeOnly);
             }
 
-            bool result = Utf8Parser.TryParse(source, out TimeSpan timespan, out int bytesConsumed, 'c');
+            bool result = Utf8Parser.TryParse(
+                source,
+                out TimeSpan timespan,
+                out int bytesConsumed,
+                'c'
+            );
 
             // Note: Utf8Parser.TryParse will return true for invalid input so
             // long as it starts with an integer. Example: "2021-06-18" or
@@ -68,7 +92,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 ThrowHelper.ThrowFormatException(DataType.TimeOnly);
             }
 
-            Debug.Assert(TimeOnly.MinValue.ToTimeSpan() <= timespan && timespan <= TimeOnly.MaxValue.ToTimeSpan());
+            Debug.Assert(
+                TimeOnly.MinValue.ToTimeSpan() <= timespan
+                    && timespan <= TimeOnly.MaxValue.ToTimeSpan()
+            );
             return TimeOnly.FromTimeSpan(timespan);
         }
 
@@ -76,22 +103,38 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             Span<byte> output = stackalloc byte[MaximumTimeOnlyFormatLength];
 
-            bool result = Utf8Formatter.TryFormat(value.ToTimeSpan(), output, out int bytesWritten, 'c');
+            bool result = Utf8Formatter.TryFormat(
+                value.ToTimeSpan(),
+                output,
+                out int bytesWritten,
+                'c'
+            );
             Debug.Assert(result);
 
             writer.WriteStringValue(output[..bytesWritten]);
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, TimeOnly value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            TimeOnly value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             Span<byte> output = stackalloc byte[MaximumTimeOnlyFormatLength];
 
-            bool result = Utf8Formatter.TryFormat(value.ToTimeSpan(), output, out int bytesWritten, 'c');
+            bool result = Utf8Formatter.TryFormat(
+                value.ToTimeSpan(),
+                output,
+                out int bytesWritten,
+                'c'
+            );
             Debug.Assert(result);
 
             writer.WritePropertyName(output[..bytesWritten]);
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.String, Format = "time" };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.String, Format = "time" };
     }
 }

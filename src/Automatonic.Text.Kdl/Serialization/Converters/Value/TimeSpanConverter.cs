@@ -8,9 +8,14 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         private const int MinimumTimeSpanFormatLength = 1; // d
         private const int MaximumTimeSpanFormatLength = 26; // -dddddddd.hh:mm:ss.fffffff
-        private const int MaximumEscapedTimeSpanFormatLength = KdlConstants.MaxExpansionFactorWhileEscaping * MaximumTimeSpanFormatLength;
+        private const int MaximumEscapedTimeSpanFormatLength =
+            KdlConstants.MaxExpansionFactorWhileEscaping * MaximumTimeSpanFormatLength;
 
-        public override TimeSpan Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override TimeSpan Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType != KdlTokenType.String)
             {
@@ -20,7 +25,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return ReadCore(ref reader);
         }
 
-        internal override TimeSpan ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override TimeSpan ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return ReadCore(ref reader);
@@ -30,7 +39,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             Debug.Assert(reader.TokenType is KdlTokenType.String or KdlTokenType.PropertyName);
 
-            if (!KdlHelpers.IsInRangeInclusive(reader.ValueLength, MinimumTimeSpanFormatLength, MaximumEscapedTimeSpanFormatLength))
+            if (
+                !KdlHelpers.IsInRangeInclusive(
+                    reader.ValueLength,
+                    MinimumTimeSpanFormatLength,
+                    MaximumEscapedTimeSpanFormatLength
+                )
+            )
             {
                 ThrowHelper.ThrowFormatException(DataType.TimeSpan);
             }
@@ -55,7 +70,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 ThrowHelper.ThrowFormatException(DataType.TimeSpan);
             }
 
-            bool result = Utf8Parser.TryParse(source, out TimeSpan tmpValue, out int bytesConsumed, 'c');
+            bool result = Utf8Parser.TryParse(
+                source,
+                out TimeSpan tmpValue,
+                out int bytesConsumed,
+                'c'
+            );
 
             // Note: Utf8Parser.TryParse will return true for invalid input so
             // long as it starts with an integer. Example: "2021-06-18" or
@@ -80,7 +100,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteStringValue(output[..bytesWritten]);
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, TimeSpan value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            TimeSpan value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             Span<byte> output = stackalloc byte[MaximumTimeSpanFormatLength];
 
@@ -90,11 +115,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WritePropertyName(output[..bytesWritten]);
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new()
-        {
-            Type = KdlSchemaType.String,
-            Comment = "Represents a System.TimeSpan value.",
-            Pattern = @"^-?(\d+\.)?\d{2}:\d{2}:\d{2}(\.\d{1,7})?$"
-        };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new()
+            {
+                Type = KdlSchemaType.String,
+                Comment = "Represents a System.TimeSpan value.",
+                Pattern = @"^-?(\d+\.)?\d{2}:\d{2}:\d{2}(\.\d{1,7})?$",
+            };
     }
 }

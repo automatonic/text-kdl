@@ -10,7 +10,6 @@
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public class KdlStringEnumMemberNameAttribute(string name) : Attribute
     {
-
         /// <summary>
         /// Gets the name of the enum member.
         /// </summary>

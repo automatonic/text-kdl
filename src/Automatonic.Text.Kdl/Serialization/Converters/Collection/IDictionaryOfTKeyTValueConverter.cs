@@ -14,14 +14,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         internal override bool CanPopulate => true;
 
-        protected override void Add(TKey key, in TValue value, KdlSerializerOptions options, ref ReadStack state)
+        protected override void Add(
+            TKey key,
+            in TValue value,
+            KdlSerializerOptions options,
+            ref ReadStack state
+        )
         {
             TDictionary collection = (TDictionary)state.Current.ReturnValue!;
             collection[key] = value;
             if (IsValueType)
             {
                 state.Current.ReturnValue = collection;
-            };
+            }
+            ;
         }
 
         protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state)
@@ -31,14 +37,24 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             if (returnValue.IsReadOnly)
             {
                 state.Current.ReturnValue = null; // clear out for more accurate KdlPath reporting.
-                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(Type, ref reader, ref state);
+                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(
+                    Type,
+                    ref reader,
+                    ref state
+                );
             }
         }
 
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfo(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        )
         {
             // Deserialize as Dictionary<TKey,TValue> for interface types that support it.
-            if (kdlTypeInfo.CreateObject is null && Type.IsAssignableFrom(typeof(Dictionary<TKey, TValue>)))
+            if (
+                kdlTypeInfo.CreateObject is null
+                && Type.IsAssignableFrom(typeof(Dictionary<TKey, TValue>))
+            )
             {
                 Debug.Assert(Type.IsInterface);
                 kdlTypeInfo.CreateObject = () => new Dictionary<TKey, TValue>();

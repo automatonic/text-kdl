@@ -100,7 +100,8 @@ namespace Automatonic.Text.Kdl.Serialization
             string propertyName,
             ref KdlReader reader,
             KdlSerializerOptions options,
-            scoped ref ReadStack state)
+            scoped ref ReadStack state
+        )
         {
             Debug.Fail("Should not be reachable.");
 
@@ -124,11 +125,13 @@ namespace Automatonic.Text.Kdl.Serialization
             }
             else
             {
-                KdlSerializerOptions.CheckConverterNullabilityIsSameAsPropertyType(this, typeof(TTarget));
+                KdlSerializerOptions.CheckConverterNullabilityIsSameAsPropertyType(
+                    this,
+                    typeof(TTarget)
+                );
 
                 // Avoid layering casting converters by consulting any source converters directly.
-                return
-                    SourceConverterForCastingConverter?.CreateCastingConverter<TTarget>()
+                return SourceConverterForCastingConverter?.CreateCastingConverter<TTarget>()
                     ?? new CastingConverter<TTarget>(this);
             }
         }
@@ -185,30 +188,88 @@ namespace Automatonic.Text.Kdl.Serialization
 
         internal static bool ShouldFlush(ref WriteStack state, KdlWriter writer)
         {
-            Debug.Assert(state.FlushThreshold == 0 || (state.PipeWriter is { CanGetUnflushedBytes: true }),
-                "ShouldFlush should only be called by resumable serializers, all of which use the PipeWriter abstraction with CanGetUnflushedBytes == true.");
+            Debug.Assert(
+                state.FlushThreshold == 0 || (state.PipeWriter is { CanGetUnflushedBytes: true }),
+                "ShouldFlush should only be called by resumable serializers, all of which use the PipeWriter abstraction with CanGetUnflushedBytes == true."
+            );
             // If surpassed flush threshold then return true which will flush stream.
             if (state.PipeWriter is { } pipeWriter)
             {
-                return state.FlushThreshold > 0 && pipeWriter.UnflushedBytes > state.FlushThreshold - writer.BytesPending;
+                return state.FlushThreshold > 0
+                    && pipeWriter.UnflushedBytes > state.FlushThreshold - writer.BytesPending;
             }
 
             return false;
         }
 
-        internal abstract object? ReadAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options);
-        internal abstract bool OnTryReadAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out object? value);
-        internal abstract bool TryReadAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out object? value);
-        internal abstract object? ReadAsPropertyNameAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options);
-        internal abstract object? ReadAsPropertyNameCoreAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options);
-        internal abstract object? ReadNumberWithCustomHandlingAsObject(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options);
+        internal abstract object? ReadAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        );
+        internal abstract bool OnTryReadAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out object? value
+        );
+        internal abstract bool TryReadAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out object? value
+        );
+        internal abstract object? ReadAsPropertyNameAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        );
+        internal abstract object? ReadAsPropertyNameCoreAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        );
+        internal abstract object? ReadNumberWithCustomHandlingAsObject(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        );
 
-        internal abstract void WriteAsObject(KdlWriter writer, object? value, KdlSerializerOptions options);
-        internal abstract bool OnTryWriteAsObject(KdlWriter writer, object? value, KdlSerializerOptions options, ref WriteStack state);
-        internal abstract bool TryWriteAsObject(KdlWriter writer, object? value, KdlSerializerOptions options, ref WriteStack state);
-        internal abstract void WriteAsPropertyNameAsObject(KdlWriter writer, object? value, KdlSerializerOptions options);
-        internal abstract void WriteAsPropertyNameCoreAsObject(KdlWriter writer, object? value, KdlSerializerOptions options, bool isWritingExtensionDataProperty);
-        internal abstract void WriteNumberWithCustomHandlingAsObject(KdlWriter writer, object? value, KdlNumberHandling handling);
+        internal abstract void WriteAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options
+        );
+        internal abstract bool OnTryWriteAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        );
+        internal abstract bool TryWriteAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        );
+        internal abstract void WriteAsPropertyNameAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options
+        );
+        internal abstract void WriteAsPropertyNameCoreAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        );
+        internal abstract void WriteNumberWithCustomHandlingAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlNumberHandling handling
+        );
 
         /// <summary>
         /// Gets a schema from the type being converted
@@ -223,13 +284,19 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <summary>
         /// Used for hooking custom configuration to a newly created associated KdlTypeInfo instance.
         /// </summary>
-        internal virtual void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options) { }
+        internal virtual void ConfigureKdlTypeInfo(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        ) { }
 
         /// <summary>
         /// Additional reflection-specific configuration required by certain collection converters.
         /// </summary>
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal virtual void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options) { }
+        internal virtual void ConfigureKdlTypeInfoUsingReflection(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        ) { }
     }
 }

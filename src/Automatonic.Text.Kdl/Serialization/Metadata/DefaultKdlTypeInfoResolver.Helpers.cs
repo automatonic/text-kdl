@@ -20,13 +20,13 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     MemberAccessor value =
 #if NET
                         // if dynamic code isn't supported, fallback to reflection
-                        RuntimeFeature.IsDynamicCodeSupported ?
-                            new ReflectionEmitCachingMemberAccessor() :
-                            new ReflectionMemberAccessor();
+                        RuntimeFeature.IsDynamicCodeSupported
+                            ? new ReflectionEmitCachingMemberAccessor()
+                            : new ReflectionMemberAccessor();
 #elif NETFRAMEWORK
-                            new ReflectionEmitCachingMemberAccessor();
+                    new ReflectionEmitCachingMemberAccessor();
 #else
-                            new ReflectionMemberAccessor();
+                    new ReflectionMemberAccessor();
 #endif
                     return Interlocked.CompareExchange(ref s_memberAccessor, value, null) ?? value;
                 }
@@ -34,11 +34,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         }
 
         internal static void ClearMemberAccessorCaches() => s_memberAccessor?.Clear();
+
         private static MemberAccessor? s_memberAccessor;
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static KdlTypeInfo CreateTypeInfoCore(Type type, KdlConverter converter, KdlSerializerOptions options)
+        private static KdlTypeInfo CreateTypeInfoCore(
+            Type type,
+            KdlConverter converter,
+            KdlSerializerOptions options
+        )
         {
             KdlTypeInfo typeInfo = KdlTypeInfo.CreateKdlTypeInfo(type, converter, options);
 
@@ -88,7 +93,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static void PopulateProperties(KdlTypeInfo typeInfo, NullabilityInfoContext nullabilityCtx)
+        private static void PopulateProperties(
+            KdlTypeInfo typeInfo,
+            NullabilityInfoContext nullabilityCtx
+        )
         {
             Debug.Assert(!typeInfo.IsReadOnly);
             Debug.Assert(typeInfo.Kind is KdlTypeInfoKind.Object);
@@ -102,8 +110,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             // Walk the type hierarchy starting from the current type up to the base type(s)
             foreach (Type currentType in typeInfo.Type.GetSortedTypeHierarchy())
             {
-                if (currentType == KdlTypeInfo.ObjectType ||
-                    currentType == typeof(ValueType))
+                if (currentType == KdlTypeInfo.ObjectType || currentType == typeof(ValueType))
                 {
                     // Don't process any members for typeof(object) or System.ValueType
                     break;
@@ -114,7 +121,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     currentType,
                     nullabilityCtx,
                     constructorHasSetsRequiredMembersAttribute,
-                    ref state);
+                    ref state
+                );
             }
 
             if (state.IsPropertyOrderSpecified)
@@ -124,11 +132,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         }
 
         private const BindingFlags AllInstanceMembers =
-            BindingFlags.Instance |
-            BindingFlags.Public |
-            BindingFlags.NonPublic |
-            BindingFlags.DeclaredOnly;
-
+            BindingFlags.Instance
+            | BindingFlags.Public
+            | BindingFlags.NonPublic
+            | BindingFlags.DeclaredOnly;
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
@@ -137,30 +144,37 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             Type currentType,
             NullabilityInfoContext nullabilityCtx,
             bool constructorHasSetsRequiredMembersAttribute,
-            ref KdlTypeInfo.PropertyHierarchyResolutionState state)
+            ref KdlTypeInfo.PropertyHierarchyResolutionState state
+        )
         {
             Debug.Assert(!typeInfo.IsReadOnly);
             Debug.Assert(currentType.IsAssignableFrom(typeInfo.Type));
 
             // Compiler adds RequiredMemberAttribute to type if any of the members are marked with 'required' keyword.
             bool shouldCheckMembersForRequiredMemberAttribute =
-                !constructorHasSetsRequiredMembersAttribute && currentType.HasRequiredMemberAttribute();
+                !constructorHasSetsRequiredMembersAttribute
+                && currentType.HasRequiredMemberAttribute();
 
             foreach (PropertyInfo propertyInfo in currentType.GetProperties(AllInstanceMembers))
             {
                 // Ignore indexers and virtual properties that have overrides that were [KdlIgnore]d.
-                if (propertyInfo.GetIndexParameters().Length > 0 ||
-                    PropertyIsOverriddenAndIgnored(propertyInfo, state.IgnoredProperties))
+                if (
+                    propertyInfo.GetIndexParameters().Length > 0
+                    || PropertyIsOverriddenAndIgnored(propertyInfo, state.IgnoredProperties)
+                )
                 {
                     continue;
                 }
 
-                bool hasKdlIncludeAttribute = propertyInfo.GetCustomAttribute<KdlIncludeAttribute>(inherit: false) != null;
+                bool hasKdlIncludeAttribute =
+                    propertyInfo.GetCustomAttribute<KdlIncludeAttribute>(inherit: false) != null;
 
                 // Only include properties that either have a public getter or a public setter or have the KdlIncludeAttribute set.
-                if (propertyInfo.GetMethod?.IsPublic == true ||
-                    propertyInfo.SetMethod?.IsPublic == true ||
-                    hasKdlIncludeAttribute)
+                if (
+                    propertyInfo.GetMethod?.IsPublic == true
+                    || propertyInfo.SetMethod?.IsPublic == true
+                    || hasKdlIncludeAttribute
+                )
                 {
                     AddMember(
                         typeInfo,
@@ -169,14 +183,18 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                         nullabilityCtx,
                         shouldCheckMembersForRequiredMemberAttribute,
                         hasKdlIncludeAttribute,
-                        ref state);
+                        ref state
+                    );
                 }
             }
 
             foreach (FieldInfo fieldInfo in currentType.GetFields(AllInstanceMembers))
             {
-                bool hasKdlIncludeAttribute = fieldInfo.GetCustomAttribute<KdlIncludeAttribute>(inherit: false) != null;
-                if (hasKdlIncludeAttribute || (fieldInfo.IsPublic && typeInfo.Options.IncludeFields))
+                bool hasKdlIncludeAttribute =
+                    fieldInfo.GetCustomAttribute<KdlIncludeAttribute>(inherit: false) != null;
+                if (
+                    hasKdlIncludeAttribute || (fieldInfo.IsPublic && typeInfo.Options.IncludeFields)
+                )
                 {
                     AddMember(
                         typeInfo,
@@ -185,7 +203,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                         nullabilityCtx,
                         shouldCheckMembersForRequiredMemberAttribute,
                         hasKdlIncludeAttribute,
-                        ref state);
+                        ref state
+                    );
                 }
             }
         }
@@ -199,9 +218,18 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             NullabilityInfoContext nullabilityCtx,
             bool shouldCheckForRequiredKeyword,
             bool hasKdlIncludeAttribute,
-            ref KdlTypeInfo.PropertyHierarchyResolutionState state)
+            ref KdlTypeInfo.PropertyHierarchyResolutionState state
+        )
         {
-            KdlPropertyInfo? kdlPropertyInfo = CreatePropertyInfo(typeInfo, typeToConvert, memberInfo, nullabilityCtx, typeInfo.Options, shouldCheckForRequiredKeyword, hasKdlIncludeAttribute);
+            KdlPropertyInfo? kdlPropertyInfo = CreatePropertyInfo(
+                typeInfo,
+                typeToConvert,
+                memberInfo,
+                nullabilityCtx,
+                typeInfo.Options,
+                shouldCheckForRequiredKeyword,
+                hasKdlIncludeAttribute
+            );
             if (kdlPropertyInfo == null)
             {
                 // ignored invalid property
@@ -221,9 +249,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             NullabilityInfoContext nullabilityCtx,
             KdlSerializerOptions options,
             bool shouldCheckForRequiredKeyword,
-            bool hasKdlIncludeAttribute)
+            bool hasKdlIncludeAttribute
+        )
         {
-            KdlIgnoreCondition? ignoreCondition = memberInfo.GetCustomAttribute<KdlIgnoreAttribute>(inherit: false)?.Condition;
+            KdlIgnoreCondition? ignoreCondition = memberInfo
+                .GetCustomAttribute<KdlIgnoreAttribute>(inherit: false)
+                ?.Condition;
 
             if (KdlTypeInfo.IsInvalidForSerialization(typeToConvert))
             {
@@ -232,7 +263,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     return null;
                 }
 
-                ThrowHelper.ThrowInvalidOperationException_CannotSerializeInvalidType(typeToConvert, memberInfo.DeclaringType, memberInfo);
+                ThrowHelper.ThrowInvalidOperationException_CannotSerializeInvalidType(
+                    typeToConvert,
+                    memberInfo.DeclaringType,
+                    memberInfo
+                );
             }
 
             // Resolve any custom converters on the attribute level.
@@ -247,40 +282,63 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 return null;
             }
 
-            KdlPropertyInfo kdlPropertyInfo = typeInfo.CreatePropertyUsingReflection(typeToConvert, declaringType: memberInfo.DeclaringType);
-            PopulatePropertyInfo(kdlPropertyInfo, memberInfo, customConverter, ignoreCondition, nullabilityCtx, shouldCheckForRequiredKeyword, hasKdlIncludeAttribute);
+            KdlPropertyInfo kdlPropertyInfo = typeInfo.CreatePropertyUsingReflection(
+                typeToConvert,
+                declaringType: memberInfo.DeclaringType
+            );
+            PopulatePropertyInfo(
+                kdlPropertyInfo,
+                memberInfo,
+                customConverter,
+                ignoreCondition,
+                nullabilityCtx,
+                shouldCheckForRequiredKeyword,
+                hasKdlIncludeAttribute
+            );
             return kdlPropertyInfo;
         }
 
         private static KdlNumberHandling? GetNumberHandlingForType(Type type)
         {
-            KdlNumberHandlingAttribute? numberHandlingAttribute = type.GetUniqueCustomAttribute<KdlNumberHandlingAttribute>(inherit: false);
+            KdlNumberHandlingAttribute? numberHandlingAttribute =
+                type.GetUniqueCustomAttribute<KdlNumberHandlingAttribute>(inherit: false);
             return numberHandlingAttribute?.Handling;
         }
 
         private static KdlObjectCreationHandling? GetObjectCreationHandlingForType(Type type)
         {
-            KdlObjectCreationHandlingAttribute? creationHandlingAttribute = type.GetUniqueCustomAttribute<KdlObjectCreationHandlingAttribute>(inherit: false);
+            KdlObjectCreationHandlingAttribute? creationHandlingAttribute =
+                type.GetUniqueCustomAttribute<KdlObjectCreationHandlingAttribute>(inherit: false);
             return creationHandlingAttribute?.Handling;
         }
 
         private static KdlUnmappedMemberHandling? GetUnmappedMemberHandling(Type type)
         {
-            KdlUnmappedMemberHandlingAttribute? numberHandlingAttribute = type.GetUniqueCustomAttribute<KdlUnmappedMemberHandlingAttribute>(inherit: false);
+            KdlUnmappedMemberHandlingAttribute? numberHandlingAttribute =
+                type.GetUniqueCustomAttribute<KdlUnmappedMemberHandlingAttribute>(inherit: false);
             return numberHandlingAttribute?.UnmappedMemberHandling;
         }
 
-        private static bool PropertyIsOverriddenAndIgnored(PropertyInfo propertyInfo, Dictionary<string, KdlPropertyInfo>? ignoredMembers)
+        private static bool PropertyIsOverriddenAndIgnored(
+            PropertyInfo propertyInfo,
+            Dictionary<string, KdlPropertyInfo>? ignoredMembers
+        )
         {
-            return propertyInfo.IsVirtual() &&
-                ignoredMembers?.TryGetValue(propertyInfo.Name, out KdlPropertyInfo? ignoredMember) == true &&
-                ignoredMember.IsVirtual &&
-                propertyInfo.PropertyType == ignoredMember.PropertyType;
+            return propertyInfo.IsVirtual()
+                && ignoredMembers?.TryGetValue(
+                    propertyInfo.Name,
+                    out KdlPropertyInfo? ignoredMember
+                ) == true
+                && ignoredMember.IsVirtual
+                && propertyInfo.PropertyType == ignoredMember.PropertyType;
         }
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static void PopulateParameterInfoValues(KdlTypeInfo typeInfo, NullabilityInfoContext nullabilityCtx)
+        private static void PopulateParameterInfoValues(
+            KdlTypeInfo typeInfo,
+            NullabilityInfoContext nullabilityCtx
+        )
         {
             Debug.Assert(typeInfo.Converter.ConstructorInfo != null);
             ParameterInfo[] parameters = typeInfo.Converter.ConstructorInfo.GetParameters();
@@ -295,7 +353,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 if (string.IsNullOrEmpty(reflectionInfo.Name))
                 {
                     Debug.Assert(typeInfo.Converter.ConstructorInfo.DeclaringType != null);
-                    ThrowHelper.ThrowNotSupportedException_ConstructorContainsNullParameterNames(typeInfo.Converter.ConstructorInfo.DeclaringType);
+                    ThrowHelper.ThrowNotSupportedException_ConstructorContainsNullParameterNames(
+                        typeInfo.Converter.ConstructorInfo.DeclaringType
+                    );
                 }
 
                 KdlParameterInfoValues kdlInfo = new()
@@ -305,7 +365,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     Position = reflectionInfo.Position,
                     HasDefaultValue = reflectionInfo.HasDefaultValue,
                     DefaultValue = reflectionInfo.GetDefaultValue(),
-                    IsNullable = DetermineParameterNullability(reflectionInfo, nullabilityCtx) is not NullabilityState.NotNull,
+                    IsNullable =
+                        DetermineParameterNullability(reflectionInfo, nullabilityCtx)
+                            is not NullabilityState.NotNull,
                 };
 
                 kdlParameters[i] = kdlInfo;
@@ -323,7 +385,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             KdlIgnoreCondition? ignoreCondition,
             NullabilityInfoContext nullabilityCtx,
             bool shouldCheckForRequiredKeyword,
-            bool hasKdlIncludeAttribute)
+            bool hasKdlIncludeAttribute
+        )
         {
             Debug.Assert(kdlPropertyInfo.AttributeProvider == null);
 
@@ -351,28 +414,42 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             if (ignoreCondition != KdlIgnoreCondition.Always)
             {
-                kdlPropertyInfo.DetermineReflectionPropertyAccessors(memberInfo, useNonPublicAccessors: hasKdlIncludeAttribute);
+                kdlPropertyInfo.DetermineReflectionPropertyAccessors(
+                    memberInfo,
+                    useNonPublicAccessors: hasKdlIncludeAttribute
+                );
             }
 
             kdlPropertyInfo.IgnoreCondition = ignoreCondition;
-            kdlPropertyInfo.IsExtensionData = memberInfo.GetCustomAttribute<KdlExtensionDataAttribute>(inherit: false) != null;
+            kdlPropertyInfo.IsExtensionData =
+                memberInfo.GetCustomAttribute<KdlExtensionDataAttribute>(inherit: false) != null;
         }
 
-        private static void DeterminePropertyPolicies(KdlPropertyInfo propertyInfo, MemberInfo memberInfo)
+        private static void DeterminePropertyPolicies(
+            KdlPropertyInfo propertyInfo,
+            MemberInfo memberInfo
+        )
         {
-            KdlPropertyOrderAttribute? orderAttr = memberInfo.GetCustomAttribute<KdlPropertyOrderAttribute>(inherit: false);
+            KdlPropertyOrderAttribute? orderAttr =
+                memberInfo.GetCustomAttribute<KdlPropertyOrderAttribute>(inherit: false);
             propertyInfo.Order = orderAttr?.Order ?? 0;
 
-            KdlNumberHandlingAttribute? numberHandlingAttr = memberInfo.GetCustomAttribute<KdlNumberHandlingAttribute>(inherit: false);
+            KdlNumberHandlingAttribute? numberHandlingAttr =
+                memberInfo.GetCustomAttribute<KdlNumberHandlingAttribute>(inherit: false);
             propertyInfo.NumberHandling = numberHandlingAttr?.Handling;
 
-            KdlObjectCreationHandlingAttribute? objectCreationHandlingAttr = memberInfo.GetCustomAttribute<KdlObjectCreationHandlingAttribute>(inherit: false);
+            KdlObjectCreationHandlingAttribute? objectCreationHandlingAttr =
+                memberInfo.GetCustomAttribute<KdlObjectCreationHandlingAttribute>(inherit: false);
             propertyInfo.ObjectCreationHandling = objectCreationHandlingAttr?.Handling;
         }
 
-        private static void DeterminePropertyName(KdlPropertyInfo propertyInfo, MemberInfo memberInfo)
+        private static void DeterminePropertyName(
+            KdlPropertyInfo propertyInfo,
+            MemberInfo memberInfo
+        )
         {
-            KdlPropertyNameAttribute? nameAttribute = memberInfo.GetCustomAttribute<KdlPropertyNameAttribute>(inherit: false);
+            KdlPropertyNameAttribute? nameAttribute =
+                memberInfo.GetCustomAttribute<KdlPropertyNameAttribute>(inherit: false);
             string? name;
             if (nameAttribute != null)
             {
@@ -395,7 +472,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             propertyInfo.Name = name;
         }
 
-        private static void DeterminePropertyIsRequired(KdlPropertyInfo propertyInfo, MemberInfo memberInfo, bool shouldCheckForRequiredKeyword)
+        private static void DeterminePropertyIsRequired(
+            KdlPropertyInfo propertyInfo,
+            MemberInfo memberInfo,
+            bool shouldCheckForRequiredKeyword
+        )
         {
             propertyInfo.IsRequired =
                 memberInfo.GetCustomAttribute<KdlRequiredAttribute>(inherit: false) != null
@@ -404,7 +485,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal static void DeterminePropertyAccessors<T>(KdlPropertyInfo<T> kdlPropertyInfo, MemberInfo memberInfo, bool useNonPublicAccessors)
+        internal static void DeterminePropertyAccessors<T>(
+            KdlPropertyInfo<T> kdlPropertyInfo,
+            MemberInfo memberInfo,
+            bool useNonPublicAccessors
+        )
         {
             Debug.Assert(memberInfo is FieldInfo or PropertyInfo);
 
@@ -445,7 +530,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static Func<object>? DetermineCreateObjectDelegate(Type type, KdlConverter converter)
+        private static Func<object>? DetermineCreateObjectDelegate(
+            Type type,
+            KdlConverter converter
+        )
         {
             ConstructorInfo? defaultCtor = null;
 
@@ -457,14 +545,23 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
 
             // Fall back to resolving any public constructors on the type.
-            defaultCtor ??= type.GetConstructor(BindingFlags.Public | BindingFlags.Instance, binder: null, Type.EmptyTypes, modifiers: null);
+            defaultCtor ??= type.GetConstructor(
+                BindingFlags.Public | BindingFlags.Instance,
+                binder: null,
+                Type.EmptyTypes,
+                modifiers: null
+            );
 
             return MemberAccessor.CreateParameterlessConstructor(type, defaultCtor);
         }
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static void DeterminePropertyNullability(KdlPropertyInfo propertyInfo, MemberInfo memberInfo, NullabilityInfoContext nullabilityCtx)
+        private static void DeterminePropertyNullability(
+            KdlPropertyInfo propertyInfo,
+            MemberInfo memberInfo,
+            NullabilityInfoContext nullabilityCtx
+        )
         {
             if (!propertyInfo.PropertyTypeCanBeNull)
             {
@@ -488,7 +585,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static NullabilityState DetermineParameterNullability(ParameterInfo parameterInfo, NullabilityInfoContext nullabilityCtx)
+        private static NullabilityState DetermineParameterNullability(
+            ParameterInfo parameterInfo,
+            NullabilityInfoContext nullabilityCtx
+        )
         {
             if (!parameterInfo.ParameterType.IsNullableType())
             {
@@ -498,7 +598,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             // Workaround for https://github.com/dotnet/runtime/issues/92487
             // The fix has been incorporated into .NET 9 (and the polyfilled implementations in netfx).
             // Should be removed once .NET 8 support is dropped.
-            if (parameterInfo.GetGenericParameterDefinition() is { ParameterType: { IsGenericParameter: true } typeParam })
+            if (
+                parameterInfo.GetGenericParameterDefinition() is
+                { ParameterType: { IsGenericParameter: true } typeParam }
+            )
             {
                 // Step 1. Look for nullable annotations on the type parameter.
                 if (GetNullableFlags(typeParam) is byte[] flags)
@@ -507,7 +610,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 }
 
                 // Step 2. Look for nullable annotations on the generic method declaration.
-                if (typeParam.DeclaringMethod != null && GetNullableContextFlag(typeParam.DeclaringMethod) is byte flag)
+                if (
+                    typeParam.DeclaringMethod != null
+                    && GetNullableContextFlag(typeParam.DeclaringMethod) is byte flag
+                )
                 {
                     return TranslateByte(flag);
                 }
@@ -526,9 +632,14 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     foreach (CustomAttributeData attr in member.GetCustomAttributesData())
                     {
                         Type attrType = attr.AttributeType;
-                        if (attrType.Name == "NullableAttribute" && attrType.Namespace == "System.Runtime.CompilerServices")
+                        if (
+                            attrType.Name == "NullableAttribute"
+                            && attrType.Namespace == "System.Runtime.CompilerServices"
+                        )
                         {
-                            foreach (CustomAttributeTypedArgument ctorArg in attr.ConstructorArguments)
+                            foreach (
+                                CustomAttributeTypedArgument ctorArg in attr.ConstructorArguments
+                            )
                             {
                                 switch (ctorArg.Value)
                                 {
@@ -549,9 +660,14 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     foreach (CustomAttributeData attr in member.GetCustomAttributesData())
                     {
                         Type attrType = attr.AttributeType;
-                        if (attrType.Name == "NullableContextAttribute" && attrType.Namespace == "System.Runtime.CompilerServices")
+                        if (
+                            attrType.Name == "NullableContextAttribute"
+                            && attrType.Namespace == "System.Runtime.CompilerServices"
+                        )
                         {
-                            foreach (CustomAttributeTypedArgument ctorArg in attr.ConstructorArguments)
+                            foreach (
+                                CustomAttributeTypedArgument ctorArg in attr.ConstructorArguments
+                            )
                             {
                                 if (ctorArg.Value is byte flag)
                                 {
@@ -569,7 +685,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     {
                         1 => NullabilityState.NotNull,
                         2 => NullabilityState.Nullable,
-                        _ => NullabilityState.Unknown
+                        _ => NullabilityState.Unknown,
                     };
             }
 #endif

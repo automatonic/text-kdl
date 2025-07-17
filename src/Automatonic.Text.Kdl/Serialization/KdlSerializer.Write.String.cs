@@ -56,7 +56,8 @@ namespace Automatonic.Text.Kdl
         public static string Serialize(
             object? value,
             Type inputType,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             ValidateInputType(value, inputType);
             KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
@@ -153,7 +154,10 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                kdlTypeInfo.Options,
+                out PooledByteBufferWriter output
+            );
 
             try
             {
@@ -170,7 +174,10 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                kdlTypeInfo.Options,
+                out PooledByteBufferWriter output
+            );
 
             try
             {

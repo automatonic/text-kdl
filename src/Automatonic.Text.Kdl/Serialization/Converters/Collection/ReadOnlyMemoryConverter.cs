@@ -10,7 +10,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             Type typeToConvert,
             KdlSerializerOptions options,
             scoped ref ReadStack state,
-            out ReadOnlyMemory<T> value)
+            out ReadOnlyMemory<T> value
+        )
         {
             if (reader.TokenType is KdlTokenType.Null)
             {
@@ -26,24 +27,39 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             ((List<T>)state.Current.ReturnValue!).Add(value);
         }
 
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             state.Current.ReturnValue = new List<T>();
         }
 
         internal sealed override bool IsConvertibleCollection => true;
+
         protected override void ConvertCollection(ref ReadStack state, KdlSerializerOptions options)
         {
             ReadOnlyMemory<T> memory = ((List<T>)state.Current.ReturnValue!).ToArray().AsMemory();
             state.Current.ReturnValue = memory;
         }
 
-        protected override bool OnWriteResume(KdlWriter writer, ReadOnlyMemory<T> value, KdlSerializerOptions options, ref WriteStack state)
+        protected override bool OnWriteResume(
+            KdlWriter writer,
+            ReadOnlyMemory<T> value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             return OnWriteResume(writer, value.Span, options, ref state);
         }
 
-        internal static bool OnWriteResume(KdlWriter writer, ReadOnlySpan<T> value, KdlSerializerOptions options, ref WriteStack state)
+        internal static bool OnWriteResume(
+            KdlWriter writer,
+            ReadOnlySpan<T> value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             int index = state.Current.EnumeratorIndex;
 

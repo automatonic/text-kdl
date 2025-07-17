@@ -17,11 +17,17 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
     [DebuggerDisplay("{DebuggerDisplay,nq}")]
     public abstract partial class KdlTypeInfo
     {
-        internal const string MetadataFactoryRequiresUnreferencedCode = "KDL serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use Automatonic.Text.Kdl source generation for native AOT applications.";
+        internal const string MetadataFactoryRequiresUnreferencedCode =
+            "KDL serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use Automatonic.Text.Kdl source generation for native AOT applications.";
 
         internal const string KdlObjectTypeName = "Automatonic.Text.Kdl.Graph.KdlNode";
 
-        internal delegate T ParameterizedConstructorDelegate<T, TArg0, TArg1, TArg2, TArg3>(TArg0? arg0, TArg1? arg1, TArg2? arg2, TArg3? arg3);
+        internal delegate T ParameterizedConstructorDelegate<T, TArg0, TArg1, TArg2, TArg3>(
+            TArg0? arg0,
+            TArg1? arg1,
+            TArg2? arg2,
+            TArg3? arg3
+        );
 
         /// <summary>
         /// Indices of required properties.
@@ -114,9 +120,18 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 VerifyMutable();
 
-                if (Kind is not (KdlTypeInfoKind.Object or KdlTypeInfoKind.Enumerable or KdlTypeInfoKind.Dictionary))
+                if (
+                    Kind
+                    is not (
+                        KdlTypeInfoKind.Object
+                        or KdlTypeInfoKind.Enumerable
+                        or KdlTypeInfoKind.Dictionary
+                    )
+                )
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                        Kind
+                    );
                 }
 
                 _onSerializing = value;
@@ -144,9 +159,18 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 VerifyMutable();
 
-                if (Kind is not (KdlTypeInfoKind.Object or KdlTypeInfoKind.Enumerable or KdlTypeInfoKind.Dictionary))
+                if (
+                    Kind
+                    is not (
+                        KdlTypeInfoKind.Object
+                        or KdlTypeInfoKind.Enumerable
+                        or KdlTypeInfoKind.Dictionary
+                    )
+                )
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                        Kind
+                    );
                 }
 
                 _onSerialized = value;
@@ -174,15 +198,26 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 VerifyMutable();
 
-                if (Kind is not (KdlTypeInfoKind.Object or KdlTypeInfoKind.Enumerable or KdlTypeInfoKind.Dictionary))
+                if (
+                    Kind
+                    is not (
+                        KdlTypeInfoKind.Object
+                        or KdlTypeInfoKind.Enumerable
+                        or KdlTypeInfoKind.Dictionary
+                    )
+                )
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                        Kind
+                    );
                 }
 
                 if (Converter.IsConvertibleCollection)
                 {
                     // The values for convertible collections aren't available at the start of deserialization.
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOnDeserializingCallbacksNotSupported(Type);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOnDeserializingCallbacksNotSupported(
+                        Type
+                    );
                 }
 
                 _onDeserializing = value;
@@ -210,9 +245,18 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 VerifyMutable();
 
-                if (Kind is not (KdlTypeInfoKind.Object or KdlTypeInfoKind.Enumerable or KdlTypeInfoKind.Dictionary))
+                if (
+                    Kind
+                    is not (
+                        KdlTypeInfoKind.Object
+                        or KdlTypeInfoKind.Enumerable
+                        or KdlTypeInfoKind.Dictionary
+                    )
+                )
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                        Kind
+                    );
                 }
 
                 _onDeserialized = value;
@@ -251,7 +295,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                         KdlMetadataServices.PopulateProperties(this, list, propInit);
                     }
 
-                    KdlPropertyInfoList? result = Interlocked.CompareExchange(ref _properties, list, null);
+                    KdlPropertyInfoList? result = Interlocked.CompareExchange(
+                        ref _properties,
+                        list,
+                        null
+                    );
                     _sourceGenDelayedPropertyInitializer = null;
                     return result ?? list;
                 }
@@ -267,7 +315,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             set
             {
                 Debug.Assert(!IsReadOnly);
-                Debug.Assert(_properties is null, "must not be set if a property list has been initialized.");
+                Debug.Assert(
+                    _properties is null,
+                    "must not be set if a property list has been initialized."
+                );
                 _sourceGenDelayedPropertyInitializer = value;
             }
         }
@@ -303,12 +354,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 {
                     if (Kind == KdlTypeInfoKind.None)
                     {
-                        ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                        ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                            Kind
+                        );
                     }
 
                     if (value.DeclaringTypeInfo != null && value.DeclaringTypeInfo != this)
                     {
-                        ThrowHelper.ThrowArgumentException_KdlPolymorphismOptionsAssociatedWithDifferentKdlTypeInfo(nameof(value));
+                        ThrowHelper.ThrowArgumentException_KdlPolymorphismOptionsAssociatedWithDifferentKdlTypeInfo(
+                            nameof(value)
+                        );
                     }
 
                     value.DeclaringTypeInfo = this;
@@ -364,7 +419,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             if (PropertyMetadataSerializationNotSupported)
             {
-                ThrowHelper.ThrowInvalidOperationException_NoMetadataForTypeProperties(Options.TypeInfoResolver, Type);
+                ThrowHelper.ThrowInvalidOperationException_NoMetadataForTypeProperties(
+                    Options.TypeInfoResolver,
+                    Type
+                );
             }
         }
 
@@ -502,7 +560,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal KdlNumberHandling EffectiveNumberHandling => _numberHandling ?? Options.NumberHandling;
+        internal KdlNumberHandling EffectiveNumberHandling =>
+            _numberHandling ?? Options.NumberHandling;
         private KdlNumberHandling? _numberHandling;
 
         /// <summary>
@@ -531,10 +590,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
                 if (Kind != KdlTypeInfoKind.Object)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                        Kind
+                    );
                 }
 
-                if (value is not null && !KdlSerializer.IsValidUnmappedMemberHandlingValue(value.Value))
+                if (
+                    value is not null
+                    && !KdlSerializer.IsValidUnmappedMemberHandlingValue(value.Value)
+                )
                 {
                     throw new ArgumentOutOfRangeException(nameof(value));
                 }
@@ -575,7 +639,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
                 if (Kind != KdlTypeInfoKind.Object)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                        Kind
+                    );
                 }
 
                 if (value is not null && !KdlSerializer.IsValidCreationHandlingValue(value.Value))
@@ -633,7 +699,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             get
             {
-                Func<ICustomAttributeProvider>? ctorAttrProviderFactory = Volatile.Read(ref ConstructorAttributeProviderFactory);
+                Func<ICustomAttributeProvider>? ctorAttrProviderFactory = Volatile.Read(
+                    ref ConstructorAttributeProviderFactory
+                );
                 ICustomAttributeProvider? ctorAttrProvider = _constructorAttributeProvider;
 
                 if (ctorAttrProvider is null && ctorAttrProviderFactory is not null)
@@ -675,13 +743,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         internal bool IsCustomized { get; set; } = true;
 
         internal bool IsConfigured => _configurationState == ConfigurationState.Configured;
-        internal bool IsConfigurationStarted => _configurationState is not ConfigurationState.NotConfigured;
+        internal bool IsConfigurationStarted =>
+            _configurationState is not ConfigurationState.NotConfigured;
         private volatile ConfigurationState _configurationState;
+
         private enum ConfigurationState : byte
         {
             NotConfigured = 0,
             Configuring = 1,
-            Configured = 2
+            Configured = 2,
         };
 
         private ExceptionDispatchInfo? _cachedConfigureError;
@@ -731,7 +801,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         private void Configure()
         {
-            Debug.Assert(Monitor.IsEntered(Options.CacheContext), "Configure called directly, use EnsureConfigured which synchronizes access to this method");
+            Debug.Assert(
+                Monitor.IsEntered(Options.CacheContext),
+                "Configure called directly, use EnsureConfigured which synchronizes access to this method"
+            );
             Debug.Assert(Options.IsReadOnly);
             Debug.Assert(IsReadOnly);
 
@@ -741,7 +814,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 // This needs to be done before ConfigureProperties() is called
                 // KdlPropertyInfo.Configure() must have this value available in order to detect Polymoprhic + cyclic class case
-                PolymorphicTypeResolver = new PolymorphicTypeResolver(Options, PolymorphismOptions, Type, Converter.CanHaveMetadata);
+                PolymorphicTypeResolver = new PolymorphicTypeResolver(
+                    Options,
+                    PolymorphismOptions,
+                    Type,
+                    Converter.CanHaveMetadata
+                );
             }
 
             if (Kind == KdlTypeInfoKind.Object)
@@ -785,7 +863,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
                 if (!_isAncestorPolymorphicTypeResolved)
                 {
-                    _ancestorPolymorhicType = PolymorphicTypeResolver.FindNearestPolymorphicBaseType(this);
+                    _ancestorPolymorhicType =
+                        PolymorphicTypeResolver.FindNearestPolymorphicBaseType(this);
                     _isAncestorPolymorphicTypeResolved = true;
                 }
 
@@ -838,8 +917,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 }
             }
 
-            if (_elementTypeInfo?.IsCompatibleWithCurrentOptions == false ||
-                _keyTypeInfo?.IsCompatibleWithCurrentOptions == false)
+            if (
+                _elementTypeInfo?.IsCompatibleWithCurrentOptions == false
+                || _keyTypeInfo?.IsCompatibleWithCurrentOptions == false
+            )
             {
                 IsCompatibleWithCurrentOptions = false;
                 return;
@@ -875,8 +956,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <summary>
         /// Determine if the current configuration is compatible with using a parameterized constructor.
         /// </summary>
-        internal bool DetermineUsesParameterizedConstructor()
-            => Converter.ConstructorIsParameterized && CreateObject is null;
+        internal bool DetermineUsesParameterizedConstructor() =>
+            Converter.ConstructorIsParameterized && CreateObject is null;
 
         /// <summary>
         /// Creates a blank <see cref="KdlTypeInfo{T}"/> instance.
@@ -904,7 +985,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 ThrowHelper.ThrowArgumentNullException(nameof(options));
             }
 
-            KdlConverter converter = DefaultKdlTypeInfoResolver.GetConverterForType(typeof(T), options, resolveKdlConverterAttribute: false);
+            KdlConverter converter = DefaultKdlTypeInfoResolver.GetConverterForType(
+                typeof(T),
+                options,
+                resolveKdlConverterAttribute: false
+            );
             return new KdlTypeInfo<T>(converter, options);
         }
 
@@ -942,16 +1027,29 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             if (IsInvalidForSerialization(type))
             {
-                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(nameof(type), type, null, null);
+                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(
+                    nameof(type),
+                    type,
+                    null,
+                    null
+                );
             }
 
-            KdlConverter converter = DefaultKdlTypeInfoResolver.GetConverterForType(type, options, resolveKdlConverterAttribute: false);
+            KdlConverter converter = DefaultKdlTypeInfoResolver.GetConverterForType(
+                type,
+                options,
+                resolveKdlConverterAttribute: false
+            );
             return CreateKdlTypeInfo(type, converter, options);
         }
 
         [RequiresUnreferencedCode(MetadataFactoryRequiresUnreferencedCode)]
         [RequiresDynamicCode(MetadataFactoryRequiresUnreferencedCode)]
-        internal static KdlTypeInfo CreateKdlTypeInfo(Type type, KdlConverter converter, KdlSerializerOptions options)
+        internal static KdlTypeInfo CreateKdlTypeInfo(
+            Type type,
+            KdlConverter converter,
+            KdlSerializerOptions options
+        )
         {
             KdlTypeInfo kdlTypeInfo;
 
@@ -964,9 +1062,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             else
             {
                 Type kdlTypeInfoType = typeof(KdlTypeInfo<>).MakeGenericType(type);
-                kdlTypeInfo = (KdlTypeInfo)kdlTypeInfoType.CreateInstanceNoWrapExceptions(
-                    parameterTypes: [typeof(KdlConverter), typeof(KdlSerializerOptions)],
-                    parameters: [converter, options])!;
+                kdlTypeInfo = (KdlTypeInfo)
+                    kdlTypeInfoType.CreateInstanceNoWrapExceptions(
+                        parameterTypes: [typeof(KdlConverter), typeof(KdlSerializerOptions)],
+                        parameters: [converter, options]
+                    )!;
             }
 
             Debug.Assert(kdlTypeInfo.Type == type);
@@ -998,11 +1098,19 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             if (IsInvalidForSerialization(propertyType))
             {
-                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(nameof(propertyType), propertyType, Type, name);
+                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(
+                    nameof(propertyType),
+                    propertyType,
+                    Type,
+                    name
+                );
             }
 
             VerifyMutable();
-            KdlPropertyInfo propertyInfo = CreatePropertyUsingReflection(propertyType, declaringType: null);
+            KdlPropertyInfo propertyInfo = CreatePropertyUsingReflection(
+                propertyType,
+                declaringType: null
+            );
             propertyInfo.Name = name;
 
             return propertyInfo;
@@ -1010,7 +1118,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
-        internal KdlPropertyInfo CreatePropertyUsingReflection(Type propertyType, Type? declaringType)
+        internal KdlPropertyInfo CreatePropertyUsingReflection(
+            Type propertyType,
+            Type? declaringType
+        )
         {
             KdlPropertyInfo kdlPropertyInfo;
 
@@ -1019,16 +1130,27 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 // If a KdlTypeInfo has already been cached for the property type,
                 // avoid reflection-based initialization by delegating construction
                 // of KdlPropertyInfo<T> construction to the property type metadata.
-                kdlPropertyInfo = kdlTypeInfo.CreateKdlPropertyInfo(declaringTypeInfo: this, declaringType, Options);
+                kdlPropertyInfo = kdlTypeInfo.CreateKdlPropertyInfo(
+                    declaringTypeInfo: this,
+                    declaringType,
+                    Options
+                );
             }
             else
             {
                 // Metadata for `propertyType` has not been registered yet.
                 // Use reflection to instantiate the correct KdlPropertyInfo<T>
                 Type propertyInfoType = typeof(KdlPropertyInfo<>).MakeGenericType(propertyType);
-                kdlPropertyInfo = (KdlPropertyInfo)propertyInfoType.CreateInstanceNoWrapExceptions(
-                    parameterTypes: [typeof(Type), typeof(KdlTypeInfo), typeof(KdlSerializerOptions)],
-                    parameters: [declaringType ?? Type, this, Options])!;
+                kdlPropertyInfo = (KdlPropertyInfo)
+                    propertyInfoType.CreateInstanceNoWrapExceptions(
+                        parameterTypes:
+                        [
+                            typeof(Type),
+                            typeof(KdlTypeInfo),
+                            typeof(KdlSerializerOptions),
+                        ],
+                        parameters: [declaringType ?? Type, this, Options]
+                    )!;
             }
 
             Debug.Assert(kdlPropertyInfo.PropertyType == propertyType);
@@ -1038,36 +1160,70 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <summary>
         /// Creates a KdlPropertyInfo whose property type matches the type of this KdlTypeInfo instance.
         /// </summary>
-        private protected abstract KdlPropertyInfo CreateKdlPropertyInfo(KdlTypeInfo declaringTypeInfo, Type? declaringType, KdlSerializerOptions options);
+        private protected abstract KdlPropertyInfo CreateKdlPropertyInfo(
+            KdlTypeInfo declaringTypeInfo,
+            Type? declaringType,
+            KdlSerializerOptions options
+        );
 
-        private protected Dictionary<ParameterLookupKey, KdlParameterInfoValues>? _parameterInfoValuesIndex;
+        private protected Dictionary<
+            ParameterLookupKey,
+            KdlParameterInfoValues
+        >? _parameterInfoValuesIndex;
 
         // Untyped, root-level serialization methods
         internal abstract void SerializeAsObject(KdlWriter writer, object? rootValue);
-        internal abstract Task SerializeAsObjectAsync(PipeWriter pipeWriter, object? rootValue, int flushThreshold, CancellationToken cancellationToken);
-        internal abstract Task SerializeAsObjectAsync(Stream utf8Kdl, object? rootValue, CancellationToken cancellationToken);
-        internal abstract Task SerializeAsObjectAsync(PipeWriter utf8Kdl, object? rootValue, CancellationToken cancellationToken);
+        internal abstract Task SerializeAsObjectAsync(
+            PipeWriter pipeWriter,
+            object? rootValue,
+            int flushThreshold,
+            CancellationToken cancellationToken
+        );
+        internal abstract Task SerializeAsObjectAsync(
+            Stream utf8Kdl,
+            object? rootValue,
+            CancellationToken cancellationToken
+        );
+        internal abstract Task SerializeAsObjectAsync(
+            PipeWriter utf8Kdl,
+            object? rootValue,
+            CancellationToken cancellationToken
+        );
         internal abstract void SerializeAsObject(Stream utf8Kdl, object? rootValue);
 
         // Untyped, root-level deserialization methods
         internal abstract object? DeserializeAsObject(ref KdlReader reader, ref ReadStack state);
-        internal abstract ValueTask<object?> DeserializeAsObjectAsync(Stream utf8Kdl, CancellationToken cancellationToken);
+        internal abstract ValueTask<object?> DeserializeAsObjectAsync(
+            Stream utf8Kdl,
+            CancellationToken cancellationToken
+        );
         internal abstract object? DeserializeAsObject(Stream utf8Kdl);
 
         internal ref struct PropertyHierarchyResolutionState(KdlSerializerOptions options)
         {
-            public Dictionary<string, (KdlPropertyInfo, int index)> AddedProperties = new(options.PropertyNameCaseInsensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
+            public Dictionary<string, (KdlPropertyInfo, int index)> AddedProperties = new(
+                options.PropertyNameCaseInsensitive
+                    ? StringComparer.OrdinalIgnoreCase
+                    : StringComparer.Ordinal
+            );
             public Dictionary<string, KdlPropertyInfo>? IgnoredProperties;
             public bool IsPropertyOrderSpecified;
         }
 
-        private protected readonly struct ParameterLookupKey(Type type, string name) : IEquatable<ParameterLookupKey>
+        private protected readonly struct ParameterLookupKey(Type type, string name)
+            : IEquatable<ParameterLookupKey>
         {
             public Type Type { get; } = type;
             public string Name { get; } = name;
+
             public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(Name);
-            public bool Equals(ParameterLookupKey other) => Type == other.Type && string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
-            public override bool Equals([NotNullWhen(true)] object? obj) => obj is ParameterLookupKey key && Equals(key);
+
+            public bool Equals(ParameterLookupKey other) =>
+                Type == other.Type
+                && string.Equals(Name, other.Name, StringComparison.OrdinalIgnoreCase);
+
+            public override bool Equals([NotNullWhen(true)] object? obj) =>
+                obj is ParameterLookupKey key && Equals(key);
         }
 
         internal void ConfigureProperties()
@@ -1078,7 +1234,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             Debug.Assert(ExtensionDataProperty is null);
 
             KdlPropertyInfoList properties = PropertyList;
-            StringComparer comparer = Options.PropertyNameCaseInsensitive ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal;
+            StringComparer comparer = Options.PropertyNameCaseInsensitive
+                ? StringComparer.OrdinalIgnoreCase
+                : StringComparer.Ordinal;
             Dictionary<string, KdlPropertyInfo> propertyIndex = new(properties.Count, comparer);
             List<KdlPropertyInfo> propertyCache = new(properties.Count);
 
@@ -1094,12 +1252,18 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 {
                     if (UnmappedMemberHandling is KdlUnmappedMemberHandling.Disallow)
                     {
-                        ThrowHelper.ThrowInvalidOperationException_ExtensionDataConflictsWithUnmappedMemberHandling(Type, property);
+                        ThrowHelper.ThrowInvalidOperationException_ExtensionDataConflictsWithUnmappedMemberHandling(
+                            Type,
+                            property
+                        );
                     }
 
                     if (ExtensionDataProperty != null)
                     {
-                        ThrowHelper.ThrowInvalidOperationException_SerializationDuplicateTypeAttribute(Type, typeof(KdlExtensionDataAttribute));
+                        ThrowHelper.ThrowInvalidOperationException_SerializationDuplicateTypeAttribute(
+                            Type,
+                            typeof(KdlExtensionDataAttribute)
+                        );
                     }
 
                     ExtensionDataProperty = property;
@@ -1119,7 +1283,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
                     if (!propertyIndex.TryAdd(property.Name, property))
                     {
-                        ThrowHelper.ThrowInvalidOperationException_SerializerPropertyNameConflict(Type, property.Name);
+                        ThrowHelper.ThrowInvalidOperationException_SerializerPropertyNameConflict(
+                            Type,
+                            property.Name
+                        );
                     }
 
                     propertyCache.Add(property);
@@ -1141,10 +1308,13 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             // Override global UnmappedMemberHandling configuration
             // if type specifies an extension data property.
-            EffectiveUnmappedMemberHandling = UnmappedMemberHandling ??
-                (ExtensionDataProperty is null
-                    ? Options.UnmappedMemberHandling
-                    : KdlUnmappedMemberHandling.Skip);
+            EffectiveUnmappedMemberHandling =
+                UnmappedMemberHandling
+                ?? (
+                    ExtensionDataProperty is null
+                        ? Options.UnmappedMemberHandling
+                        : KdlUnmappedMemberHandling.Skip
+                );
         }
 
         internal void PopulateParameterInfoValues(KdlParameterInfoValues[] parameterInfoValues)
@@ -1154,10 +1324,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 return;
             }
 
-            Dictionary<ParameterLookupKey, KdlParameterInfoValues> parameterIndex = new(parameterInfoValues.Length);
+            Dictionary<ParameterLookupKey, KdlParameterInfoValues> parameterIndex = new(
+                parameterInfoValues.Length
+            );
             foreach (KdlParameterInfoValues parameterInfoValue in parameterInfoValues)
             {
-                ParameterLookupKey paramKey = new(parameterInfoValue.ParameterType, parameterInfoValue.Name);
+                ParameterLookupKey paramKey = new(
+                    parameterInfoValue.ParameterType,
+                    parameterInfoValue.Name
+                );
                 parameterIndex.TryAdd(paramKey, parameterInfoValue); // Ignore conflicts since they are reported at serialization time.
             }
 
@@ -1169,7 +1344,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             Debug.Assert(
                 CreateObjectWithArgs is null || _parameterInfoValuesIndex is not null,
-                "Metadata with parameterized constructors must have populated parameter info metadata.");
+                "Metadata with parameterized constructors must have populated parameter info metadata."
+            );
 
             if (_parameterInfoValuesIndex is not { } index)
             {
@@ -1211,7 +1387,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                         Type,
                         parameterInfo.Name,
                         propertyInfo.Name,
-                        parameterIndex[paramKey].MatchingProperty.Name);
+                        parameterIndex[paramKey].MatchingProperty.Name
+                    );
                 }
 
                 parameterCache.Add(parameterInfo);
@@ -1219,8 +1396,14 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             if (ExtensionDataProperty is { AssociatedParameter: not null })
             {
-                Debug.Assert(ExtensionDataProperty.MemberName != null, "Custom property info cannot be data extension property");
-                ThrowHelper.ThrowInvalidOperationException_ExtensionDataCannotBindToCtorParam(ExtensionDataProperty.MemberName, ExtensionDataProperty);
+                Debug.Assert(
+                    ExtensionDataProperty.MemberName != null,
+                    "Custom property info cannot be data extension property"
+                );
+                ThrowHelper.ThrowInvalidOperationException_ExtensionDataCannotBindToCtorParam(
+                    ExtensionDataProperty.MemberName,
+                    ExtensionDataProperty
+                );
             }
 
             _parameterCache = [.. parameterCache];
@@ -1231,20 +1414,29 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             if (IsInvalidForSerialization(type))
             {
-                ThrowHelper.ThrowInvalidOperationException_CannotSerializeInvalidType(type, declaringType: null, memberInfo: null);
+                ThrowHelper.ThrowInvalidOperationException_CannotSerializeInvalidType(
+                    type,
+                    declaringType: null,
+                    memberInfo: null
+                );
             }
         }
 
         internal static bool IsInvalidForSerialization(Type type)
         {
-            return type == typeof(void) || type.IsPointer || type.IsByRef || IsByRefLike(type) || type.ContainsGenericParameters;
+            return type == typeof(void)
+                || type.IsPointer
+                || type.IsByRef
+                || IsByRefLike(type)
+                || type.ContainsGenericParameters;
         }
 
         internal void PopulatePolymorphismMetadata()
         {
             Debug.Assert(!IsReadOnly);
 
-            KdlPolymorphismOptions? options = KdlPolymorphismOptions.CreateFromAttributeDeclarations(Type);
+            KdlPolymorphismOptions? options =
+                KdlPolymorphismOptions.CreateFromAttributeDeclarations(Type);
             if (options != null)
             {
                 options.DeclaringTypeInfo = this;
@@ -1256,7 +1448,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             Debug.Assert(!IsReadOnly);
 
-            if (Kind is KdlTypeInfoKind.Object or KdlTypeInfoKind.Enumerable or KdlTypeInfoKind.Dictionary)
+            if (
+                Kind
+                is KdlTypeInfoKind.Object
+                    or KdlTypeInfoKind.Enumerable
+                    or KdlTypeInfoKind.Dictionary
+            )
             {
                 if (typeof(IKdlOnSerializing).IsAssignableFrom(Type))
                 {
@@ -1306,7 +1503,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             for (int i = 0; i < attributes.Length; i++)
             {
-                if (attributes[i].GetType().FullName == "System.Runtime.CompilerServices.IsByRefLikeAttribute")
+                if (
+                    attributes[i].GetType().FullName
+                    == "System.Runtime.CompilerServices.IsByRefLikeAttribute"
+                )
                 {
                     return true;
                 }
@@ -1328,10 +1528,14 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         internal static bool IsValidExtensionDataProperty(Type propertyType)
         {
-            return typeof(IDictionary<string, object>).IsAssignableFrom(propertyType) ||
-                typeof(IDictionary<string, KdlReadOnlyElement>).IsAssignableFrom(propertyType) ||
+            return typeof(IDictionary<string, object>).IsAssignableFrom(propertyType)
+                || typeof(IDictionary<string, KdlReadOnlyElement>).IsAssignableFrom(propertyType)
+                ||
                 // Avoid a reference to typeof(KdlVertex) to support trimming.
-                (propertyType.FullName == KdlObjectTypeName && ReferenceEquals(propertyType.Assembly, typeof(KdlTypeInfo).Assembly));
+                (
+                    propertyType.FullName == KdlObjectTypeName
+                    && ReferenceEquals(propertyType.Assembly, typeof(KdlTypeInfo).Assembly)
+                );
         }
 
         private static KdlTypeInfoKind GetTypeInfoKind(Type type, KdlConverter converter)
@@ -1363,11 +1567,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal sealed class KdlPropertyInfoList(KdlTypeInfo kdlTypeInfo) : ConfigurationList<KdlPropertyInfo>
+        internal sealed class KdlPropertyInfoList(KdlTypeInfo kdlTypeInfo)
+            : ConfigurationList<KdlPropertyInfo>
         {
             private readonly KdlTypeInfo _kdlTypeInfo = kdlTypeInfo;
 
-            public override bool IsReadOnly => (_kdlTypeInfo._properties == this && _kdlTypeInfo.IsReadOnly) || _kdlTypeInfo.Kind != KdlTypeInfoKind.Object;
+            public override bool IsReadOnly =>
+                (_kdlTypeInfo._properties == this && _kdlTypeInfo.IsReadOnly)
+                || _kdlTypeInfo.Kind != KdlTypeInfoKind.Object;
+
             protected override void OnCollectionModifying()
             {
                 if (_kdlTypeInfo._properties == this)
@@ -1377,7 +1585,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
                 if (_kdlTypeInfo.Kind != KdlTypeInfoKind.Object)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(_kdlTypeInfo.Kind);
+                    ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                        _kdlTypeInfo.Kind
+                    );
                 }
             }
 
@@ -1394,10 +1604,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             /// <summary>
             /// Used by the built-in resolvers to add property metadata applying conflict resolution.
             /// </summary>
-            public void AddPropertyWithConflictResolution(KdlPropertyInfo kdlPropertyInfo, ref PropertyHierarchyResolutionState state)
+            public void AddPropertyWithConflictResolution(
+                KdlPropertyInfo kdlPropertyInfo,
+                ref PropertyHierarchyResolutionState state
+            )
             {
                 Debug.Assert(!_kdlTypeInfo.IsConfigured);
-                Debug.Assert(kdlPropertyInfo.MemberName != null, "MemberName can be null in custom KdlPropertyInfo instances and should never be passed in this method");
+                Debug.Assert(
+                    kdlPropertyInfo.MemberName != null,
+                    "MemberName can be null in custom KdlPropertyInfo instances and should never be passed in this method"
+                );
 
                 // Algorithm should be kept in sync with the Roslyn equivalent in KdlSourceGenerator.Parser.cs
                 string memberName = kdlPropertyInfo.MemberName;
@@ -1410,7 +1626,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 else
                 {
                     // The KdlPropertyNameAttribute or naming policy resulted in a collision.
-                    (KdlPropertyInfo other, int index) = state.AddedProperties[kdlPropertyInfo.Name];
+                    (KdlPropertyInfo other, int index) = state.AddedProperties[
+                        kdlPropertyInfo.Name
+                    ];
 
                     if (other.IsIgnored)
                     {
@@ -1423,17 +1641,28 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     {
                         bool ignoreCurrentProperty =
                             // Does the current property have `KdlIgnoreAttribute`?
-                            kdlPropertyInfo.IsIgnored ||
+                            kdlPropertyInfo.IsIgnored
+                            ||
                             // Is the current property hidden by the previously cached property
                             // (with `new` keyword, or by overriding)?
-                            kdlPropertyInfo.IsOverriddenOrShadowedBy(other) ||
+                            kdlPropertyInfo.IsOverriddenOrShadowedBy(other)
+                            ||
                             // Was a property with the same CLR name ignored? That property hid the current property,
                             // thus, if it was ignored, the current property should be ignored too.
-                            (state.IgnoredProperties?.TryGetValue(memberName, out KdlPropertyInfo? ignored) == true && kdlPropertyInfo.IsOverriddenOrShadowedBy(ignored));
+                            (
+                                state.IgnoredProperties?.TryGetValue(
+                                    memberName,
+                                    out KdlPropertyInfo? ignored
+                                ) == true
+                                && kdlPropertyInfo.IsOverriddenOrShadowedBy(ignored)
+                            );
 
                         if (!ignoreCurrentProperty)
                         {
-                            ThrowHelper.ThrowInvalidOperationException_SerializerPropertyNameConflict(_kdlTypeInfo.Type, kdlPropertyInfo.Name);
+                            ThrowHelper.ThrowInvalidOperationException_SerializerPropertyNameConflict(
+                                _kdlTypeInfo.Type,
+                                kdlPropertyInfo.Name
+                            );
                         }
                     }
                 }

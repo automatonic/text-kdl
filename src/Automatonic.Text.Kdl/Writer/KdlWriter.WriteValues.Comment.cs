@@ -70,7 +70,9 @@ namespace Automatonic.Text.Kdl
 
         private void WriteCommentMinimized(ReadOnlySpan<char> value)
         {
-            Debug.Assert(value.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - 4);
+            Debug.Assert(
+                value.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - 4
+            );
 
             // All ASCII, /*...*/ => escapedValue.Length + 4
             // Optionally, up to 3x growth when transcoding
@@ -86,7 +88,11 @@ namespace Automatonic.Text.Kdl
             output[BytesPending++] = KdlConstants.Slash;
             output[BytesPending++] = KdlConstants.Asterisk;
 
-            OperationStatus status = KdlWriterHelper.ToUtf8(value, output[BytesPending..], out int written);
+            OperationStatus status = KdlWriterHelper.ToUtf8(
+                value,
+                output[BytesPending..],
+                out int written
+            );
             Debug.Assert(status != OperationStatus.DestinationTooSmall);
             if (status == OperationStatus.InvalidData)
             {
@@ -104,11 +110,21 @@ namespace Automatonic.Text.Kdl
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
-            Debug.Assert(value.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - indent - 4 - _newLineLength);
+            Debug.Assert(
+                value.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - indent
+                        - 4
+                        - _newLineLength
+            );
 
             // All ASCII, /*...*/ => escapedValue.Length + 4
             // Optionally, 1-2 bytes for new line, and up to 3x growth when transcoding
-            int maxRequired = indent + (value.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + 4 + _newLineLength;
+            int maxRequired =
+                indent
+                + (value.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + 4
+                + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -127,7 +143,11 @@ namespace Automatonic.Text.Kdl
             output[BytesPending++] = KdlConstants.Slash;
             output[BytesPending++] = KdlConstants.Asterisk;
 
-            OperationStatus status = KdlWriterHelper.ToUtf8(value, output[BytesPending..], out int written);
+            OperationStatus status = KdlWriterHelper.ToUtf8(
+                value,
+                output[BytesPending..],
+                out int written
+            );
             Debug.Assert(status != OperationStatus.DestinationTooSmall);
             if (status == OperationStatus.InvalidData)
             {

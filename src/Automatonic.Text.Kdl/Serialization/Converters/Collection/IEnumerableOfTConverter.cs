@@ -7,7 +7,9 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         : IEnumerableDefaultConverter<TCollection, TElement>
         where TCollection : IEnumerable<TElement>
     {
-        private readonly bool _isDeserializable = typeof(TCollection).IsAssignableFrom(typeof(List<TElement>));
+        private readonly bool _isDeserializable = typeof(TCollection).IsAssignableFrom(
+            typeof(List<TElement>)
+        );
 
         protected override void Add(in TElement value, ref ReadStack state)
         {
@@ -15,11 +17,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         }
 
         internal override bool SupportsCreateObjectDelegate => false;
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             if (!_isDeserializable)
             {
-                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(Type, ref reader, ref state);
+                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(
+                    Type,
+                    ref reader,
+                    ref state
+                );
             }
 
             state.Current.ReturnValue = new List<TElement>();

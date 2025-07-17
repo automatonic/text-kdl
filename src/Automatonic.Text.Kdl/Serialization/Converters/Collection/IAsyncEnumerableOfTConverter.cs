@@ -6,11 +6,21 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         : KdlCollectionConverter<TAsyncEnumerable, TElement>
         where TAsyncEnumerable : IAsyncEnumerable<TElement>
     {
-        internal override bool OnTryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out TAsyncEnumerable value)
+        internal override bool OnTryRead(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out TAsyncEnumerable value
+        )
         {
             if (!typeToConvert.IsAssignableFrom(typeof(IAsyncEnumerable<TElement>)))
             {
-                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(Type, ref reader, ref state);
+                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(
+                    Type,
+                    ref reader,
+                    ref state
+                );
             }
 
             return base.OnTryRead(ref reader, typeToConvert, options, ref state, out value!);
@@ -22,12 +32,22 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         }
 
         internal override bool SupportsCreateObjectDelegate => false;
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             state.Current.ReturnValue = new BufferedAsyncEnumerable();
         }
 
-        internal override bool OnTryWrite(KdlWriter writer, TAsyncEnumerable value, KdlSerializerOptions options, ref WriteStack state)
+        internal override bool OnTryWrite(
+            KdlWriter writer,
+            TAsyncEnumerable value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             if (!state.SupportAsync)
             {
@@ -37,8 +57,17 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return base.OnTryWrite(writer, value, options, ref state);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Reliability", "CA2012:Use ValueTasks correctly", Justification = "Converter needs to consume ValueTask's in a non-async context")]
-        protected override bool OnWriteResume(KdlWriter writer, TAsyncEnumerable value, KdlSerializerOptions options, ref WriteStack state)
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Reliability",
+            "CA2012:Use ValueTasks correctly",
+            Justification = "Converter needs to consume ValueTask's in a non-async context"
+        )]
+        protected override bool OnWriteResume(
+            KdlWriter writer,
+            TAsyncEnumerable value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             IAsyncEnumerator<TElement> enumerator;
             ValueTask<bool> moveNextTask;

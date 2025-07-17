@@ -9,9 +9,10 @@
         /// A type declared as <see cref="object"/> is deserialized as a <see cref="KdlElement"/>.
         /// </summary>
         KdlElement = 0,
+
         /// <summary>
         /// A type declared as <see cref="object"/> is deserialized as a <see cref="KdlVertex"/>.
         /// </summary>
-        KdlVertex = 1
+        KdlVertex = 1,
     }
 }

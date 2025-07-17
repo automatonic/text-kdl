@@ -9,13 +9,17 @@ namespace Automatonic.Text.Kdl
 {
     internal static partial class KdlReaderHelper
     {
-        public static bool TryGetUnescapedBase64Bytes(ReadOnlySpan<byte> utf8Source, [NotNullWhen(true)] out byte[]? bytes)
+        public static bool TryGetUnescapedBase64Bytes(
+            ReadOnlySpan<byte> utf8Source,
+            [NotNullWhen(true)] out byte[]? bytes
+        )
         {
             byte[]? unescapedArray = null;
 
-            Span<byte> utf8Unescaped = utf8Source.Length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (unescapedArray = ArrayPool<byte>.Shared.Rent(utf8Source.Length));
+            Span<byte> utf8Unescaped =
+                utf8Source.Length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (unescapedArray = ArrayPool<byte>.Shared.Rent(utf8Source.Length));
 
             Unescape(utf8Source, utf8Unescaped, out int written);
             Debug.Assert(written > 0);
@@ -34,7 +38,10 @@ namespace Automatonic.Text.Kdl
         }
 
         // Reject any invalid UTF-8 data rather than silently replacing.
-        public static readonly UTF8Encoding s_utf8Encoding = new(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+        public static readonly UTF8Encoding s_utf8Encoding = new(
+            encoderShouldEmitUTF8Identifier: false,
+            throwOnInvalidBytes: true
+        );
 
         // TODO: Similar to escaping, replace the unescaping logic with publicly shipping APIs from https://github.com/dotnet/runtime/issues/27919
         public static string GetUnescapedString(ReadOnlySpan<byte> utf8Source)
@@ -43,9 +50,10 @@ namespace Automatonic.Text.Kdl
             int length = utf8Source.Length;
             byte[]? pooledName = null;
 
-            Span<byte> utf8Unescaped = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (pooledName = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> utf8Unescaped =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (pooledName = ArrayPool<byte>.Shared.Rent(length));
 
             Unescape(utf8Source, utf8Unescaped, out int written);
             Debug.Assert(written > 0);
@@ -70,9 +78,10 @@ namespace Automatonic.Text.Kdl
             int length = utf8Source.Length;
             byte[]? pooledName = null;
 
-            Span<byte> utf8Unescaped = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (pooledName = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> utf8Unescaped =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (pooledName = ArrayPool<byte>.Shared.Rent(length));
 
             Unescape(utf8Source, utf8Unescaped, out int written);
             Debug.Assert(written > 0);
@@ -89,15 +98,23 @@ namespace Automatonic.Text.Kdl
             return propertyName;
         }
 
-        public static bool UnescapeAndCompare(ReadOnlySpan<byte> utf8Source, ReadOnlySpan<byte> other)
+        public static bool UnescapeAndCompare(
+            ReadOnlySpan<byte> utf8Source,
+            ReadOnlySpan<byte> other
+        )
         {
-            Debug.Assert(utf8Source.Length >= other.Length && utf8Source.Length / KdlConstants.MaxExpansionFactorWhileEscaping <= other.Length);
+            Debug.Assert(
+                utf8Source.Length >= other.Length
+                    && utf8Source.Length / KdlConstants.MaxExpansionFactorWhileEscaping
+                        <= other.Length
+            );
 
             byte[]? unescapedArray = null;
 
-            Span<byte> utf8Unescaped = utf8Source.Length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (unescapedArray = ArrayPool<byte>.Shared.Rent(utf8Source.Length));
+            Span<byte> utf8Unescaped =
+                utf8Source.Length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (unescapedArray = ArrayPool<byte>.Shared.Rent(utf8Source.Length));
 
             Unescape(utf8Source, utf8Unescaped, 0, out int written);
             Debug.Assert(written > 0);
@@ -116,23 +133,32 @@ namespace Automatonic.Text.Kdl
             return result;
         }
 
-        public static bool UnescapeAndCompare(ReadOnlySequence<byte> utf8Source, ReadOnlySpan<byte> other)
+        public static bool UnescapeAndCompare(
+            ReadOnlySequence<byte> utf8Source,
+            ReadOnlySpan<byte> other
+        )
         {
             Debug.Assert(!utf8Source.IsSingleSegment);
-            Debug.Assert(utf8Source.Length >= other.Length && utf8Source.Length / KdlConstants.MaxExpansionFactorWhileEscaping <= other.Length);
+            Debug.Assert(
+                utf8Source.Length >= other.Length
+                    && utf8Source.Length / KdlConstants.MaxExpansionFactorWhileEscaping
+                        <= other.Length
+            );
 
             byte[]? escapedArray = null;
             byte[]? unescapedArray = null;
 
             int length = checked((int)utf8Source.Length);
 
-            Span<byte> utf8Unescaped = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (unescapedArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> utf8Unescaped =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (unescapedArray = ArrayPool<byte>.Shared.Rent(length));
 
-            Span<byte> utf8Escaped = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (escapedArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> utf8Escaped =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (escapedArray = ArrayPool<byte>.Shared.Rent(length));
 
             utf8Source.CopyTo(utf8Escaped);
             utf8Escaped = utf8Escaped[..length];
@@ -157,7 +183,10 @@ namespace Automatonic.Text.Kdl
             return result;
         }
 
-        public static bool UnescapeAndCompareBothInputs(ReadOnlySpan<byte> utf8Source1, ReadOnlySpan<byte> utf8Source2)
+        public static bool UnescapeAndCompareBothInputs(
+            ReadOnlySpan<byte> utf8Source1,
+            ReadOnlySpan<byte> utf8Source2
+        )
         {
             int index1 = utf8Source1.IndexOf(KdlConstants.BackSlash);
             int index2 = utf8Source2.IndexOf(KdlConstants.BackSlash);
@@ -168,13 +197,15 @@ namespace Automatonic.Text.Kdl
             byte[]? unescapedArray1 = null;
             byte[]? unescapedArray2 = null;
 
-            Span<byte> utf8Unescaped1 = utf8Source1.Length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (unescapedArray1 = ArrayPool<byte>.Shared.Rent(utf8Source1.Length));
+            Span<byte> utf8Unescaped1 =
+                utf8Source1.Length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (unescapedArray1 = ArrayPool<byte>.Shared.Rent(utf8Source1.Length));
 
-            Span<byte> utf8Unescaped2 = utf8Source2.Length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (unescapedArray2 = ArrayPool<byte>.Shared.Rent(utf8Source2.Length));
+            Span<byte> utf8Unescaped2 =
+                utf8Source2.Length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (unescapedArray2 = ArrayPool<byte>.Shared.Rent(utf8Source2.Length));
 
             Unescape(utf8Source1, utf8Unescaped1, index1, out int written);
             utf8Unescaped1 = utf8Unescaped1[..written];
@@ -201,9 +232,15 @@ namespace Automatonic.Text.Kdl
             return result;
         }
 
-        public static bool TryDecodeBase64InPlace(Span<byte> utf8Unescaped, [NotNullWhen(true)] out byte[]? bytes)
+        public static bool TryDecodeBase64InPlace(
+            Span<byte> utf8Unescaped,
+            [NotNullWhen(true)] out byte[]? bytes
+        )
         {
-            OperationStatus status = Base64.DecodeFromUtf8InPlace(utf8Unescaped, out int bytesWritten);
+            OperationStatus status = Base64.DecodeFromUtf8InPlace(
+                utf8Unescaped,
+                out int bytesWritten
+            );
             if (status != OperationStatus.Done)
             {
                 bytes = null;
@@ -213,15 +250,24 @@ namespace Automatonic.Text.Kdl
             return true;
         }
 
-        public static bool TryDecodeBase64(ReadOnlySpan<byte> utf8Unescaped, [NotNullWhen(true)] out byte[]? bytes)
+        public static bool TryDecodeBase64(
+            ReadOnlySpan<byte> utf8Unescaped,
+            [NotNullWhen(true)] out byte[]? bytes
+        )
         {
             byte[]? pooledArray = null;
 
-            Span<byte> byteSpan = utf8Unescaped.Length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (pooledArray = ArrayPool<byte>.Shared.Rent(utf8Unescaped.Length));
+            Span<byte> byteSpan =
+                utf8Unescaped.Length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (pooledArray = ArrayPool<byte>.Shared.Rent(utf8Unescaped.Length));
 
-            OperationStatus status = Base64.DecodeFromUtf8(utf8Unescaped, byteSpan, out int bytesConsumed, out int bytesWritten);
+            OperationStatus status = Base64.DecodeFromUtf8(
+                utf8Unescaped,
+                byteSpan,
+                out int bytesConsumed,
+                out int bytesWritten
+            );
 
             if (status != OperationStatus.Done)
             {
@@ -295,7 +341,12 @@ namespace Automatonic.Text.Kdl
                     fixed (byte* srcPtr = utf8Unescaped)
                     fixed (char* destPtr = destination)
                     {
-                        return s_utf8Encoding.GetChars(srcPtr, utf8Unescaped.Length, destPtr, destination.Length);
+                        return s_utf8Encoding.GetChars(
+                            srcPtr,
+                            utf8Unescaped.Length,
+                            destPtr,
+                            destination.Length
+                        );
                     }
                 }
 #endif
@@ -439,7 +490,11 @@ namespace Automatonic.Text.Kdl
 #endif
         }
 
-        internal static void Unescape(ReadOnlySpan<byte> source, Span<byte> destination, out int written)
+        internal static void Unescape(
+            ReadOnlySpan<byte> source,
+            Span<byte> destination,
+            out int written
+        )
         {
             Debug.Assert(destination.Length >= source.Length);
 
@@ -450,7 +505,12 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(result);
         }
 
-        internal static void Unescape(ReadOnlySpan<byte> source, Span<byte> destination, int idx, out int written)
+        internal static void Unescape(
+            ReadOnlySpan<byte> source,
+            Span<byte> destination,
+            int idx,
+            out int written
+        )
         {
             Debug.Assert(idx >= 0 && idx < source.Length);
             Debug.Assert(source[idx] == KdlConstants.BackSlash);
@@ -463,7 +523,11 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Used when writing to buffers not guaranteed to fit the unescaped result.
         /// </summary>
-        internal static bool TryUnescape(ReadOnlySpan<byte> source, Span<byte> destination, out int written)
+        internal static bool TryUnescape(
+            ReadOnlySpan<byte> source,
+            Span<byte> destination,
+            out int written
+        )
         {
             int idx = source.IndexOf(KdlConstants.BackSlash);
             Debug.Assert(idx >= 0);
@@ -474,7 +538,12 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Used when writing to buffers not guaranteed to fit the unescaped result.
         /// </summary>
-        private static bool TryUnescape(ReadOnlySpan<byte> source, Span<byte> destination, int idx, out int written)
+        private static bool TryUnescape(
+            ReadOnlySpan<byte> source,
+            Span<byte> destination,
+            int idx,
+            out int written
+        )
         {
             Debug.Assert(idx >= 0 && idx < source.Length);
             Debug.Assert(source[idx] == KdlConstants.BackSlash);
@@ -523,18 +592,32 @@ namespace Automatonic.Text.Kdl
                         destination[written++] = KdlConstants.FormFeed;
                         break;
                     default:
-                        Debug.Assert(source[idx] == 'u', "invalid escape sequences must have already been caught by KdlReader.Read()");
+                        Debug.Assert(
+                            source[idx] == 'u',
+                            "invalid escape sequences must have already been caught by KdlReader.Read()"
+                        );
 
                         // The source is known to be valid KDL, and hence if we see a \u, it is guaranteed to have 4 hex digits following it
                         // Otherwise, the KdlReader would have already thrown an exception.
                         Debug.Assert(source.Length >= idx + 5);
 
-                        bool result = Utf8Parser.TryParse(source.Slice(idx + 1, 4), out int scalar, out int bytesConsumed, 'x');
+                        bool result = Utf8Parser.TryParse(
+                            source.Slice(idx + 1, 4),
+                            out int scalar,
+                            out int bytesConsumed,
+                            'x'
+                        );
                         Debug.Assert(result);
                         Debug.Assert(bytesConsumed == 4);
                         idx += 4;
 
-                        if (KdlHelpers.IsInRangeInclusive((uint)scalar, KdlConstants.HighSurrogateStartValue, KdlConstants.LowSurrogateEndValue))
+                        if (
+                            KdlHelpers.IsInRangeInclusive(
+                                (uint)scalar,
+                                KdlConstants.HighSurrogateStartValue,
+                                KdlConstants.LowSurrogateEndValue
+                            )
+                        )
                         {
                             // The first hex value cannot be a low surrogate.
                             if (scalar >= KdlConstants.LowSurrogateStartValue)
@@ -542,39 +625,73 @@ namespace Automatonic.Text.Kdl
                                 ThrowHelper.ThrowInvalidOperationException_ReadInvalidUTF16(scalar);
                             }
 
-                            Debug.Assert(KdlHelpers.IsInRangeInclusive((uint)scalar, KdlConstants.HighSurrogateStartValue, KdlConstants.HighSurrogateEndValue));
+                            Debug.Assert(
+                                KdlHelpers.IsInRangeInclusive(
+                                    (uint)scalar,
+                                    KdlConstants.HighSurrogateStartValue,
+                                    KdlConstants.HighSurrogateEndValue
+                                )
+                            );
 
                             // We must have a low surrogate following a high surrogate.
-                            if (source.Length < idx + 7 || source[idx + 1] != '\\' || source[idx + 2] != 'u')
+                            if (
+                                source.Length < idx + 7
+                                || source[idx + 1] != '\\'
+                                || source[idx + 2] != 'u'
+                            )
                             {
                                 ThrowHelper.ThrowInvalidOperationException_ReadIncompleteUTF16();
                             }
 
                             // The source is known to be valid KDL, and hence if we see a \u, it is guaranteed to have 4 hex digits following it
                             // Otherwise, the KdlReader would have already thrown an exception.
-                            result = Utf8Parser.TryParse(source.Slice(idx + 3, 4), out int lowSurrogate, out bytesConsumed, 'x');
+                            result = Utf8Parser.TryParse(
+                                source.Slice(idx + 3, 4),
+                                out int lowSurrogate,
+                                out bytesConsumed,
+                                'x'
+                            );
                             Debug.Assert(result);
                             Debug.Assert(bytesConsumed == 4);
                             idx += 6;
 
                             // If the first hex value is a high surrogate, the next one must be a low surrogate.
-                            if (!KdlHelpers.IsInRangeInclusive((uint)lowSurrogate, KdlConstants.LowSurrogateStartValue, KdlConstants.LowSurrogateEndValue))
+                            if (
+                                !KdlHelpers.IsInRangeInclusive(
+                                    (uint)lowSurrogate,
+                                    KdlConstants.LowSurrogateStartValue,
+                                    KdlConstants.LowSurrogateEndValue
+                                )
+                            )
                             {
-                                ThrowHelper.ThrowInvalidOperationException_ReadInvalidUTF16(lowSurrogate);
+                                ThrowHelper.ThrowInvalidOperationException_ReadInvalidUTF16(
+                                    lowSurrogate
+                                );
                             }
 
                             // To find the unicode scalar:
                             // (0x400 * (High surrogate - 0xD800)) + Low surrogate - 0xDC00 + 0x10000
-                            scalar = (KdlConstants.BitShiftBy10 * (scalar - KdlConstants.HighSurrogateStartValue))
+                            scalar =
+                                (
+                                    KdlConstants.BitShiftBy10
+                                    * (scalar - KdlConstants.HighSurrogateStartValue)
+                                )
                                 + (lowSurrogate - KdlConstants.LowSurrogateStartValue)
                                 + KdlConstants.UnicodePlane01StartValue;
                         }
 
 #if NET
                         var rune = new Rune(scalar);
-                        bool success = rune.TryEncodeToUtf8(destination[written..], out int bytesWritten);
+                        bool success = rune.TryEncodeToUtf8(
+                            destination[written..],
+                            out int bytesWritten
+                        );
 #else
-                        bool success = TryEncodeToUtf8Bytes((uint)scalar, destination.Slice(written), out int bytesWritten);
+                        bool success = TryEncodeToUtf8Bytes(
+                            (uint)scalar,
+                            destination.Slice(written),
+                            out int bytesWritten
+                        );
 #endif
                         if (!success)
                         {
@@ -648,7 +765,11 @@ namespace Automatonic.Text.Kdl
         /// Copies the UTF-8 code unit representation of this scalar to an output buffer.
         /// The buffer must be large enough to hold the required number of <see cref="byte"/>s.
         /// </summary>
-        private static bool TryEncodeToUtf8Bytes(uint scalar, Span<byte> utf8Destination, out int bytesWritten)
+        private static bool TryEncodeToUtf8Bytes(
+            uint scalar,
+            Span<byte> utf8Destination,
+            out int bytesWritten
+        )
         {
             Debug.Assert(KdlHelpers.IsValidUnicodeScalar(scalar));
 

@@ -39,23 +39,33 @@ internal static partial class ReflectionExtensions
     public static bool IsInSubtypeRelationshipWith(this Type type, Type other) =>
         type.IsAssignableFromInternal(other) || other.IsAssignableFromInternal(type);
 
-    private static bool HasKdlConstructorAttribute(ConstructorInfo constructorInfo)
-        => constructorInfo.GetCustomAttribute<KdlConstructorAttribute>() != null;
+    private static bool HasKdlConstructorAttribute(ConstructorInfo constructorInfo) =>
+        constructorInfo.GetCustomAttribute<KdlConstructorAttribute>() != null;
 
     public static bool HasRequiredMemberAttribute(this MemberInfo memberInfo)
     {
         // For compiler related attributes we should only look at full type name rather than trying to do something different for version when attribute was introduced.
         // I.e. library is targeting netstandard2.0 with polyfilled attributes and is being consumed by an app targeting net7.0 or greater.
-        return memberInfo.HasCustomAttributeWithName("System.Runtime.CompilerServices.RequiredMemberAttribute", inherit: false);
+        return memberInfo.HasCustomAttributeWithName(
+            "System.Runtime.CompilerServices.RequiredMemberAttribute",
+            inherit: false
+        );
     }
 
     public static bool HasSetsRequiredMembersAttribute(this MemberInfo memberInfo)
     {
         // See comment for HasRequiredMemberAttribute for why we need to always only look at full name
-        return memberInfo.HasCustomAttributeWithName("System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute", inherit: false);
+        return memberInfo.HasCustomAttributeWithName(
+            "System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute",
+            inherit: false
+        );
     }
 
-    private static bool HasCustomAttributeWithName(this MemberInfo memberInfo, string fullName, bool inherit)
+    private static bool HasCustomAttributeWithName(
+        this MemberInfo memberInfo,
+        string fullName,
+        bool inherit
+    )
     {
         foreach (object attribute in memberInfo.GetCustomAttributes(inherit))
         {
@@ -68,7 +78,10 @@ internal static partial class ReflectionExtensions
         return false;
     }
 
-    public static TAttribute? GetUniqueCustomAttribute<TAttribute>(this MemberInfo memberInfo, bool inherit)
+    public static TAttribute? GetUniqueCustomAttribute<TAttribute>(
+        this MemberInfo memberInfo,
+        bool inherit
+    )
         where TAttribute : Attribute
     {
         object[] attributes = memberInfo.GetCustomAttributes(typeof(TAttribute), inherit);
@@ -83,7 +96,10 @@ internal static partial class ReflectionExtensions
             return (TAttribute)attributes[0];
         }
 
-        ThrowHelper.ThrowInvalidOperationException_SerializationDuplicateAttribute(typeof(TAttribute), memberInfo);
+        ThrowHelper.ThrowInvalidOperationException_SerializationDuplicateAttribute(
+            typeof(TAttribute),
+            memberInfo
+        );
         return null;
     }
 
@@ -91,11 +107,21 @@ internal static partial class ReflectionExtensions
     /// Polyfill for BindingFlags.DoNotWrapExceptions
     /// </summary>
     public static object? CreateInstanceNoWrapExceptions(
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.NonPublicConstructors)] this Type type,
+        [DynamicallyAccessedMembers(
+            DynamicallyAccessedMemberTypes.PublicConstructors
+                | DynamicallyAccessedMemberTypes.NonPublicConstructors
+        )]
+            this Type type,
         Type[] parameterTypes,
-        object?[] parameters)
+        object?[] parameters
+    )
     {
-        ConstructorInfo ctorInfo = type.GetConstructor(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, parameterTypes, null)!;
+        ConstructorInfo ctorInfo = type.GetConstructor(
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
+            null,
+            parameterTypes,
+            null
+        )!;
 #if NET
         return ctorInfo.Invoke(BindingFlags.DoNotWrapExceptions, null, parameters, null);
 #else
@@ -115,8 +141,11 @@ internal static partial class ReflectionExtensions
 
     public static ParameterInfo GetGenericParameterDefinition(this ParameterInfo parameter)
     {
-        if (parameter.Member is { DeclaringType.IsConstructedGenericType: true }
-                             or MethodInfo { IsGenericMethod: true, IsGenericMethodDefinition: false })
+        if (
+            parameter.Member
+            is { DeclaringType.IsConstructedGenericType: true }
+                or MethodInfo { IsGenericMethod: true, IsGenericMethodDefinition: false }
+        )
         {
             var genericMethod = (MethodBase)parameter.Member.GetGenericMemberDefinition()!;
             return genericMethod.GetParameters()[parameter.Position];
@@ -125,8 +154,11 @@ internal static partial class ReflectionExtensions
         return parameter;
     }
 
-    [UnconditionalSuppressMessage("Trimming", "IL2075:'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.",
-        Justification = "Looking up the generic member definition of the provided member.")]
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2075:'this' argument does not satisfy 'DynamicallyAccessedMembersAttribute' in call to target method. The return value of the source method does not have matching annotations.",
+        Justification = "Looking up the generic member definition of the provided member."
+    )]
     public static MemberInfo GetGenericMemberDefinition(this MemberInfo member)
     {
         if (member is Type type)
@@ -137,11 +169,15 @@ internal static partial class ReflectionExtensions
         if (member.DeclaringType!.IsConstructedGenericType)
         {
             const BindingFlags AllMemberFlags =
-                BindingFlags.Static | BindingFlags.Instance |
-                BindingFlags.Public | BindingFlags.NonPublic;
+                BindingFlags.Static
+                | BindingFlags.Instance
+                | BindingFlags.Public
+                | BindingFlags.NonPublic;
 
             Type genericTypeDef = member.DeclaringType.GetGenericTypeDefinition();
-            foreach (MemberInfo genericMember in genericTypeDef.GetMember(member.Name, AllMemberFlags))
+            foreach (
+                MemberInfo genericMember in genericTypeDef.GetMember(member.Name, AllMemberFlags)
+            )
             {
                 if (genericMember.MetadataToken == member.MetadataToken)
                 {

@@ -19,7 +19,12 @@ namespace Automatonic.Text.Kdl
         private static readonly byte[] s_typePropertyName = "$type"u8.ToArray();
         private static readonly byte[] s_valuesPropertyName = "$values"u8.ToArray();
 
-        internal static bool TryReadMetadata(KdlConverter converter, KdlTypeInfo kdlTypeInfo, ref KdlReader reader, scoped ref ReadStack state)
+        internal static bool TryReadMetadata(
+            KdlConverter converter,
+            KdlTypeInfo kdlTypeInfo,
+            ref KdlReader reader,
+            scoped ref ReadStack state
+        )
         {
             Debug.Assert(state.Current.ObjectState == StackFrameObjectState.StartToken);
             Debug.Assert(state.Current.CanContainMetadata);
@@ -52,7 +57,10 @@ namespace Automatonic.Text.Kdl
                     // Read the property name.
                     if (!reader.Read())
                     {
-                        Debug.Assert(!allowOutOfOrderMetadata, "Object must have already been buffered in this mode.");
+                        Debug.Assert(
+                            !allowOutOfOrderMetadata,
+                            "Object must have already been buffered in this mode."
+                        );
                         return false;
                     }
 
@@ -73,11 +81,19 @@ namespace Automatonic.Text.Kdl
                     if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Ref) != 0)
                     {
                         // No properties whatsoever should follow a $ref property.
-                        ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties(reader.GetUnescapedSpan(), ref state);
+                        ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties(
+                            reader.GetUnescapedSpan(),
+                            ref state
+                        );
                     }
 
                     ReadOnlySpan<byte> propertyName = reader.GetUnescapedSpan();
-                    switch (state.Current.LatestMetadataPropertyName = GetMetadataPropertyName(propertyName, kdlTypeInfo.PolymorphicTypeResolver))
+                    switch (
+                        state.Current.LatestMetadataPropertyName = GetMetadataPropertyName(
+                            propertyName,
+                            kdlTypeInfo.PolymorphicTypeResolver
+                        )
+                    )
                     {
                         case MetadataPropertyName.Id:
                             state.Current.KdlPropertyName = s_idPropertyName;
@@ -85,17 +101,30 @@ namespace Automatonic.Text.Kdl
                             if (state.ReferenceResolver is null)
                             {
                                 // Found an $id property in a type that doesn't support reference preservation
-                                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(propertyName, ref state);
+                                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(
+                                    propertyName,
+                                    ref state
+                                );
                             }
-                            if ((state.Current.MetadataPropertyNames & (MetadataPropertyName.Id | MetadataPropertyName.Ref)) != 0)
+                            if (
+                                (
+                                    state.Current.MetadataPropertyNames
+                                    & (MetadataPropertyName.Id | MetadataPropertyName.Ref)
+                                ) != 0
+                            )
                             {
                                 // No $id or $ref properties should precede $id properties.
-                                ThrowHelper.ThrowKdlException_MetadataIdCannotBeCombinedWithRef(propertyName, ref state);
+                                ThrowHelper.ThrowKdlException_MetadataIdCannotBeCombinedWithRef(
+                                    propertyName,
+                                    ref state
+                                );
                             }
                             if (!converter.CanHaveMetadata)
                             {
                                 // Should not be permitted unless the converter is capable of handling metadata.
-                                ThrowHelper.ThrowKdlException_MetadataCannotParsePreservedObjectIntoImmutable(converter.Type!);
+                                ThrowHelper.ThrowKdlException_MetadataCannotParsePreservedObjectIntoImmutable(
+                                    converter.Type!
+                                );
                             }
 
                             break;
@@ -106,33 +135,52 @@ namespace Automatonic.Text.Kdl
                             if (state.ReferenceResolver is null)
                             {
                                 // Found a $ref property in a type that doesn't support reference preservation
-                                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(propertyName, ref state);
+                                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(
+                                    propertyName,
+                                    ref state
+                                );
                             }
                             if (converter.IsValueType)
                             {
                                 // Should not be permitted if the converter is a struct.
-                                ThrowHelper.ThrowKdlException_MetadataInvalidReferenceToValueType(converter.Type!);
+                                ThrowHelper.ThrowKdlException_MetadataInvalidReferenceToValueType(
+                                    converter.Type!
+                                );
                             }
-                            if (state.Current.MetadataPropertyNames != 0 || isReadingAheadOfNonMetadataProperties)
+                            if (
+                                state.Current.MetadataPropertyNames != 0
+                                || isReadingAheadOfNonMetadataProperties
+                            )
                             {
                                 // No properties should precede a $ref property.
-                                ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties(reader.GetUnescapedSpan(), ref state);
+                                ThrowHelper.ThrowKdlException_MetadataReferenceObjectCannotContainOtherProperties(
+                                    reader.GetUnescapedSpan(),
+                                    ref state
+                                );
                             }
 
                             break;
 
                         case MetadataPropertyName.Type:
-                            state.Current.KdlPropertyName = kdlTypeInfo.PolymorphicTypeResolver?.CustomTypeDiscriminatorPropertyNameUtf8 ?? s_typePropertyName;
+                            state.Current.KdlPropertyName =
+                                kdlTypeInfo
+                                    .PolymorphicTypeResolver
+                                    ?.CustomTypeDiscriminatorPropertyNameUtf8 ?? s_typePropertyName;
 
                             if (kdlTypeInfo.PolymorphicTypeResolver is null)
                             {
                                 // Found a $type property in a type that doesn't support polymorphism
-                                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(propertyName, ref state);
+                                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(
+                                    propertyName,
+                                    ref state
+                                );
                             }
                             if (state.PolymorphicTypeDiscriminator != null)
                             {
                                 // Found a duplicate $type property.
-                                ThrowHelper.ThrowKdlException_DuplicateMetadataProperty(state.Current.KdlPropertyName);
+                                ThrowHelper.ThrowKdlException_DuplicateMetadataProperty(
+                                    state.Current.KdlPropertyName
+                                );
                             }
 
                             break;
@@ -140,22 +188,34 @@ namespace Automatonic.Text.Kdl
                         case MetadataPropertyName.Values:
                             state.Current.KdlPropertyName = s_valuesPropertyName;
 
-                            if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Values) != 0)
+                            if (
+                                (state.Current.MetadataPropertyNames & MetadataPropertyName.Values)
+                                != 0
+                            )
                             {
                                 // Found a duplicate $values property.
-                                ThrowHelper.ThrowKdlException_DuplicateMetadataProperty(s_valuesPropertyName);
+                                ThrowHelper.ThrowKdlException_DuplicateMetadataProperty(
+                                    s_valuesPropertyName
+                                );
                             }
 
                             if (isReadingAheadOfNonMetadataProperties)
                             {
                                 // Cannot combine a $values property with other non-metadata properties.
-                                ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(ref state, kdlTypeInfo.Type, reader);
+                                ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(
+                                    ref state,
+                                    kdlTypeInfo.Type,
+                                    reader
+                                );
                             }
 
                             break;
 
                         default:
-                            Debug.Assert(state.Current.LatestMetadataPropertyName == MetadataPropertyName.None);
+                            Debug.Assert(
+                                state.Current.LatestMetadataPropertyName
+                                    == MetadataPropertyName.None
+                            );
 
                             // Encountered a non-metadata property
                             if (allowOutOfOrderMetadata)
@@ -167,16 +227,29 @@ namespace Automatonic.Text.Kdl
                                     checkpoint = reader;
                                 }
 
-                                if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Values) != 0)
+                                if (
+                                    (
+                                        state.Current.MetadataPropertyNames
+                                        & MetadataPropertyName.Values
+                                    ) != 0
+                                )
                                 {
                                     // Cannot combine a $values property with other non-metadata properties.
-                                    ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(ref state, kdlTypeInfo.Type, reader);
+                                    ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(
+                                        ref state,
+                                        kdlTypeInfo.Type,
+                                        reader
+                                    );
                                 }
 
                                 if (IsMetadataPropertyName(propertyName, resolver: null))
                                 {
                                     // properties starting with '$' are reserved for metadata
-                                    ThrowHelper.ThrowUnexpectedMetadataException(propertyName, ref reader, ref state);
+                                    ThrowHelper.ThrowUnexpectedMetadataException(
+                                        propertyName,
+                                        ref reader,
+                                        ref state
+                                    );
                                 }
 
                                 break;
@@ -196,7 +269,10 @@ namespace Automatonic.Text.Kdl
                     // Read the property value.
                     if (!reader.Read())
                     {
-                        Debug.Assert(!allowOutOfOrderMetadata, "Object must have already been buffered in this mode.");
+                        Debug.Assert(
+                            !allowOutOfOrderMetadata,
+                            "Object must have already been buffered in this mode."
+                        );
                         return false;
                     }
 
@@ -210,12 +286,18 @@ namespace Automatonic.Text.Kdl
                     case MetadataPropertyName.Id:
                         if (reader.TokenType != KdlTokenType.String)
                         {
-                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(reader.TokenType);
+                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(
+                                reader.TokenType
+                            );
                         }
 
                         if (state.ReferenceId != null)
                         {
-                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
+                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(
+                                s_refPropertyName,
+                                ref reader,
+                                ref state
+                            );
                         }
 
                         state.ReferenceId = reader.GetString();
@@ -224,12 +306,18 @@ namespace Automatonic.Text.Kdl
                     case MetadataPropertyName.Ref:
                         if (reader.TokenType != KdlTokenType.String)
                         {
-                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(reader.TokenType);
+                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(
+                                reader.TokenType
+                            );
                         }
 
                         if (state.ReferenceId != null)
                         {
-                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
+                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(
+                                s_refPropertyName,
+                                ref reader,
+                                ref state
+                            );
                         }
 
                         state.ReferenceId = reader.GetString();
@@ -247,7 +335,9 @@ namespace Automatonic.Text.Kdl
                                 state.PolymorphicTypeDiscriminator = reader.GetInt32();
                                 break;
                             default:
-                                ThrowHelper.ThrowKdlException_MetadataValueWasNotString(reader.TokenType);
+                                ThrowHelper.ThrowKdlException_MetadataValueWasNotString(
+                                    reader.TokenType
+                                );
                                 break;
                         }
 
@@ -257,14 +347,19 @@ namespace Automatonic.Text.Kdl
 
                         if (reader.TokenType != KdlTokenType.StartArray)
                         {
-                            ThrowHelper.ThrowKdlException_MetadataValuesInvalidToken(reader.TokenType);
+                            ThrowHelper.ThrowKdlException_MetadataValuesInvalidToken(
+                                reader.TokenType
+                            );
                         }
 
                         if (allowOutOfOrderMetadata)
                         {
                             // The $values property contains the collection payload,
                             // checkpoint the current reader and continue the read-ahead.
-                            Debug.Assert(!isReadingAheadOfNonMetadataProperties, "must have already verified if non-metadata properties precede $values");
+                            Debug.Assert(
+                                !isReadingAheadOfNonMetadataProperties,
+                                "must have already verified if non-metadata properties precede $values"
+                            );
                             isReadingAheadOfNonMetadataProperties = true;
                             checkpoint = reader;
                             reader.SkipWithVerify();
@@ -279,8 +374,13 @@ namespace Automatonic.Text.Kdl
                         break;
 
                     default:
-                        Debug.Assert(state.Current.LatestMetadataPropertyName == MetadataPropertyName.None);
-                        Debug.Assert(allowOutOfOrderMetadata, "should only be reached if reading ahead is required.");
+                        Debug.Assert(
+                            state.Current.LatestMetadataPropertyName == MetadataPropertyName.None
+                        );
+                        Debug.Assert(
+                            allowOutOfOrderMetadata,
+                            "should only be reached if reading ahead is required."
+                        );
                         reader.SkipWithVerify();
 
                         break;
@@ -295,7 +395,10 @@ namespace Automatonic.Text.Kdl
             if (state.Current.MetadataPropertyNames is MetadataPropertyName.Values)
             {
                 // Cannot have a $values property unless there are other metadata properties.
-                ThrowHelper.ThrowKdlException_MetadataStandaloneValuesProperty(ref state, s_valuesPropertyName);
+                ThrowHelper.ThrowKdlException_MetadataStandaloneValuesProperty(
+                    ref state,
+                    s_valuesPropertyName
+                );
             }
 
             if (isReadingAheadOfNonMetadataProperties)
@@ -307,14 +410,23 @@ namespace Automatonic.Text.Kdl
             return true;
         }
 
-        internal static bool IsMetadataPropertyName(ReadOnlySpan<byte> propertyName, PolymorphicTypeResolver? resolver)
+        internal static bool IsMetadataPropertyName(
+            ReadOnlySpan<byte> propertyName,
+            PolymorphicTypeResolver? resolver
+        )
         {
-            return
-                (propertyName.Length > 0 && propertyName[0] == '$') ||
-                (resolver?.CustomTypeDiscriminatorPropertyNameUtf8?.AsSpan().SequenceEqual(propertyName) == true);
+            return (propertyName.Length > 0 && propertyName[0] == '$')
+                || (
+                    resolver
+                        ?.CustomTypeDiscriminatorPropertyNameUtf8?.AsSpan()
+                        .SequenceEqual(propertyName) == true
+                );
         }
 
-        internal static MetadataPropertyName GetMetadataPropertyName(ReadOnlySpan<byte> propertyName, PolymorphicTypeResolver? resolver)
+        internal static MetadataPropertyName GetMetadataPropertyName(
+            ReadOnlySpan<byte> propertyName,
+            PolymorphicTypeResolver? resolver
+        )
         {
             if (propertyName.Length > 0 && propertyName[0] == '$')
             {
@@ -326,7 +438,9 @@ namespace Automatonic.Text.Kdl
                     case 4 when propertyName.SequenceEqual("$ref"u8):
                         return MetadataPropertyName.Ref;
 
-                    case 5 when resolver?.CustomTypeDiscriminatorPropertyNameUtf8 is null && propertyName.SequenceEqual("$type"u8):
+                    case 5
+                        when resolver?.CustomTypeDiscriminatorPropertyNameUtf8 is null
+                            && propertyName.SequenceEqual("$type"u8):
                         return MetadataPropertyName.Type;
 
                     case 7 when propertyName.SequenceEqual("$values"u8):
@@ -334,8 +448,10 @@ namespace Automatonic.Text.Kdl
                 }
             }
 
-            if (resolver?.CustomTypeDiscriminatorPropertyNameUtf8 is byte[] customTypeDiscriminator &&
-                propertyName.SequenceEqual(customTypeDiscriminator))
+            if (
+                resolver?.CustomTypeDiscriminatorPropertyNameUtf8 is byte[] customTypeDiscriminator
+                && propertyName.SequenceEqual(customTypeDiscriminator)
+            )
             {
                 return MetadataPropertyName.Type;
             }
@@ -347,7 +463,8 @@ namespace Automatonic.Text.Kdl
             ref KdlReader reader,
             scoped ref ReadStack state,
             KdlReadOnlyElement element,
-            [NotNullWhen(true)] out object? referenceValue)
+            [NotNullWhen(true)] out object? referenceValue
+        )
         {
             bool refMetadataFound = false;
             referenceValue = default;
@@ -367,16 +484,25 @@ namespace Automatonic.Text.Kdl
                     {
                         if (state.ReferenceId != null)
                         {
-                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
+                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(
+                                s_refPropertyName,
+                                ref reader,
+                                ref state
+                            );
                         }
 
                         if (property.Value.ValueKind != KdlValueKind.String)
                         {
-                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(property.Value.ValueKind);
+                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(
+                                property.Value.ValueKind
+                            );
                         }
 
                         object boxedElement = element;
-                        state.ReferenceResolver.AddReference(property.Value.GetString()!, boxedElement);
+                        state.ReferenceResolver.AddReference(
+                            property.Value.GetString()!,
+                            boxedElement
+                        );
                         referenceValue = boxedElement;
                         return true;
                     }
@@ -384,7 +510,11 @@ namespace Automatonic.Text.Kdl
                     {
                         if (state.ReferenceId != null)
                         {
-                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(s_refPropertyName, ref reader, ref state);
+                            ThrowHelper.ThrowNotSupportedException_ObjectWithParameterizedCtorRefMetadataNotSupported(
+                                s_refPropertyName,
+                                ref reader,
+                                ref state
+                            );
                         }
 
                         if (propertyCount > 1)
@@ -395,10 +525,14 @@ namespace Automatonic.Text.Kdl
 
                         if (property.Value.ValueKind != KdlValueKind.String)
                         {
-                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(property.Value.ValueKind);
+                            ThrowHelper.ThrowKdlException_MetadataValueWasNotString(
+                                property.Value.ValueKind
+                            );
                         }
 
-                        referenceValue = state.ReferenceResolver.ResolveReference(property.Value.GetString()!);
+                        referenceValue = state.ReferenceResolver.ResolveReference(
+                            property.Value.GetString()!
+                        );
                         refMetadataFound = true;
                     }
                 }
@@ -411,7 +545,8 @@ namespace Automatonic.Text.Kdl
             ref KdlReader reader,
             scoped ref ReadStack state,
             KdlElement? kdlElement,
-            [NotNullWhen(true)] out object? referenceValue)
+            [NotNullWhen(true)] out object? referenceValue
+        )
         {
             bool refMetadataFound = false;
             referenceValue = default;
@@ -485,30 +620,49 @@ namespace Automatonic.Text.Kdl
             if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Values) != 0)
             {
                 // Object converters do not support $values metadata.
-                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(s_valuesPropertyName, ref state);
+                ThrowHelper.ThrowKdlException_MetadataUnexpectedProperty(
+                    s_valuesPropertyName,
+                    ref state
+                );
             }
         }
 
-        internal static void ValidateMetadataForArrayConverter(KdlConverter converter, ref KdlReader reader, scoped ref ReadStack state)
+        internal static void ValidateMetadataForArrayConverter(
+            KdlConverter converter,
+            ref KdlReader reader,
+            scoped ref ReadStack state
+        )
         {
             switch (reader.TokenType)
             {
                 case KdlTokenType.StartArray:
-                    Debug.Assert(state.Current.MetadataPropertyNames is MetadataPropertyName.None || state.Current.MetadataPropertyNames.HasFlag(MetadataPropertyName.Values));
+                    Debug.Assert(
+                        state.Current.MetadataPropertyNames is MetadataPropertyName.None
+                            || state.Current.MetadataPropertyNames.HasFlag(
+                                MetadataPropertyName.Values
+                            )
+                    );
                     break;
 
                 case KdlTokenType.EndChildrenBlock:
                     if (state.Current.MetadataPropertyNames != MetadataPropertyName.Ref)
                     {
                         // Read the entire KDL object while parsing for metadata: for collection converters this is only legal for $ref nodes.
-                        ThrowHelper.ThrowKdlException_MetadataPreservedArrayValuesNotFound(ref state, converter.Type!);
+                        ThrowHelper.ThrowKdlException_MetadataPreservedArrayValuesNotFound(
+                            ref state,
+                            converter.Type!
+                        );
                     }
                     break;
 
                 default:
                     Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
                     // Do not tolerate non-metadata properties in collection converters.
-                    ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(ref state, converter.Type!, reader);
+                    ThrowHelper.ThrowKdlException_MetadataInvalidPropertyInArrayMetadata(
+                        ref state,
+                        converter.Type!,
+                        reader
+                    );
                     break;
             }
         }
@@ -529,7 +683,10 @@ namespace Automatonic.Text.Kdl
             catch (InvalidCastException)
             {
                 ThrowHelper.ThrowInvalidOperationException_MetadataReferenceOfTypeCannotBeAssignedToType(
-                    referenceId, value.GetType(), typeof(T));
+                    referenceId,
+                    value.GetType(),
+                    typeof(T)
+                );
                 return default!;
             }
         }

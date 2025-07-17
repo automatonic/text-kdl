@@ -13,7 +13,8 @@ namespace Automatonic.Text.Kdl.Schema
             KdlTypeInfo typeInfo,
             KdlPropertyInfo? propertyInfo,
             KdlTypeInfo? baseTypeInfo,
-            string[] path)
+            string[] path
+        )
         {
             TypeInfo = typeInfo;
             PropertyInfo = propertyInfo;

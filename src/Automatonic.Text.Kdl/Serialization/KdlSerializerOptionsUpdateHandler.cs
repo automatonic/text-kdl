@@ -4,6 +4,7 @@ using Automatonic.Text.Kdl.Serialization.Metadata;
 
 [assembly: MetadataUpdateHandler(typeof(KdlSerializerOptionsUpdateHandler))]
 
+
 #pragma warning disable IDE0060
 
 namespace Automatonic.Text.Kdl
@@ -14,7 +15,11 @@ namespace Automatonic.Text.Kdl
         public static void ClearCache(Type[]? types)
         {
             // Ignore the types, and just clear out all reflection caches from serializer options.
-            foreach (KeyValuePair<KdlSerializerOptions, object?> options in KdlSerializerOptions.TrackedOptionsInstances.All)
+            foreach (
+                KeyValuePair<KdlSerializerOptions, object?> options in KdlSerializerOptions
+                    .TrackedOptionsInstances
+                    .All
+            )
             {
                 options.Key.ClearCaches();
             }

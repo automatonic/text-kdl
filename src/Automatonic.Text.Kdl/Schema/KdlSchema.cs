@@ -23,9 +23,11 @@ namespace Automatonic.Text.Kdl.Schema
         internal const string MaxLengthPropertyName = "maxLength";
 
         public static KdlSchema CreateFalseSchema() => new(false);
+
         public static KdlSchema CreateTrueSchema() => new(true);
 
         public KdlSchema() { }
+
         private KdlSchema(bool trueOrFalse) => _trueOrFalse = trueOrFalse;
 
         public bool IsTrue => _trueOrFalse is true;
@@ -40,55 +42,191 @@ namespace Automatonic.Text.Kdl.Schema
         /// </summary>
         private readonly bool? _trueOrFalse;
 
-        public string? Ref { get => _ref; set { VerifyMutable(); _ref = value; } }
+        public string? Ref
+        {
+            get => _ref;
+            set
+            {
+                VerifyMutable();
+                _ref = value;
+            }
+        }
         private string? _ref;
 
-        public string? Comment { get => _comment; set { VerifyMutable(); _comment = value; } }
+        public string? Comment
+        {
+            get => _comment;
+            set
+            {
+                VerifyMutable();
+                _comment = value;
+            }
+        }
         private string? _comment;
 
-        public KdlSchemaType Type { get => _type; set { VerifyMutable(); _type = value; } }
+        public KdlSchemaType Type
+        {
+            get => _type;
+            set
+            {
+                VerifyMutable();
+                _type = value;
+            }
+        }
         private KdlSchemaType _type = KdlSchemaType.Any;
 
-        public string? Format { get => _format; set { VerifyMutable(); _format = value; } }
+        public string? Format
+        {
+            get => _format;
+            set
+            {
+                VerifyMutable();
+                _format = value;
+            }
+        }
         private string? _format;
 
-        public string? Pattern { get => _pattern; set { VerifyMutable(); _pattern = value; } }
+        public string? Pattern
+        {
+            get => _pattern;
+            set
+            {
+                VerifyMutable();
+                _pattern = value;
+            }
+        }
         private string? _pattern;
 
-        public KdlElement? Constant { get => _constant; set { VerifyMutable(); _constant = value; } }
+        public KdlElement? Constant
+        {
+            get => _constant;
+            set
+            {
+                VerifyMutable();
+                _constant = value;
+            }
+        }
         private KdlElement? _constant;
 
-        public List<KeyValuePair<string, KdlSchema>>? Properties { get => _properties; set { VerifyMutable(); _properties = value; } }
+        public List<KeyValuePair<string, KdlSchema>>? Properties
+        {
+            get => _properties;
+            set
+            {
+                VerifyMutable();
+                _properties = value;
+            }
+        }
         private List<KeyValuePair<string, KdlSchema>>? _properties;
 
-        public List<string>? Required { get => _required; set { VerifyMutable(); _required = value; } }
+        public List<string>? Required
+        {
+            get => _required;
+            set
+            {
+                VerifyMutable();
+                _required = value;
+            }
+        }
         private List<string>? _required;
 
-        public KdlSchema? Items { get => _items; set { VerifyMutable(); _items = value; } }
+        public KdlSchema? Items
+        {
+            get => _items;
+            set
+            {
+                VerifyMutable();
+                _items = value;
+            }
+        }
         private KdlSchema? _items;
 
-        public KdlSchema? AdditionalProperties { get => _additionalProperties; set { VerifyMutable(); _additionalProperties = value; } }
+        public KdlSchema? AdditionalProperties
+        {
+            get => _additionalProperties;
+            set
+            {
+                VerifyMutable();
+                _additionalProperties = value;
+            }
+        }
         private KdlSchema? _additionalProperties;
 
-        public KdlNode? Enum { get => _enum; set { VerifyMutable(); _enum = value; } }
+        public KdlNode? Enum
+        {
+            get => _enum;
+            set
+            {
+                VerifyMutable();
+                _enum = value;
+            }
+        }
         private KdlNode? _enum;
 
-        public KdlSchema? Not { get => _not; set { VerifyMutable(); _not = value; } }
+        public KdlSchema? Not
+        {
+            get => _not;
+            set
+            {
+                VerifyMutable();
+                _not = value;
+            }
+        }
         private KdlSchema? _not;
 
-        public List<KdlSchema>? AnyOf { get => _anyOf; set { VerifyMutable(); _anyOf = value; } }
+        public List<KdlSchema>? AnyOf
+        {
+            get => _anyOf;
+            set
+            {
+                VerifyMutable();
+                _anyOf = value;
+            }
+        }
         private List<KdlSchema>? _anyOf;
 
-        public bool HasDefaultValue { get => _hasDefaultValue; set { VerifyMutable(); _hasDefaultValue = value; } }
+        public bool HasDefaultValue
+        {
+            get => _hasDefaultValue;
+            set
+            {
+                VerifyMutable();
+                _hasDefaultValue = value;
+            }
+        }
         private bool _hasDefaultValue;
 
-        public KdlElement? DefaultValue { get => _defaultValue; set { VerifyMutable(); _defaultValue = value; } }
+        public KdlElement? DefaultValue
+        {
+            get => _defaultValue;
+            set
+            {
+                VerifyMutable();
+                _defaultValue = value;
+            }
+        }
         private KdlElement? _defaultValue;
 
-        public int? MinLength { get => _minLength; set { VerifyMutable(); _minLength = value; } }
+        public int? MinLength
+        {
+            get => _minLength;
+            set
+            {
+                VerifyMutable();
+                _minLength = value;
+            }
+        }
         private int? _minLength;
 
-        public int? MaxLength { get => _maxLength; set { VerifyMutable(); _maxLength = value; } }
+        public int? MaxLength
+        {
+            get => _maxLength;
+            set
+            {
+                VerifyMutable();
+                _maxLength = value;
+            }
+        }
         private int? _maxLength;
 
         public KdlSchemaExporterContext? ExporterContext { get; set; }
@@ -209,7 +347,10 @@ namespace Automatonic.Text.Kdl.Schema
 
             if (AdditionalProperties != null)
             {
-                objSchema.Add(AdditionalPropertiesPropertyName, AdditionalProperties.ToKdlNode(options));
+                objSchema.Add(
+                    AdditionalPropertiesPropertyName,
+                    AdditionalProperties.ToKdlNode(options)
+                );
             }
 
             if (Enum != null)
@@ -254,7 +395,10 @@ namespace Automatonic.Text.Kdl.Schema
             {
                 if (ExporterContext is { } context)
                 {
-                    Debug.Assert(options.TransformSchemaNode != null, "context should only be populated if a callback is present.");
+                    Debug.Assert(
+                        options.TransformSchemaNode != null,
+                        "context should only be populated if a callback is present."
+                    );
                     // Apply any user-defined transformations to the schema.
                     return options.TransformSchemaNode(context, schema);
                 }
@@ -281,16 +425,16 @@ namespace Automatonic.Text.Kdl.Schema
         }
 
         private static ReadOnlySpan<KdlSchemaType> s_schemaValues =>
-        [
-            // NB the order of these values influences order of types in the rendered schema
-            KdlSchemaType.String,
-            KdlSchemaType.Integer,
-            KdlSchemaType.Number,
-            KdlSchemaType.Boolean,
-            KdlSchemaType.Array,
-            KdlSchemaType.Object,
-            KdlSchemaType.Null,
-        ];
+            [
+                // NB the order of these values influences order of types in the rendered schema
+                KdlSchemaType.String,
+                KdlSchemaType.Integer,
+                KdlSchemaType.Number,
+                KdlSchemaType.Boolean,
+                KdlSchemaType.Array,
+                KdlSchemaType.Object,
+                KdlSchemaType.Null,
+            ];
 
         private void VerifyMutable()
         {
@@ -325,17 +469,18 @@ namespace Automatonic.Text.Kdl.Schema
 
             return array;
 
-            static string? ToIdentifier(KdlSchemaType schemaType) => schemaType switch
-            {
-                KdlSchemaType.Null => "null",
-                KdlSchemaType.Boolean => "boolean",
-                KdlSchemaType.Integer => "integer",
-                KdlSchemaType.Number => "number",
-                KdlSchemaType.String => "string",
-                KdlSchemaType.Array => "array",
-                KdlSchemaType.Object => "object",
-                _ => null,
-            };
+            static string? ToIdentifier(KdlSchemaType schemaType) =>
+                schemaType switch
+                {
+                    KdlSchemaType.Null => "null",
+                    KdlSchemaType.Boolean => "boolean",
+                    KdlSchemaType.Integer => "integer",
+                    KdlSchemaType.Number => "number",
+                    KdlSchemaType.String => "string",
+                    KdlSchemaType.Array => "array",
+                    KdlSchemaType.Object => "object",
+                    _ => null,
+                };
         }
     }
 }

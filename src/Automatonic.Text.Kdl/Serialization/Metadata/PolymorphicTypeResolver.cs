@@ -12,16 +12,23 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
     /// </summary>
     internal sealed class PolymorphicTypeResolver
     {
-        private readonly ConcurrentDictionary<Type, DerivedKdlTypeInfo?> _typeToDiscriminatorId = new();
+        private readonly ConcurrentDictionary<Type, DerivedKdlTypeInfo?> _typeToDiscriminatorId =
+            new();
         private readonly Dictionary<object, DerivedKdlTypeInfo>? _discriminatorIdtoType;
 #pragma warning disable IDE0052 // Remove unread private members
         private readonly KdlSerializerOptions _options;
 #pragma warning restore IDE0052 // Remove unread private members
 
-        public PolymorphicTypeResolver(KdlSerializerOptions options, KdlPolymorphismOptions polymorphismOptions, Type baseType, bool converterCanHaveMetadata)
+        public PolymorphicTypeResolver(
+            KdlSerializerOptions options,
+            KdlPolymorphismOptions polymorphismOptions,
+            Type baseType,
+            bool converterCanHaveMetadata
+        )
         {
             UnknownDerivedTypeHandling = polymorphismOptions.UnknownDerivedTypeHandling;
-            IgnoreUnrecognizedTypeDiscriminators = polymorphismOptions.IgnoreUnrecognizedTypeDiscriminators;
+            IgnoreUnrecognizedTypeDiscriminators =
+                polymorphismOptions.IgnoreUnrecognizedTypeDiscriminators;
             BaseType = baseType;
             _options = options;
 
@@ -31,14 +38,25 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
 
             bool containsDerivedTypes = false;
-            foreach ((Type derivedType, object? typeDiscriminator) in polymorphismOptions.DerivedTypes)
+            foreach (
+                (Type derivedType, object? typeDiscriminator) in polymorphismOptions.DerivedTypes
+            )
             {
                 Debug.Assert(typeDiscriminator is null or int or string);
 
-                if (!IsSupportedDerivedType(BaseType, derivedType) ||
-                    (derivedType.IsAbstract && UnknownDerivedTypeHandling != KdlUnknownDerivedTypeHandling.FallBackToNearestAncestor))
+                if (
+                    !IsSupportedDerivedType(BaseType, derivedType)
+                    || (
+                        derivedType.IsAbstract
+                        && UnknownDerivedTypeHandling
+                            != KdlUnknownDerivedTypeHandling.FallBackToNearestAncestor
+                    )
+                )
                 {
-                    ThrowHelper.ThrowInvalidOperationException_DerivedTypeNotSupported(BaseType, derivedType);
+                    ThrowHelper.ThrowInvalidOperationException_DerivedTypeNotSupported(
+                        BaseType,
+                        derivedType
+                    );
                 }
 
                 KdlTypeInfo derivedTypeInfo = options.GetTypeInfoInternal(derivedType);
@@ -46,14 +64,25 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
                 if (!_typeToDiscriminatorId.TryAdd(derivedType, derivedTypeInfoHolder))
                 {
-                    ThrowHelper.ThrowInvalidOperationException_DerivedTypeIsAlreadySpecified(BaseType, derivedType);
+                    ThrowHelper.ThrowInvalidOperationException_DerivedTypeIsAlreadySpecified(
+                        BaseType,
+                        derivedType
+                    );
                 }
 
                 if (typeDiscriminator is not null)
                 {
-                    if (!(_discriminatorIdtoType ??= []).TryAdd(typeDiscriminator, derivedTypeInfoHolder))
+                    if (
+                        !(_discriminatorIdtoType ??= []).TryAdd(
+                            typeDiscriminator,
+                            derivedTypeInfoHolder
+                        )
+                    )
                     {
-                        ThrowHelper.ThrowInvalidOperationException_TypeDicriminatorIdIsAlreadySpecified(BaseType, typeDiscriminator);
+                        ThrowHelper.ThrowInvalidOperationException_TypeDicriminatorIdIsAlreadySpecified(
+                            BaseType,
+                            typeDiscriminator
+                        );
                     }
 
                     UsesTypeDiscriminators = true;
@@ -64,16 +93,23 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             if (!containsDerivedTypes)
             {
-                ThrowHelper.ThrowInvalidOperationException_PolymorphicTypeConfigurationDoesNotSpecifyDerivedTypes(BaseType);
+                ThrowHelper.ThrowInvalidOperationException_PolymorphicTypeConfigurationDoesNotSpecifyDerivedTypes(
+                    BaseType
+                );
             }
 
             if (UsesTypeDiscriminators)
             {
-                Debug.Assert(_discriminatorIdtoType != null, "Discriminator index must have been populated.");
+                Debug.Assert(
+                    _discriminatorIdtoType != null,
+                    "Discriminator index must have been populated."
+                );
 
                 if (!converterCanHaveMetadata)
                 {
-                    ThrowHelper.ThrowNotSupportedException_BaseConverterDoesNotSupportMetadata(BaseType);
+                    ThrowHelper.ThrowNotSupportedException_BaseConverterDoesNotSupportMetadata(
+                        BaseType
+                    );
                 }
 
                 string propertyName = polymorphismOptions.TypeDiscriminatorPropertyName;
@@ -82,13 +118,21 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     byte[] utf8EncodedName = Encoding.UTF8.GetBytes(propertyName);
 
                     // Check if the property name conflicts with other metadata property names
-                    if ((KdlSerializer.GetMetadataPropertyName(utf8EncodedName, resolver: null) & ~MetadataPropertyName.Type) != 0)
+                    if (
+                        (
+                            KdlSerializer.GetMetadataPropertyName(utf8EncodedName, resolver: null)
+                            & ~MetadataPropertyName.Type
+                        ) != 0
+                    )
                     {
                         ThrowHelper.ThrowInvalidOperationException_InvalidCustomTypeDiscriminatorPropertyName();
                     }
 
                     CustomTypeDiscriminatorPropertyNameUtf8 = utf8EncodedName;
-                    CustomTypeDiscriminatorPropertyNameKdlEncoded = KdlEncodedText.Encode(propertyName, options.Encoder);
+                    CustomTypeDiscriminatorPropertyNameKdlEncoded = KdlEncodedText.Encode(
+                        propertyName,
+                        options.Encoder
+                    );
                 }
 
                 // Check if the discriminator property name conflicts with any derived property names.
@@ -98,9 +142,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     {
                         foreach (KdlPropertyInfo property in derivedTypeInfo.KdlTypeInfo.Properties)
                         {
-                            if (property is { IsIgnored: false, IsExtensionData: false } && property.Name == propertyName)
+                            if (
+                                property is { IsIgnored: false, IsExtensionData: false }
+                                && property.Name == propertyName
+                            )
                             {
-                                ThrowHelper.ThrowInvalidOperationException_PropertyConflictsWithMetadataPropertyName(derivedTypeInfo.KdlTypeInfo.Type, propertyName);
+                                ThrowHelper.ThrowInvalidOperationException_PropertyConflictsWithMetadataPropertyName(
+                                    derivedTypeInfo.KdlTypeInfo.Type,
+                                    propertyName
+                                );
                             }
                         }
                     }
@@ -115,7 +165,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         public byte[]? CustomTypeDiscriminatorPropertyNameUtf8 { get; }
         public KdlEncodedText? CustomTypeDiscriminatorPropertyNameKdlEncoded { get; }
 
-        public bool TryGetDerivedKdlTypeInfo(Type runtimeType, [NotNullWhen(true)] out KdlTypeInfo? kdlTypeInfo, out object? typeDiscriminator)
+        public bool TryGetDerivedKdlTypeInfo(
+            Type runtimeType,
+            [NotNullWhen(true)] out KdlTypeInfo? kdlTypeInfo,
+            out object? typeDiscriminator
+        )
         {
             Debug.Assert(BaseType.IsAssignableFrom(runtimeType));
 
@@ -139,7 +193,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     default:
                         if (runtimeType != BaseType)
                         {
-                            ThrowHelper.ThrowNotSupportedException_RuntimeTypeNotSupported(BaseType, runtimeType);
+                            ThrowHelper.ThrowNotSupportedException_RuntimeTypeNotSupported(
+                                BaseType,
+                                runtimeType
+                            );
                         }
                         break;
                 }
@@ -159,13 +216,21 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        public bool TryGetDerivedKdlTypeInfo(object typeDiscriminator, [NotNullWhen(true)] out KdlTypeInfo? kdlTypeInfo)
+        public bool TryGetDerivedKdlTypeInfo(
+            object typeDiscriminator,
+            [NotNullWhen(true)] out KdlTypeInfo? kdlTypeInfo
+        )
         {
             Debug.Assert(typeDiscriminator is int or string);
             Debug.Assert(UsesTypeDiscriminators);
             Debug.Assert(_discriminatorIdtoType != null);
 
-            if (_discriminatorIdtoType.TryGetValue(typeDiscriminator, out DerivedKdlTypeInfo? result))
+            if (
+                _discriminatorIdtoType.TryGetValue(
+                    typeDiscriminator,
+                    out DerivedKdlTypeInfo? result
+                )
+            )
             {
                 Debug.Assert(typeDiscriminator.Equals(result.TypeDiscriminator));
                 kdlTypeInfo = result.KdlTypeInfo;
@@ -182,24 +247,30 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         }
 
         public static bool IsSupportedPolymorphicBaseType(Type? type) =>
-            type != null &&
-            (type.IsClass || type.IsInterface) &&
-            !type.IsSealed &&
-            !type.IsGenericTypeDefinition &&
-            !type.IsPointer &&
-            type != KdlTypeInfo.ObjectType;
+            type != null
+            && (type.IsClass || type.IsInterface)
+            && !type.IsSealed
+            && !type.IsGenericTypeDefinition
+            && !type.IsPointer
+            && type != KdlTypeInfo.ObjectType;
 
         public static bool IsSupportedDerivedType(Type baseType, Type? derivedType) =>
             baseType.IsAssignableFrom(derivedType) && !derivedType.IsGenericTypeDefinition;
 
-        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2070:UnrecognizedReflectionPattern",
-            Justification = "The call to GetInterfaces will cross-reference results with interface types " +
-                            "already declared as derived types of the polymorphic base type.")]
+        [UnconditionalSuppressMessage(
+            "ReflectionAnalysis",
+            "IL2070:UnrecognizedReflectionPattern",
+            Justification = "The call to GetInterfaces will cross-reference results with interface types "
+                + "already declared as derived types of the polymorphic base type."
+        )]
         private DerivedKdlTypeInfo? CalculateNearestAncestor(Type type)
         {
             Debug.Assert(!type.IsAbstract);
             Debug.Assert(BaseType.IsAssignableFrom(type));
-            Debug.Assert(UnknownDerivedTypeHandling == KdlUnknownDerivedTypeHandling.FallBackToNearestAncestor);
+            Debug.Assert(
+                UnknownDerivedTypeHandling
+                    == KdlUnknownDerivedTypeHandling.FallBackToNearestAncestor
+            );
 
             if (type == BaseType)
             {
@@ -209,7 +280,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             DerivedKdlTypeInfo? result = null;
 
             // First, walk up the class hierarchy for any supported types.
-            for (Type? candidate = type.BaseType; BaseType.IsAssignableFrom(candidate); candidate = candidate.BaseType)
+            for (
+                Type? candidate = type.BaseType;
+                BaseType.IsAssignableFrom(candidate);
+                candidate = candidate.BaseType
+            )
             {
                 Debug.Assert(candidate != null);
 
@@ -225,9 +300,15 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 foreach (Type interfaceTy in type.GetInterfaces())
                 {
-                    if (interfaceTy != BaseType && BaseType.IsAssignableFrom(interfaceTy) &&
-                        _typeToDiscriminatorId.TryGetValue(interfaceTy, out DerivedKdlTypeInfo? interfaceResult) &&
-                        interfaceResult is not null)
+                    if (
+                        interfaceTy != BaseType
+                        && BaseType.IsAssignableFrom(interfaceTy)
+                        && _typeToDiscriminatorId.TryGetValue(
+                            interfaceTy,
+                            out DerivedKdlTypeInfo? interfaceResult
+                        )
+                        && interfaceResult is not null
+                    )
                     {
                         if (result is null)
                         {
@@ -235,7 +316,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                         }
                         else
                         {
-                            ThrowHelper.ThrowNotSupportedException_RuntimeTypeDiamondAmbiguity(BaseType, type, result.KdlTypeInfo.Type, interfaceResult.KdlTypeInfo.Type);
+                            ThrowHelper.ThrowNotSupportedException_RuntimeTypeDiamondAmbiguity(
+                                BaseType,
+                                type,
+                                result.KdlTypeInfo.Type,
+                                interfaceResult.KdlTypeInfo.Type
+                            );
                         }
                     }
                 }
@@ -247,9 +333,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <summary>
         /// Walks the type hierarchy above the current type for any types that use polymorphic configuration.
         /// </summary>
-        [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2075:UnrecognizedReflectionPattern",
-            Justification = "The call to GetInterfaces will cross-reference results with interface types " +
-                            "already declared as derived types of the polymorphic base type.")]
+        [UnconditionalSuppressMessage(
+            "ReflectionAnalysis",
+            "IL2075:UnrecognizedReflectionPattern",
+            Justification = "The call to GetInterfaces will cross-reference results with interface types "
+                + "already declared as derived types of the polymorphic base type."
+        )]
         internal static KdlTypeInfo? FindNearestPolymorphicBaseType(KdlTypeInfo typeInfo)
         {
             Debug.Assert(typeInfo.IsConfigured);
@@ -263,7 +352,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             KdlTypeInfo? matchingResult = null;
 
             // First, walk up the class hierarchy for any supported types.
-            for (Type? candidate = typeInfo.Type.BaseType; candidate != null; candidate = candidate.BaseType)
+            for (
+                Type? candidate = typeInfo.Type.BaseType;
+                candidate != null;
+                candidate = candidate.BaseType
+            )
             {
                 KdlTypeInfo? candidateInfo = ResolveAncestorTypeInfo(candidate, typeInfo.Options);
                 if (candidateInfo?.PolymorphismOptions != null)
@@ -277,7 +370,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             // Now, walk the interface hierarchy for any polymorphic interface declarations.
             foreach (Type interfaceType in typeInfo.Type.GetInterfaces())
             {
-                KdlTypeInfo? candidateInfo = ResolveAncestorTypeInfo(interfaceType, typeInfo.Options);
+                KdlTypeInfo? candidateInfo = ResolveAncestorTypeInfo(
+                    interfaceType,
+                    typeInfo.Options
+                );
                 if (candidateInfo?.PolymorphismOptions != null)
                 {
                     if (matchingResult != null)

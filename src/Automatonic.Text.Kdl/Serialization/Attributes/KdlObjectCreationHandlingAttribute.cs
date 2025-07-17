@@ -24,7 +24,14 @@ namespace Automatonic.Text.Kdl.Serialization;
 /// Value types require a setter to support population; in such cases
 /// deserialization will use a copy of the property value which will get assigned back to the setter once finished.
 /// </remarks>
-[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Interface, AllowMultiple = false)]
+[AttributeUsage(
+    AttributeTargets.Field
+        | AttributeTargets.Property
+        | AttributeTargets.Class
+        | AttributeTargets.Struct
+        | AttributeTargets.Interface,
+    AllowMultiple = false
+)]
 public sealed class KdlObjectCreationHandlingAttribute : KdlAttribute
 {
     /// <summary>

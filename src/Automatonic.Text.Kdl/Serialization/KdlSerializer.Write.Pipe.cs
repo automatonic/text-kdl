@@ -23,7 +23,8 @@ namespace Automatonic.Text.Kdl
             PipeWriter utf8Kdl,
             TValue value,
             KdlTypeInfo<TValue> kdlTypeInfo,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -60,7 +61,8 @@ namespace Automatonic.Text.Kdl
             PipeWriter utf8Kdl,
             TValue value,
             KdlSerializerOptions? options = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -89,7 +91,8 @@ namespace Automatonic.Text.Kdl
             PipeWriter utf8Kdl,
             object? value,
             KdlTypeInfo kdlTypeInfo,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -125,11 +128,12 @@ namespace Automatonic.Text.Kdl
         /// for <paramref name="inputType"/>  or its serializable members.
         /// </exception>
         public static Task SerializeAsync(
-                PipeWriter utf8Kdl,
-                object? value,
-                Type inputType,
-                KdlSerializerContext context,
-                CancellationToken cancellationToken = default)
+            PipeWriter utf8Kdl,
+            object? value,
+            Type inputType,
+            KdlSerializerContext context,
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -169,11 +173,12 @@ namespace Automatonic.Text.Kdl
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static Task SerializeAsync(
-                PipeWriter utf8Kdl,
-                object? value,
-                Type inputType,
-                KdlSerializerOptions? options = null,
-                CancellationToken cancellationToken = default)
+            PipeWriter utf8Kdl,
+            object? value,
+            Type inputType,
+            KdlSerializerOptions? options = null,
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {

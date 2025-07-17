@@ -1,7 +1,16 @@
 using Automatonic.Text.Kdl.Serialization.Metadata;
-
-using FoundProperties = System.ValueTuple<Automatonic.Text.Kdl.Serialization.Metadata.KdlPropertyInfo, Automatonic.Text.Kdl.KdlReaderState, long, byte[]?, string?>;
-using FoundPropertiesAsync = System.ValueTuple<Automatonic.Text.Kdl.Serialization.Metadata.KdlPropertyInfo, object?, string?>;
+using FoundProperties = System.ValueTuple<
+    Automatonic.Text.Kdl.Serialization.Metadata.KdlPropertyInfo,
+    Automatonic.Text.Kdl.KdlReaderState,
+    long,
+    byte[]?,
+    string?
+>;
+using FoundPropertiesAsync = System.ValueTuple<
+    Automatonic.Text.Kdl.Serialization.Metadata.KdlPropertyInfo,
+    object?,
+    string?
+>;
 
 namespace Automatonic.Text.Kdl
 {

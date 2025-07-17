@@ -94,7 +94,11 @@ namespace Automatonic.Text.Kdl
             BytesPending += bytesWritten;
         }
 
-        private static bool TryFormatDouble(double value, Span<byte> destination, out int bytesWritten)
+        private static bool TryFormatDouble(
+            double value,
+            Span<byte> destination,
+            out int bytesWritten
+        )
         {
             // Frameworks that are not .NET Core 3.0 or higher do not produce roundtrippable strings by
             // default. Further, the Utf8Formatter on older frameworks does not support taking a precision
@@ -105,7 +109,10 @@ namespace Automatonic.Text.Kdl
 #if NET
             return Utf8Formatter.TryFormat(value, destination, out bytesWritten);
 #else
-            string utf16Text = value.ToString(KdlConstants.DoubleFormatString, CultureInfo.InvariantCulture);
+            string utf16Text = value.ToString(
+                KdlConstants.DoubleFormatString,
+                CultureInfo.InvariantCulture
+            );
 
             // Copy the value to the destination, if it's large enough.
 

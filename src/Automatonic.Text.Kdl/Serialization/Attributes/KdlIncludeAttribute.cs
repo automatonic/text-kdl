@@ -9,7 +9,10 @@ namespace Automatonic.Text.Kdl.Serialization
     /// Non-public properties and fields are not allowed when serializing and deserializing. If the attribute is used on a non-public property or field,
     /// an <see cref="InvalidOperationException"/> is thrown during the first serialization or deserialization of the declaring type.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Property | System.AttributeTargets.Field, AllowMultiple = false)]
+    [AttributeUsage(
+        AttributeTargets.Property | System.AttributeTargets.Field,
+        AllowMultiple = false
+    )]
     public sealed class KdlIncludeAttribute : KdlAttribute
     {
         /// <summary>

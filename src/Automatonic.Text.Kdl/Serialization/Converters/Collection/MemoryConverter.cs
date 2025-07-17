@@ -10,7 +10,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             Type typeToConvert,
             KdlSerializerOptions options,
             scoped ref ReadStack state,
-            out Memory<T> value)
+            out Memory<T> value
+        )
         {
             if (reader.TokenType is KdlTokenType.Null)
             {
@@ -26,19 +27,29 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             ((List<T>)state.Current.ReturnValue!).Add(value);
         }
 
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             state.Current.ReturnValue = new List<T>();
         }
 
         internal sealed override bool IsConvertibleCollection => true;
+
         protected override void ConvertCollection(ref ReadStack state, KdlSerializerOptions options)
         {
             Memory<T> memory = ((List<T>)state.Current.ReturnValue!).ToArray().AsMemory();
             state.Current.ReturnValue = memory;
         }
 
-        protected override bool OnWriteResume(KdlWriter writer, Memory<T> value, KdlSerializerOptions options, ref WriteStack state)
+        protected override bool OnWriteResume(
+            KdlWriter writer,
+            Memory<T> value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             return ReadOnlyMemoryConverter<T>.OnWriteResume(writer, value.Span, options, ref state);
         }

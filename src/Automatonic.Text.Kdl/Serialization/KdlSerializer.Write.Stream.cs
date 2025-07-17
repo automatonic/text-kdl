@@ -36,7 +36,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             TValue value,
             KdlSerializerOptions? options = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -66,7 +67,8 @@ namespace Automatonic.Text.Kdl
         public static void Serialize<TValue>(
             Stream utf8Kdl,
             TValue value,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             if (utf8Kdl is null)
             {
@@ -103,7 +105,8 @@ namespace Automatonic.Text.Kdl
             object? value,
             Type inputType,
             KdlSerializerOptions? options = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -138,7 +141,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             object? value,
             Type inputType,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             if (utf8Kdl is null)
             {
@@ -166,7 +170,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             TValue value,
             KdlTypeInfo<TValue> kdlTypeInfo,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -194,7 +199,8 @@ namespace Automatonic.Text.Kdl
         public static void Serialize<TValue>(
             Stream utf8Kdl,
             TValue value,
-            KdlTypeInfo<TValue> kdlTypeInfo)
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (utf8Kdl is null)
             {
@@ -227,7 +233,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             object? value,
             KdlTypeInfo kdlTypeInfo,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -254,10 +261,7 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="InvalidCastException">
         /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
-        public static void Serialize(
-            Stream utf8Kdl,
-            object? value,
-            KdlTypeInfo kdlTypeInfo)
+        public static void Serialize(Stream utf8Kdl, object? value, KdlTypeInfo kdlTypeInfo)
         {
             if (utf8Kdl is null)
             {
@@ -296,7 +300,8 @@ namespace Automatonic.Text.Kdl
             object? value,
             Type inputType,
             KdlSerializerContext context,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default
+        )
         {
             if (utf8Kdl is null)
             {
@@ -333,7 +338,8 @@ namespace Automatonic.Text.Kdl
             Stream utf8Kdl,
             object? value,
             Type inputType,
-            KdlSerializerContext context)
+            KdlSerializerContext context
+        )
         {
             if (utf8Kdl is null)
             {

@@ -10,10 +10,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         // of values corresponding according to the current KdlTypeInfo configuration.
 
         // Root serialization method for sync, non-streaming serialization
-        internal void Serialize(
-            KdlWriter writer,
-            in T? rootValue,
-            object? rootValueBoxed = null)
+        internal void Serialize(KdlWriter writer, in T? rootValue, object? rootValueBoxed = null)
         {
             Debug.Assert(IsConfigured);
             Debug.Assert(rootValueBoxed is null or T);
@@ -32,11 +29,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
             else if (
 #if NET
-                !typeof(T).IsValueType &&
+                !typeof(T).IsValueType
+                &&
 #endif
-                Converter.CanBePolymorphic &&
-                rootValue is not null &&
-                Options.TryGetPolymorphicTypeInfoForRootType(rootValue, out KdlTypeInfo? derivedTypeInfo))
+                Converter.CanBePolymorphic
+                && rootValue is not null
+                && Options.TryGetPolymorphicTypeInfoForRootType(
+                    rootValue,
+                    out KdlTypeInfo? derivedTypeInfo
+                )
+            )
             {
                 Debug.Assert(typeof(T) == typeof(object));
                 derivedTypeInfo.SerializeAsObject(writer, rootValue);
@@ -53,25 +55,43 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal Task SerializeAsync(Stream utf8Kdl,
+        internal Task SerializeAsync(
+            Stream utf8Kdl,
             T? rootValue,
             CancellationToken cancellationToken,
-            object? rootValueBoxed = null)
+            object? rootValueBoxed = null
+        )
         {
             // Value chosen as 90% of the default buffer used in PooledByteBufferWriter.
             // This is a tradeoff between likelihood of needing to grow the array vs. utilizing most of the buffer
             int flushThreshold = (int)(Options.DefaultBufferSize * KdlSerializer.FlushThreshold);
-            return SerializeAsync(new PooledByteBufferWriter(Options.DefaultBufferSize, utf8Kdl), rootValue, flushThreshold, cancellationToken, rootValueBoxed);
+            return SerializeAsync(
+                new PooledByteBufferWriter(Options.DefaultBufferSize, utf8Kdl),
+                rootValue,
+                flushThreshold,
+                cancellationToken,
+                rootValueBoxed
+            );
         }
 
-        internal Task SerializeAsync(PipeWriter utf8Kdl,
+        internal Task SerializeAsync(
+            PipeWriter utf8Kdl,
             T? rootValue,
             CancellationToken cancellationToken,
-            object? rootValueBoxed = null)
+            object? rootValueBoxed = null
+        )
         {
             // Value chosen as 90% of 4 buffer segments in Pipes. This is semi-arbitrarily chosen and may be changed in future iterations.
-            int flushThreshold = (int)(4 * PipeOptions.Default.MinimumSegmentSize * KdlSerializer.FlushThreshold);
-            return SerializeAsync(utf8Kdl, rootValue, flushThreshold, cancellationToken, rootValueBoxed);
+            int flushThreshold = (int)(
+                4 * PipeOptions.Default.MinimumSegmentSize * KdlSerializer.FlushThreshold
+            );
+            return SerializeAsync(
+                utf8Kdl,
+                rootValue,
+                flushThreshold,
+                cancellationToken,
+                rootValueBoxed
+            );
         }
 
         // Root serialization method for async streaming serialization.
@@ -80,7 +100,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             T? rootValue,
             int flushThreshold,
             CancellationToken cancellationToken,
-            object? rootValueBoxed = null)
+            object? rootValueBoxed = null
+        )
         {
             Debug.Assert(IsConfigured);
             Debug.Assert(rootValueBoxed is null or T);
@@ -106,12 +127,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     {
                         // Record the serialization size in both successful and failed operations,
                         // since we want to immediately opt out of the fast path if it exceeds the threshold.
-                        OnRootLevelAsyncSerializationCompleted(writer.BytesCommitted + writer.BytesPending);
+                        OnRootLevelAsyncSerializationCompleted(
+                            writer.BytesCommitted + writer.BytesPending
+                        );
 
                         KdlWriterCache.ReturnWriter(writer);
                     }
 
-                    FlushResult result = await pipeWriter.FlushAsync(cancellationToken).ConfigureAwait(false);
+                    FlushResult result = await pipeWriter
+                        .FlushAsync(cancellationToken)
+                        .ConfigureAwait(false);
                     if (result.IsCanceled)
                     {
                         ThrowHelper.ThrowOperationCanceledException_PipeWriteCanceled();
@@ -127,27 +152,43 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
             else if (
 #if NET
-                !typeof(T).IsValueType &&
+                !typeof(T).IsValueType
+                &&
 #endif
-                Converter.CanBePolymorphic &&
-                rootValue is not null &&
-                Options.TryGetPolymorphicTypeInfoForRootType(rootValue, out KdlTypeInfo? derivedTypeInfo))
+                Converter.CanBePolymorphic
+                && rootValue is not null
+                && Options.TryGetPolymorphicTypeInfoForRootType(
+                    rootValue,
+                    out KdlTypeInfo? derivedTypeInfo
+                )
+            )
             {
                 Debug.Assert(typeof(T) == typeof(object));
-                await derivedTypeInfo.SerializeAsObjectAsync(pipeWriter, rootValue, flushThreshold, cancellationToken).ConfigureAwait(false);
+                await derivedTypeInfo
+                    .SerializeAsObjectAsync(
+                        pipeWriter,
+                        rootValue,
+                        flushThreshold,
+                        cancellationToken
+                    )
+                    .ConfigureAwait(false);
             }
             else
             {
                 bool isFinalBlock;
                 WriteStack state = default;
-                state.Initialize(this,
+                state.Initialize(
+                    this,
                     rootValueBoxed,
                     supportContinuation: true,
-                    supportAsync: true);
+                    supportAsync: true
+                );
 
                 if (!pipeWriter.CanGetUnflushedBytes)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_PipeWriterDoesNotImplementUnflushedBytes(pipeWriter);
+                    ThrowHelper.ThrowInvalidOperationException_PipeWriterDoesNotImplementUnflushedBytes(
+                        pipeWriter
+                    );
                 }
                 state.PipeWriter = pipeWriter;
                 state.CancellationToken = cancellationToken;
@@ -162,7 +203,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     {
                         try
                         {
-                            isFinalBlock = EffectiveConverter.WriteCore(writer, rootValue, Options, ref state);
+                            isFinalBlock = EffectiveConverter.WriteCore(
+                                writer,
+                                rootValue,
+                                Options,
+                                ref state
+                            );
                             writer.Flush();
 
                             if (state.SuppressFlush)
@@ -173,7 +219,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                             }
                             else
                             {
-                                FlushResult result = await pipeWriter.FlushAsync(cancellationToken).ConfigureAwait(false);
+                                FlushResult result = await pipeWriter
+                                    .FlushAsync(cancellationToken)
+                                    .ConfigureAwait(false);
                                 if (result.IsCanceled || result.IsCompleted)
                                 {
                                     if (result.IsCanceled)
@@ -194,7 +242,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                             {
                                 // Exceptions should only be propagated by the resuming converter
 #if NET8_0_OR_GREATER
-                                await state.PendingTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                                await state.PendingTask.ConfigureAwait(
+                                    ConfigureAwaitOptions.SuppressThrowing
+                                );
 #else
                                 try
                                 {
@@ -207,10 +257,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                             // Dispose any pending async disposables (currently these can only be completed IAsyncEnumerators).
                             if (state.CompletedAsyncDisposables?.Count > 0)
                             {
-                                await state.DisposeCompletedAsyncDisposables().ConfigureAwait(false);
+                                await state
+                                    .DisposeCompletedAsyncDisposables()
+                                    .ConfigureAwait(false);
                             }
                         }
-
                     } while (!isFinalBlock);
 
                     if (CanUseSerializeHandler)
@@ -240,10 +291,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         }
 
         // Root serialization method for non-async streaming serialization
-        internal void Serialize(
-            Stream utf8Kdl,
-            in T? rootValue,
-            object? rootValueBoxed = null)
+        internal void Serialize(Stream utf8Kdl, in T? rootValue, object? rootValueBoxed = null)
         {
             Debug.Assert(IsConfigured);
             Debug.Assert(rootValueBoxed is null or T);
@@ -256,7 +304,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 Debug.Assert(CanUseSerializeHandler);
                 Debug.Assert(Converter is KdlMetadataServicesConverter<T>);
 
-                KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(Options, out PooledByteBufferWriter bufferWriter);
+                KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                    Options,
+                    out PooledByteBufferWriter bufferWriter
+                );
                 try
                 {
                     SerializeHandler(writer, rootValue!);
@@ -267,18 +318,25 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 {
                     // Record the serialization size in both successful and failed operations,
                     // since we want to immediately opt out of the fast path if it exceeds the threshold.
-                    OnRootLevelAsyncSerializationCompleted(writer.BytesCommitted + writer.BytesPending);
+                    OnRootLevelAsyncSerializationCompleted(
+                        writer.BytesCommitted + writer.BytesPending
+                    );
 
                     KdlWriterCache.ReturnWriterAndBuffer(writer, bufferWriter);
                 }
             }
             else if (
 #if NET
-                !typeof(T).IsValueType &&
+                !typeof(T).IsValueType
+                &&
 #endif
-                Converter.CanBePolymorphic &&
-                rootValue is not null &&
-                Options.TryGetPolymorphicTypeInfoForRootType(rootValue, out KdlTypeInfo? polymorphicTypeInfo))
+                Converter.CanBePolymorphic
+                && rootValue is not null
+                && Options.TryGetPolymorphicTypeInfoForRootType(
+                    rootValue,
+                    out KdlTypeInfo? polymorphicTypeInfo
+                )
+            )
             {
                 Debug.Assert(typeof(T) == typeof(object));
                 polymorphicTypeInfo.SerializeAsObject(utf8Kdl, rootValue);
@@ -287,10 +345,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 bool isFinalBlock;
                 WriteStack state = default;
-                state.Initialize(this,
+                state.Initialize(
+                    this,
                     rootValueBoxed,
                     supportContinuation: true,
-                    supportAsync: false);
+                    supportAsync: false
+                );
 
                 using var bufferWriter = new PooledByteBufferWriter(Options.DefaultBufferSize);
                 using var writer = new KdlWriter(bufferWriter, Options.GetWriterOptions());
@@ -302,7 +362,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
                 do
                 {
-                    isFinalBlock = EffectiveConverter.WriteCore(writer, rootValue, Options, ref state);
+                    isFinalBlock = EffectiveConverter.WriteCore(
+                        writer,
+                        rootValue,
+                        Options,
+                        ref state
+                    );
                     writer.Flush();
 
                     bufferWriter.WriteToStream(utf8Kdl);
@@ -322,20 +387,49 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal sealed override void SerializeAsObject(KdlWriter writer, object? rootValue)
-            => Serialize(writer, KdlSerializer.UnboxOnWrite<T>(rootValue), rootValue);
+        internal sealed override void SerializeAsObject(KdlWriter writer, object? rootValue) =>
+            Serialize(writer, KdlSerializer.UnboxOnWrite<T>(rootValue), rootValue);
 
-        internal sealed override Task SerializeAsObjectAsync(PipeWriter pipeWriter, object? rootValue, int flushThreshold, CancellationToken cancellationToken)
-            => SerializeAsync(pipeWriter, KdlSerializer.UnboxOnWrite<T>(rootValue), flushThreshold, cancellationToken, rootValue);
+        internal sealed override Task SerializeAsObjectAsync(
+            PipeWriter pipeWriter,
+            object? rootValue,
+            int flushThreshold,
+            CancellationToken cancellationToken
+        ) =>
+            SerializeAsync(
+                pipeWriter,
+                KdlSerializer.UnboxOnWrite<T>(rootValue),
+                flushThreshold,
+                cancellationToken,
+                rootValue
+            );
 
-        internal sealed override Task SerializeAsObjectAsync(Stream utf8Kdl, object? rootValue, CancellationToken cancellationToken)
-            => SerializeAsync(utf8Kdl, KdlSerializer.UnboxOnWrite<T>(rootValue), cancellationToken, rootValue);
+        internal sealed override Task SerializeAsObjectAsync(
+            Stream utf8Kdl,
+            object? rootValue,
+            CancellationToken cancellationToken
+        ) =>
+            SerializeAsync(
+                utf8Kdl,
+                KdlSerializer.UnboxOnWrite<T>(rootValue),
+                cancellationToken,
+                rootValue
+            );
 
-        internal sealed override Task SerializeAsObjectAsync(PipeWriter utf8Kdl, object? rootValue, CancellationToken cancellationToken)
-            => SerializeAsync(utf8Kdl, KdlSerializer.UnboxOnWrite<T>(rootValue), cancellationToken, rootValue);
+        internal sealed override Task SerializeAsObjectAsync(
+            PipeWriter utf8Kdl,
+            object? rootValue,
+            CancellationToken cancellationToken
+        ) =>
+            SerializeAsync(
+                utf8Kdl,
+                KdlSerializer.UnboxOnWrite<T>(rootValue),
+                cancellationToken,
+                rootValue
+            );
 
-        internal sealed override void SerializeAsObject(Stream utf8Kdl, object? rootValue)
-            => Serialize(utf8Kdl, KdlSerializer.UnboxOnWrite<T>(rootValue), rootValue);
+        internal sealed override void SerializeAsObject(Stream utf8Kdl, object? rootValue) =>
+            Serialize(utf8Kdl, KdlSerializer.UnboxOnWrite<T>(rootValue), rootValue);
 
         // Fast-path serialization in source gen has not been designed with streaming in mind.
         // Even though it's not used in streaming by default, we can sometimes try to turn it on
@@ -343,7 +437,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         // The `CanUseSerializeHandlerInStreaming` flag returns true iff:
         //  * The type has been used in at least `MinSerializationsSampleSize` streaming serializations AND
         //  * No serialization size exceeding KdlSerializerOptions.DefaultBufferSize / 2 has been recorded so far.
-        private bool CanUseSerializeHandlerInStreaming => _canUseSerializeHandlerInStreamingState == 1;
+        private bool CanUseSerializeHandlerInStreaming =>
+            _canUseSerializeHandlerInStreamingState == 1;
         private volatile int _canUseSerializeHandlerInStreamingState; // 0: unspecified, 1: allowed, 2: forbidden
 
         private const int MinSerializationsSampleSize = 10;
@@ -365,11 +460,18 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 }
                 else if ((uint)_serializationCount < MinSerializationsSampleSize)
                 {
-                    if (Interlocked.Increment(ref _serializationCount) == MinSerializationsSampleSize)
+                    if (
+                        Interlocked.Increment(ref _serializationCount)
+                        == MinSerializationsSampleSize
+                    )
                     {
                         // We have the minimum number of serializations needed to flag the type as safe for fast-path.
                         // Use CMPXCHG to avoid racing with threads reporting a large serialization.
-                        Interlocked.CompareExchange(ref _canUseSerializeHandlerInStreamingState, 1, 0);
+                        Interlocked.CompareExchange(
+                            ref _canUseSerializeHandlerInStreamingState,
+                            1,
+                            0
+                        );
                     }
                 }
             }

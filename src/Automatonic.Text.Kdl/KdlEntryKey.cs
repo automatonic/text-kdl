@@ -36,12 +36,13 @@ namespace Automatonic.Text.Kdl
         /// Use this form to get the n-th entry of a node.
         /// </remarks>
         /// <returns>A new instance.</returns>
-        public static KdlEntryKey ForEntry(int entryIndex) => new(
-            entryIndex: entryIndex,
-            propertyIndex: null,
-            propertyName: null,
-            argumentIndex: null);
-
+        public static KdlEntryKey ForEntry(int entryIndex) =>
+            new(
+                entryIndex: entryIndex,
+                propertyIndex: null,
+                propertyName: null,
+                argumentIndex: null
+            );
 
         /// <summary>
         /// Creates a new instance of the <see cref="KdlEntryKey"/> record with the specified property index.
@@ -51,11 +52,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Used by the system to enumerate the sorted properties of a node.
         /// </remarks>
-        public static KdlEntryKey ForProperty(int propertyIndex) => new(
-            entryIndex: null,
-            propertyIndex: propertyIndex,
-            propertyName: null,
-            argumentIndex: null);
+        public static KdlEntryKey ForProperty(int propertyIndex) =>
+            new(
+                entryIndex: null,
+                propertyIndex: propertyIndex,
+                propertyName: null,
+                argumentIndex: null
+            );
 
         /// <summary>
         /// Creates a new instance of the <see cref="KdlEntryKey"/> record with the specified property name.
@@ -64,11 +67,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Use this key when only the property name is known.
         /// </remarks>
-        public static KdlEntryKey ForProperty(string propertyName) => new(
-            entryIndex: null,
-            propertyIndex: null,
-            propertyName: propertyName,
-            argumentIndex: null);
+        public static KdlEntryKey ForProperty(string propertyName) =>
+            new(
+                entryIndex: null,
+                propertyIndex: null,
+                propertyName: propertyName,
+                argumentIndex: null
+            );
 
         /// <summary>
         /// Creates a new instance of the <see cref="KdlEntryKey"/> record with the specified argument index.
@@ -77,11 +82,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Use this key when only the argument index is known.
         /// </remarks>
-        public static KdlEntryKey ForArgument(int argumentIndex) => new(
-            entryIndex: null,
-            propertyIndex: null,
-            propertyName: null,
-            argumentIndex: argumentIndex);
+        public static KdlEntryKey ForArgument(int argumentIndex) =>
+            new(
+                entryIndex: null,
+                propertyIndex: null,
+                propertyName: null,
+                argumentIndex: argumentIndex
+            );
 
         /// <summary>
         /// Creates a new instance of the <see cref="KdlEntryKey"/> record with the specified entry, property index, and property name.
@@ -92,11 +99,17 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Used by the system to enumerate the properties of a node.
         /// </remarks>
-        internal static KdlEntryKey ForExistingProperty(int entryIndex, int propertyIndex, string propertyName) => new(
-            entryIndex: entryIndex,
-            propertyIndex: propertyIndex,
-            propertyName: propertyName,
-            argumentIndex: null);
+        internal static KdlEntryKey ForExistingProperty(
+            int entryIndex,
+            int propertyIndex,
+            string propertyName
+        ) =>
+            new(
+                entryIndex: entryIndex,
+                propertyIndex: propertyIndex,
+                propertyName: propertyName,
+                argumentIndex: null
+            );
 
         /// <summary>
         /// Creates a new instance of the <see cref="KdlEntryKey"/> record with the specified entry and argument index.
@@ -106,11 +119,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Used by the system to enumerate the arguments of a node.
         /// </remarks>
-        internal static KdlEntryKey ForExistingArgument(int entryIndex, int argumentIndex) => new(
-            entryIndex: entryIndex,
-            propertyIndex: null,
-            propertyName: null,
-            argumentIndex: argumentIndex);
+        internal static KdlEntryKey ForExistingArgument(int entryIndex, int argumentIndex) =>
+            new(
+                entryIndex: entryIndex,
+                propertyIndex: null,
+                propertyName: null,
+                argumentIndex: argumentIndex
+            );
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KdlEntryKey"/> class.
@@ -119,7 +134,12 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// This constructor is intentially internal to limit the formulations of keys to the known valid ones.
         /// </remarks>
-        internal KdlEntryKey(int? entryIndex, int? propertyIndex, string? propertyName, int? argumentIndex)
+        internal KdlEntryKey(
+            int? entryIndex,
+            int? propertyIndex,
+            string? propertyName,
+            int? argumentIndex
+        )
         {
             EntryIndex = entryIndex;
             PropertyIndex = propertyIndex;
@@ -130,27 +150,29 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Implcit conversion from string to <see cref="KdlEntryKey"/>.
         /// </summary>
-        public static implicit operator KdlEntryKey(string propertyName) => ForProperty(propertyName);
+        public static implicit operator KdlEntryKey(string propertyName) =>
+            ForProperty(propertyName);
 
         public bool IsForProperty => PropertyName is not null || PropertyIndex is not null;
         public bool IsForArgument => ArgumentIndex is not null;
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        public string Display => this switch
-        {
-            { EntryIndex: { } ei } => this switch
+        public string Display =>
+            this switch
             {
-                { PropertyIndex: { } pi, PropertyName: { } pn } => $"#{ei} {pn}@{pi}=",
-                { PropertyIndex: { } pi } => $"3{ei} @{pi}=",
-                { PropertyName: { } pn } => $"#{ei} {pn}=",
-                { ArgumentIndex: { } ai } => $"#{ei} [{ai}]",
-                _ => $"#{ei}"
-            },
-            { PropertyIndex: { } pi, PropertyName: { } pn } => $"{pn}@{pi}=",
-            { PropertyIndex: { } pi } => $"@{pi}=",
-            { PropertyName: { } pn } => $"{pn}=",
-            { ArgumentIndex: { } ai } => $"[{ai}]",
-            _ => "Unknown"
-        };
+                { EntryIndex: { } ei } => this switch
+                {
+                    { PropertyIndex: { } pi, PropertyName: { } pn } => $"#{ei} {pn}@{pi}=",
+                    { PropertyIndex: { } pi } => $"3{ei} @{pi}=",
+                    { PropertyName: { } pn } => $"#{ei} {pn}=",
+                    { ArgumentIndex: { } ai } => $"#{ei} [{ai}]",
+                    _ => $"#{ei}",
+                },
+                { PropertyIndex: { } pi, PropertyName: { } pn } => $"{pn}@{pi}=",
+                { PropertyIndex: { } pi } => $"@{pi}=",
+                { PropertyName: { } pn } => $"{pn}=",
+                { ArgumentIndex: { } ai } => $"[{ai}]",
+                _ => "Unknown",
+            };
     }
 }

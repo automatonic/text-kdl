@@ -47,7 +47,8 @@ namespace Automatonic.Text.Kdl.Serialization
             return typeToConvert == typeof(T);
         }
 
-        private protected override ConverterStrategy GetDefaultConverterStrategy() => ConverterStrategy.Value;
+        private protected override ConverterStrategy GetDefaultConverterStrategy() =>
+            ConverterStrategy.Value;
 
         internal sealed override KdlTypeInfo CreateKdlTypeInfo(KdlSerializerOptions options)
         {
@@ -71,59 +72,94 @@ namespace Automatonic.Text.Kdl.Serialization
         }
 
         // This non-generic API is sealed as it just forwards to the generic version.
-        internal sealed override void WriteAsObject(KdlWriter writer, object? value, KdlSerializerOptions options)
+        internal sealed override void WriteAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options
+        )
         {
             T valueOfT = KdlSerializer.UnboxOnWrite<T>(value)!;
             Write(writer, valueOfT, options);
         }
 
         // This non-generic API is sealed as it just forwards to the generic version.
-        internal sealed override bool OnTryWriteAsObject(KdlWriter writer, object? value, KdlSerializerOptions options, ref WriteStack state)
+        internal sealed override bool OnTryWriteAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             T valueOfT = KdlSerializer.UnboxOnWrite<T>(value)!;
             return OnTryWrite(writer, valueOfT, options, ref state);
         }
 
         // This non-generic API is sealed as it just forwards to the generic version.
-        internal sealed override void WriteAsPropertyNameAsObject(KdlWriter writer, object? value, KdlSerializerOptions options)
+        internal sealed override void WriteAsPropertyNameAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options
+        )
         {
             T valueOfT = KdlSerializer.UnboxOnWrite<T>(value)!;
             WriteAsPropertyName(writer, valueOfT, options);
         }
 
-        internal sealed override void WriteAsPropertyNameCoreAsObject(KdlWriter writer, object? value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal sealed override void WriteAsPropertyNameCoreAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             T valueOfT = KdlSerializer.UnboxOnWrite<T>(value)!;
             WriteAsPropertyNameCore(writer, valueOfT, options, isWritingExtensionDataProperty);
         }
 
-        internal sealed override void WriteNumberWithCustomHandlingAsObject(KdlWriter writer, object? value, KdlNumberHandling handling)
+        internal sealed override void WriteNumberWithCustomHandlingAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlNumberHandling handling
+        )
         {
             T valueOfT = KdlSerializer.UnboxOnWrite<T>(value)!;
             WriteNumberWithCustomHandling(writer, valueOfT, handling);
         }
 
         // This non-generic API is sealed as it just forwards to the generic version.
-        internal sealed override bool TryWriteAsObject(KdlWriter writer, object? value, KdlSerializerOptions options, ref WriteStack state)
+        internal sealed override bool TryWriteAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             T valueOfT = KdlSerializer.UnboxOnWrite<T>(value)!;
             return TryWrite(writer, valueOfT, options, ref state);
         }
 
         // Provide a default implementation for value converters.
-        internal virtual bool OnTryWrite(KdlWriter writer,
+        internal virtual bool OnTryWrite(
+            KdlWriter writer,
 #nullable disable // T may or may not be nullable depending on the derived converter's HandleNull override.
             T value,
 #nullable enable
             KdlSerializerOptions options,
-            ref WriteStack state)
+            ref WriteStack state
+        )
         {
             Write(writer, value, options);
             return true;
         }
 
         // Provide a default implementation for value converters.
-        internal virtual bool OnTryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out T? value)
+        internal virtual bool OnTryRead(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out T? value
+        )
         {
             value = Read(ref reader, typeToConvert, options);
             return true;
@@ -140,9 +176,20 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <param name="options">The <see cref="KdlSerializerOptions"/> being used.</param>
         /// <returns>The value that was converted.</returns>
         /// <remarks>Note that the value of <seealso cref="HandleNull"/> determines if the converter handles null KDL tokens.</remarks>
-        public abstract T? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options);
+        public abstract T? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        );
 
-        internal bool TryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out T? value, out bool isPopulatedValue)
+        internal bool TryRead(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out T? value,
+            out bool isPopulatedValue
+        )
         {
             // For perf and converter simplicity, handle null here instead of forwarding to the converter.
             if (reader.TokenType == KdlTokenType.Null && !HandleNullOnRead && !state.IsContinuation)
@@ -167,7 +214,11 @@ namespace Automatonic.Text.Kdl.Serialization
                 {
                     if (state.Current.NumberHandling != null && IsInternalConverterForNumberType)
                     {
-                        value = ReadNumberWithCustomHandling(ref reader, state.Current.NumberHandling.Value, options);
+                        value = ReadNumberWithCustomHandling(
+                            ref reader,
+                            state.Current.NumberHandling.Value,
+                            options
+                        );
                     }
                     else
                     {
@@ -183,7 +234,11 @@ namespace Automatonic.Text.Kdl.Serialization
 
                     if (state.Current.NumberHandling != null && IsInternalConverterForNumberType)
                     {
-                        value = ReadNumberWithCustomHandling(ref reader, state.Current.NumberHandling.Value, options);
+                        value = ReadNumberWithCustomHandling(
+                            ref reader,
+                            state.Current.NumberHandling.Value,
+                            options
+                        );
                     }
                     else
                     {
@@ -195,7 +250,8 @@ namespace Automatonic.Text.Kdl.Serialization
                         originalPropertyDepth,
                         originalPropertyBytesConsumed,
                         isValueConverter: true,
-                        ref reader);
+                        ref reader
+                    );
                 }
 
                 isPopulatedValue = false;
@@ -262,7 +318,8 @@ namespace Automatonic.Text.Kdl.Serialization
                     state.Current.OriginalDepth,
                     bytesConsumed: 0,
                     isValueConverter: false,
-                    ref reader);
+                    ref reader
+                );
 
                 // No need to clear state.Current.* since a stack pop will occur.
             }
@@ -276,39 +333,80 @@ namespace Automatonic.Text.Kdl.Serialization
             return success;
         }
 
-        internal sealed override bool OnTryReadAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out object? value)
+        internal sealed override bool OnTryReadAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out object? value
+        )
         {
-            bool success = OnTryRead(ref reader, typeToConvert, options, ref state, out T? typedValue);
+            bool success = OnTryRead(
+                ref reader,
+                typeToConvert,
+                options,
+                ref state,
+                out T? typedValue
+            );
             value = typedValue;
             return success;
         }
 
-        internal sealed override bool TryReadAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out object? value)
+        internal sealed override bool TryReadAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out object? value
+        )
         {
-            bool success = TryRead(ref reader, typeToConvert, options, ref state, out T? typedValue, out _);
+            bool success = TryRead(
+                ref reader,
+                typeToConvert,
+                options,
+                ref state,
+                out T? typedValue,
+                out _
+            );
             value = typedValue;
             return success;
         }
 
-        internal sealed override object? ReadAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal sealed override object? ReadAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             T? typedValue = Read(ref reader, typeToConvert, options);
             return typedValue;
         }
 
-        internal sealed override object? ReadAsPropertyNameAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal sealed override object? ReadAsPropertyNameAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             T typedValue = ReadAsPropertyName(ref reader, typeToConvert, options);
             return typedValue;
         }
 
-        internal sealed override object? ReadAsPropertyNameCoreAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal sealed override object? ReadAsPropertyNameCoreAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             T typedValue = ReadAsPropertyNameCore(ref reader, typeToConvert, options);
             return typedValue;
         }
 
-        internal sealed override object? ReadNumberWithCustomHandlingAsObject(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal sealed override object? ReadNumberWithCustomHandlingAsObject(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
             T typedValue = ReadNumberWithCustomHandling(ref reader, handling, options);
             return typedValue;
@@ -321,7 +419,12 @@ namespace Automatonic.Text.Kdl.Serialization
         /// </summary>
         private static bool IsNull(T? value) => value is null;
 
-        internal bool TryWrite(KdlWriter writer, in T? value, KdlSerializerOptions options, ref WriteStack state)
+        internal bool TryWrite(
+            KdlWriter writer,
+            in T? value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             if (writer.CurrentDepth >= options.EffectiveMaxDepth)
             {
@@ -344,7 +447,11 @@ namespace Automatonic.Text.Kdl.Serialization
 
                 if (state.Current.NumberHandling != null && IsInternalConverterForNumberType)
                 {
-                    WriteNumberWithCustomHandling(writer, value, state.Current.NumberHandling.Value);
+                    WriteNumberWithCustomHandling(
+                        writer,
+                        value,
+                        state.Current.NumberHandling.Value
+                    );
                 }
                 else
                 {
@@ -362,25 +469,40 @@ namespace Automatonic.Text.Kdl.Serialization
             if (
 #if NET
                 // Short-circuit the check against "is not null"; treated as a constant by recent versions of the JIT.
-                !typeof(T).IsValueType &&
+                !typeof(T).IsValueType
+                &&
 #else
-                !IsValueType &&
+                !IsValueType
+                &&
 #endif
-                value is not null &&
+                value is not null
+                &&
                 // Do not handle objects that have already been
                 // handled by a polymorphic converter for a base type.
-                state.Current.PolymorphicSerializationState != PolymorphicSerializationState.PolymorphicReEntryStarted)
+                state.Current.PolymorphicSerializationState
+                    != PolymorphicSerializationState.PolymorphicReEntryStarted
+            )
             {
                 KdlTypeInfo kdlTypeInfo = state.PeekNestedKdlTypeInfo();
                 Debug.Assert(kdlTypeInfo.Converter.Type == Type);
 
-                bool canBePolymorphic = CanBePolymorphic || kdlTypeInfo.PolymorphicTypeResolver is not null;
-                KdlConverter? polymorphicConverter = canBePolymorphic ?
-                    ResolvePolymorphicConverter(value, kdlTypeInfo, options, ref state) :
-                    null;
+                bool canBePolymorphic =
+                    CanBePolymorphic || kdlTypeInfo.PolymorphicTypeResolver is not null;
+                KdlConverter? polymorphicConverter = canBePolymorphic
+                    ? ResolvePolymorphicConverter(value, kdlTypeInfo, options, ref state)
+                    : null;
 
-                if (!isContinuation && options.ReferenceHandlingStrategy != KdlKnownReferenceHandler.Unspecified &&
-                    TryHandleSerializedObjectReference(writer, value, options, polymorphicConverter, ref state))
+                if (
+                    !isContinuation
+                    && options.ReferenceHandlingStrategy != KdlKnownReferenceHandler.Unspecified
+                    && TryHandleSerializedObjectReference(
+                        writer,
+                        value,
+                        options,
+                        polymorphicConverter,
+                        ref state
+                    )
+                )
                 {
                     // The reference handler wrote reference metadata, serialization complete.
                     return true;
@@ -388,7 +510,12 @@ namespace Automatonic.Text.Kdl.Serialization
 
                 if (polymorphicConverter is not null)
                 {
-                    success = polymorphicConverter.TryWriteAsObject(writer, value, options, ref state);
+                    success = polymorphicConverter.TryWriteAsObject(
+                        writer,
+                        value,
+                        options,
+                        ref state
+                    );
                     state.Current.ExitPolymorphicConverter(success);
 
                     if (success)
@@ -439,7 +566,12 @@ namespace Automatonic.Text.Kdl.Serialization
             return success;
         }
 
-        internal bool TryWriteDataExtensionProperty(KdlWriter writer, T value, KdlSerializerOptions options, ref WriteStack state)
+        internal bool TryWriteDataExtensionProperty(
+            KdlWriter writer,
+            T value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             Debug.Assert(value != null);
 
@@ -448,8 +580,10 @@ namespace Automatonic.Text.Kdl.Serialization
                 return TryWrite(writer, value, options, ref state);
             }
 
-            KdlDictionaryConverter<T>? dictionaryConverter = this as KdlDictionaryConverter<T>
-                ?? (this as KdlMetadataServicesConverter<T>)?.Converter as KdlDictionaryConverter<T>;
+            KdlDictionaryConverter<T>? dictionaryConverter =
+                this as KdlDictionaryConverter<T>
+                ?? (this as KdlMetadataServicesConverter<T>)?.Converter
+                    as KdlDictionaryConverter<T>;
 
             if (dictionaryConverter == null)
             {
@@ -477,7 +611,11 @@ namespace Automatonic.Text.Kdl.Serialization
 
             // Extension data properties change how dictionary key naming policies are applied.
             state.Current.IsWritingExtensionDataProperty = true;
-            state.Current.KdlPropertyInfo = state.Current.KdlTypeInfo.ElementTypeInfo!.PropertyInfoForTypeInfo;
+            state.Current.KdlPropertyInfo = state
+                .Current
+                .KdlTypeInfo
+                .ElementTypeInfo!
+                .PropertyInfoForTypeInfo;
 
             success = dictionaryConverter.OnWriteResume(writer, value, options, ref state);
             if (success)
@@ -493,7 +631,13 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <inheritdoc/>
         public sealed override Type Type { get; } = typeof(T);
 
-        internal void VerifyRead(KdlTokenType tokenType, int depth, long bytesConsumed, bool isValueConverter, ref KdlReader reader)
+        internal void VerifyRead(
+            KdlTokenType tokenType,
+            int depth,
+            long bytesConsumed,
+            bool isValueConverter,
+            ref KdlReader reader
+        )
         {
             Debug.Assert(isValueConverter == (ConverterStrategy == ConverterStrategy.Value));
 
@@ -540,7 +684,10 @@ namespace Automatonic.Text.Kdl.Serialization
                     {
                         // A non-value converter (object or collection) should always have Start and End tokens
                         // unless it is polymorphic or supports null value reads.
-                        if (!CanBePolymorphic && !(HandleNullOnRead && tokenType == KdlTokenType.Null))
+                        if (
+                            !CanBePolymorphic
+                            && !(HandleNullOnRead && tokenType == KdlTokenType.Null)
+                        )
                         {
                             ThrowHelper.ThrowKdlException_SerializationConverterRead(this);
                         }
@@ -570,8 +717,7 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <param name="writer">The <see cref="KdlWriter"/> to write to.</param>
         /// <param name="value">The value to convert. Note that the value of <seealso cref="HandleNull"/> determines if the converter handles <see langword="null" /> values.</param>
         /// <param name="options">The <see cref="KdlSerializerOptions"/> being used.</param>
-        public abstract void Write(
-            KdlWriter writer,
+        public abstract void Write(KdlWriter writer,
 #nullable disable // T may or may not be nullable depending on the derived converter's HandleNull override.
             T value,
 #nullable restore
@@ -585,10 +731,16 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <param name="options">The <see cref="KdlSerializerOptions"/> being used.</param>
         /// <returns>The value that was converted.</returns>
         /// <remarks>Method should be overridden in custom converters of types used in deserialized dictionary keys.</remarks>
-        public virtual T ReadAsPropertyName(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public virtual T ReadAsPropertyName(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             // .NET 5 backward compatibility: hardcode the default converter for primitive key serialization.
-            KdlConverter<T>? fallbackConverter = GetFallbackConverterForPropertyNameSerialization(options);
+            KdlConverter<T>? fallbackConverter = GetFallbackConverterForPropertyNameSerialization(
+                options
+            );
             if (fallbackConverter is null)
             {
                 ThrowHelper.ThrowNotSupportedException_DictionaryKeyTypeNotSupported(Type, this);
@@ -597,7 +749,11 @@ namespace Automatonic.Text.Kdl.Serialization
             return fallbackConverter.ReadAsPropertyNameCore(ref reader, typeToConvert, options);
         }
 
-        internal virtual T ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal virtual T ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
 
@@ -618,19 +774,35 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <param name="value">The value to convert. Note that the value of <seealso cref="HandleNull"/> determines if the converter handles <see langword="null" /> values.</param>
         /// <param name="options">The <see cref="KdlSerializerOptions"/> being used.</param>
         /// <remarks>Method should be overridden in custom converters of types used in serialized dictionary keys.</remarks>
-        public virtual void WriteAsPropertyName(KdlWriter writer, [DisallowNull] T value, KdlSerializerOptions options)
+        public virtual void WriteAsPropertyName(
+            KdlWriter writer,
+            [DisallowNull] T value,
+            KdlSerializerOptions options
+        )
         {
             // .NET 5 backward compatibility: hardcode the default converter for primitive key serialization.
-            KdlConverter<T>? fallbackConverter = GetFallbackConverterForPropertyNameSerialization(options);
+            KdlConverter<T>? fallbackConverter = GetFallbackConverterForPropertyNameSerialization(
+                options
+            );
             if (fallbackConverter is null)
             {
                 ThrowHelper.ThrowNotSupportedException_DictionaryKeyTypeNotSupported(Type, this);
             }
 
-            fallbackConverter.WriteAsPropertyNameCore(writer, value, options, isWritingExtensionDataProperty: false);
+            fallbackConverter.WriteAsPropertyNameCore(
+                writer,
+                value,
+                options,
+                isWritingExtensionDataProperty: false
+            );
         }
 
-        internal virtual void WriteAsPropertyNameCore(KdlWriter writer, [DisallowNull] T value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal virtual void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            [DisallowNull] T value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             if (value is null)
             {
@@ -648,14 +820,19 @@ namespace Automatonic.Text.Kdl.Serialization
 
             int originalDepth = writer.CurrentDepth;
             WriteAsPropertyName(writer, value, options);
-            if (originalDepth != writer.CurrentDepth || writer.TokenType != KdlTokenType.PropertyName)
+            if (
+                originalDepth != writer.CurrentDepth
+                || writer.TokenType != KdlTokenType.PropertyName
+            )
             {
                 ThrowHelper.ThrowKdlException_SerializationConverterWrite(this);
             }
         }
 
         // .NET 5 backward compatibility: hardcode the default converter for primitive key serialization.
-        private KdlConverter<T>? GetFallbackConverterForPropertyNameSerialization(KdlSerializerOptions options)
+        private KdlConverter<T>? GetFallbackConverterForPropertyNameSerialization(
+            KdlSerializerOptions options
+        )
         {
             KdlConverter<T>? result = null;
 
@@ -665,10 +842,17 @@ namespace Automatonic.Text.Kdl.Serialization
             {
                 result = _fallbackConverterForPropertyNameSerialization;
 
-                if (result is null && DefaultKdlTypeInfoResolver.TryGetDefaultSimpleConverter(Type, out KdlConverter? defaultConverter))
+                if (
+                    result is null
+                    && DefaultKdlTypeInfoResolver.TryGetDefaultSimpleConverter(
+                        Type,
+                        out KdlConverter? defaultConverter
+                    )
+                )
                 {
                     Debug.Assert(defaultConverter != this);
-                    _fallbackConverterForPropertyNameSerialization = result = (KdlConverter<T>)defaultConverter;
+                    _fallbackConverterForPropertyNameSerialization = result =
+                        (KdlConverter<T>)defaultConverter;
                 }
             }
 
@@ -677,10 +861,16 @@ namespace Automatonic.Text.Kdl.Serialization
 
         private KdlConverter<T>? _fallbackConverterForPropertyNameSerialization;
 
-        internal virtual T ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
-            => throw new InvalidOperationException();
+        internal virtual T ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        ) => throw new InvalidOperationException();
 
-        internal virtual void WriteNumberWithCustomHandling(KdlWriter writer, T? value, KdlNumberHandling handling)
-            => throw new InvalidOperationException();
+        internal virtual void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            T? value,
+            KdlNumberHandling handling
+        ) => throw new InvalidOperationException();
     }
 }

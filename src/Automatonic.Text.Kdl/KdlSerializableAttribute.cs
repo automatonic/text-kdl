@@ -13,7 +13,6 @@ namespace Automatonic.Text.Kdl.Serialization
     /// </remarks>
     /// <param name="type">The type to generate source code for.</param>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-
 #if BUILDING_SOURCE_GENERATOR
     internal
 #else
@@ -23,7 +22,6 @@ namespace Automatonic.Text.Kdl.Serialization
     sealed class KdlSerializableAttribute(Type type) : KdlAttribute
 #pragma warning restore CS9113 // Parameter is unread.
     {
-
         /// <summary>
         /// The name of the property for the generated <see cref="KdlTypeInfo{T}"/> for
         /// the type on the generated, derived <see cref="KdlSerializerContext"/> type.

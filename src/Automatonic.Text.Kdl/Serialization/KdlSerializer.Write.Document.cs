@@ -21,7 +21,10 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static KdlReadOnlyDocument SerializeToDocument<TValue>(TValue value, KdlSerializerOptions? options = null)
+        public static KdlReadOnlyDocument SerializeToDocument<TValue>(
+            TValue value,
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             return WriteDocument(value, kdlTypeInfo);
@@ -46,7 +49,11 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static KdlReadOnlyDocument SerializeToDocument(object? value, Type inputType, KdlSerializerOptions? options = null)
+        public static KdlReadOnlyDocument SerializeToDocument(
+            object? value,
+            Type inputType,
+            KdlSerializerOptions? options = null
+        )
         {
             ValidateInputType(value, inputType);
             KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
@@ -63,7 +70,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentNullException">
         /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlReadOnlyDocument SerializeToDocument<TValue>(TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static KdlReadOnlyDocument SerializeToDocument<TValue>(
+            TValue value,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -86,7 +96,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="InvalidCastException">
         /// <paramref name="value"/> does not match the type of <paramref name="kdlTypeInfo"/>.
         /// </exception>
-        public static KdlReadOnlyDocument SerializeToDocument(object? value, KdlTypeInfo kdlTypeInfo)
+        public static KdlReadOnlyDocument SerializeToDocument(
+            object? value,
+            KdlTypeInfo kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -115,7 +128,11 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentNullException">
         /// <paramref name="inputType"/> or <paramref name="context"/> is <see langword="null"/>.
         /// </exception>
-        public static KdlReadOnlyDocument SerializeToDocument(object? value, Type inputType, KdlSerializerContext context)
+        public static KdlReadOnlyDocument SerializeToDocument(
+            object? value,
+            Type inputType,
+            KdlSerializerContext context
+        )
         {
             if (context is null)
             {
@@ -126,7 +143,10 @@ namespace Automatonic.Text.Kdl
             return WriteDocumentAsObject(value, GetTypeInfo(context, inputType));
         }
 
-        private static KdlReadOnlyDocument WriteDocument<TValue>(in TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
+        private static KdlReadOnlyDocument WriteDocument<TValue>(
+            in TValue value,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
             KdlSerializerOptions options = kdlTypeInfo.Options;
@@ -147,7 +167,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private static KdlReadOnlyDocument WriteDocumentAsObject(object? value, KdlTypeInfo kdlTypeInfo)
+        private static KdlReadOnlyDocument WriteDocumentAsObject(
+            object? value,
+            KdlTypeInfo kdlTypeInfo
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
             KdlSerializerOptions options = kdlTypeInfo.Options;

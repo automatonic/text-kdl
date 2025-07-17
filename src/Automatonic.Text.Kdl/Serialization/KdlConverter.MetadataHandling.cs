@@ -8,12 +8,18 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <summary>
         /// Initializes the state for polymorphic cases and returns the appropriate derived converter.
         /// </summary>
-        internal KdlConverter? ResolvePolymorphicConverter(KdlTypeInfo kdlTypeInfo, ref ReadStack state)
+        internal KdlConverter? ResolvePolymorphicConverter(
+            KdlTypeInfo kdlTypeInfo,
+            ref ReadStack state
+        )
         {
             Debug.Assert(!IsValueType);
             Debug.Assert(CanHaveMetadata);
             Debug.Assert((state.Current.MetadataPropertyNames & MetadataPropertyName.Type) != 0);
-            Debug.Assert(state.Current.PolymorphicSerializationState != PolymorphicSerializationState.PolymorphicReEntryStarted);
+            Debug.Assert(
+                state.Current.PolymorphicSerializationState
+                    != PolymorphicSerializationState.PolymorphicReEntryStarted
+            );
             Debug.Assert(kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true);
 
             KdlConverter? polymorphicConverter = null;
@@ -25,19 +31,27 @@ namespace Automatonic.Text.Kdl.Serialization
                     Debug.Assert(state.PolymorphicTypeDiscriminator != null);
 
                     PolymorphicTypeResolver resolver = kdlTypeInfo.PolymorphicTypeResolver;
-                    if (resolver.TryGetDerivedKdlTypeInfo(state.PolymorphicTypeDiscriminator, out KdlTypeInfo? resolvedType))
+                    if (
+                        resolver.TryGetDerivedKdlTypeInfo(
+                            state.PolymorphicTypeDiscriminator,
+                            out KdlTypeInfo? resolvedType
+                        )
+                    )
                     {
                         Debug.Assert(Type!.IsAssignableFrom(resolvedType.Type));
 
                         polymorphicConverter = state.InitializePolymorphicReEntry(resolvedType);
                         if (!polymorphicConverter.CanHaveMetadata)
                         {
-                            ThrowHelper.ThrowNotSupportedException_DerivedConverterDoesNotSupportMetadata(resolvedType.Type);
+                            ThrowHelper.ThrowNotSupportedException_DerivedConverterDoesNotSupportMetadata(
+                                resolvedType.Type
+                            );
                         }
                     }
                     else
                     {
-                        state.Current.PolymorphicSerializationState = PolymorphicSerializationState.PolymorphicReEntryNotFound;
+                        state.Current.PolymorphicSerializationState =
+                            PolymorphicSerializationState.PolymorphicReEntryNotFound;
                     }
 
                     state.PolymorphicTypeDiscriminator = null;
@@ -63,7 +77,12 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <summary>
         /// Initializes the state for polymorphic cases and returns the appropriate derived converter.
         /// </summary>
-        internal KdlConverter? ResolvePolymorphicConverter(object value, KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options, ref WriteStack state)
+        internal KdlConverter? ResolvePolymorphicConverter(
+            object value,
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             Debug.Assert(!IsValueType);
             Debug.Assert(value != null && Type!.IsAssignableFrom(value.GetType()));
@@ -82,7 +101,10 @@ namespace Automatonic.Text.Kdl.Serialization
                     if (CanBePolymorphic && runtimeType != Type)
                     {
                         Debug.Assert(Type == typeof(object));
-                        kdlTypeInfo = state.Current.InitializePolymorphicReEntry(runtimeType, options);
+                        kdlTypeInfo = state.Current.InitializePolymorphicReEntry(
+                            runtimeType,
+                            options
+                        );
                         polymorphicConverter = kdlTypeInfo.Converter;
                     }
 
@@ -90,15 +112,25 @@ namespace Automatonic.Text.Kdl.Serialization
                     {
                         Debug.Assert(kdlTypeInfo.Converter.CanHaveMetadata);
 
-                        if (resolver.TryGetDerivedKdlTypeInfo(runtimeType, out KdlTypeInfo? derivedKdlTypeInfo, out object? typeDiscriminator))
+                        if (
+                            resolver.TryGetDerivedKdlTypeInfo(
+                                runtimeType,
+                                out KdlTypeInfo? derivedKdlTypeInfo,
+                                out object? typeDiscriminator
+                            )
+                        )
                         {
-                            polymorphicConverter = state.Current.InitializePolymorphicReEntry(derivedKdlTypeInfo);
+                            polymorphicConverter = state.Current.InitializePolymorphicReEntry(
+                                derivedKdlTypeInfo
+                            );
 
                             if (typeDiscriminator is not null)
                             {
                                 if (!polymorphicConverter.CanHaveMetadata)
                                 {
-                                    ThrowHelper.ThrowNotSupportedException_DerivedConverterDoesNotSupportMetadata(derivedKdlTypeInfo.Type);
+                                    ThrowHelper.ThrowNotSupportedException_DerivedConverterDoesNotSupportMetadata(
+                                        derivedKdlTypeInfo.Type
+                                    );
                                 }
 
                                 state.PolymorphicTypeDiscriminator = typeDiscriminator;
@@ -109,7 +141,8 @@ namespace Automatonic.Text.Kdl.Serialization
 
                     if (polymorphicConverter is null)
                     {
-                        state.Current.PolymorphicSerializationState = PolymorphicSerializationState.PolymorphicReEntryNotFound;
+                        state.Current.PolymorphicSerializationState =
+                            PolymorphicSerializationState.PolymorphicReEntryNotFound;
                     }
 
                     break;
@@ -132,7 +165,13 @@ namespace Automatonic.Text.Kdl.Serialization
             return polymorphicConverter;
         }
 
-        internal bool TryHandleSerializedObjectReference(KdlWriter writer, object value, KdlSerializerOptions options, KdlConverter? polymorphicConverter, ref WriteStack state)
+        internal bool TryHandleSerializedObjectReference(
+            KdlWriter writer,
+            object value,
+            KdlSerializerOptions options,
+            KdlConverter? polymorphicConverter,
+            ref WriteStack state
+        )
         {
             Debug.Assert(!IsValueType);
             Debug.Assert(!state.IsContinuation);
@@ -156,8 +195,12 @@ namespace Automatonic.Text.Kdl.Serialization
                     break;
 
                 case KdlKnownReferenceHandler.Preserve:
-                    bool canHaveIdMetadata = polymorphicConverter?.CanHaveMetadata ?? CanHaveMetadata;
-                    if (canHaveIdMetadata && KdlSerializer.TryGetReferenceForValue(value, ref state, writer))
+                    bool canHaveIdMetadata =
+                        polymorphicConverter?.CanHaveMetadata ?? CanHaveMetadata;
+                    if (
+                        canHaveIdMetadata
+                        && KdlSerializer.TryGetReferenceForValue(value, ref state, writer)
+                    )
                     {
                         // We found a repeating reference and wrote the relevant metadata; serialization complete.
                         return true;

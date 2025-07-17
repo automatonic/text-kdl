@@ -12,9 +12,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal override void ConfigureKdlTypeInfoUsingReflection(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfoUsingReflection(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        )
         {
-            kdlTypeInfo.AddMethodDelegate = DefaultKdlTypeInfoResolver.MemberAccessor.CreateAddMethodDelegate<TCollection>();
+            kdlTypeInfo.AddMethodDelegate =
+                DefaultKdlTypeInfoResolver.MemberAccessor.CreateAddMethodDelegate<TCollection>();
         }
     }
 }

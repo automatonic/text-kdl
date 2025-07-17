@@ -11,6 +11,6 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         /// <summary>
         /// Allow number values.
         /// </summary>
-        AllowNumbers = 0b0010
+        AllowNumbers = 0b0010,
     }
 }

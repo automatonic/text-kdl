@@ -34,7 +34,9 @@ namespace Automatonic.Text.Kdl
         {
             [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
             [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-            get => s_defaultOptions ?? GetOrCreateSingleton(ref s_defaultOptions, KdlSerializerDefaults.General);
+            get =>
+                s_defaultOptions
+                ?? GetOrCreateSingleton(ref s_defaultOptions, KdlSerializerDefaults.General);
         }
 
         private static KdlSerializerOptions? s_defaultOptions;
@@ -51,7 +53,8 @@ namespace Automatonic.Text.Kdl
         {
             [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
             [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-            get => s_webOptions ?? GetOrCreateSingleton(ref s_webOptions, KdlSerializerDefaults.Web);
+            get =>
+                s_webOptions ?? GetOrCreateSingleton(ref s_webOptions, KdlSerializerDefaults.Web);
         }
 
         private static KdlSerializerOptions? s_webOptions;
@@ -75,8 +78,10 @@ namespace Automatonic.Text.Kdl
         private int _maxDepth;
         private bool _allowOutOfOrderMetadataProperties;
         private bool _allowTrailingCommas;
-        private bool _respectNullableAnnotations = AppContextSwitchHelper.RespectNullableAnnotationsDefault;
-        private bool _respectRequiredConstructorParameters = AppContextSwitchHelper.RespectRequiredConstructorParametersDefault;
+        private bool _respectNullableAnnotations =
+            AppContextSwitchHelper.RespectNullableAnnotationsDefault;
+        private bool _respectRequiredConstructorParameters =
+            AppContextSwitchHelper.RespectRequiredConstructorParametersDefault;
         private readonly bool _ignoreNullValues;
         private bool _ignoreReadOnlyProperties;
         private bool _ignoreReadonlyFields;
@@ -149,7 +154,8 @@ namespace Automatonic.Text.Kdl
         /// Constructs a new <see cref="KdlSerializerOptions"/> instance with a predefined set of options determined by the specified <see cref="KdlSerializerDefaults"/>.
         /// </summary>
         /// <param name="defaults"> The <see cref="KdlSerializerDefaults"/> to reason about.</param>
-        public KdlSerializerOptions(KdlSerializerDefaults defaults) : this()
+        public KdlSerializerOptions(KdlSerializerDefaults defaults)
+            : this()
         {
             // Should be kept in sync with equivalent overload in KdlSourceGenerationOptionsAttribute
 
@@ -166,7 +172,8 @@ namespace Automatonic.Text.Kdl
         }
 
         /// <summary>Tracks the options instance to enable all instances to be enumerated.</summary>
-        private static void TrackOptionsInstance(KdlSerializerOptions options) => TrackedOptionsInstances.All.Add(options, null);
+        private static void TrackOptionsInstance(KdlSerializerOptions options) =>
+            TrackedOptionsInstances.All.Add(options, null);
 
         internal static class TrackedOptionsInstances
         {
@@ -198,7 +205,10 @@ namespace Automatonic.Text.Kdl
             {
                 VerifyMutable();
 
-                if (_typeInfoResolverChain is { } resolverChain && !ReferenceEquals(resolverChain, value))
+                if (
+                    _typeInfoResolverChain is { } resolverChain
+                    && !ReferenceEquals(resolverChain, value)
+                )
                 {
                     // User is setting a new resolver; invalidate the resolver chain if already created.
                     resolverChain.Clear();
@@ -220,7 +230,8 @@ namespace Automatonic.Text.Kdl
         /// This property is auxiliary to and is kept in sync with the <see cref="TypeInfoResolver"/> property.
         /// Any change made to this property will be reflected by <see cref="TypeInfoResolver"/> and vice versa.
         /// </remarks>
-        public IList<IKdlTypeInfoResolver> TypeInfoResolverChain => _typeInfoResolverChain ??= new(this);
+        public IList<IKdlTypeInfoResolver> TypeInfoResolverChain =>
+            _typeInfoResolverChain ??= new(this);
         private OptionsBoundKdlTypeInfoResolverChain? _typeInfoResolverChain;
 
         /// <summary>
@@ -481,7 +492,9 @@ namespace Automatonic.Text.Kdl
 
                 if (value < 0)
                 {
-                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(nameof(value));
+                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(
+                        nameof(value)
+                    );
                 }
 
                 _maxDepth = value;
@@ -547,7 +560,10 @@ namespace Automatonic.Text.Kdl
                 Debug.Assert(value >= 0);
                 if (value > KdlCommentHandling.Skip)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), SR.KdlSerializerDoesNotSupportComments);
+                    throw new ArgumentOutOfRangeException(
+                        nameof(value),
+                        SR.KdlSerializerDoesNotSupportComments
+                    );
                 }
 
                 _readCommentHandling = value;
@@ -647,7 +663,8 @@ namespace Automatonic.Text.Kdl
             {
                 VerifyMutable();
                 _referenceHandler = value;
-                ReferenceHandlingStrategy = value?.HandlingStrategy ?? KdlKnownReferenceHandler.Unspecified;
+                ReferenceHandlingStrategy =
+                    value?.HandlingStrategy ?? KdlKnownReferenceHandler.Unspecified;
             }
         }
 
@@ -737,14 +754,16 @@ namespace Automatonic.Text.Kdl
             {
                 Debug.Assert(IsReadOnly);
                 Debug.Assert(TypeInfoResolver != null);
-                return _canUseFastPathSerializationLogic ??= TypeInfoResolver.IsCompatibleWithOptions(this);
+                return _canUseFastPathSerializationLogic ??=
+                    TypeInfoResolver.IsCompatibleWithOptions(this);
             }
         }
 
         private bool? _canUseFastPathSerializationLogic;
 
         // The cached value used to determine if ReferenceHandler should use Preserve or IgnoreCycles semantics or None of them.
-        internal KdlKnownReferenceHandler ReferenceHandlingStrategy = KdlKnownReferenceHandler.Unspecified;
+        internal KdlKnownReferenceHandler ReferenceHandlingStrategy =
+            KdlKnownReferenceHandler.Unspecified;
 
         /// <summary>
         /// Specifies whether the current instance has been locked for user modification.
@@ -790,8 +809,12 @@ namespace Automatonic.Text.Kdl
         ///
         /// This method is idempotent.
         /// </remarks>
-        [RequiresUnreferencedCode("Populating unconfigured TypeInfoResolver properties with the reflection resolver requires unreferenced code.")]
-        [RequiresDynamicCode("Populating unconfigured TypeInfoResolver properties with the reflection resolver requires runtime code generation.")]
+        [RequiresUnreferencedCode(
+            "Populating unconfigured TypeInfoResolver properties with the reflection resolver requires unreferenced code."
+        )]
+        [RequiresDynamicCode(
+            "Populating unconfigured TypeInfoResolver properties with the reflection resolver requires runtime code generation."
+        )]
         public void MakeReadOnly(bool populateMissingResolver)
         {
             if (populateMissingResolver)
@@ -820,7 +843,8 @@ namespace Automatonic.Text.Kdl
             {
                 // Even if a resolver has already been specified, we need to root
                 // the default resolver to gain access to the default converters.
-                DefaultKdlTypeInfoResolver defaultResolver = DefaultKdlTypeInfoResolver.DefaultInstance;
+                DefaultKdlTypeInfoResolver defaultResolver =
+                    DefaultKdlTypeInfoResolver.DefaultInstance;
 
                 switch (_typeInfoResolver)
                 {
@@ -829,16 +853,23 @@ namespace Automatonic.Text.Kdl
                         _typeInfoResolver = defaultResolver;
                         break;
 
-                    case KdlSerializerContext ctx when AppContextSwitchHelper.IsSourceGenReflectionFallbackEnabled:
+                    case KdlSerializerContext ctx
+                        when AppContextSwitchHelper.IsSourceGenReflectionFallbackEnabled:
                         // .NET 6 compatibility mode: enable fallback to reflection metadata for KdlSerializerContext
-                        _effectiveKdlTypeInfoResolver = KdlTypeInfoResolver.Combine(ctx, defaultResolver);
+                        _effectiveKdlTypeInfoResolver = KdlTypeInfoResolver.Combine(
+                            ctx,
+                            defaultResolver
+                        );
 
                         if (_cachingContext is { } cachingContext)
                         {
                             // A cache has already been created by the source generator.
                             // Repeat the same configuration routine for that options instance, if different.
                             // Invalidate any cache entries that have already been stored.
-                            if (cachingContext.Options != this && !cachingContext.Options._isConfiguredForKdlSerializer)
+                            if (
+                                cachingContext.Options != this
+                                && !cachingContext.Options._isConfiguredForKdlSerializer
+                            )
                             {
                                 cachingContext.Options.ConfigureForKdlSerializer();
                             }
@@ -886,7 +917,10 @@ namespace Automatonic.Text.Kdl
             {
                 if (info.Type != type)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_ResolverTypeNotCompatible(type, info.Type);
+                    ThrowHelper.ThrowInvalidOperationException_ResolverTypeNotCompatible(
+                        type,
+                        info.Type
+                    );
                 }
 
                 if (info.Options != this)
@@ -896,7 +930,10 @@ namespace Automatonic.Text.Kdl
             }
             else
             {
-                Debug.Assert(_effectiveKdlTypeInfoResolver is null, "an effective resolver always returns metadata");
+                Debug.Assert(
+                    _effectiveKdlTypeInfoResolver is null,
+                    "an effective resolver always returns metadata"
+                );
 
                 if (type == KdlTypeInfo.ObjectType)
                 {
@@ -916,7 +953,7 @@ namespace Automatonic.Text.Kdl
             {
                 AllowTrailingCommas = AllowTrailingCommas,
                 CommentHandling = ReadCommentHandling,
-                MaxDepth = MaxDepth
+                MaxDepth = MaxDepth,
             };
         }
 
@@ -924,7 +961,7 @@ namespace Automatonic.Text.Kdl
         {
             return new KdlElementOptions
             {
-                PropertyNameCaseInsensitive = PropertyNameCaseInsensitive
+                PropertyNameCaseInsensitive = PropertyNameCaseInsensitive,
             };
         }
 
@@ -934,7 +971,7 @@ namespace Automatonic.Text.Kdl
             {
                 AllowTrailingCommas = AllowTrailingCommas,
                 CommentHandling = ReadCommentHandling,
-                MaxDepth = EffectiveMaxDepth
+                MaxDepth = EffectiveMaxDepth,
             };
         }
 
@@ -958,15 +995,21 @@ namespace Automatonic.Text.Kdl
         {
             if (_isReadOnly)
             {
-                ThrowHelper.ThrowInvalidOperationException_SerializerOptionsReadOnly(_typeInfoResolver as KdlSerializerContext);
+                ThrowHelper.ThrowInvalidOperationException_SerializerOptionsReadOnly(
+                    _typeInfoResolver as KdlSerializerContext
+                );
             }
         }
 
-        private sealed class ConverterList(KdlSerializerOptions options, IList<KdlConverter>? source = null) : ConfigurationList<KdlConverter>(source)
+        private sealed class ConverterList(
+            KdlSerializerOptions options,
+            IList<KdlConverter>? source = null
+        ) : ConfigurationList<KdlConverter>(source)
         {
             private readonly KdlSerializerOptions _options = options;
 
             public override bool IsReadOnly => _options.IsReadOnly;
+
             protected override void OnCollectionModifying() => _options.VerifyMutable();
         }
 
@@ -984,7 +1027,9 @@ namespace Automatonic.Text.Kdl
 
             protected override void ValidateAddedValue(IKdlTypeInfoResolver item)
             {
-                if (ReferenceEquals(item, this) || ReferenceEquals(item, _options._typeInfoResolver))
+                if (
+                    ReferenceEquals(item, this) || ReferenceEquals(item, _options._typeInfoResolver)
+                )
                 {
                     // Cannot add the instances in TypeInfoResolver or TypeInfoResolverChain to the chain itself.
                     ThrowHelper.ThrowInvalidOperationException_InvalidChainedResolver();
@@ -1008,7 +1053,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
         private static KdlSerializerOptions GetOrCreateSingleton(
             ref KdlSerializerOptions? location,
-            KdlSerializerDefaults defaults)
+            KdlSerializerDefaults defaults
+        )
         {
             var options = new KdlSerializerOptions(defaults)
             {
@@ -1027,6 +1073,7 @@ namespace Automatonic.Text.Kdl
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"TypeInfoResolver = {TypeInfoResolver?.ToString() ?? "<null>"}, IsReadOnly = {IsReadOnly}";
+        private string DebuggerDisplay =>
+            $"TypeInfoResolver = {TypeInfoResolver?.ToString() ?? "<null>"}, IsReadOnly = {IsReadOnly}";
     }
 }

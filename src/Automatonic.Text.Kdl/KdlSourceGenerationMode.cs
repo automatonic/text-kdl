@@ -27,6 +27,6 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <remarks>
         /// This mode supports only a subset of <see cref="KdlSerializer"/> features.
         /// </remarks>
-        Serialization = 2
+        Serialization = 2,
     }
 }

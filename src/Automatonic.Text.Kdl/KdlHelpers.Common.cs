@@ -13,7 +13,12 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// netstandard/netfx polyfill for Dictionary.TryAdd
         /// </summary>
-        public static bool TryAdd<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, TValue value) where TKey : notnull
+        public static bool TryAdd<TKey, TValue>(
+            this Dictionary<TKey, TValue> dictionary,
+            TKey key,
+            TValue value
+        )
+            where TKey : notnull
         {
             if (!dictionary.ContainsKey(key))
             {
@@ -43,7 +48,13 @@ namespace Automatonic.Text.Kdl
         internal static bool RequiresSpecialNumberHandlingOnWrite(KdlNumberHandling? handling)
         {
             return handling != null
-&& (handling.Value & (KdlNumberHandling.WriteAsString | KdlNumberHandling.AllowNamedFloatingPointLiterals)) != 0;
+                && (
+                    handling.Value
+                    & (
+                        KdlNumberHandling.WriteAsString
+                        | KdlNumberHandling.AllowNamedFloatingPointLiterals
+                    )
+                ) != 0;
         }
 
         /// <summary>
@@ -58,9 +69,10 @@ namespace Automatonic.Text.Kdl
             // Tuples implement lexical ordering OOTB which can be used to encode stable sorting
             // using the actual key as the first element and index as the second element.
             const int StackallocThreshold = 32;
-            Span<(TKey, int)> keys = span.Length <= StackallocThreshold
-                ? (stackalloc (TKey, int)[StackallocThreshold])[..span.Length]
-                : new (TKey, int)[span.Length];
+            Span<(TKey, int)> keys =
+                span.Length <= StackallocThreshold
+                    ? (stackalloc (TKey, int)[StackallocThreshold])[..span.Length]
+                    : new (TKey, int)[span.Length];
 
             for (int i = 0; i < keys.Length; i++)
             {
@@ -85,7 +97,11 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Traverses a DAG and returns its nodes applying topological sorting to the result.
         /// </summary>
-        public static T[] TraverseGraphWithTopologicalSort<T>(T entryNode, Func<T, ICollection<T>> getChildren, IEqualityComparer<T>? comparer = null)
+        public static T[] TraverseGraphWithTopologicalSort<T>(
+            T entryNode,
+            Func<T, ICollection<T>> getChildren,
+            IEqualityComparer<T>? comparer = null
+        )
             where T : notnull
         {
             comparer ??= EqualityComparer<T>.Default;
@@ -152,7 +168,11 @@ namespace Automatonic.Text.Kdl
                 // Iterate over the adjacency matrix, removing any occurrence of nextIndex.
                 for (int i = 0; i < adjacency.Count; i++)
                 {
-                    if (adjacency[i] is { } childMap && nextIndex < childMap.Length && childMap[nextIndex])
+                    if (
+                        adjacency[i] is { } childMap
+                        && nextIndex < childMap.Length
+                        && childMap[nextIndex]
+                    )
                     {
                         childMap[nextIndex] = false;
 
@@ -163,7 +183,6 @@ namespace Automatonic.Text.Kdl
                         }
                     }
                 }
-
             } while (childlessQueue.Count > 0);
 
             Debug.Assert(idx == 0, "should have populated the entire sortedNodes array.");

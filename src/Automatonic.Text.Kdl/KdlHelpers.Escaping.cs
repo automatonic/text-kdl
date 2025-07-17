@@ -8,7 +8,10 @@ namespace Automatonic.Text.Kdl
     internal static partial class KdlHelpers
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static byte[] GetEscapedPropertyNameSection(ReadOnlySpan<byte> utf8Value, JavaScriptEncoder? encoder)
+        public static byte[] GetEscapedPropertyNameSection(
+            ReadOnlySpan<byte> utf8Value,
+            JavaScriptEncoder? encoder
+        )
         {
             int idx = KdlWriterHelper.NeedsEscaping(utf8Value, encoder);
 
@@ -25,20 +28,30 @@ namespace Automatonic.Text.Kdl
         public static byte[] EscapeValue(
             ReadOnlySpan<byte> utf8Value,
             int firstEscapeIndexVal,
-            JavaScriptEncoder? encoder)
+            JavaScriptEncoder? encoder
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length
+            );
             Debug.Assert(firstEscapeIndexVal >= 0 && firstEscapeIndexVal < utf8Value.Length);
 
             byte[]? valueArray = null;
 
             int length = KdlWriterHelper.GetMaxEscapedLength(utf8Value.Length, firstEscapeIndexVal);
 
-            Span<byte> escapedValue = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (valueArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> escapedValue =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (valueArray = ArrayPool<byte>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                utf8Value,
+                escapedValue,
+                firstEscapeIndexVal,
+                encoder,
+                out int written
+            );
 
             byte[] escapedString = escapedValue[..written].ToArray();
 
@@ -53,20 +66,30 @@ namespace Automatonic.Text.Kdl
         private static byte[] GetEscapedPropertyNameSection(
             ReadOnlySpan<byte> utf8Value,
             int firstEscapeIndexVal,
-            JavaScriptEncoder? encoder)
+            JavaScriptEncoder? encoder
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length
+            );
             Debug.Assert(firstEscapeIndexVal >= 0 && firstEscapeIndexVal < utf8Value.Length);
 
             byte[]? valueArray = null;
 
             int length = KdlWriterHelper.GetMaxEscapedLength(utf8Value.Length, firstEscapeIndexVal);
 
-            Span<byte> escapedValue = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (valueArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> escapedValue =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (valueArray = ArrayPool<byte>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                utf8Value,
+                escapedValue,
+                firstEscapeIndexVal,
+                encoder,
+                out int written
+            );
 
             byte[] propertySection = GetPropertyNameSection(escapedValue[..written]);
 

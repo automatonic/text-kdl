@@ -67,7 +67,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     _topOfStack,
                     _rentedBuffer,
                     _rentedBuffer.Length - toReturn.Length + _topOfStack,
-                    toReturn.Length - _topOfStack);
+                    toReturn.Length - _topOfStack
+                );
 
                 _topOfStack += _rentedBuffer.Length - toReturn.Length;
 

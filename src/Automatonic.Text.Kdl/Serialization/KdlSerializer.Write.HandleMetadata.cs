@@ -6,15 +6,28 @@ namespace Automatonic.Text.Kdl
     public static partial class KdlSerializer
     {
         // Pre-encoded metadata properties.
-        internal static readonly KdlEncodedText s_metadataId = KdlEncodedText.Encode(IdPropertyName, encoder: null);
-        internal static readonly KdlEncodedText s_metadataRef = KdlEncodedText.Encode(RefPropertyName, encoder: null);
-        internal static readonly KdlEncodedText s_metadataType = KdlEncodedText.Encode(TypePropertyName, encoder: null);
-        internal static readonly KdlEncodedText s_metadataValues = KdlEncodedText.Encode(ValuesPropertyName, encoder: null);
+        internal static readonly KdlEncodedText s_metadataId = KdlEncodedText.Encode(
+            IdPropertyName,
+            encoder: null
+        );
+        internal static readonly KdlEncodedText s_metadataRef = KdlEncodedText.Encode(
+            RefPropertyName,
+            encoder: null
+        );
+        internal static readonly KdlEncodedText s_metadataType = KdlEncodedText.Encode(
+            TypePropertyName,
+            encoder: null
+        );
+        internal static readonly KdlEncodedText s_metadataValues = KdlEncodedText.Encode(
+            ValuesPropertyName,
+            encoder: null
+        );
 
         internal static MetadataPropertyName WriteMetadataForObject(
             KdlConverter kdlConverter,
             ref WriteStack state,
-            KdlWriter writer)
+            KdlWriter writer
+        )
         {
             Debug.Assert(kdlConverter.CanHaveMetadata);
             Debug.Assert(!state.IsContinuation);
@@ -33,8 +46,10 @@ namespace Automatonic.Text.Kdl
             {
                 Debug.Assert(state.PolymorphicTypeResolver != null);
 
-                KdlEncodedText propertyName =
-                    state.PolymorphicTypeResolver.CustomTypeDiscriminatorPropertyNameKdlEncoded is KdlEncodedText customPropertyName
+                KdlEncodedText propertyName = state
+                    .PolymorphicTypeResolver
+                    .CustomTypeDiscriminatorPropertyNameKdlEncoded
+                    is KdlEncodedText customPropertyName
                     ? customPropertyName
                     : s_metadataType;
 
@@ -59,11 +74,16 @@ namespace Automatonic.Text.Kdl
         internal static MetadataPropertyName WriteMetadataForCollection(
             KdlConverter kdlConverter,
             ref WriteStack state,
-            KdlWriter writer)
+            KdlWriter writer
+        )
         {
             // For collections with metadata, we nest the array payload within a KDL object.
             writer.WriteStartObject();
-            MetadataPropertyName writtenMetadata = WriteMetadataForObject(kdlConverter, ref state, writer);
+            MetadataPropertyName writtenMetadata = WriteMetadataForObject(
+                kdlConverter,
+                ref state,
+                writer
+            );
             writer.WritePropertyName(s_metadataValues); // property name containing nested array values.
             return writtenMetadata;
         }
@@ -71,11 +91,18 @@ namespace Automatonic.Text.Kdl
         /// <summary>
         /// Compute reference id for the next value to be serialized.
         /// </summary>
-        internal static bool TryGetReferenceForValue(object currentValue, ref WriteStack state, KdlWriter writer)
+        internal static bool TryGetReferenceForValue(
+            object currentValue,
+            ref WriteStack state,
+            KdlWriter writer
+        )
         {
             Debug.Assert(state.NewReferenceId == null);
 
-            string referenceId = state.ReferenceResolver.GetReference(currentValue, out bool alreadyExists);
+            string referenceId = state.ReferenceResolver.GetReference(
+                currentValue,
+                out bool alreadyExists
+            );
             Debug.Assert(referenceId != null);
 
             if (alreadyExists)

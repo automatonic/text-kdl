@@ -75,8 +75,16 @@ namespace Automatonic.Text.Kdl
 
         internal readonly int CopyValue(Span<byte> utf8Destination)
         {
-            Debug.Assert(_tokenType is KdlTokenType.String or KdlTokenType.PropertyName or KdlTokenType.Number);
-            Debug.Assert(_tokenType != KdlTokenType.Number || !ValueIsEscaped, "Numbers can't contain escape characters.");
+            Debug.Assert(
+                _tokenType
+                    is KdlTokenType.String
+                        or KdlTokenType.PropertyName
+                        or KdlTokenType.Number
+            );
+            Debug.Assert(
+                _tokenType != KdlTokenType.Number || !ValueIsEscaped,
+                "Numbers can't contain escape characters."
+            );
 
             int bytesWritten;
 
@@ -139,8 +147,16 @@ namespace Automatonic.Text.Kdl
 
         internal readonly int CopyValue(Span<char> destination)
         {
-            Debug.Assert(_tokenType is KdlTokenType.String or KdlTokenType.PropertyName or KdlTokenType.Number);
-            Debug.Assert(_tokenType != KdlTokenType.Number || !ValueIsEscaped, "Numbers can't contain escape characters.");
+            Debug.Assert(
+                _tokenType
+                    is KdlTokenType.String
+                        or KdlTokenType.PropertyName
+                        or KdlTokenType.Number
+            );
+            Debug.Assert(
+                _tokenType != KdlTokenType.Number || !ValueIsEscaped,
+                "Numbers can't contain escape characters."
+            );
 
             scoped ReadOnlySpan<byte> unescapedSource;
             byte[]? rentedBuffer = null;
@@ -150,9 +166,10 @@ namespace Automatonic.Text.Kdl
             {
                 valueLength = ValueLength;
 
-                Span<byte> unescapedBuffer = valueLength <= KdlConstants.StackallocByteThreshold ?
-                    stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                    (rentedBuffer = ArrayPool<byte>.Shared.Rent(valueLength));
+                Span<byte> unescapedBuffer =
+                    valueLength <= KdlConstants.StackallocByteThreshold
+                        ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                        : (rentedBuffer = ArrayPool<byte>.Shared.Rent(valueLength));
 
                 bool success = TryCopyEscapedString(unescapedBuffer, out int bytesWritten);
                 Debug.Assert(success);
@@ -165,9 +182,10 @@ namespace Automatonic.Text.Kdl
                     ReadOnlySequence<byte> valueSequence = ValueSequence;
                     valueLength = checked((int)valueSequence.Length);
 
-                    Span<byte> intermediate = valueLength <= KdlConstants.StackallocByteThreshold ?
-                        stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                        (rentedBuffer = ArrayPool<byte>.Shared.Rent(valueLength));
+                    Span<byte> intermediate =
+                        valueLength <= KdlConstants.StackallocByteThreshold
+                            ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                            : (rentedBuffer = ArrayPool<byte>.Shared.Rent(valueLength));
 
                     valueSequence.CopyTo(intermediate);
                     unescapedSource = intermediate[..valueLength];
@@ -202,9 +220,10 @@ namespace Automatonic.Text.Kdl
                 ReadOnlySequence<byte> valueSequence = ValueSequence;
                 int sequenceLength = checked((int)valueSequence.Length);
 
-                Span<byte> intermediate = sequenceLength <= KdlConstants.StackallocByteThreshold ?
-                    stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                    (rentedBuffer = ArrayPool<byte>.Shared.Rent(sequenceLength));
+                Span<byte> intermediate =
+                    sequenceLength <= KdlConstants.StackallocByteThreshold
+                        ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                        : (rentedBuffer = ArrayPool<byte>.Shared.Rent(sequenceLength));
 
                 valueSequence.CopyTo(intermediate);
                 source = intermediate[..sequenceLength];
@@ -222,7 +241,10 @@ namespace Automatonic.Text.Kdl
                 ArrayPool<byte>.Shared.Return(rentedBuffer);
             }
 
-            Debug.Assert(bytesWritten < source.Length, "source buffer must contain at least one escape sequence");
+            Debug.Assert(
+                bytesWritten < source.Length,
+                "source buffer must contain at least one escape sequence"
+            );
             return success;
         }
 
@@ -600,9 +622,13 @@ namespace Automatonic.Text.Kdl
             // NETCOREAPP implementation of the TryParse method above permits case-insensitive variants of the
             // float constants "NaN", "Infinity", "-Infinity". This differs from the NETFRAMEWORK implementation.
             // The following logic reconciles the two implementations to enforce consistent behavior.
-            if (!(Utf8Parser.TryParse(span, out value, out int bytesConsumed)
-                  && span.Length == bytesConsumed
-                  && KdlHelpers.IsFinite(value)))
+            if (
+                !(
+                    Utf8Parser.TryParse(span, out value, out int bytesConsumed)
+                    && span.Length == bytesConsumed
+                    && KdlHelpers.IsFinite(value)
+                )
+            )
             {
                 ThrowHelper.ThrowFormatException(NumericType.Single);
             }
@@ -657,9 +683,13 @@ namespace Automatonic.Text.Kdl
             // NETCOREAPP implementation of the TryParse method above permits case-insensitive variants of the
             // float constants "NaN", "Infinity", "-Infinity". This differs from the NETFRAMEWORK implementation.
             // The following logic reconciles the two implementations to enforce consistent behavior.
-            if (!(Utf8Parser.TryParse(span, out value, out int bytesConsumed)
-                  && span.Length == bytesConsumed
-                  && KdlHelpers.IsFinite(value)))
+            if (
+                !(
+                    Utf8Parser.TryParse(span, out value, out int bytesConsumed)
+                    && span.Length == bytesConsumed
+                    && KdlHelpers.IsFinite(value)
+                )
+            )
             {
                 ThrowHelper.ThrowFormatException(NumericType.Double);
             }
@@ -863,8 +893,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetByteCore(out byte value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out byte tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out byte tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -899,8 +931,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetSByteCore(out sbyte value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out sbyte tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out sbyte tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -934,8 +968,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetInt16Core(out short value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out short tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out short tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -969,8 +1005,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetInt32Core(out int value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out int tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out int tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1004,8 +1042,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetInt64Core(out long value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out long tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out long tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1040,8 +1080,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetUInt16Core(out ushort value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out ushort tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out ushort tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1076,8 +1118,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetUInt32Core(out uint value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out uint tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out uint tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1112,8 +1156,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetUInt64Core(out ulong value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out ulong tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out ulong tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1142,8 +1188,10 @@ namespace Automatonic.Text.Kdl
 
             ReadOnlySpan<byte> span = HasValueSequence ? ValueSequence.ToArray() : ValueSpan;
 
-            if (Utf8Parser.TryParse(span, out float tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out float tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1172,8 +1220,10 @@ namespace Automatonic.Text.Kdl
 
             ReadOnlySpan<byte> span = HasValueSequence ? ValueSequence.ToArray() : ValueSpan;
 
-            if (Utf8Parser.TryParse(span, out double tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out double tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1207,8 +1257,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static bool TryGetDecimalCore(out decimal value, ReadOnlySpan<byte> span)
         {
-            if (Utf8Parser.TryParse(span, out decimal tmp, out int bytesConsumed)
-                && span.Length == bytesConsumed)
+            if (
+                Utf8Parser.TryParse(span, out decimal tmp, out int bytesConsumed)
+                && span.Length == bytesConsumed
+            )
             {
                 value = tmp;
                 return true;
@@ -1245,19 +1297,32 @@ namespace Automatonic.Text.Kdl
             if (HasValueSequence)
             {
                 long sequenceLength = ValueSequence.Length;
-                if (!KdlHelpers.IsInRangeInclusive(sequenceLength, KdlConstants.MinimumDateTimeParseLength, KdlConstants.MaximumEscapedDateTimeOffsetParseLength))
+                if (
+                    !KdlHelpers.IsInRangeInclusive(
+                        sequenceLength,
+                        KdlConstants.MinimumDateTimeParseLength,
+                        KdlConstants.MaximumEscapedDateTimeOffsetParseLength
+                    )
+                )
                 {
                     value = default;
                     return false;
                 }
 
-                Span<byte> stackSpan = stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
+                Span<byte> stackSpan =
+                    stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
                 ValueSequence.CopyTo(stackSpan);
                 span = stackSpan[..(int)sequenceLength];
             }
             else
             {
-                if (!KdlHelpers.IsInRangeInclusive(ValueSpan.Length, KdlConstants.MinimumDateTimeParseLength, KdlConstants.MaximumEscapedDateTimeOffsetParseLength))
+                if (
+                    !KdlHelpers.IsInRangeInclusive(
+                        ValueSpan.Length,
+                        KdlConstants.MinimumDateTimeParseLength,
+                        KdlConstants.MaximumEscapedDateTimeOffsetParseLength
+                    )
+                )
                 {
                     value = default;
                     return false;
@@ -1310,19 +1375,32 @@ namespace Automatonic.Text.Kdl
             if (HasValueSequence)
             {
                 long sequenceLength = ValueSequence.Length;
-                if (!KdlHelpers.IsInRangeInclusive(sequenceLength, KdlConstants.MinimumDateTimeParseLength, KdlConstants.MaximumEscapedDateTimeOffsetParseLength))
+                if (
+                    !KdlHelpers.IsInRangeInclusive(
+                        sequenceLength,
+                        KdlConstants.MinimumDateTimeParseLength,
+                        KdlConstants.MaximumEscapedDateTimeOffsetParseLength
+                    )
+                )
                 {
                     value = default;
                     return false;
                 }
 
-                Span<byte> stackSpan = stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
+                Span<byte> stackSpan =
+                    stackalloc byte[KdlConstants.MaximumEscapedDateTimeOffsetParseLength];
                 ValueSequence.CopyTo(stackSpan);
                 span = stackSpan[..(int)sequenceLength];
             }
             else
             {
-                if (!KdlHelpers.IsInRangeInclusive(ValueSpan.Length, KdlConstants.MinimumDateTimeParseLength, KdlConstants.MaximumEscapedDateTimeOffsetParseLength))
+                if (
+                    !KdlHelpers.IsInRangeInclusive(
+                        ValueSpan.Length,
+                        KdlConstants.MinimumDateTimeParseLength,
+                        KdlConstants.MaximumEscapedDateTimeOffsetParseLength
+                    )
+                )
                 {
                     value = default;
                     return false;
@@ -1404,8 +1482,10 @@ namespace Automatonic.Text.Kdl
 
             Debug.Assert(span.IndexOf(KdlConstants.BackSlash) == -1);
 
-            if (span.Length == KdlConstants.MaximumFormatGuidLength
-                && Utf8Parser.TryParse(span, out Guid tmp, out _, 'D'))
+            if (
+                span.Length == KdlConstants.MaximumFormatGuidLength
+                && Utf8Parser.TryParse(span, out Guid tmp, out _, 'D')
+            )
             {
                 value = tmp;
                 return true;

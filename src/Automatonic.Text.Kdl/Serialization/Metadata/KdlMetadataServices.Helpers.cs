@@ -9,7 +9,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <summary>
         /// Creates serialization metadata for a type using a simple converter.
         /// </summary>
-        private static KdlTypeInfo<T> CreateCore<T>(KdlConverter converter, KdlSerializerOptions options)
+        private static KdlTypeInfo<T> CreateCore<T>(
+            KdlConverter converter,
+            KdlSerializerOptions options
+        )
         {
             var typeInfo = new KdlTypeInfo<T>(converter, options);
             typeInfo.PopulatePolymorphismMetadata();
@@ -24,7 +27,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <summary>
         /// Creates serialization metadata for an object.
         /// </summary>
-        private static KdlTypeInfo<T> CreateCore<T>(KdlSerializerOptions options, KdlObjectInfoValues<T> objectInfo)
+        private static KdlTypeInfo<T> CreateCore<T>(
+            KdlSerializerOptions options,
+            KdlObjectInfoValues<T> objectInfo
+        )
         {
             KdlConverter<T> converter = GetConverter(objectInfo);
             var typeInfo = new KdlTypeInfo<T>(converter, options);
@@ -32,25 +38,33 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 // NB parameter metadata must be populated *before* property metadata
                 // so that properties can be linked to their associated parameters.
-                typeInfo.CreateObjectWithArgs = objectInfo.ObjectWithParameterizedConstructorCreator;
-                PopulateParameterInfoValues(typeInfo, objectInfo.ConstructorParameterMetadataInitializer);
+                typeInfo.CreateObjectWithArgs =
+                    objectInfo.ObjectWithParameterizedConstructorCreator;
+                PopulateParameterInfoValues(
+                    typeInfo,
+                    objectInfo.ConstructorParameterMetadataInitializer
+                );
             }
             else
             {
                 typeInfo.SetCreateObjectIfCompatible(objectInfo.ObjectCreator);
-                typeInfo.CreateObjectForExtensionDataProperty = ((KdlTypeInfo)typeInfo).CreateObject;
+                typeInfo.CreateObjectForExtensionDataProperty = (
+                    (KdlTypeInfo)typeInfo
+                ).CreateObject;
             }
 
             if (objectInfo.PropertyMetadataInitializer != null)
             {
-                typeInfo.SourceGenDelayedPropertyInitializer = objectInfo.PropertyMetadataInitializer;
+                typeInfo.SourceGenDelayedPropertyInitializer =
+                    objectInfo.PropertyMetadataInitializer;
             }
             else
             {
                 typeInfo.PropertyMetadataSerializationNotSupported = true;
             }
 
-            typeInfo.ConstructorAttributeProviderFactory = objectInfo.ConstructorAttributeProviderFactory;
+            typeInfo.ConstructorAttributeProviderFactory =
+                objectInfo.ConstructorAttributeProviderFactory;
             typeInfo.SerializeHandler = objectInfo.SerializeHandler;
             typeInfo.NumberHandling = objectInfo.NumberHandling;
             typeInfo.PopulatePolymorphismMetadata();
@@ -70,21 +84,23 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             KdlCollectionInfoValues<T> collectionInfo,
             KdlConverter<T> converter,
             object? createObjectWithArgs = null,
-            object? addFunc = null)
+            object? addFunc = null
+        )
         {
             if (collectionInfo is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(collectionInfo));
             }
 
-            converter = collectionInfo.SerializeHandler != null
-                ? new KdlMetadataServicesConverter<T>(converter)
-                : converter;
+            converter =
+                collectionInfo.SerializeHandler != null
+                    ? new KdlMetadataServicesConverter<T>(converter)
+                    : converter;
 
             KdlTypeInfo<T> typeInfo = new KdlTypeInfo<T>(converter, options)
             {
                 KeyTypeInfo = collectionInfo.KeyInfo,
-                ElementTypeInfo = collectionInfo.ElementInfo
+                ElementTypeInfo = collectionInfo.ElementInfo,
             };
             Debug.Assert(typeInfo.Kind != KdlTypeInfoKind.None);
             typeInfo.NumberHandling = collectionInfo.NumberHandling;
@@ -104,9 +120,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         private static KdlConverter<T> GetConverter<T>(KdlObjectInfoValues<T> objectInfo)
         {
 #pragma warning disable CS8714 // Nullability of type argument 'T' doesn't match 'notnull' constraint.
-            KdlConverter<T> converter = objectInfo.ObjectWithParameterizedConstructorCreator != null
-                ? new LargeObjectWithParameterizedConstructorConverter<T>()
-                : new ObjectDefaultConverter<T>();
+            KdlConverter<T> converter =
+                objectInfo.ObjectWithParameterizedConstructorCreator != null
+                    ? new LargeObjectWithParameterizedConstructorConverter<T>()
+                    : new ObjectDefaultConverter<T>();
 #pragma warning restore CS8714
 
             return objectInfo.SerializeHandler != null
@@ -114,7 +131,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 : converter;
         }
 
-        private static void PopulateParameterInfoValues(KdlTypeInfo typeInfo, Func<KdlParameterInfoValues[]?>? paramFactory)
+        private static void PopulateParameterInfoValues(
+            KdlTypeInfo typeInfo,
+            Func<KdlParameterInfoValues[]?>? paramFactory
+        )
         {
             Debug.Assert(typeInfo.Kind is KdlTypeInfoKind.Object);
             Debug.Assert(!typeInfo.IsReadOnly);
@@ -129,14 +149,19 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal static void PopulateProperties(KdlTypeInfo typeInfo, KdlTypeInfo.KdlPropertyInfoList propertyList, Func<KdlSerializerContext, KdlPropertyInfo[]> propInitFunc)
+        internal static void PopulateProperties(
+            KdlTypeInfo typeInfo,
+            KdlTypeInfo.KdlPropertyInfoList propertyList,
+            Func<KdlSerializerContext, KdlPropertyInfo[]> propInitFunc
+        )
         {
             Debug.Assert(typeInfo.Kind is KdlTypeInfoKind.Object);
             Debug.Assert(!typeInfo.IsConfigured);
             Debug.Assert(typeInfo.Type != KdlTypeInfo.ObjectType);
             Debug.Assert(typeInfo.Converter.ElementType is null);
 
-            KdlSerializerContext? context = typeInfo.Options.TypeInfoResolver as KdlSerializerContext;
+            KdlSerializerContext? context =
+                typeInfo.Options.TypeInfoResolver as KdlSerializerContext;
             KdlPropertyInfo[] properties = propInitFunc(context!);
 
             // Regardless of the source generator we need to re-run the naming conflict resolution algorithm
@@ -149,14 +174,24 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 {
                     if (kdlPropertyInfo.SrcGen_HasKdlInclude)
                     {
-                        Debug.Assert(kdlPropertyInfo.MemberName != null, "MemberName is not set by source gen");
-                        ThrowHelper.ThrowInvalidOperationException_KdlIncludeOnInaccessibleProperty(kdlPropertyInfo.MemberName, kdlPropertyInfo.DeclaringType);
+                        Debug.Assert(
+                            kdlPropertyInfo.MemberName != null,
+                            "MemberName is not set by source gen"
+                        );
+                        ThrowHelper.ThrowInvalidOperationException_KdlIncludeOnInaccessibleProperty(
+                            kdlPropertyInfo.MemberName,
+                            kdlPropertyInfo.DeclaringType
+                        );
                     }
 
                     continue;
                 }
 
-                if (kdlPropertyInfo.MemberType == MemberTypes.Field && !kdlPropertyInfo.SrcGen_HasKdlInclude && !typeInfo.Options.IncludeFields)
+                if (
+                    kdlPropertyInfo.MemberType == MemberTypes.Field
+                    && !kdlPropertyInfo.SrcGen_HasKdlInclude
+                    && !typeInfo.Options.IncludeFields
+                )
                 {
                     continue;
                 }
@@ -170,16 +205,27 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        private static KdlPropertyInfo<T> CreatePropertyInfoCore<T>(KdlPropertyInfoValues<T> propertyInfoValues, KdlSerializerOptions options)
+        private static KdlPropertyInfo<T> CreatePropertyInfoCore<T>(
+            KdlPropertyInfoValues<T> propertyInfoValues,
+            KdlSerializerOptions options
+        )
         {
-            var propertyInfo = new KdlPropertyInfo<T>(propertyInfoValues.DeclaringType, declaringTypeInfo: null, options);
+            var propertyInfo = new KdlPropertyInfo<T>(
+                propertyInfoValues.DeclaringType,
+                declaringTypeInfo: null,
+                options
+            );
 
-            DeterminePropertyName(propertyInfo,
+            DeterminePropertyName(
+                propertyInfo,
                 declaredPropertyName: propertyInfoValues.PropertyName,
-                declaredKdlPropertyName: propertyInfoValues.KdlPropertyName);
+                declaredKdlPropertyName: propertyInfoValues.KdlPropertyName
+            );
 
             propertyInfo.MemberName = propertyInfoValues.PropertyName;
-            propertyInfo.MemberType = propertyInfoValues.IsProperty ? MemberTypes.Property : MemberTypes.Field;
+            propertyInfo.MemberType = propertyInfoValues.IsProperty
+                ? MemberTypes.Property
+                : MemberTypes.Field;
             propertyInfo.SrcGen_IsPublic = propertyInfoValues.IsPublic;
             propertyInfo.SrcGen_HasKdlInclude = propertyInfoValues.HasKdlInclude;
             propertyInfo.IsExtensionData = propertyInfoValues.IsExtensionData;
@@ -202,7 +248,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         private static void DeterminePropertyName(
             KdlPropertyInfo propertyInfo,
             string declaredPropertyName,
-            string? declaredKdlPropertyName)
+            string? declaredKdlPropertyName
+        )
         {
             string? name;
 

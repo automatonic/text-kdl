@@ -89,6 +89,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             private bool _convertToAlloc; // Convert the rented data to an alloc when complete.
             private bool _isLocked; // Is the array the correct fixed size.
+
             // _isLocked _convertToAlloc truth table:
             // false     false  Standard flow. Size is not known and renting used throughout lifetime.
             // true      false  Used by KdlElement.ParseValue() for primitives and KdlDocument.Clone(). Size is known and no renting.
@@ -213,8 +214,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
             {
                 // StartArray or StartObject should have length -1, otherwise the length should not be -1.
                 Debug.Assert(
-                    (tokenType == KdlTokenType.StartArray || tokenType == KdlTokenType.StartChildrenBlock) ==
-                    (length == DbRow.UnknownSize));
+                    (
+                        tokenType == KdlTokenType.StartArray
+                        || tokenType == KdlTokenType.StartChildrenBlock
+                    ) == (length == DbRow.UnknownSize)
+                );
 
                 if (Length >= _data.Length - DbRow.Size)
                 {
@@ -270,7 +274,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             {
                 Debug.Assert(index >= 0);
                 Debug.Assert(index <= Length - DbRow.Size, $"index {index} is out of bounds");
-                Debug.Assert(index % DbRow.Size == 0, $"index {index} is not at a record start position");
+                Debug.Assert(
+                    index % DbRow.Size == 0,
+                    $"index {index} is not at a record start position"
+                );
             }
 
             internal void SetLength(int index, int length)
@@ -308,7 +315,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             internal readonly int FindIndexOfFirstUnsetSizeOrLength(KdlTokenType lookupType)
             {
-                Debug.Assert(lookupType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray);
+                Debug.Assert(
+                    lookupType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray
+                );
                 return FindOpenElement(lookupType);
             }
 
@@ -349,7 +358,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
             {
                 Debug.Assert(
                     endIndex > startIndex,
-                    $"endIndex={endIndex} was at or before startIndex={startIndex}");
+                    $"endIndex={endIndex} was at or before startIndex={startIndex}"
+                );
 
                 AssertValidIndex(startIndex);
                 Debug.Assert(endIndex <= Length);
@@ -362,19 +372,22 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 {
                     Debug.Assert(
                         end.TokenType == KdlTokenType.EndChildrenBlock,
-                        $"StartObject paired with {end.TokenType}");
+                        $"StartObject paired with {end.TokenType}"
+                    );
                 }
                 else if (start.TokenType == KdlTokenType.StartArray)
                 {
                     Debug.Assert(
                         end.TokenType == KdlTokenType.EndArray,
-                        $"StartArray paired with {end.TokenType}");
+                        $"StartArray paired with {end.TokenType}"
+                    );
                 }
                 else
                 {
                     Debug.Assert(
                         startIndex + DbRow.Size == endIndex,
-                        $"{start.TokenType} should have been one row");
+                        $"{start.TokenType} should have been one row"
+                    );
                 }
 #endif
 
@@ -392,7 +405,11 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     locationOffset--;
                 }
 
-                for (int i = (length - DbRow.Size) / sizeof(int); i >= 0; i -= DbRow.Size / sizeof(int))
+                for (
+                    int i = (length - DbRow.Size) / sizeof(int);
+                    i >= 0;
+                    i -= DbRow.Size / sizeof(int)
+                )
                 {
                     Debug.Assert(newDbInts[i] >= locationOffset);
                     newDbInts[i] -= locationOffset;

@@ -11,6 +11,7 @@ internal static partial class ThrowHelper
 
     internal static string Format(string format, object? arg0) =>
         string.Format(CultureInfo.InvariantCulture, format, arg0);
+
     internal static string Format(string format, object? arg0, object? arg1) =>
         string.Format(CultureInfo.InvariantCulture, format, arg0, arg1);
 

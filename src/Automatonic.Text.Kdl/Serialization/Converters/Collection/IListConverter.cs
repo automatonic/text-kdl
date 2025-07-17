@@ -5,8 +5,7 @@ using Automatonic.Text.Kdl.Serialization.Metadata;
 namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     /// Converter for <cref>System.Collections.IList</cref>.
-    internal sealed class IListConverter<TCollection>
-        : KdlCollectionConverter<TCollection, object?>
+    internal sealed class IListConverter<TCollection> : KdlCollectionConverter<TCollection, object?>
         where TCollection : IList
     {
         internal override bool CanPopulate => true;
@@ -21,18 +20,31 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             base.CreateCollection(ref reader, ref state, options);
             TCollection returnValue = (TCollection)state.Current.ReturnValue!;
             if (returnValue.IsReadOnly)
             {
                 state.Current.ReturnValue = null; // clear out for more accurate KdlPath reporting.
-                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(Type, ref reader, ref state);
+                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(
+                    Type,
+                    ref reader,
+                    ref state
+                );
             }
         }
 
-        protected override bool OnWriteResume(KdlWriter writer, TCollection value, KdlSerializerOptions options, ref WriteStack state)
+        protected override bool OnWriteResume(
+            KdlWriter writer,
+            TCollection value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             IList list = value;
 
@@ -72,7 +84,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return true;
         }
 
-        internal override void ConfigureKdlTypeInfo(KdlTypeInfo kdlTypeInfo, KdlSerializerOptions options)
+        internal override void ConfigureKdlTypeInfo(
+            KdlTypeInfo kdlTypeInfo,
+            KdlSerializerOptions options
+        )
         {
             // Deserialize as List<object?> for interface types that support it.
             if (kdlTypeInfo.CreateObject is null && Type.IsAssignableFrom(typeof(List<object?>)))

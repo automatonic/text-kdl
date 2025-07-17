@@ -17,17 +17,22 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return typeDef == typeof(Memory<>) || typeDef == typeof(ReadOnlyMemory<>);
         }
 
-        public override KdlConverter? CreateConverter(Type typeToConvert, KdlSerializerOptions options)
+        public override KdlConverter? CreateConverter(
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(CanConvert(typeToConvert));
 
-            Type converterType = typeToConvert.GetGenericTypeDefinition() == typeof(Memory<>) ?
-                typeof(MemoryConverter<>) : typeof(ReadOnlyMemoryConverter<>);
+            Type converterType =
+                typeToConvert.GetGenericTypeDefinition() == typeof(Memory<>)
+                    ? typeof(MemoryConverter<>)
+                    : typeof(ReadOnlyMemoryConverter<>);
 
             Type elementType = typeToConvert.GetGenericArguments()[0];
 
-            return (KdlConverter)Activator.CreateInstance(
-                converterType.MakeGenericType(elementType))!;
+            return (KdlConverter)
+                Activator.CreateInstance(converterType.MakeGenericType(elementType))!;
         }
     }
 }

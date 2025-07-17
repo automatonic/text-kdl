@@ -42,26 +42,40 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// </exception>
         public static KdlReadOnlyElement ParseValue(ref KdlReader reader)
         {
-            bool ret = KdlReadOnlyDocument.TryParseValue(ref reader, out KdlReadOnlyDocument? document, shouldThrow: true, useArrayPools: false);
+            bool ret = KdlReadOnlyDocument.TryParseValue(
+                ref reader,
+                out KdlReadOnlyDocument? document,
+                shouldThrow: true,
+                useArrayPools: false
+            );
 
             Debug.Assert(ret, "TryParseValue returned false with shouldThrow: true.");
             Debug.Assert(document != null, "null document returned with shouldThrow: true.");
             return document.RootElement;
         }
 
-        internal static KdlReadOnlyElement ParseValue(Stream utf8Kdl, KdlReadOnlyDocumentOptions options)
+        internal static KdlReadOnlyElement ParseValue(
+            Stream utf8Kdl,
+            KdlReadOnlyDocumentOptions options
+        )
         {
             KdlReadOnlyDocument document = KdlReadOnlyDocument.ParseValue(utf8Kdl, options);
             return document.RootElement;
         }
 
-        internal static KdlReadOnlyElement ParseValue(ReadOnlySpan<byte> utf8Kdl, KdlReadOnlyDocumentOptions options)
+        internal static KdlReadOnlyElement ParseValue(
+            ReadOnlySpan<byte> utf8Kdl,
+            KdlReadOnlyDocumentOptions options
+        )
         {
             KdlReadOnlyDocument document = KdlReadOnlyDocument.ParseValue(utf8Kdl, options);
             return document.RootElement;
         }
 
-        internal static KdlReadOnlyElement ParseValue(string kdl, KdlReadOnlyDocumentOptions options)
+        internal static KdlReadOnlyElement ParseValue(
+            string kdl,
+            KdlReadOnlyDocumentOptions options
+        )
         {
             KdlReadOnlyDocument document = KdlReadOnlyDocument.ParseValue(kdl, options);
             return document.RootElement;
@@ -105,9 +119,17 @@ namespace Automatonic.Text.Kdl.RandomAccess
         /// <exception cref="KdlException">
         ///   A value could not be read from the reader.
         /// </exception>
-        public static bool TryParseValue(ref KdlReader reader, [NotNullWhen(true)] out KdlReadOnlyElement? element)
+        public static bool TryParseValue(
+            ref KdlReader reader,
+            [NotNullWhen(true)] out KdlReadOnlyElement? element
+        )
         {
-            bool ret = KdlReadOnlyDocument.TryParseValue(ref reader, out KdlReadOnlyDocument? document, shouldThrow: false, useArrayPools: false);
+            bool ret = KdlReadOnlyDocument.TryParseValue(
+                ref reader,
+                out KdlReadOnlyDocument? document,
+                shouldThrow: false,
+                useArrayPools: false
+            );
             element = document?.RootElement;
             return ret;
         }

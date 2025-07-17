@@ -12,14 +12,27 @@ namespace Automatonic.Text.Kdl.Serialization
     /// <see cref="KdlSerializerOptions.Converters"/> or there is another <see cref="KdlConverterAttribute"/> on a property or field
     /// of the same type.
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    [AttributeUsage(
+        AttributeTargets.Class
+            | AttributeTargets.Interface
+            | AttributeTargets.Struct
+            | AttributeTargets.Enum
+            | AttributeTargets.Property
+            | AttributeTargets.Field,
+        AllowMultiple = false
+    )]
     public class KdlConverterAttribute : KdlAttribute
     {
         /// <summary>
         /// Initializes a new instance of <see cref="KdlConverterAttribute"/> with the specified converter type.
         /// </summary>
         /// <param name="converterType">The type of the converter.</param>
-        public KdlConverterAttribute([DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicParameterlessConstructor)] Type converterType) => ConverterType = converterType;
+        public KdlConverterAttribute(
+            [DynamicallyAccessedMembers(
+                DynamicallyAccessedMemberTypes.PublicParameterlessConstructor
+            )]
+                Type converterType
+        ) => ConverterType = converterType;
 
         /// <summary>
         /// Initializes a new instance of <see cref="KdlConverterAttribute"/>.

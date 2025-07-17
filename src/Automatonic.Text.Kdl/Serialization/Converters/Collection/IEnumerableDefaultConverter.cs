@@ -5,12 +5,18 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     /// <summary>
     /// Default base class implementation of <cref>KdlIEnumerableConverter{TCollection, TElement}</cref>.
     /// </summary>
-    internal abstract class IEnumerableDefaultConverter<TCollection, TElement> : KdlCollectionConverter<TCollection, TElement>
+    internal abstract class IEnumerableDefaultConverter<TCollection, TElement>
+        : KdlCollectionConverter<TCollection, TElement>
         where TCollection : IEnumerable<TElement>
     {
         internal override bool CanHaveMetadata => true;
 
-        protected override bool OnWriteResume(KdlWriter writer, TCollection value, KdlSerializerOptions options, ref WriteStack state)
+        protected override bool OnWriteResume(
+            KdlWriter writer,
+            TCollection value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             Debug.Assert(value is not null);
 

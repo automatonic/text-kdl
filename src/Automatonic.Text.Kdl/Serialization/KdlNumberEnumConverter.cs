@@ -23,14 +23,22 @@ namespace Automatonic.Text.Kdl.Serialization
         public override bool CanConvert(Type typeToConvert) => typeToConvert == typeof(TEnum);
 
         /// <inheritdoc />
-        public override KdlConverter? CreateConverter(Type typeToConvert, KdlSerializerOptions options)
+        public override KdlConverter? CreateConverter(
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (typeToConvert != typeof(TEnum))
             {
-                ThrowHelper.ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(typeToConvert);
+                ThrowHelper.ThrowArgumentOutOfRangeException_KdlConverterFactory_TypeNotSupported(
+                    typeToConvert
+                );
             }
 
-            return EnumConverterFactory.Helpers.Create<TEnum>(EnumConverterOptions.AllowNumbers, options);
+            return EnumConverterFactory.Helpers.Create<TEnum>(
+                EnumConverterOptions.AllowNumbers,
+                options
+            );
         }
     }
 }

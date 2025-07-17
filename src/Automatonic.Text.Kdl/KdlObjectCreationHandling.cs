@@ -1,6 +1,5 @@
 ﻿namespace Automatonic.Text.Kdl.Serialization
 {
-
     /// <summary>
     /// Determines how deserialization will handle object creation for fields or properties.
     /// </summary>

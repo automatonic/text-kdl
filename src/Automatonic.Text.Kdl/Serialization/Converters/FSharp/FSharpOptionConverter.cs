@@ -10,6 +10,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         internal override Type? ElementType => typeof(TElement);
         internal override KdlConverter? NullableElementConverter => _elementConverter;
+
         // 'None' is encoded using 'null' at runtime and serialized as 'null' in KDL.
         public override bool HandleNull => true;
 
@@ -22,12 +23,25 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         public FSharpOptionConverter(KdlConverter<TElement> elementConverter)
         {
             _elementConverter = elementConverter;
-            _optionValueGetter = FSharpCoreReflectionProxy.Instance.CreateFSharpOptionValueGetter<TOption, TElement>();
-            _optionConstructor = FSharpCoreReflectionProxy.Instance.CreateFSharpOptionSomeConstructor<TOption, TElement>();
+            _optionValueGetter = FSharpCoreReflectionProxy.Instance.CreateFSharpOptionValueGetter<
+                TOption,
+                TElement
+            >();
+            _optionConstructor =
+                FSharpCoreReflectionProxy.Instance.CreateFSharpOptionSomeConstructor<
+                    TOption,
+                    TElement
+                >();
             ConverterStrategy = elementConverter.ConverterStrategy;
         }
 
-        internal override bool OnTryRead(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options, scoped ref ReadStack state, out TOption? value)
+        internal override bool OnTryRead(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state,
+            out TOption? value
+        )
         {
             // `null` values deserialize as `None`
             if (!state.IsContinuation && reader.TokenType == KdlTokenType.Null)
@@ -36,8 +50,21 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 return true;
             }
 
-            state.Current.KdlPropertyInfo = state.Current.KdlTypeInfo.ElementTypeInfo!.PropertyInfoForTypeInfo;
-            if (_elementConverter.TryRead(ref reader, typeof(TElement), options, ref state, out TElement? element, out _))
+            state.Current.KdlPropertyInfo = state
+                .Current
+                .KdlTypeInfo
+                .ElementTypeInfo!
+                .PropertyInfoForTypeInfo;
+            if (
+                _elementConverter.TryRead(
+                    ref reader,
+                    typeof(TElement),
+                    options,
+                    ref state,
+                    out TElement? element,
+                    out _
+                )
+            )
             {
                 value = _optionConstructor(element);
                 return true;
@@ -47,7 +74,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return false;
         }
 
-        internal override bool OnTryWrite(KdlWriter writer, TOption value, KdlSerializerOptions options, ref WriteStack state)
+        internal override bool OnTryWrite(
+            KdlWriter writer,
+            TOption value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             if (value is null)
             {
@@ -57,7 +89,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
 
             TElement element = _optionValueGetter(value);
-            state.Current.KdlPropertyInfo = state.Current.KdlTypeInfo.ElementTypeInfo!.PropertyInfoForTypeInfo;
+            state.Current.KdlPropertyInfo = state
+                .Current
+                .KdlTypeInfo
+                .ElementTypeInfo!
+                .PropertyInfoForTypeInfo;
             return _elementConverter.TryWrite(writer, element, options, ref state);
         }
 
@@ -77,7 +113,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        public override TOption? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override TOption? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType == KdlTokenType.Null)
             {

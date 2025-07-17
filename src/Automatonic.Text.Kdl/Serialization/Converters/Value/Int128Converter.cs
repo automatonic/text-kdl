@@ -11,7 +11,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         public Int128Converter() => IsInternalConverterForNumberType = true;
 
-        public override Int128 Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override Int128 Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType != KdlTokenType.Number)
             {
@@ -31,12 +35,15 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             int bufferLength = reader.ValueLength;
 
             byte[]? rentedBuffer = null;
-            Span<byte> buffer = bufferLength <= KdlConstants.StackallocByteThreshold
-                ? stackalloc byte[KdlConstants.StackallocByteThreshold]
-                : (rentedBuffer = ArrayPool<byte>.Shared.Rent(bufferLength));
+            Span<byte> buffer =
+                bufferLength <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (rentedBuffer = ArrayPool<byte>.Shared.Rent(bufferLength));
 
             int written = reader.CopyValue(buffer);
-            if (!Int128.TryParse(buffer[..written], CultureInfo.InvariantCulture, out Int128 result))
+            if (
+                !Int128.TryParse(buffer[..written], CultureInfo.InvariantCulture, out Int128 result)
+            )
             {
                 ThrowHelper.ThrowFormatException(NumericType.Int128);
             }
@@ -56,23 +63,38 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteRawValue(buffer[..written]);
         }
 
-        internal override Int128 ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override Int128 ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return ReadCore(ref reader);
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, Int128 value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            Int128 value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             Span<byte> buffer = stackalloc byte[MaxFormatLength];
             Format(buffer, value, out int written);
             writer.WritePropertyName(buffer);
         }
 
-        internal override Int128 ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal override Int128 ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
-            if (reader.TokenType == KdlTokenType.String &&
-                (KdlNumberHandling.AllowReadingFromString & handling) != 0)
+            if (
+                reader.TokenType == KdlTokenType.String
+                && (KdlNumberHandling.AllowReadingFromString & handling) != 0
+            )
             {
                 return ReadCore(ref reader);
             }
@@ -80,7 +102,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return Read(ref reader, Type, options);
         }
 
-        internal override void WriteNumberWithCustomHandling(KdlWriter writer, Int128 value, KdlNumberHandling handling)
+        internal override void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            Int128 value,
+            KdlNumberHandling handling
+        )
         {
             if ((KdlNumberHandling.WriteAsString & handling) != 0)
             {
@@ -102,11 +128,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         internal override KdlSchema? GetSchema(KdlNumberHandling numberHandling) =>
             GetSchemaForNumericType(KdlSchemaType.Integer, numberHandling);
 
-        private static void Format(
-            Span<byte> destination,
-            Int128 value, out int written)
+        private static void Format(Span<byte> destination, Int128 value, out int written)
         {
-            bool formattedSuccessfully = value.TryFormat(destination, out written, provider: CultureInfo.InvariantCulture);
+            bool formattedSuccessfully = value.TryFormat(
+                destination,
+                out written,
+                provider: CultureInfo.InvariantCulture
+            );
             Debug.Assert(formattedSuccessfully);
         }
     }

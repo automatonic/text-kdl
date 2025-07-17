@@ -13,21 +13,22 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="InvalidOperationException">
         /// Thrown if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WritePropertyName(KdlEncodedText propertyName)
-            => WritePropertyNameHelper(propertyName.EncodedUtf8Bytes);
+        public void WritePropertyName(KdlEncodedText propertyName) =>
+            WritePropertyNameHelper(propertyName.EncodedUtf8Bytes);
 
         internal void WritePropertyNameSection(ReadOnlySpan<byte> escapedPropertyNameSection)
         {
             if (_options.Indented)
             {
-                ReadOnlySpan<byte> escapedPropertyName =
-                    escapedPropertyNameSection[1..^2];
+                ReadOnlySpan<byte> escapedPropertyName = escapedPropertyNameSection[1..^2];
 
                 WritePropertyNameHelper(escapedPropertyName);
             }
             else
             {
-                Debug.Assert(escapedPropertyNameSection.Length <= KdlConstants.MaxUnescapedTokenSize - 3);
+                Debug.Assert(
+                    escapedPropertyNameSection.Length <= KdlConstants.MaxUnescapedTokenSize - 3
+                );
 
                 WriteStringPropertyNameSection(escapedPropertyNameSection);
 
@@ -92,7 +93,11 @@ namespace Automatonic.Text.Kdl
 
             int propertyIdx = KdlWriterHelper.NeedsEscaping(propertyName, _options.Encoder);
 
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < propertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < propertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             if (propertyIdx != -1)
             {
@@ -107,16 +112,24 @@ namespace Automatonic.Text.Kdl
             _commentAfterNoneOrPropertyName = false;
         }
 
-        private void WriteStringEscapeProperty(scoped ReadOnlySpan<char> propertyName, int firstEscapeIndexProp)
+        private void WriteStringEscapeProperty(
+            scoped ReadOnlySpan<char> propertyName,
+            int firstEscapeIndexProp
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length
+            );
 
             char[]? propertyArray = null;
             scoped Span<char> escapedPropertyName;
 
             if (firstEscapeIndexProp != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(propertyName.Length, firstEscapeIndexProp);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    propertyName.Length,
+                    firstEscapeIndexProp
+                );
 
                 if (length > KdlConstants.StackallocCharThreshold)
                 {
@@ -128,7 +141,13 @@ namespace Automatonic.Text.Kdl
                     escapedPropertyName = stackalloc char[KdlConstants.StackallocCharThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    propertyName,
+                    escapedPropertyName,
+                    firstEscapeIndexProp,
+                    _options.Encoder,
+                    out int written
+                );
                 propertyName = escapedPropertyName[..written];
             }
 
@@ -156,11 +175,15 @@ namespace Automatonic.Text.Kdl
         private void WriteStringMinimizedPropertyName(ReadOnlySpan<char> escapedPropertyName)
         {
             Debug.Assert(escapedPropertyName.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue - 4) / KdlConstants.MaxExpansionFactorWhileTranscoding);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue - 4) / KdlConstants.MaxExpansionFactorWhileTranscoding
+            );
 
             // All ASCII, 2 quotes for property name, and 1 colon => escapedPropertyName.Length + 3
             // Optionally, 1 list separator, and up to 3x growth when transcoding
-            int maxRequired = (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + 4;
+            int maxRequired =
+                (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + 4;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -187,11 +210,19 @@ namespace Automatonic.Text.Kdl
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
             Debug.Assert(escapedPropertyName.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue - 5 - indent - _newLineLength) / KdlConstants.MaxExpansionFactorWhileTranscoding);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue - 5 - indent - _newLineLength)
+                        / KdlConstants.MaxExpansionFactorWhileTranscoding
+            );
 
             // All ASCII, 2 quotes for property name, 1 colon, and 1 space => escapedPropertyName.Length + 4
             // Optionally, 1 list separator, 1-2 bytes for new line, and up to 3x growth when transcoding
-            int maxRequired = indent + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + 5 + _newLineLength;
+            int maxRequired =
+                indent
+                + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + 5
+                + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -241,7 +272,11 @@ namespace Automatonic.Text.Kdl
 
             int propertyIdx = KdlWriterHelper.NeedsEscaping(utf8PropertyName, _options.Encoder);
 
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < utf8PropertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < utf8PropertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             if (propertyIdx != -1)
             {
@@ -266,16 +301,25 @@ namespace Automatonic.Text.Kdl
             _commentAfterNoneOrPropertyName = false;
         }
 
-        private void WriteStringEscapeProperty(scoped ReadOnlySpan<byte> utf8PropertyName, int firstEscapeIndexProp)
+        private void WriteStringEscapeProperty(
+            scoped ReadOnlySpan<byte> utf8PropertyName,
+            int firstEscapeIndexProp
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8PropertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping
+                    >= utf8PropertyName.Length
+            );
 
             byte[]? propertyArray = null;
             scoped Span<byte> escapedPropertyName;
 
             if (firstEscapeIndexProp != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(utf8PropertyName.Length, firstEscapeIndexProp);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    utf8PropertyName.Length,
+                    firstEscapeIndexProp
+                );
 
                 if (length > KdlConstants.StackallocByteThreshold)
                 {
@@ -287,7 +331,13 @@ namespace Automatonic.Text.Kdl
                     escapedPropertyName = stackalloc byte[KdlConstants.StackallocByteThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    utf8PropertyName,
+                    escapedPropertyName,
+                    firstEscapeIndexProp,
+                    _options.Encoder,
+                    out int written
+                );
                 utf8PropertyName = escapedPropertyName[..written];
             }
 
@@ -420,12 +470,18 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="InvalidOperationException">
         /// Thrown if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WriteString(KdlEncodedText propertyName, KdlEncodedText value)
-            => WriteStringHelper(propertyName.EncodedUtf8Bytes, value.EncodedUtf8Bytes);
+        public void WriteString(KdlEncodedText propertyName, KdlEncodedText value) =>
+            WriteStringHelper(propertyName.EncodedUtf8Bytes, value.EncodedUtf8Bytes);
 
-        private void WriteStringHelper(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringHelper(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
-            Debug.Assert(utf8PropertyName.Length <= KdlConstants.MaxUnescapedTokenSize && utf8Value.Length <= KdlConstants.MaxUnescapedTokenSize);
+            Debug.Assert(
+                utf8PropertyName.Length <= KdlConstants.MaxUnescapedTokenSize
+                    && utf8Value.Length <= KdlConstants.MaxUnescapedTokenSize
+            );
 
             WriteStringByOptions(utf8PropertyName, utf8Value);
 
@@ -593,10 +649,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// The value is escaped before writing.
         /// </remarks>
-        public void WriteString(KdlEncodedText propertyName, ReadOnlySpan<char> value)
-            => WriteStringHelperEscapeValue(propertyName.EncodedUtf8Bytes, value);
+        public void WriteString(KdlEncodedText propertyName, ReadOnlySpan<char> value) =>
+            WriteStringHelperEscapeValue(propertyName.EncodedUtf8Bytes, value);
 
-        private void WriteStringHelperEscapeValue(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<char> value)
+        private void WriteStringHelperEscapeValue(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<char> value
+        )
         {
             Debug.Assert(utf8PropertyName.Length <= KdlConstants.MaxUnescapedTokenSize);
 
@@ -683,10 +742,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// The value is escaped before writing.
         /// </remarks>
-        public void WriteString(KdlEncodedText propertyName, ReadOnlySpan<byte> utf8Value)
-            => WriteStringHelperEscapeValue(propertyName.EncodedUtf8Bytes, utf8Value);
+        public void WriteString(KdlEncodedText propertyName, ReadOnlySpan<byte> utf8Value) =>
+            WriteStringHelperEscapeValue(propertyName.EncodedUtf8Bytes, utf8Value);
 
-        private void WriteStringHelperEscapeValue(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringHelperEscapeValue(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
             Debug.Assert(utf8PropertyName.Length <= KdlConstants.MaxUnescapedTokenSize);
 
@@ -694,7 +756,9 @@ namespace Automatonic.Text.Kdl
 
             int valueIdx = KdlWriterHelper.NeedsEscaping(utf8Value, _options.Encoder);
 
-            Debug.Assert(valueIdx >= -1 && valueIdx < utf8Value.Length && valueIdx < int.MaxValue / 2);
+            Debug.Assert(
+                valueIdx >= -1 && valueIdx < utf8Value.Length && valueIdx < int.MaxValue / 2
+            );
 
             if (valueIdx != -1)
             {
@@ -773,10 +837,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// The property name is escaped before writing.
         /// </remarks>
-        public void WriteString(ReadOnlySpan<char> propertyName, KdlEncodedText value)
-            => WriteStringHelperEscapeProperty(propertyName, value.EncodedUtf8Bytes);
+        public void WriteString(ReadOnlySpan<char> propertyName, KdlEncodedText value) =>
+            WriteStringHelperEscapeProperty(propertyName, value.EncodedUtf8Bytes);
 
-        private void WriteStringHelperEscapeProperty(ReadOnlySpan<char> propertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringHelperEscapeProperty(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
             Debug.Assert(utf8Value.Length <= KdlConstants.MaxUnescapedTokenSize);
 
@@ -784,7 +851,11 @@ namespace Automatonic.Text.Kdl
 
             int propertyIdx = KdlWriterHelper.NeedsEscaping(propertyName, _options.Encoder);
 
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < propertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < propertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             if (propertyIdx != -1)
             {
@@ -845,10 +916,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// The property name is escaped before writing.
         /// </remarks>
-        public void WriteString(ReadOnlySpan<byte> utf8PropertyName, KdlEncodedText value)
-            => WriteStringHelperEscapeProperty(utf8PropertyName, value.EncodedUtf8Bytes);
+        public void WriteString(ReadOnlySpan<byte> utf8PropertyName, KdlEncodedText value) =>
+            WriteStringHelperEscapeProperty(utf8PropertyName, value.EncodedUtf8Bytes);
 
-        private void WriteStringHelperEscapeProperty(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringHelperEscapeProperty(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
             Debug.Assert(utf8Value.Length <= KdlConstants.MaxUnescapedTokenSize);
 
@@ -856,7 +930,11 @@ namespace Automatonic.Text.Kdl
 
             int propertyIdx = KdlWriterHelper.NeedsEscaping(utf8PropertyName, _options.Encoder);
 
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < utf8PropertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < utf8PropertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             if (propertyIdx != -1)
             {
@@ -903,20 +981,33 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapeValueOnly(ReadOnlySpan<byte> escapedPropertyName, ReadOnlySpan<byte> utf8Value, int firstEscapeIndex)
+        private void WriteStringEscapeValueOnly(
+            ReadOnlySpan<byte> escapedPropertyName,
+            ReadOnlySpan<byte> utf8Value,
+            int firstEscapeIndex
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length
+            );
             Debug.Assert(firstEscapeIndex >= 0 && firstEscapeIndex < utf8Value.Length);
 
             byte[]? valueArray = null;
 
             int length = KdlWriterHelper.GetMaxEscapedLength(utf8Value.Length, firstEscapeIndex);
 
-            Span<byte> escapedValue = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (valueArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> escapedValue =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (valueArray = ArrayPool<byte>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndex, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                utf8Value,
+                escapedValue,
+                firstEscapeIndex,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStringByOptions(escapedPropertyName, escapedValue[..written]);
 
@@ -926,20 +1017,33 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapeValueOnly(ReadOnlySpan<byte> escapedPropertyName, ReadOnlySpan<char> value, int firstEscapeIndex)
+        private void WriteStringEscapeValueOnly(
+            ReadOnlySpan<byte> escapedPropertyName,
+            ReadOnlySpan<char> value,
+            int firstEscapeIndex
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= value.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= value.Length
+            );
             Debug.Assert(firstEscapeIndex >= 0 && firstEscapeIndex < value.Length);
 
             char[]? valueArray = null;
 
             int length = KdlWriterHelper.GetMaxEscapedLength(value.Length, firstEscapeIndex);
 
-            Span<char> escapedValue = length <= KdlConstants.StackallocCharThreshold ?
-                stackalloc char[KdlConstants.StackallocCharThreshold] :
-                (valueArray = ArrayPool<char>.Shared.Rent(length));
+            Span<char> escapedValue =
+                length <= KdlConstants.StackallocCharThreshold
+                    ? stackalloc char[KdlConstants.StackallocCharThreshold]
+                    : (valueArray = ArrayPool<char>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(value, escapedValue, firstEscapeIndex, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                value,
+                escapedValue,
+                firstEscapeIndex,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStringByOptions(escapedPropertyName, escapedValue[..written]);
 
@@ -949,20 +1053,33 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapePropertyOnly(ReadOnlySpan<char> propertyName, ReadOnlySpan<byte> escapedValue, int firstEscapeIndex)
+        private void WriteStringEscapePropertyOnly(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<byte> escapedValue,
+            int firstEscapeIndex
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length
+            );
             Debug.Assert(firstEscapeIndex >= 0 && firstEscapeIndex < propertyName.Length);
 
             char[]? propertyArray = null;
 
             int length = KdlWriterHelper.GetMaxEscapedLength(propertyName.Length, firstEscapeIndex);
 
-            Span<char> escapedPropertyName = length <= KdlConstants.StackallocCharThreshold ?
-                stackalloc char[KdlConstants.StackallocCharThreshold] :
-                (propertyArray = ArrayPool<char>.Shared.Rent(length));
+            Span<char> escapedPropertyName =
+                length <= KdlConstants.StackallocCharThreshold
+                    ? stackalloc char[KdlConstants.StackallocCharThreshold]
+                    : (propertyArray = ArrayPool<char>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndex, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                propertyName,
+                escapedPropertyName,
+                firstEscapeIndex,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStringByOptions(escapedPropertyName[..written], escapedValue);
 
@@ -972,20 +1089,37 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapePropertyOnly(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<byte> escapedValue, int firstEscapeIndex)
+        private void WriteStringEscapePropertyOnly(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<byte> escapedValue,
+            int firstEscapeIndex
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8PropertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping
+                    >= utf8PropertyName.Length
+            );
             Debug.Assert(firstEscapeIndex >= 0 && firstEscapeIndex < utf8PropertyName.Length);
 
             byte[]? propertyArray = null;
 
-            int length = KdlWriterHelper.GetMaxEscapedLength(utf8PropertyName.Length, firstEscapeIndex);
+            int length = KdlWriterHelper.GetMaxEscapedLength(
+                utf8PropertyName.Length,
+                firstEscapeIndex
+            );
 
-            Span<byte> escapedPropertyName = length <= KdlConstants.StackallocByteThreshold ?
-                stackalloc byte[KdlConstants.StackallocByteThreshold] :
-                (propertyArray = ArrayPool<byte>.Shared.Rent(length));
+            Span<byte> escapedPropertyName =
+                length <= KdlConstants.StackallocByteThreshold
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                    : (propertyArray = ArrayPool<byte>.Shared.Rent(length));
 
-            KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndex, _options.Encoder, out int written);
+            KdlWriterHelper.EscapeString(
+                utf8PropertyName,
+                escapedPropertyName,
+                firstEscapeIndex,
+                _options.Encoder,
+                out int written
+            );
 
             WriteStringByOptions(escapedPropertyName[..written], escapedValue);
 
@@ -1001,7 +1135,11 @@ namespace Automatonic.Text.Kdl
             int propertyIdx = KdlWriterHelper.NeedsEscaping(propertyName, _options.Encoder);
 
             Debug.Assert(valueIdx >= -1 && valueIdx < value.Length && valueIdx < int.MaxValue / 2);
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < propertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < propertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             // Equivalent to: valueIdx != -1 || propertyIdx != -1
             if (valueIdx + propertyIdx != -2)
@@ -1014,18 +1152,32 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscape(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringEscape(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
             int valueIdx = KdlWriterHelper.NeedsEscaping(utf8Value, _options.Encoder);
             int propertyIdx = KdlWriterHelper.NeedsEscaping(utf8PropertyName, _options.Encoder);
 
-            Debug.Assert(valueIdx >= -1 && valueIdx < utf8Value.Length && valueIdx < int.MaxValue / 2);
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < utf8PropertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                valueIdx >= -1 && valueIdx < utf8Value.Length && valueIdx < int.MaxValue / 2
+            );
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < utf8PropertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             // Equivalent to: valueIdx != -1 || propertyIdx != -1
             if (valueIdx + propertyIdx != -2)
             {
-                WriteStringEscapePropertyOrValue(utf8PropertyName, utf8Value, propertyIdx, valueIdx);
+                WriteStringEscapePropertyOrValue(
+                    utf8PropertyName,
+                    utf8Value,
+                    propertyIdx,
+                    valueIdx
+                );
             }
             else
             {
@@ -1033,13 +1185,22 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscape(ReadOnlySpan<char> propertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringEscape(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
             int valueIdx = KdlWriterHelper.NeedsEscaping(utf8Value, _options.Encoder);
             int propertyIdx = KdlWriterHelper.NeedsEscaping(propertyName, _options.Encoder);
 
-            Debug.Assert(valueIdx >= -1 && valueIdx < utf8Value.Length && valueIdx < int.MaxValue / 2);
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < propertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                valueIdx >= -1 && valueIdx < utf8Value.Length && valueIdx < int.MaxValue / 2
+            );
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < propertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             // Equivalent to: valueIdx != -1 || propertyIdx != -1
             if (valueIdx + propertyIdx != -2)
@@ -1052,13 +1213,20 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscape(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<char> value)
+        private void WriteStringEscape(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<char> value
+        )
         {
             int valueIdx = KdlWriterHelper.NeedsEscaping(value, _options.Encoder);
             int propertyIdx = KdlWriterHelper.NeedsEscaping(utf8PropertyName, _options.Encoder);
 
             Debug.Assert(valueIdx >= -1 && valueIdx < value.Length && valueIdx < int.MaxValue / 2);
-            Debug.Assert(propertyIdx >= -1 && propertyIdx < utf8PropertyName.Length && propertyIdx < int.MaxValue / 2);
+            Debug.Assert(
+                propertyIdx >= -1
+                    && propertyIdx < utf8PropertyName.Length
+                    && propertyIdx < int.MaxValue / 2
+            );
 
             // Equivalent to: valueIdx != -1 || propertyIdx != -1
             if (valueIdx + propertyIdx != -2)
@@ -1071,10 +1239,19 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapePropertyOrValue(scoped ReadOnlySpan<char> propertyName, scoped ReadOnlySpan<char> value, int firstEscapeIndexProp, int firstEscapeIndexVal)
+        private void WriteStringEscapePropertyOrValue(
+            scoped ReadOnlySpan<char> propertyName,
+            scoped ReadOnlySpan<char> value,
+            int firstEscapeIndexProp,
+            int firstEscapeIndexVal
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= value.Length);
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= value.Length
+            );
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length
+            );
 
             char[]? valueArray = null;
             char[]? propertyArray = null;
@@ -1094,7 +1271,13 @@ namespace Automatonic.Text.Kdl
                     escapedValue = stackalloc char[KdlConstants.StackallocCharThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    value,
+                    escapedValue,
+                    firstEscapeIndexVal,
+                    _options.Encoder,
+                    out int written
+                );
                 value = escapedValue[..written];
             }
 
@@ -1102,7 +1285,10 @@ namespace Automatonic.Text.Kdl
 
             if (firstEscapeIndexProp != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(propertyName.Length, firstEscapeIndexProp);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    propertyName.Length,
+                    firstEscapeIndexProp
+                );
 
                 if (length > KdlConstants.StackallocCharThreshold)
                 {
@@ -1114,7 +1300,13 @@ namespace Automatonic.Text.Kdl
                     escapedPropertyName = stackalloc char[KdlConstants.StackallocCharThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    propertyName,
+                    escapedPropertyName,
+                    firstEscapeIndexProp,
+                    _options.Encoder,
+                    out int written
+                );
                 propertyName = escapedPropertyName[..written];
             }
 
@@ -1131,10 +1323,20 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapePropertyOrValue(scoped ReadOnlySpan<byte> utf8PropertyName, scoped ReadOnlySpan<byte> utf8Value, int firstEscapeIndexProp, int firstEscapeIndexVal)
+        private void WriteStringEscapePropertyOrValue(
+            scoped ReadOnlySpan<byte> utf8PropertyName,
+            scoped ReadOnlySpan<byte> utf8Value,
+            int firstEscapeIndexProp,
+            int firstEscapeIndexVal
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length);
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8PropertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length
+            );
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping
+                    >= utf8PropertyName.Length
+            );
 
             byte[]? valueArray = null;
             byte[]? propertyArray = null;
@@ -1142,7 +1344,10 @@ namespace Automatonic.Text.Kdl
 
             if (firstEscapeIndexVal != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(utf8Value.Length, firstEscapeIndexVal);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    utf8Value.Length,
+                    firstEscapeIndexVal
+                );
 
                 if (length > KdlConstants.StackallocByteThreshold)
                 {
@@ -1154,7 +1359,13 @@ namespace Automatonic.Text.Kdl
                     escapedValue = stackalloc byte[KdlConstants.StackallocByteThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    utf8Value,
+                    escapedValue,
+                    firstEscapeIndexVal,
+                    _options.Encoder,
+                    out int written
+                );
                 utf8Value = escapedValue[..written];
             }
 
@@ -1162,7 +1373,10 @@ namespace Automatonic.Text.Kdl
 
             if (firstEscapeIndexProp != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(utf8PropertyName.Length, firstEscapeIndexProp);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    utf8PropertyName.Length,
+                    firstEscapeIndexProp
+                );
 
                 if (length > KdlConstants.StackallocByteThreshold)
                 {
@@ -1174,7 +1388,13 @@ namespace Automatonic.Text.Kdl
                     escapedPropertyName = stackalloc byte[KdlConstants.StackallocByteThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    utf8PropertyName,
+                    escapedPropertyName,
+                    firstEscapeIndexProp,
+                    _options.Encoder,
+                    out int written
+                );
                 utf8PropertyName = escapedPropertyName[..written];
             }
 
@@ -1191,10 +1411,19 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapePropertyOrValue(scoped ReadOnlySpan<char> propertyName, scoped ReadOnlySpan<byte> utf8Value, int firstEscapeIndexProp, int firstEscapeIndexVal)
+        private void WriteStringEscapePropertyOrValue(
+            scoped ReadOnlySpan<char> propertyName,
+            scoped ReadOnlySpan<byte> utf8Value,
+            int firstEscapeIndexProp,
+            int firstEscapeIndexVal
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length);
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8Value.Length
+            );
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= propertyName.Length
+            );
 
             byte[]? valueArray = null;
             char[]? propertyArray = null;
@@ -1202,7 +1431,10 @@ namespace Automatonic.Text.Kdl
 
             if (firstEscapeIndexVal != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(utf8Value.Length, firstEscapeIndexVal);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    utf8Value.Length,
+                    firstEscapeIndexVal
+                );
 
                 if (length > KdlConstants.StackallocByteThreshold)
                 {
@@ -1214,7 +1446,13 @@ namespace Automatonic.Text.Kdl
                     escapedValue = stackalloc byte[KdlConstants.StackallocByteThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(utf8Value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    utf8Value,
+                    escapedValue,
+                    firstEscapeIndexVal,
+                    _options.Encoder,
+                    out int written
+                );
                 utf8Value = escapedValue[..written];
             }
 
@@ -1222,7 +1460,10 @@ namespace Automatonic.Text.Kdl
 
             if (firstEscapeIndexProp != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(propertyName.Length, firstEscapeIndexProp);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    propertyName.Length,
+                    firstEscapeIndexProp
+                );
 
                 if (length > KdlConstants.StackallocCharThreshold)
                 {
@@ -1234,7 +1475,13 @@ namespace Automatonic.Text.Kdl
                     escapedPropertyName = stackalloc char[KdlConstants.StackallocCharThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(propertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    propertyName,
+                    escapedPropertyName,
+                    firstEscapeIndexProp,
+                    _options.Encoder,
+                    out int written
+                );
                 propertyName = escapedPropertyName[..written];
             }
 
@@ -1251,10 +1498,20 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringEscapePropertyOrValue(scoped ReadOnlySpan<byte> utf8PropertyName, scoped ReadOnlySpan<char> value, int firstEscapeIndexProp, int firstEscapeIndexVal)
+        private void WriteStringEscapePropertyOrValue(
+            scoped ReadOnlySpan<byte> utf8PropertyName,
+            scoped ReadOnlySpan<char> value,
+            int firstEscapeIndexProp,
+            int firstEscapeIndexVal
+        )
         {
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= value.Length);
-            Debug.Assert(int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= utf8PropertyName.Length);
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping >= value.Length
+            );
+            Debug.Assert(
+                int.MaxValue / KdlConstants.MaxExpansionFactorWhileEscaping
+                    >= utf8PropertyName.Length
+            );
 
             char[]? valueArray = null;
             byte[]? propertyArray = null;
@@ -1274,7 +1531,13 @@ namespace Automatonic.Text.Kdl
                     escapedValue = stackalloc char[KdlConstants.StackallocCharThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(value, escapedValue, firstEscapeIndexVal, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    value,
+                    escapedValue,
+                    firstEscapeIndexVal,
+                    _options.Encoder,
+                    out int written
+                );
                 value = escapedValue[..written];
             }
 
@@ -1282,7 +1545,10 @@ namespace Automatonic.Text.Kdl
 
             if (firstEscapeIndexProp != -1)
             {
-                int length = KdlWriterHelper.GetMaxEscapedLength(utf8PropertyName.Length, firstEscapeIndexProp);
+                int length = KdlWriterHelper.GetMaxEscapedLength(
+                    utf8PropertyName.Length,
+                    firstEscapeIndexProp
+                );
 
                 if (length > KdlConstants.StackallocByteThreshold)
                 {
@@ -1294,7 +1560,13 @@ namespace Automatonic.Text.Kdl
                     escapedPropertyName = stackalloc byte[KdlConstants.StackallocByteThreshold];
                 }
 
-                KdlWriterHelper.EscapeString(utf8PropertyName, escapedPropertyName, firstEscapeIndexProp, _options.Encoder, out int written);
+                KdlWriterHelper.EscapeString(
+                    utf8PropertyName,
+                    escapedPropertyName,
+                    firstEscapeIndexProp,
+                    _options.Encoder,
+                    out int written
+                );
                 utf8PropertyName = escapedPropertyName[..written];
             }
 
@@ -1324,7 +1596,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringByOptions(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringByOptions(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
             ValidateWritingProperty();
             if (_options.Indented)
@@ -1337,7 +1612,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringByOptions(ReadOnlySpan<char> propertyName, ReadOnlySpan<byte> utf8Value)
+        private void WriteStringByOptions(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<byte> utf8Value
+        )
         {
             ValidateWritingProperty();
             if (_options.Indented)
@@ -1350,7 +1628,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        private void WriteStringByOptions(ReadOnlySpan<byte> utf8PropertyName, ReadOnlySpan<char> value)
+        private void WriteStringByOptions(
+            ReadOnlySpan<byte> utf8PropertyName,
+            ReadOnlySpan<char> value
+        )
         {
             ValidateWritingProperty();
             if (_options.Indented)
@@ -1364,14 +1645,25 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringMinimized(ReadOnlySpan<char> escapedPropertyName, ReadOnlySpan<char> escapedValue)
+        private void WriteStringMinimized(
+            ReadOnlySpan<char> escapedPropertyName,
+            ReadOnlySpan<char> escapedValue
+        )
         {
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxUnescapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < ((int.MaxValue - 6) / KdlConstants.MaxExpansionFactorWhileTranscoding) - escapedValue.Length);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < ((int.MaxValue - 6) / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - escapedValue.Length
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for value, and 1 colon => escapedPropertyName.Length + escapedValue.Length + 5
             // Optionally, 1 list separator, and up to 3x growth when transcoding
-            int maxRequired = ((escapedPropertyName.Length + escapedValue.Length) * KdlConstants.MaxExpansionFactorWhileTranscoding) + 6;
+            int maxRequired =
+                (
+                    (escapedPropertyName.Length + escapedValue.Length)
+                    * KdlConstants.MaxExpansionFactorWhileTranscoding
+                ) + 6;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -1399,7 +1691,10 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringMinimized(ReadOnlySpan<byte> escapedPropertyName, ReadOnlySpan<byte> escapedValue)
+        private void WriteStringMinimized(
+            ReadOnlySpan<byte> escapedPropertyName,
+            ReadOnlySpan<byte> escapedValue
+        )
         {
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxEscapedTokenSize);
             Debug.Assert(escapedPropertyName.Length < int.MaxValue - escapedValue.Length - 6);
@@ -1435,14 +1730,25 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringMinimized(ReadOnlySpan<char> escapedPropertyName, ReadOnlySpan<byte> escapedValue)
+        private void WriteStringMinimized(
+            ReadOnlySpan<char> escapedPropertyName,
+            ReadOnlySpan<byte> escapedValue
+        )
         {
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - escapedValue.Length - 6);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - escapedValue.Length
+                        - 6
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for value, and 1 colon => escapedPropertyName.Length + escapedValue.Length + 5
             // Optionally, 1 list separator, and up to 3x growth when transcoding
-            int maxRequired = (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + escapedValue.Length + 6;
+            int maxRequired =
+                (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + escapedValue.Length
+                + 6;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -1471,14 +1777,25 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringMinimized(ReadOnlySpan<byte> escapedPropertyName, ReadOnlySpan<char> escapedValue)
+        private void WriteStringMinimized(
+            ReadOnlySpan<byte> escapedPropertyName,
+            ReadOnlySpan<char> escapedValue
+        )
         {
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - escapedValue.Length - 6);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - escapedValue.Length
+                        - 6
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for value, and 1 colon => escapedPropertyName.Length + escapedValue.Length + 5
             // Optionally, 1 list separator, and up to 3x growth when transcoding
-            int maxRequired = (escapedValue.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + escapedPropertyName.Length + 6;
+            int maxRequired =
+                (escapedValue.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + escapedPropertyName.Length
+                + 6;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -1507,17 +1824,33 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringIndented(ReadOnlySpan<char> escapedPropertyName, ReadOnlySpan<char> escapedValue)
+        private void WriteStringIndented(
+            ReadOnlySpan<char> escapedPropertyName,
+            ReadOnlySpan<char> escapedValue
+        )
         {
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < ((int.MaxValue - 7 - indent - _newLineLength) / KdlConstants.MaxExpansionFactorWhileTranscoding) - escapedValue.Length);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (
+                        (int.MaxValue - 7 - indent - _newLineLength)
+                        / KdlConstants.MaxExpansionFactorWhileTranscoding
+                    ) - escapedValue.Length
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for value, 1 colon, and 1 space => escapedPropertyName.Length + escapedValue.Length + 6
             // Optionally, 1 list separator, 1-2 bytes for new line, and up to 3x growth when transcoding
-            int maxRequired = indent + ((escapedPropertyName.Length + escapedValue.Length) * KdlConstants.MaxExpansionFactorWhileTranscoding) + 7 + _newLineLength;
+            int maxRequired =
+                indent
+                + (
+                    (escapedPropertyName.Length + escapedValue.Length)
+                    * KdlConstants.MaxExpansionFactorWhileTranscoding
+                )
+                + 7
+                + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -1557,13 +1890,19 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringIndented(ReadOnlySpan<byte> escapedPropertyName, ReadOnlySpan<byte> escapedValue)
+        private void WriteStringIndented(
+            ReadOnlySpan<byte> escapedPropertyName,
+            ReadOnlySpan<byte> escapedValue
+        )
         {
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < int.MaxValue - indent - escapedValue.Length - 7 - _newLineLength);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < int.MaxValue - indent - escapedValue.Length - 7 - _newLineLength
+            );
 
             int minRequired = indent + escapedPropertyName.Length + escapedValue.Length + 6; // 2 quotes for property name, 2 quotes for value, 1 colon, and 1 space
             int maxRequired = minRequired + 1 + _newLineLength; // Optionally, 1 list separator and 1-2 bytes for new line
@@ -1608,17 +1947,32 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringIndented(ReadOnlySpan<char> escapedPropertyName, ReadOnlySpan<byte> escapedValue)
+        private void WriteStringIndented(
+            ReadOnlySpan<char> escapedPropertyName,
+            ReadOnlySpan<byte> escapedValue
+        )
         {
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - escapedValue.Length - 7 - indent - _newLineLength);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - escapedValue.Length
+                        - 7
+                        - indent
+                        - _newLineLength
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for value, 1 colon, and 1 space => escapedPropertyName.Length + escapedValue.Length + 6
             // Optionally, 1 list separator, 1-2 bytes for new line, and up to 3x growth when transcoding
-            int maxRequired = indent + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + escapedValue.Length + 7 + _newLineLength;
+            int maxRequired =
+                indent
+                + (escapedPropertyName.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + escapedValue.Length
+                + 7
+                + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {
@@ -1659,17 +2013,32 @@ namespace Automatonic.Text.Kdl
         }
 
         // TODO: https://github.com/dotnet/runtime/issues/29293
-        private void WriteStringIndented(ReadOnlySpan<byte> escapedPropertyName, ReadOnlySpan<char> escapedValue)
+        private void WriteStringIndented(
+            ReadOnlySpan<byte> escapedPropertyName,
+            ReadOnlySpan<char> escapedValue
+        )
         {
             int indent = Indentation;
             Debug.Assert(indent <= _indentLength * _options.MaxDepth);
 
             Debug.Assert(escapedValue.Length <= KdlConstants.MaxEscapedTokenSize);
-            Debug.Assert(escapedPropertyName.Length < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding) - escapedValue.Length - 7 - indent - _newLineLength);
+            Debug.Assert(
+                escapedPropertyName.Length
+                    < (int.MaxValue / KdlConstants.MaxExpansionFactorWhileTranscoding)
+                        - escapedValue.Length
+                        - 7
+                        - indent
+                        - _newLineLength
+            );
 
             // All ASCII, 2 quotes for property name, 2 quotes for value, 1 colon, and 1 space => escapedPropertyName.Length + escapedValue.Length + 6
             // Optionally, 1 list separator, 1-2 bytes for new line, and up to 3x growth when transcoding
-            int maxRequired = indent + (escapedValue.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) + escapedPropertyName.Length + 7 + _newLineLength;
+            int maxRequired =
+                indent
+                + (escapedValue.Length * KdlConstants.MaxExpansionFactorWhileTranscoding)
+                + escapedPropertyName.Length
+                + 7
+                + _newLineLength;
 
             if (_memory.Length - BytesPending < maxRequired)
             {

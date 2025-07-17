@@ -14,7 +14,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         private Func<T>? _typedCreateObject;
 
         internal KdlTypeInfo(KdlConverter converter, KdlSerializerOptions options)
-            : base(typeof(T), converter, options) => EffectiveConverter = converter.CreateCastingConverter<T>();
+            : base(typeof(T), converter, options) =>
+            EffectiveConverter = converter.CreateCastingConverter<T>();
 
         /// <summary>
         /// A Converter whose declared type always matches that of the current KdlTypeInfo.
@@ -56,7 +57,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 Debug.Assert(_createObject == null);
                 Debug.Assert(_typedCreateObject == null);
-                ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(Kind);
+                ThrowHelper.ThrowInvalidOperationException_KdlTypeInfoOperationNotPossibleForKind(
+                    Kind
+                );
             }
 
             if (!Converter.SupportsCreateObjectDelegate)
@@ -77,7 +80,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             else if (createObject is Func<T> typedDelegate)
             {
                 typedCreateObject = typedDelegate;
-                untypedCreateObject = createObject is Func<object> untypedDelegate ? untypedDelegate : () => typedDelegate()!;
+                untypedCreateObject = createObject is Func<object> untypedDelegate
+                    ? untypedDelegate
+                    : () => typedDelegate()!;
             }
             else
             {
@@ -128,18 +133,27 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return new KdlPropertyInfo<T>(
                 declaringType: typeof(T),
                 declaringTypeInfo: this,
-                Options)
+                Options
+            )
             {
                 KdlTypeInfo = this,
                 IsForTypeInfo = true,
             };
         }
 
-        private protected override KdlPropertyInfo CreateKdlPropertyInfo(KdlTypeInfo declaringTypeInfo, Type? declaringType, KdlSerializerOptions options)
+        private protected override KdlPropertyInfo CreateKdlPropertyInfo(
+            KdlTypeInfo declaringTypeInfo,
+            Type? declaringType,
+            KdlSerializerOptions options
+        )
         {
-            return new KdlPropertyInfo<T>(declaringType ?? declaringTypeInfo.Type, declaringTypeInfo, options)
+            return new KdlPropertyInfo<T>(
+                declaringType ?? declaringTypeInfo.Type,
+                declaringTypeInfo,
+                options
+            )
             {
-                KdlTypeInfo = this
+                KdlTypeInfo = this,
             };
         }
     }

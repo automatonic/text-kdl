@@ -29,7 +29,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 Debug.Assert(value >= 0);
                 if (value > KdlCommentHandling.Skip)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(value), SR.KdlDocumentDoesNotSupportComments);
+                    throw new ArgumentOutOfRangeException(
+                        nameof(value),
+                        SR.KdlDocumentDoesNotSupportComments
+                    );
                 }
 
                 _commentHandling = value;
@@ -52,7 +55,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
             {
                 if (value < 0)
                 {
-                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(nameof(value));
+                    ThrowHelper.ThrowArgumentOutOfRangeException_MaxDepthMustBePositive(
+                        nameof(value)
+                    );
                 }
 
                 _maxDepth = value;
@@ -74,7 +79,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
             {
                 AllowTrailingCommas = AllowTrailingCommas,
                 CommentHandling = CommentHandling,
-                MaxDepth = MaxDepth
+                MaxDepth = MaxDepth,
             };
         }
     }

@@ -19,7 +19,8 @@ namespace Automatonic.Text.Kdl
             ref ReadStack state,
             KdlSerializerOptions options,
             out bool useExtensionProperty,
-            bool createExtensionProperty = true)
+            bool createExtensionProperty = true
+        )
         {
             KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
             useExtensionProperty = false;
@@ -27,7 +28,8 @@ namespace Automatonic.Text.Kdl
             KdlPropertyInfo? kdlPropertyInfo = kdlTypeInfo.GetProperty(
                 unescapedPropertyName,
                 ref state.Current,
-                out byte[] utf8PropertyName);
+                out byte[] utf8PropertyName
+            );
 
             // Increment PropertyIndex so GetProperty() checks the next property first when called again.
             state.Current.PropertyIndex++;
@@ -38,17 +40,34 @@ namespace Automatonic.Text.Kdl
             // Handle missing properties
             if (kdlPropertyInfo is null)
             {
-                if (kdlTypeInfo.EffectiveUnmappedMemberHandling is KdlUnmappedMemberHandling.Disallow)
+                if (
+                    kdlTypeInfo.EffectiveUnmappedMemberHandling
+                    is KdlUnmappedMemberHandling.Disallow
+                )
                 {
-                    Debug.Assert(kdlTypeInfo.ExtensionDataProperty is null, "kdlTypeInfo.Configure() should have caught conflicting configuration.");
+                    Debug.Assert(
+                        kdlTypeInfo.ExtensionDataProperty is null,
+                        "kdlTypeInfo.Configure() should have caught conflicting configuration."
+                    );
                     string stringPropertyName = KdlHelpers.Utf8GetString(unescapedPropertyName);
-                    ThrowHelper.ThrowKdlException_UnmappedKdlProperty(kdlTypeInfo.Type, stringPropertyName);
+                    ThrowHelper.ThrowKdlException_UnmappedKdlProperty(
+                        kdlTypeInfo.Type,
+                        stringPropertyName
+                    );
                 }
 
                 // Determine if we should use the extension property.
-                if (kdlTypeInfo.ExtensionDataProperty is KdlPropertyInfo { HasGetter: true, HasSetter: true } dataExtProperty)
+                if (
+                    kdlTypeInfo.ExtensionDataProperty is KdlPropertyInfo
+                    {
+                        HasGetter: true,
+                        HasSetter: true
+                    } dataExtProperty
+                )
                 {
-                    state.Current.KdlPropertyNameAsString = KdlHelpers.Utf8GetString(unescapedPropertyName);
+                    state.Current.KdlPropertyNameAsString = KdlHelpers.Utf8GetString(
+                        unescapedPropertyName
+                    );
 
                     if (createExtensionProperty)
                     {
@@ -76,14 +95,20 @@ namespace Automatonic.Text.Kdl
             scoped ref ReadStack state,
             ref KdlReader reader,
             KdlSerializerOptions options,
-            out bool isAlreadyReadMetadataProperty)
+            out bool isAlreadyReadMetadataProperty
+        )
         {
             ReadOnlySpan<byte> propertyName = reader.GetUnescapedSpan();
             isAlreadyReadMetadataProperty = false;
 
             if (state.Current.CanContainMetadata)
             {
-                if (IsMetadataPropertyName(propertyName, state.Current.BaseKdlTypeInfo.PolymorphicTypeResolver))
+                if (
+                    IsMetadataPropertyName(
+                        propertyName,
+                        state.Current.BaseKdlTypeInfo.PolymorphicTypeResolver
+                    )
+                )
                 {
                     if (options.AllowOutOfOrderMetadataProperties)
                     {
@@ -91,7 +116,11 @@ namespace Automatonic.Text.Kdl
                     }
                     else
                     {
-                        ThrowHelper.ThrowUnexpectedMetadataException(propertyName, ref reader, ref state);
+                        ThrowHelper.ThrowUnexpectedMetadataException(
+                            propertyName,
+                            ref reader,
+                            ref state
+                        );
                     }
                 }
             }
@@ -102,7 +131,8 @@ namespace Automatonic.Text.Kdl
         internal static void CreateExtensionDataProperty(
             object obj,
             KdlPropertyInfo kdlPropertyInfo,
-            KdlSerializerOptions options)
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(kdlPropertyInfo != null);
 
@@ -111,19 +141,24 @@ namespace Automatonic.Text.Kdl
             {
                 // Create the appropriate dictionary type. We already verified the types.
 #if DEBUG
-                Type underlyingIDictionaryType = kdlPropertyInfo.PropertyType.GetCompatibleGenericInterface(typeof(IDictionary<,>))!;
+                Type underlyingIDictionaryType =
+                    kdlPropertyInfo.PropertyType.GetCompatibleGenericInterface(
+                        typeof(IDictionary<,>)
+                    )!;
                 Type[] genericArgs = underlyingIDictionaryType.GetGenericArguments();
 
                 Debug.Assert(underlyingIDictionaryType.IsGenericType);
                 Debug.Assert(genericArgs.Length == 2);
                 Debug.Assert(genericArgs[0].UnderlyingSystemType == typeof(string));
                 Debug.Assert(
-                    genericArgs[1].UnderlyingSystemType == KdlTypeInfo.ObjectType ||
-                    genericArgs[1].UnderlyingSystemType == typeof(KdlReadOnlyElement) ||
-                    genericArgs[1].UnderlyingSystemType == typeof(Graph.KdlElement));
+                    genericArgs[1].UnderlyingSystemType == KdlTypeInfo.ObjectType
+                        || genericArgs[1].UnderlyingSystemType == typeof(KdlReadOnlyElement)
+                        || genericArgs[1].UnderlyingSystemType == typeof(Graph.KdlElement)
+                );
 #endif
 
-                Func<object>? createObjectForExtensionDataProp = kdlPropertyInfo.KdlTypeInfo.CreateObject
+                Func<object>? createObjectForExtensionDataProp =
+                    kdlPropertyInfo.KdlTypeInfo.CreateObject
                     ?? kdlPropertyInfo.KdlTypeInfo.CreateObjectForExtensionDataProperty;
 
                 if (createObjectForExtensionDataProp == null)
@@ -135,7 +170,9 @@ namespace Automatonic.Text.Kdl
                     }
                     else
                     {
-                        ThrowHelper.ThrowNotSupportedException_SerializationNotSupported(kdlPropertyInfo.PropertyType);
+                        ThrowHelper.ThrowNotSupportedException_SerializationNotSupported(
+                            kdlPropertyInfo.PropertyType
+                        );
                     }
                 }
 

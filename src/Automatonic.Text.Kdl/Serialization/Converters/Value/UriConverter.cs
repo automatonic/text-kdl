@@ -5,7 +5,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class UriConverter : KdlPrimitiveConverter<Uri?>
     {
-        public override Uri? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override Uri? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.TokenType is KdlTokenType.Null ? null : ReadCore(ref reader);
         }
@@ -21,7 +25,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteStringValue(value.OriginalString);
         }
 
-        internal override Uri ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override Uri ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType is KdlTokenType.PropertyName);
             return ReadCore(ref reader);
@@ -39,7 +47,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return value;
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, Uri value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            Uri value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             if (value is null)
             {

@@ -30,8 +30,8 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-        public readonly KdlPropertyInfo? ParentProperty
-            => Current.HasParentObject ? Parent.KdlPropertyInfo : null;
+        public readonly KdlPropertyInfo? ParentProperty =>
+            Current.HasParentObject ? Parent.KdlPropertyInfo : null;
 
         /// <summary>
         /// Buffer containing all frames in the stack. For performance it is only populated for serialization depths > 1.
@@ -103,7 +103,9 @@ namespace Automatonic.Text.Kdl
             Current.KdlTypeInfo = kdlTypeInfo;
             Current.KdlPropertyInfo = kdlTypeInfo.PropertyInfoForTypeInfo;
             Current.NumberHandling = Current.KdlPropertyInfo.EffectiveNumberHandling;
-            Current.CanContainMetadata = PreserveReferences || kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
+            Current.CanContainMetadata =
+                PreserveReferences
+                || kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
             SupportContinuation = supportContinuation;
         }
 
@@ -120,7 +122,9 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    KdlTypeInfo kdlTypeInfo = Current.KdlPropertyInfo?.KdlTypeInfo ?? Current.CtorArgumentState!.KdlParameterInfo!.KdlTypeInfo;
+                    KdlTypeInfo kdlTypeInfo =
+                        Current.KdlPropertyInfo?.KdlTypeInfo
+                        ?? Current.CtorArgumentState!.KdlParameterInfo!.KdlTypeInfo;
                     KdlNumberHandling? numberHandling = Current.NumberHandling;
 
                     EnsurePushCapacity();
@@ -131,8 +135,11 @@ namespace Automatonic.Text.Kdl
                     Current.KdlTypeInfo = kdlTypeInfo;
                     Current.KdlPropertyInfo = kdlTypeInfo.PropertyInfoForTypeInfo;
                     // Allow number handling on property to win over handling on type.
-                    Current.NumberHandling = numberHandling ?? Current.KdlPropertyInfo.EffectiveNumberHandling;
-                    Current.CanContainMetadata = PreserveReferences || kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
+                    Current.NumberHandling =
+                        numberHandling ?? Current.KdlPropertyInfo.EffectiveNumberHandling;
+                    Current.CanContainMetadata =
+                        PreserveReferences
+                        || kdlTypeInfo.PolymorphicTypeResolver?.UsesTypeDiscriminators == true;
                 }
             }
             else
@@ -209,18 +216,20 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(!IsContinuation);
             Debug.Assert(Current.PolymorphicKdlTypeInfo == null);
-            Debug.Assert(Current.PolymorphicSerializationState == PolymorphicSerializationState.None);
+            Debug.Assert(
+                Current.PolymorphicSerializationState == PolymorphicSerializationState.None
+            );
 
             Current.PolymorphicKdlTypeInfo = Current.KdlTypeInfo;
             Current.KdlTypeInfo = derivedKdlTypeInfo;
             Current.KdlPropertyInfo = derivedKdlTypeInfo.PropertyInfoForTypeInfo;
             Current.NumberHandling ??= Current.KdlPropertyInfo.NumberHandling;
-            Current.PolymorphicSerializationState = PolymorphicSerializationState.PolymorphicReEntryStarted;
+            Current.PolymorphicSerializationState =
+                PolymorphicSerializationState.PolymorphicReEntryStarted;
             SetConstructorArgumentState();
 
             return derivedKdlTypeInfo.Converter;
         }
-
 
         /// <summary>
         /// Configures the current frame for a continuation of a polymorphic converter.
@@ -228,11 +237,18 @@ namespace Automatonic.Text.Kdl
         public KdlConverter ResumePolymorphicReEntry()
         {
             Debug.Assert(Current.PolymorphicKdlTypeInfo != null);
-            Debug.Assert(Current.PolymorphicSerializationState == PolymorphicSerializationState.PolymorphicReEntrySuspended);
+            Debug.Assert(
+                Current.PolymorphicSerializationState
+                    == PolymorphicSerializationState.PolymorphicReEntrySuspended
+            );
 
             // Swap out the two values as we resume the polymorphic converter
-            (Current.KdlTypeInfo, Current.PolymorphicKdlTypeInfo) = (Current.PolymorphicKdlTypeInfo, Current.KdlTypeInfo);
-            Current.PolymorphicSerializationState = PolymorphicSerializationState.PolymorphicReEntryStarted;
+            (Current.KdlTypeInfo, Current.PolymorphicKdlTypeInfo) = (
+                Current.PolymorphicKdlTypeInfo,
+                Current.KdlTypeInfo
+            );
+            Current.PolymorphicSerializationState =
+                PolymorphicSerializationState.PolymorphicReEntryStarted;
             return Current.KdlTypeInfo.Converter;
         }
 
@@ -242,11 +258,19 @@ namespace Automatonic.Text.Kdl
         public void ExitPolymorphicConverter(bool success)
         {
             Debug.Assert(Current.PolymorphicKdlTypeInfo != null);
-            Debug.Assert(Current.PolymorphicSerializationState == PolymorphicSerializationState.PolymorphicReEntryStarted);
+            Debug.Assert(
+                Current.PolymorphicSerializationState
+                    == PolymorphicSerializationState.PolymorphicReEntryStarted
+            );
 
             // Swap out the two values as we exit the polymorphic converter
-            (Current.KdlTypeInfo, Current.PolymorphicKdlTypeInfo) = (Current.PolymorphicKdlTypeInfo, Current.KdlTypeInfo);
-            Current.PolymorphicSerializationState = success ? PolymorphicSerializationState.None : PolymorphicSerializationState.PolymorphicReEntrySuspended;
+            (Current.KdlTypeInfo, Current.PolymorphicKdlTypeInfo) = (
+                Current.PolymorphicKdlTypeInfo,
+                Current.KdlTypeInfo
+            );
+            Current.PolymorphicSerializationState = success
+                ? PolymorphicSerializationState.None
+                : PolymorphicSerializationState.PolymorphicReEntrySuspended;
         }
 
         // Return a KDLPath using simple dot-notation when possible. When special characters are present, bracket-notation is used:
@@ -260,7 +284,7 @@ namespace Automatonic.Text.Kdl
             {
                 0 => (_count - 1, true), // Not a continuation, report previous frames and Current.
                 1 => (0, true), // Continuation of depth 1, just report Current frame.
-                int c => (c, false) // Continuation of depth > 1, report the entire stack.
+                int c => (c, false), // Continuation of depth > 1, report the entire stack.
             };
 
             for (int i = 0; i < frameCount; i++)
@@ -289,9 +313,12 @@ namespace Automatonic.Text.Kdl
                     }
 
                     // For continuation scenarios only, before or after all elements are read, the exception is not within the array.
-                    if (frame.ObjectState is StackFrameObjectState.None or
-                        StackFrameObjectState.CreatedObject or
-                        StackFrameObjectState.ReadElements)
+                    if (
+                        frame.ObjectState
+                        is StackFrameObjectState.None
+                            or StackFrameObjectState.CreatedObject
+                            or StackFrameObjectState.ReadElements
+                    )
                     {
                         sb.Append('[');
                         sb.Append(GetCount(enumerable));
@@ -352,8 +379,9 @@ namespace Automatonic.Text.Kdl
                     else
                     {
                         // Attempt to get the KDL property name from the KdlPropertyInfo or KdlParameterInfo.
-                        utf8PropertyName = frame.KdlPropertyInfo?.NameAsUtf8Bytes ??
-                            frame.CtorArgumentState?.KdlParameterInfo?.KdlNameAsUtf8Bytes;
+                        utf8PropertyName =
+                            frame.KdlPropertyInfo?.NameAsUtf8Bytes
+                            ?? frame.CtorArgumentState?.KdlParameterInfo?.KdlNameAsUtf8Bytes;
                     }
                 }
 
@@ -394,6 +422,7 @@ namespace Automatonic.Text.Kdl
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        private string DebuggerDisplay => $"Path = {KdlPath()}, Current = ConverterStrategy.{Current.KdlTypeInfo?.Converter.ConverterStrategy}, {Current.KdlTypeInfo?.Type.Name}";
+        private string DebuggerDisplay =>
+            $"Path = {KdlPath()}, Current = ConverterStrategy.{Current.KdlTypeInfo?.Converter.ConverterStrategy}, {Current.KdlTypeInfo?.Type.Name}";
     }
 }

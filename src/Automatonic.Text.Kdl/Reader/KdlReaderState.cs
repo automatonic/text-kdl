@@ -60,7 +60,8 @@ namespace Automatonic.Text.Kdl
             KdlTokenType tokenType,
             KdlTokenType previousTokenType,
             KdlReaderOptions readerOptions,
-            BitStack bitStack)
+            BitStack bitStack
+        )
         {
             _lineNumber = lineNumber;
             _bytePositionInLine = bytePositionInLine;

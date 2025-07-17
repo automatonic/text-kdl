@@ -15,7 +15,8 @@ namespace Automatonic.Text.Kdl.Serialization
         /// </summary>
         protected KdlConverterFactory() { }
 
-        private protected override ConverterStrategy GetDefaultConverterStrategy() => ConverterStrategy.None;
+        private protected override ConverterStrategy GetDefaultConverterStrategy() =>
+            ConverterStrategy.None;
 
         /// <summary>
         /// Create a converter for the provided <see cref="System.Type"/>.
@@ -26,7 +27,10 @@ namespace Automatonic.Text.Kdl.Serialization
         /// An instance of a <see cref="KdlConverter{T}"/> where T is compatible with <paramref name="typeToConvert"/>.
         /// If <see langword="null"/> is returned, a <see cref="NotSupportedException"/> will be thrown.
         /// </returns>
-        public abstract KdlConverter? CreateConverter(Type typeToConvert, KdlSerializerOptions options);
+        public abstract KdlConverter? CreateConverter(
+            Type typeToConvert,
+            KdlSerializerOptions options
+        );
 
         internal KdlConverter GetConverterInternal(Type typeToConvert, KdlSerializerOptions options)
         {
@@ -36,17 +40,25 @@ namespace Automatonic.Text.Kdl.Serialization
             switch (converter)
             {
                 case null:
-                    ThrowHelper.ThrowInvalidOperationException_SerializerConverterFactoryReturnsNull(GetType());
+                    ThrowHelper.ThrowInvalidOperationException_SerializerConverterFactoryReturnsNull(
+                        GetType()
+                    );
                     break;
                 case KdlConverterFactory:
-                    ThrowHelper.ThrowInvalidOperationException_SerializerConverterFactoryReturnsKdlConverterFactorty(GetType());
+                    ThrowHelper.ThrowInvalidOperationException_SerializerConverterFactoryReturnsKdlConverterFactorty(
+                        GetType()
+                    );
                     break;
             }
 
             return converter;
         }
 
-        internal sealed override object? ReadAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal sealed override object? ReadAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Fail("We should never get here.");
 
@@ -58,7 +70,8 @@ namespace Automatonic.Text.Kdl.Serialization
             Type typeToConvert,
             KdlSerializerOptions options,
             scoped ref ReadStack state,
-            out object? value)
+            out object? value
+        )
         {
             Debug.Fail("We should never get here.");
 
@@ -70,35 +83,52 @@ namespace Automatonic.Text.Kdl.Serialization
             Type typeToConvert,
             KdlSerializerOptions options,
             scoped ref ReadStack state,
-            out object? value)
+            out object? value
+        )
         {
             Debug.Fail("We should never get here.");
 
             throw new InvalidOperationException();
         }
 
-        internal sealed override object? ReadAsPropertyNameAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal sealed override object? ReadAsPropertyNameAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Fail("We should never get here.");
 
             throw new InvalidOperationException();
         }
 
-        internal sealed override object? ReadAsPropertyNameCoreAsObject(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal sealed override object? ReadAsPropertyNameCoreAsObject(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Fail("We should never get here.");
 
             throw new InvalidOperationException();
         }
 
-        internal sealed override object? ReadNumberWithCustomHandlingAsObject(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal sealed override object? ReadNumberWithCustomHandlingAsObject(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
             Debug.Fail("We should never get here.");
 
             throw new InvalidOperationException();
         }
 
-        internal sealed override void WriteAsObject(KdlWriter writer, object? value, KdlSerializerOptions options)
+        internal sealed override void WriteAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options
+        )
         {
             Debug.Fail("We should never get here.");
 
@@ -109,7 +139,8 @@ namespace Automatonic.Text.Kdl.Serialization
             KdlWriter writer,
             object? value,
             KdlSerializerOptions options,
-            ref WriteStack state)
+            ref WriteStack state
+        )
         {
             Debug.Fail("We should never get here.");
 
@@ -120,14 +151,19 @@ namespace Automatonic.Text.Kdl.Serialization
             KdlWriter writer,
             object? value,
             KdlSerializerOptions options,
-            ref WriteStack state)
+            ref WriteStack state
+        )
         {
             Debug.Fail("We should never get here.");
 
             throw new InvalidOperationException();
         }
 
-        internal sealed override void WriteAsPropertyNameAsObject(KdlWriter writer, object? value, KdlSerializerOptions options)
+        internal sealed override void WriteAsPropertyNameAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlSerializerOptions options
+        )
         {
             Debug.Fail("We should never get here.");
 
@@ -141,14 +177,19 @@ namespace Automatonic.Text.Kdl.Serialization
             KdlWriter writer,
             object? value,
             KdlSerializerOptions options,
-            bool isWritingExtensionDataProperty)
+            bool isWritingExtensionDataProperty
+        )
         {
             Debug.Fail("We should never get here.");
 
             throw new InvalidOperationException();
         }
 
-        internal sealed override void WriteNumberWithCustomHandlingAsObject(KdlWriter writer, object? value, KdlNumberHandling handling)
+        internal sealed override void WriteNumberWithCustomHandlingAsObject(
+            KdlWriter writer,
+            object? value,
+            KdlNumberHandling handling
+        )
         {
             Debug.Fail("We should never get here.");
 

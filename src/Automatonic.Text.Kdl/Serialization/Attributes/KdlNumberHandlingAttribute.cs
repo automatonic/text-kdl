@@ -4,7 +4,13 @@
     /// When placed on a type, property, or field, indicates what <see cref="KdlNumberHandling"/>
     /// settings should be used when serializing or deserializing numbers.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
+    [AttributeUsage(
+        AttributeTargets.Class
+            | AttributeTargets.Struct
+            | AttributeTargets.Property
+            | AttributeTargets.Field,
+        AllowMultiple = false
+    )]
     public sealed class KdlNumberHandlingAttribute : KdlAttribute
     {
         /// <summary>

@@ -6,7 +6,8 @@ namespace Automatonic.Text.Kdl.Serialization
             KdlWriter writer,
             in T? value,
             KdlSerializerOptions options,
-            ref WriteStack state)
+            ref WriteStack state
+        )
         {
             try
             {
@@ -23,7 +24,8 @@ namespace Automatonic.Text.Kdl.Serialization
 
                 switch (ex)
                 {
-                    case InvalidOperationException when ex.Source == ThrowHelper.ExceptionSourceValueToRethrowAsKdlException:
+                    case InvalidOperationException
+                        when ex.Source == ThrowHelper.ExceptionSourceValueToRethrowAsKdlException:
                         ThrowHelper.ReThrowWithPath(ref state, ex);
                         break;
 

@@ -41,7 +41,11 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentNullException(nameof(value));
             }
 
-            if (value is not KdlConstants.NewLineLineFeed and not KdlConstants.NewLineCarriageReturnLineFeed)
+            if (
+                value
+                is not KdlConstants.NewLineLineFeed
+                    and not KdlConstants.NewLineCarriageReturnLineFeed
+            )
             {
                 ThrowHelper.ThrowArgumentOutOfRangeException_NewLine(nameof(value));
             }
@@ -50,7 +54,11 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ValidateIndentCharacter(char value)
         {
-            if (value is not KdlConstants.DefaultIndentCharacter and not KdlConstants.TabIndentCharacter)
+            if (
+                value
+                is not KdlConstants.DefaultIndentCharacter
+                    and not KdlConstants.TabIndentCharacter
+            )
             {
                 ThrowHelper.ThrowArgumentOutOfRangeException_IndentCharacter(nameof(value));
             }
@@ -61,7 +69,11 @@ namespace Automatonic.Text.Kdl
         {
             if (value is < KdlConstants.MinimumIndentSize or > KdlConstants.MaximumIndentSize)
             {
-                ThrowHelper.ThrowArgumentOutOfRangeException_IndentSize(nameof(value), KdlConstants.MinimumIndentSize, KdlConstants.MaximumIndentSize);
+                ThrowHelper.ThrowArgumentOutOfRangeException_IndentSize(
+                    nameof(value),
+                    KdlConstants.MinimumIndentSize,
+                    KdlConstants.MaximumIndentSize
+                );
             }
         }
 
@@ -120,36 +132,60 @@ namespace Automatonic.Text.Kdl
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidatePropertyAndValue(ReadOnlySpan<char> propertyName, ReadOnlySpan<byte> value)
+        public static void ValidatePropertyAndValue(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<byte> value
+        )
         {
-            if (propertyName.Length > KdlConstants.MaxCharacterTokenSize || value.Length > KdlConstants.MaxUnescapedTokenSize)
+            if (
+                propertyName.Length > KdlConstants.MaxCharacterTokenSize
+                || value.Length > KdlConstants.MaxUnescapedTokenSize
+            )
             {
                 ThrowHelper.ThrowArgumentException(propertyName, value);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidatePropertyAndValue(ReadOnlySpan<byte> propertyName, ReadOnlySpan<char> value)
+        public static void ValidatePropertyAndValue(
+            ReadOnlySpan<byte> propertyName,
+            ReadOnlySpan<char> value
+        )
         {
-            if (propertyName.Length > KdlConstants.MaxUnescapedTokenSize || value.Length > KdlConstants.MaxCharacterTokenSize)
+            if (
+                propertyName.Length > KdlConstants.MaxUnescapedTokenSize
+                || value.Length > KdlConstants.MaxCharacterTokenSize
+            )
             {
                 ThrowHelper.ThrowArgumentException(propertyName, value);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidatePropertyAndValue(ReadOnlySpan<byte> propertyName, ReadOnlySpan<byte> value)
+        public static void ValidatePropertyAndValue(
+            ReadOnlySpan<byte> propertyName,
+            ReadOnlySpan<byte> value
+        )
         {
-            if (propertyName.Length > KdlConstants.MaxUnescapedTokenSize || value.Length > KdlConstants.MaxUnescapedTokenSize)
+            if (
+                propertyName.Length > KdlConstants.MaxUnescapedTokenSize
+                || value.Length > KdlConstants.MaxUnescapedTokenSize
+            )
             {
                 ThrowHelper.ThrowArgumentException(propertyName, value);
             }
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public static void ValidatePropertyAndValue(ReadOnlySpan<char> propertyName, ReadOnlySpan<char> value)
+        public static void ValidatePropertyAndValue(
+            ReadOnlySpan<char> propertyName,
+            ReadOnlySpan<char> value
+        )
         {
-            if (propertyName.Length > KdlConstants.MaxCharacterTokenSize || value.Length > KdlConstants.MaxCharacterTokenSize)
+            if (
+                propertyName.Length > KdlConstants.MaxCharacterTokenSize
+                || value.Length > KdlConstants.MaxCharacterTokenSize
+            )
             {
                 ThrowHelper.ThrowArgumentException(propertyName, value);
             }
@@ -190,7 +226,10 @@ namespace Automatonic.Text.Kdl
 
                 if (utf8FormattedNumber.Length <= i)
                 {
-                    throw new ArgumentException(SR.RequiredDigitNotFoundEndOfData, nameof(utf8FormattedNumber));
+                    throw new ArgumentException(
+                        SR.RequiredDigitNotFoundEndOfData,
+                        nameof(utf8FormattedNumber)
+                    );
                 }
             }
 
@@ -220,7 +259,10 @@ namespace Automatonic.Text.Kdl
 
                 if (utf8FormattedNumber.Length <= i)
                 {
-                    throw new ArgumentException(SR.RequiredDigitNotFoundEndOfData, nameof(utf8FormattedNumber));
+                    throw new ArgumentException(
+                        SR.RequiredDigitNotFoundEndOfData,
+                        nameof(utf8FormattedNumber)
+                    );
                 }
 
                 while (i < utf8FormattedNumber.Length && KdlHelpers.IsDigit(utf8FormattedNumber[i]))
@@ -243,7 +285,10 @@ namespace Automatonic.Text.Kdl
 
                 if (utf8FormattedNumber.Length <= i)
                 {
-                    throw new ArgumentException(SR.RequiredDigitNotFoundEndOfData, nameof(utf8FormattedNumber));
+                    throw new ArgumentException(
+                        SR.RequiredDigitNotFoundEndOfData,
+                        nameof(utf8FormattedNumber)
+                    );
                 }
 
                 val = utf8FormattedNumber[i];
@@ -256,13 +301,20 @@ namespace Automatonic.Text.Kdl
             else
             {
                 throw new ArgumentException(
-                    string.Format(SR.ExpectedEndOfDigitNotFound, ThrowHelper.GetPrintableString(val)),
-                    nameof(utf8FormattedNumber));
+                    string.Format(
+                        SR.ExpectedEndOfDigitNotFound,
+                        ThrowHelper.GetPrintableString(val)
+                    ),
+                    nameof(utf8FormattedNumber)
+                );
             }
 
             if (utf8FormattedNumber.Length <= i)
             {
-                throw new ArgumentException(SR.RequiredDigitNotFoundEndOfData, nameof(utf8FormattedNumber));
+                throw new ArgumentException(
+                    SR.RequiredDigitNotFoundEndOfData,
+                    nameof(utf8FormattedNumber)
+                );
             }
 
             while (i < utf8FormattedNumber.Length && KdlHelpers.IsDigit(utf8FormattedNumber[i]))
@@ -273,13 +325,20 @@ namespace Automatonic.Text.Kdl
             if (i != utf8FormattedNumber.Length)
             {
                 throw new ArgumentException(
-                    string.Format(SR.ExpectedEndOfDigitNotFound, ThrowHelper.GetPrintableString(utf8FormattedNumber[i])),
-                    nameof(utf8FormattedNumber));
+                    string.Format(
+                        SR.ExpectedEndOfDigitNotFound,
+                        ThrowHelper.GetPrintableString(utf8FormattedNumber[i])
+                    ),
+                    nameof(utf8FormattedNumber)
+                );
             }
         }
 
 #if !NET8_0_OR_GREATER
-        private static readonly UTF8Encoding s_utf8Encoding = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false, throwOnInvalidBytes: true);
+        private static readonly UTF8Encoding s_utf8Encoding = new UTF8Encoding(
+            encoderShouldEmitUTF8Identifier: false,
+            throwOnInvalidBytes: true
+        );
 #endif
 
         public static unsafe bool IsValidUtf8String(ReadOnlySpan<byte> bytes)
@@ -309,11 +368,27 @@ namespace Automatonic.Text.Kdl
 #endif
         }
 
-        internal static unsafe OperationStatus ToUtf8(ReadOnlySpan<char> source, Span<byte> destination, out int written)
+        internal static unsafe OperationStatus ToUtf8(
+            ReadOnlySpan<char> source,
+            Span<byte> destination,
+            out int written
+        )
         {
 #if NET
-            OperationStatus status = Utf8.FromUtf16(source, destination, out int charsRead, out written, replaceInvalidSequences: false, isFinalBlock: true);
-            Debug.Assert(status is OperationStatus.Done or OperationStatus.DestinationTooSmall or OperationStatus.InvalidData);
+            OperationStatus status = Utf8.FromUtf16(
+                source,
+                destination,
+                out int charsRead,
+                out written,
+                replaceInvalidSequences: false,
+                isFinalBlock: true
+            );
+            Debug.Assert(
+                status
+                    is OperationStatus.Done
+                        or OperationStatus.DestinationTooSmall
+                        or OperationStatus.InvalidData
+            );
             Debug.Assert(charsRead == source.Length || status is not OperationStatus.Done);
             return status;
 #else
@@ -325,7 +400,12 @@ namespace Automatonic.Text.Kdl
                     fixed (char* charPtr = source)
                     fixed (byte* destPtr = destination)
                     {
-                        written = s_utf8Encoding.GetBytes(charPtr, source.Length, destPtr, destination.Length);
+                        written = s_utf8Encoding.GetBytes(
+                            charPtr,
+                            source.Length,
+                            destPtr,
+                            destination.Length
+                        );
                     }
                 }
 

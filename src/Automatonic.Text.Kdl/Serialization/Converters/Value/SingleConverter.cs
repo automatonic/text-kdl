@@ -5,10 +5,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class SingleConverter : KdlPrimitiveConverter<float>
     {
-
         public SingleConverter() => IsInternalConverterForNumberType = true;
 
-        public override float Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override float Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetSingle();
         }
@@ -18,18 +21,31 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteNumberValue(value);
         }
 
-        internal override float ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override float ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetSingleWithQuotes();
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, float value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            float value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             writer.WritePropertyName(value);
         }
 
-        internal override float ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal override float ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType == KdlTokenType.String)
             {
@@ -46,7 +62,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return reader.GetSingle();
         }
 
-        internal override void WriteNumberWithCustomHandling(KdlWriter writer, float value, KdlNumberHandling handling)
+        internal override void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            float value,
+            KdlNumberHandling handling
+        )
         {
             if ((KdlNumberHandling.WriteAsString & handling) != 0)
             {
@@ -63,6 +83,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling numberHandling) =>
-            GetSchemaForNumericType(KdlSchemaType.Number, numberHandling, isIeeeFloatingPoint: true);
+            GetSchemaForNumericType(
+                KdlSchemaType.Number,
+                numberHandling,
+                isIeeeFloatingPoint: true
+            );
     }
 }

@@ -4,7 +4,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class ByteArrayConverter : KdlConverter<byte[]?>
     {
-        public override byte[]? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override byte[]? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType == KdlTokenType.Null)
             {
@@ -26,6 +30,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.String };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.String };
     }
 }

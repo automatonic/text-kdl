@@ -54,7 +54,11 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(
+                value,
+                output[BytesPending..],
+                out int bytesWritten
+            );
             Debug.Assert(result);
             BytesPending += bytesWritten;
 
@@ -93,7 +97,11 @@ namespace Automatonic.Text.Kdl
 
             output[BytesPending++] = KdlConstants.Quote;
 
-            bool result = Utf8Formatter.TryFormat(value, output[BytesPending..], out int bytesWritten);
+            bool result = Utf8Formatter.TryFormat(
+                value,
+                output[BytesPending..],
+                out int bytesWritten
+            );
             Debug.Assert(result);
             BytesPending += bytesWritten;
 

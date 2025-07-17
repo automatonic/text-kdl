@@ -12,7 +12,6 @@
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false)]
     public sealed class KdlPropertyOrderAttribute(int order) : KdlAttribute
     {
-
         /// <summary>
         /// The serialization order of the property.
         /// </summary>

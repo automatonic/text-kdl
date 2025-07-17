@@ -18,7 +18,8 @@ namespace Automatonic.Text.Kdl.Graph
         /// <summary>
         /// Gets or creates the underlying dictionary containing the properties of the object.
         /// </summary>
-        private OrderedDictionary<KdlEntryKey, KdlElement?> Dictionary => _dictionary ?? InitializeDictionary();
+        private OrderedDictionary<KdlEntryKey, KdlElement?> Dictionary =>
+            _dictionary ?? InitializeDictionary();
 
         internal KdlEntryKey? GetPropertyName(KdlElement? elementNode)
         {
@@ -26,8 +27,16 @@ namespace Automatonic.Text.Kdl.Graph
             return item.HasValue ? item.Value.Key : null;
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>")]
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>")]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Style",
+            "IDE0060:Remove unused parameter",
+            Justification = "<Pending>"
+        )]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage(
+            "Performance",
+            "CA1822:Mark members as static",
+            Justification = "<Pending>"
+        )]
         internal int GetElementIndex(KdlElement? elementNode)
         {
             //TECHDEBT:
@@ -83,7 +92,7 @@ namespace Automatonic.Text.Kdl.Graph
 #else
                 !dict.TryAdd(propertyName, value)
 #endif
-                )
+            )
             {
 #if !NET10_0_OR_GREATER
                 int index = dict.IndexOf(propertyName);
@@ -102,7 +111,6 @@ namespace Automatonic.Text.Kdl.Graph
 
             value?.AssignParent(this);
         }
-
 
         private KeyValuePair<KdlEntryKey, KdlElement?>? FindValue(KdlElement? value)
         {

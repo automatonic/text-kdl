@@ -13,8 +13,8 @@ namespace Automatonic.Text.Kdl.Serialization
             _stackForCycleDetection.Pop();
         }
 
-        internal override bool ContainsReferenceForCycleDetection(object value)
-            => _stackForCycleDetection?.Contains(new ReferenceEqualsWrapper(value)) ?? false;
+        internal override bool ContainsReferenceForCycleDetection(object value) =>
+            _stackForCycleDetection?.Contains(new ReferenceEqualsWrapper(value)) ?? false;
 
         internal override void PushReferenceForCycleDetection(object value)
         {
@@ -26,10 +26,13 @@ namespace Automatonic.Text.Kdl.Serialization
             _stackForCycleDetection.Push(wrappedValue);
         }
 
-        public override void AddReference(string referenceId, object value) => throw new InvalidOperationException();
+        public override void AddReference(string referenceId, object value) =>
+            throw new InvalidOperationException();
 
-        public override string GetReference(object value, out bool alreadyExists) => throw new InvalidOperationException();
+        public override string GetReference(object value, out bool alreadyExists) =>
+            throw new InvalidOperationException();
 
-        public override object ResolveReference(string referenceId) => throw new InvalidOperationException();
+        public override object ResolveReference(string referenceId) =>
+            throw new InvalidOperationException();
     }
 }

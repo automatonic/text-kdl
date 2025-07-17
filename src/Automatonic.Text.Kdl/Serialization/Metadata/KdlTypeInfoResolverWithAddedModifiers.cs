@@ -7,7 +7,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         private readonly IKdlTypeInfoResolver _source;
         private readonly Action<KdlTypeInfo>[] _modifiers;
 
-        public KdlTypeInfoResolverWithAddedModifiers(IKdlTypeInfoResolver source, Action<KdlTypeInfo>[] modifiers)
+        public KdlTypeInfoResolverWithAddedModifiers(
+            IKdlTypeInfoResolver source,
+            Action<KdlTypeInfo>[] modifiers
+        )
         {
             Debug.Assert(modifiers.Length > 0);
             _source = source;

@@ -16,7 +16,7 @@ public class KdlSerializerShould
         {
             Date = new DateTimeOffset(2000, 11, 22, 0, 0, 0, TimeSpan.Zero),
             TemperatureCelsius = 25,
-            Summary = "Hot"
+            Summary = "Hot",
         };
 
         var kdl = KdlSerializer.Serialize(weatherForecast);

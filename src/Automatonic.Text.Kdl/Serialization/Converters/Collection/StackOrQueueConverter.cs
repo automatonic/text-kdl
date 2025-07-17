@@ -4,20 +4,24 @@ using Automatonic.Text.Kdl.Serialization.Metadata;
 
 namespace Automatonic.Text.Kdl.Serialization.Converters
 {
-    internal class StackOrQueueConverter<TCollection>
-        : KdlCollectionConverter<TCollection, object?>
+    internal class StackOrQueueConverter<TCollection> : KdlCollectionConverter<TCollection, object?>
         where TCollection : IEnumerable
     {
         internal override bool CanPopulate => true;
 
         protected sealed override void Add(in object? value, ref ReadStack state)
         {
-            var addMethodDelegate = (Action<TCollection, object?>?)state.Current.KdlTypeInfo.AddMethodDelegate;
+            var addMethodDelegate = (Action<TCollection, object?>?)
+                state.Current.KdlTypeInfo.AddMethodDelegate;
             Debug.Assert(addMethodDelegate != null);
             addMethodDelegate((TCollection)state.Current.ReturnValue!, value);
         }
 
-        protected sealed override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+        protected sealed override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             if (state.ParentProperty?.TryGetPrePopulatedValue(ref state) == true)
             {
@@ -29,7 +33,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
             if (constructorDelegate == null)
             {
-                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(Type, ref reader, ref state);
+                ThrowHelper.ThrowNotSupportedException_CannotPopulateCollection(
+                    Type,
+                    ref reader,
+                    ref state
+                );
             }
 
             state.Current.ReturnValue = constructorDelegate();
@@ -37,7 +45,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             Debug.Assert(typeInfo.AddMethodDelegate != null);
         }
 
-        protected sealed override bool OnWriteResume(KdlWriter writer, TCollection value, KdlSerializerOptions options, ref WriteStack state)
+        protected sealed override bool OnWriteResume(
+            KdlWriter writer,
+            TCollection value,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             IEnumerator enumerator;
             if (state.Current.CollectionEnumerator == null)

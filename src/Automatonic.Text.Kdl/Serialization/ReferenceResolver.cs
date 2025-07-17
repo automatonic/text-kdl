@@ -33,10 +33,13 @@ namespace Automatonic.Text.Kdl.Serialization
 
         // We are breaking single responsibility on this class internally.
         // In the future, if this model is required to be exposed, we can add a base class and extend this class and a new class containing below members from that base class.
-        internal virtual void PopReferenceForCycleDetection() => throw new InvalidOperationException();
+        internal virtual void PopReferenceForCycleDetection() =>
+            throw new InvalidOperationException();
 
-        internal virtual void PushReferenceForCycleDetection(object value) => throw new InvalidOperationException();
+        internal virtual void PushReferenceForCycleDetection(object value) =>
+            throw new InvalidOperationException();
 
-        internal virtual bool ContainsReferenceForCycleDetection(object value) => throw new InvalidOperationException();
+        internal virtual bool ContainsReferenceForCycleDetection(object value) =>
+            throw new InvalidOperationException();
     }
 }

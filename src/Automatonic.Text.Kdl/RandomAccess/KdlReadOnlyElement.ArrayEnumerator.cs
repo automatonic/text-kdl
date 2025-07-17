@@ -9,7 +9,9 @@ namespace Automatonic.Text.Kdl.RandomAccess
         ///   An enumerable and enumerator for the contents of a KDL array.
         /// </summary>
         [DebuggerDisplay("{Current,nq}")]
-        public struct ArrayEnumerator : IEnumerable<KdlReadOnlyElement>, IEnumerator<KdlReadOnlyElement>
+        public struct ArrayEnumerator
+            : IEnumerable<KdlReadOnlyElement>,
+                IEnumerator<KdlReadOnlyElement>
         {
             private readonly KdlReadOnlyElement _target;
             private int _curIdx;
@@ -22,7 +24,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
                 Debug.Assert(target.TokenType == KdlTokenType.StartArray);
 
-                _endIdxOrVersion = target._parent.GetEndIndex(_target._idx, includeEndElement: false);
+                _endIdxOrVersion = target._parent.GetEndIndex(
+                    _target._idx,
+                    includeEndElement: false
+                );
             }
 
             /// <inheritdoc />
@@ -57,7 +62,8 @@ namespace Automatonic.Text.Kdl.RandomAccess
             readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
             /// <inheritdoc />
-            readonly IEnumerator<KdlReadOnlyElement> IEnumerable<KdlReadOnlyElement>.GetEnumerator() => GetEnumerator();
+            readonly IEnumerator<KdlReadOnlyElement> IEnumerable<KdlReadOnlyElement>.GetEnumerator() =>
+                GetEnumerator();
 
             /// <inheritdoc />
             public void Dispose()

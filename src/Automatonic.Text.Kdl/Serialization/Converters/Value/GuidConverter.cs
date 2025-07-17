@@ -5,7 +5,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class GuidConverter : KdlPrimitiveConverter<Guid>
     {
-        public override Guid Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override Guid Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetGuid();
         }
@@ -15,13 +19,22 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteStringValue(value);
         }
 
-        internal override Guid ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override Guid ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetGuidNoValidation();
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, Guid value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            Guid value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             writer.WritePropertyName(value);
         }

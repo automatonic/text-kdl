@@ -18,7 +18,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <param name="propertyInfo">Provides serialization metadata about the property or field.</param>
         /// <returns>A <see cref="KdlPropertyInfo"/> instance initialized with the provided metadata.</returns>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlPropertyInfo CreatePropertyInfo<T>(KdlSerializerOptions options, KdlPropertyInfoValues<T> propertyInfo)
+        public static KdlPropertyInfo CreatePropertyInfo<T>(
+            KdlSerializerOptions options,
+            KdlPropertyInfoValues<T> propertyInfo
+        )
         {
             if (options is null)
             {
@@ -29,13 +32,24 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyInfo));
             }
 
-            Type? declaringType = propertyInfo.DeclaringType ?? throw new ArgumentException(nameof(propertyInfo.DeclaringType));
+            Type? declaringType =
+                propertyInfo.DeclaringType
+                ?? throw new ArgumentException(nameof(propertyInfo.DeclaringType));
 
-            string? propertyName = propertyInfo.PropertyName ?? throw new ArgumentException(nameof(propertyInfo.PropertyName));
+            string? propertyName =
+                propertyInfo.PropertyName
+                ?? throw new ArgumentException(nameof(propertyInfo.PropertyName));
 
             if (!propertyInfo.IsProperty && propertyInfo.IsVirtual)
             {
-                throw new InvalidOperationException(string.Format(provider: CultureInfo.InvariantCulture, format: SR.FieldCannotBeVirtual, nameof(propertyInfo.IsProperty), nameof(propertyInfo.IsVirtual)));
+                throw new InvalidOperationException(
+                    string.Format(
+                        provider: CultureInfo.InvariantCulture,
+                        format: SR.FieldCannotBeVirtual,
+                        nameof(propertyInfo.IsProperty),
+                        nameof(propertyInfo.IsVirtual)
+                    )
+                );
             }
 
             return CreatePropertyInfoCore(propertyInfo, options);
@@ -50,7 +64,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <exception cref="ArgumentNullException">Thrown when <paramref name="options"/> or <paramref name="objectInfo"/> is null.</exception>
         /// <returns>A <see cref="KdlTypeInfo{T}"/> instance representing the class or struct.</returns>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlTypeInfo<T> CreateObjectInfo<T>(KdlSerializerOptions options, KdlObjectInfoValues<T> objectInfo) where T : notnull
+        public static KdlTypeInfo<T> CreateObjectInfo<T>(
+            KdlSerializerOptions options,
+            KdlObjectInfoValues<T> objectInfo
+        )
+            where T : notnull
         {
             if (options is null)
             {
@@ -70,7 +88,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         /// <typeparam name="T">The generic type definition.</typeparam>
         /// <returns>A <see cref="KdlTypeInfo{T}"/> instance representing the type.</returns>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
-        public static KdlTypeInfo<T> CreateValueInfo<T>(KdlSerializerOptions options, KdlConverter converter)
+        public static KdlTypeInfo<T> CreateValueInfo<T>(
+            KdlSerializerOptions options,
+            KdlConverter converter
+        )
         {
             if (options is null)
             {

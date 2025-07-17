@@ -9,10 +9,21 @@ namespace Automatonic.Text.Kdl.Graph
     /// </summary>
     internal sealed class KdlValueOfElement : KdlValue<KdlReadOnlyElement>
     {
-        public KdlValueOfElement(KdlReadOnlyElement value, KdlElementOptions? options) : base(value, options) => Debug.Assert(value.ValueKind is KdlValueKind.False or KdlValueKind.True or KdlValueKind.Number or KdlValueKind.String);
+        public KdlValueOfElement(KdlReadOnlyElement value, KdlElementOptions? options)
+            : base(value, options) =>
+            Debug.Assert(
+                value.ValueKind
+                    is KdlValueKind.False
+                        or KdlValueKind.True
+                        or KdlValueKind.Number
+                        or KdlValueKind.String
+            );
 
         internal override KdlReadOnlyElement? UnderlyingReadOnlyElement => Value;
-        internal override KdlElement DeepCloneCore() => new KdlValueOfElement(Value.Clone(), Options);
+
+        internal override KdlElement DeepCloneCore() =>
+            new KdlValueOfElement(Value.Clone(), Options);
+
         private protected override KdlValueKind GetValueKindCore() => Value.ValueKind;
 
         internal override bool DeepEqualsCore(KdlElement otherNode)
@@ -36,7 +47,10 @@ namespace Automatonic.Text.Kdl.Graph
         {
             if (!TryGetValue(out TypeToConvert? value))
             {
-                ThrowHelper.ThrowInvalidOperationException_NodeUnableToConvertElement(Value.ValueKind, typeof(TypeToConvert));
+                ThrowHelper.ThrowInvalidOperationException_NodeUnableToConvertElement(
+                    Value.ValueKind,
+                    typeof(TypeToConvert)
+                );
             }
 
             return value;
@@ -55,77 +69,110 @@ namespace Automatonic.Text.Kdl.Graph
             switch (Value.ValueKind)
             {
                 case KdlValueKind.Number:
-                    if (typeof(TypeToConvert) == typeof(int) || typeof(TypeToConvert) == typeof(int?))
+                    if (
+                        typeof(TypeToConvert) == typeof(int)
+                        || typeof(TypeToConvert) == typeof(int?)
+                    )
                     {
                         success = Value.TryGetInt32(out int result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(long) || typeof(TypeToConvert) == typeof(long?))
+                    if (
+                        typeof(TypeToConvert) == typeof(long)
+                        || typeof(TypeToConvert) == typeof(long?)
+                    )
                     {
                         success = Value.TryGetInt64(out long result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(double) || typeof(TypeToConvert) == typeof(double?))
+                    if (
+                        typeof(TypeToConvert) == typeof(double)
+                        || typeof(TypeToConvert) == typeof(double?)
+                    )
                     {
                         success = Value.TryGetDouble(out double result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(short) || typeof(TypeToConvert) == typeof(short?))
+                    if (
+                        typeof(TypeToConvert) == typeof(short)
+                        || typeof(TypeToConvert) == typeof(short?)
+                    )
                     {
                         success = Value.TryGetInt16(out short result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(decimal) || typeof(TypeToConvert) == typeof(decimal?))
+                    if (
+                        typeof(TypeToConvert) == typeof(decimal)
+                        || typeof(TypeToConvert) == typeof(decimal?)
+                    )
                     {
                         success = Value.TryGetDecimal(out decimal result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(byte) || typeof(TypeToConvert) == typeof(byte?))
+                    if (
+                        typeof(TypeToConvert) == typeof(byte)
+                        || typeof(TypeToConvert) == typeof(byte?)
+                    )
                     {
                         success = Value.TryGetByte(out byte result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(float) || typeof(TypeToConvert) == typeof(float?))
+                    if (
+                        typeof(TypeToConvert) == typeof(float)
+                        || typeof(TypeToConvert) == typeof(float?)
+                    )
                     {
                         success = Value.TryGetSingle(out float result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(uint) || typeof(TypeToConvert) == typeof(uint?))
+                    if (
+                        typeof(TypeToConvert) == typeof(uint)
+                        || typeof(TypeToConvert) == typeof(uint?)
+                    )
                     {
                         success = Value.TryGetUInt32(out uint result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(ushort) || typeof(TypeToConvert) == typeof(ushort?))
+                    if (
+                        typeof(TypeToConvert) == typeof(ushort)
+                        || typeof(TypeToConvert) == typeof(ushort?)
+                    )
                     {
                         success = Value.TryGetUInt16(out ushort result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(ulong) || typeof(TypeToConvert) == typeof(ulong?))
+                    if (
+                        typeof(TypeToConvert) == typeof(ulong)
+                        || typeof(TypeToConvert) == typeof(ulong?)
+                    )
                     {
                         success = Value.TryGetUInt64(out ulong result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(sbyte) || typeof(TypeToConvert) == typeof(sbyte?))
+                    if (
+                        typeof(TypeToConvert) == typeof(sbyte)
+                        || typeof(TypeToConvert) == typeof(sbyte?)
+                    )
                     {
                         success = Value.TryGetSByte(out sbyte result);
                         value = (TypeToConvert)(object)result;
@@ -142,28 +189,40 @@ namespace Automatonic.Text.Kdl.Graph
                         return true;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(DateTime) || typeof(TypeToConvert) == typeof(DateTime?))
+                    if (
+                        typeof(TypeToConvert) == typeof(DateTime)
+                        || typeof(TypeToConvert) == typeof(DateTime?)
+                    )
                     {
                         success = Value.TryGetDateTime(out DateTime result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(DateTimeOffset) || typeof(TypeToConvert) == typeof(DateTimeOffset?))
+                    if (
+                        typeof(TypeToConvert) == typeof(DateTimeOffset)
+                        || typeof(TypeToConvert) == typeof(DateTimeOffset?)
+                    )
                     {
                         success = Value.TryGetDateTimeOffset(out DateTimeOffset result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(Guid) || typeof(TypeToConvert) == typeof(Guid?))
+                    if (
+                        typeof(TypeToConvert) == typeof(Guid)
+                        || typeof(TypeToConvert) == typeof(Guid?)
+                    )
                     {
                         success = Value.TryGetGuid(out Guid result);
                         value = (TypeToConvert)(object)result;
                         return success;
                     }
 
-                    if (typeof(TypeToConvert) == typeof(char) || typeof(TypeToConvert) == typeof(char?))
+                    if (
+                        typeof(TypeToConvert) == typeof(char)
+                        || typeof(TypeToConvert) == typeof(char?)
+                    )
                     {
                         string? result = Value.GetString();
                         Debug.Assert(result != null);
@@ -177,7 +236,10 @@ namespace Automatonic.Text.Kdl.Graph
 
                 case KdlValueKind.True:
                 case KdlValueKind.False:
-                    if (typeof(TypeToConvert) == typeof(bool) || typeof(TypeToConvert) == typeof(bool?))
+                    if (
+                        typeof(TypeToConvert) == typeof(bool)
+                        || typeof(TypeToConvert) == typeof(bool?)
+                    )
                     {
                         value = (TypeToConvert)(object)Value.GetBoolean();
                         return true;

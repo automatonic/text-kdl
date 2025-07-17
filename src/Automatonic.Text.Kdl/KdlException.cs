@@ -21,7 +21,14 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Note that the <paramref name="bytePositionInLine"/> counts the number of bytes (i.e. UTF-8 code units) and not characters or scalars.
         /// </remarks>
-        public KdlException(string? message, string? path, long? lineNumber, long? bytePositionInLine, Exception? innerException) : base(message, innerException)
+        public KdlException(
+            string? message,
+            string? path,
+            long? lineNumber,
+            long? bytePositionInLine,
+            Exception? innerException
+        )
+            : base(message, innerException)
         {
             _message = message;
             LineNumber = lineNumber;
@@ -39,7 +46,13 @@ namespace Automatonic.Text.Kdl
         /// <remarks>
         /// Note that the <paramref name="bytePositionInLine"/> counts the number of bytes (i.e. UTF-8 code units) and not characters or scalars.
         /// </remarks>
-        public KdlException(string? message, string? path, long? lineNumber, long? bytePositionInLine) : base(message)
+        public KdlException(
+            string? message,
+            string? path,
+            long? lineNumber,
+            long? bytePositionInLine
+        )
+            : base(message)
         {
             _message = message;
             LineNumber = lineNumber;
@@ -52,18 +65,21 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         /// <param name="message">The context specific error message.</param>
         /// <param name="innerException">The exception that caused the current exception.</param>
-        public KdlException(string? message, Exception? innerException) : base(message, innerException) => _message = message;
+        public KdlException(string? message, Exception? innerException)
+            : base(message, innerException) => _message = message;
 
         /// <summary>
         /// Creates a new exception object to relay error information to the user.
         /// </summary>
         /// <param name="message">The context specific error message.</param>
-        public KdlException(string? message) : base(message) => _message = message;
+        public KdlException(string? message)
+            : base(message) => _message = message;
 
         /// <summary>
         /// Creates a new exception object to relay error information to the user.
         /// </summary>
-        public KdlException() : base() { }
+        public KdlException()
+            : base() { }
 
         /// <summary>
         /// Specifies that 'try' logic should append Path information to the exception message.

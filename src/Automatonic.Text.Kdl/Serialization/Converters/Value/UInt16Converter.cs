@@ -7,7 +7,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         public UInt16Converter() => IsInternalConverterForNumberType = true;
 
-        public override ushort Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override ushort Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetUInt16();
         }
@@ -18,21 +22,36 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             writer.WriteNumberValue((long)value);
         }
 
-        internal override ushort ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override ushort ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetUInt16WithQuotes();
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, ushort value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            ushort value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             writer.WritePropertyName(value);
         }
 
-        internal override ushort ReadNumberWithCustomHandling(ref KdlReader reader, KdlNumberHandling handling, KdlSerializerOptions options)
+        internal override ushort ReadNumberWithCustomHandling(
+            ref KdlReader reader,
+            KdlNumberHandling handling,
+            KdlSerializerOptions options
+        )
         {
-            if (reader.TokenType == KdlTokenType.String &&
-                (KdlNumberHandling.AllowReadingFromString & handling) != 0)
+            if (
+                reader.TokenType == KdlTokenType.String
+                && (KdlNumberHandling.AllowReadingFromString & handling) != 0
+            )
             {
                 return reader.GetUInt16WithQuotes();
             }
@@ -40,7 +59,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return reader.GetUInt16();
         }
 
-        internal override void WriteNumberWithCustomHandling(KdlWriter writer, ushort value, KdlNumberHandling handling)
+        internal override void WriteNumberWithCustomHandling(
+            KdlWriter writer,
+            ushort value,
+            KdlNumberHandling handling
+        )
         {
             if ((KdlNumberHandling.WriteAsString & handling) != 0)
             {

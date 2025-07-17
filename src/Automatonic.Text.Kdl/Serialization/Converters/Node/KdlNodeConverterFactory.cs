@@ -5,7 +5,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class KdlNodeConverterFactory : KdlConverterFactory
     {
-        public override KdlConverter? CreateConverter(Type typeToConvert, KdlSerializerOptions options)
+        public override KdlConverter? CreateConverter(
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (typeof(KdlValue).IsAssignableFrom(typeToConvert))
             {
@@ -26,6 +29,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return KdlVertexConverter.Instance;
         }
 
-        public override bool CanConvert(Type typeToConvert) => typeof(KdlElement).IsAssignableFrom(typeToConvert);
+        public override bool CanConvert(Type typeToConvert) =>
+            typeof(KdlElement).IsAssignableFrom(typeToConvert);
     }
 }

@@ -23,7 +23,10 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>(this KdlElement? node, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(
+            this KdlElement? node,
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             return ReadFromNode(node, kdlTypeInfo);
@@ -45,7 +48,11 @@ namespace Automatonic.Text.Kdl
         /// </exception>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(this KdlElement? node, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(
+            this KdlElement? node,
+            Type returnType,
+            KdlSerializerOptions? options = null
+        )
         {
             if (returnType is null)
             {
@@ -69,7 +76,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="KdlException">
         /// <typeparamref name="TValue" /> is not compatible with the KDL.
         /// </exception>
-        public static TValue? Deserialize<TValue>(this KdlElement? node, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static TValue? Deserialize<TValue>(
+            this KdlElement? node,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -132,7 +142,11 @@ namespace Automatonic.Text.Kdl
         /// The <see cref="KdlSerializerContext.GetTypeInfo(Type)"/> method of the provided
         /// <paramref name="context"/> returns <see langword="null"/> for the type to convert.
         /// </exception>
-        public static object? Deserialize(this KdlElement? node, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(
+            this KdlElement? node,
+            Type returnType,
+            KdlSerializerContext context
+        )
         {
             if (returnType is null)
             {
@@ -147,7 +161,10 @@ namespace Automatonic.Text.Kdl
             return ReadFromNodeAsObject(node, kdlTypeInfo);
         }
 
-        private static TValue? ReadFromNode<TValue>(KdlElement? node, KdlTypeInfo<TValue> kdlTypeInfo)
+        private static TValue? ReadFromNode<TValue>(
+            KdlElement? node,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             KdlSerializerOptions options = kdlTypeInfo.Options;
 

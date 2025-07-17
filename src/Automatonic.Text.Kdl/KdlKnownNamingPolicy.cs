@@ -33,6 +33,6 @@ namespace Automatonic.Text.Kdl.Serialization
         /// <summary>
         /// Specifies that the built-in <see cref="Kdl.KdlNamingPolicy.KebabCaseUpper"/> be used to convert KDL property names.
         /// </summary>
-        KebabCaseUpper = 5
+        KebabCaseUpper = 5,
     }
 }

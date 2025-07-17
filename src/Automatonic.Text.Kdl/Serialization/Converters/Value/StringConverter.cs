@@ -5,7 +5,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class StringConverter : KdlPrimitiveConverter<string?>
     {
-        public override string? Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override string? Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return reader.GetString();
         }
@@ -23,13 +27,22 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
         }
 
-        internal override string ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override string ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return reader.GetString()!;
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, string value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            string value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             if (value is null)
             {
@@ -42,13 +55,16 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
                 if (value == null)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_NamingPolicyReturnNull(options.DictionaryKeyPolicy);
+                    ThrowHelper.ThrowInvalidOperationException_NamingPolicyReturnNull(
+                        options.DictionaryKeyPolicy
+                    );
                 }
             }
 
             writer.WritePropertyName(value);
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.String };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.String };
     }
 }

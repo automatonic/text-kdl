@@ -72,7 +72,8 @@ namespace Automatonic.Text.Kdl.Graph
         /// </summary>
         /// <param name="value">A <see cref="DateTimeOffset"/> to implicitly convert.</param>
         /// <returns>A <see cref="KdlElement"/> instance converted from the <paramref name="value"/> parameter.</returns>
-        public static implicit operator KdlElement?(DateTimeOffset? value) => KdlValue.Create(value);
+        public static implicit operator KdlElement?(DateTimeOffset? value) =>
+            KdlValue.Create(value);
 
         /// <summary>
         ///   Defines an implicit conversion of a given <see cref="decimal"/> to a <see cref="KdlElement"/>.
@@ -305,14 +306,16 @@ namespace Automatonic.Text.Kdl.Graph
         /// </summary>
         /// <param name="value">A <see cref="DateTimeOffset"/> to explicitly convert.</param>
         /// <returns>A value converted from the <see cref="KdlElement"/> instance.</returns>
-        public static explicit operator DateTimeOffset(KdlElement value) => value.GetValue<DateTimeOffset>();
+        public static explicit operator DateTimeOffset(KdlElement value) =>
+            value.GetValue<DateTimeOffset>();
 
         /// <summary>
         ///   Defines an explicit conversion of a given <see cref="DateTimeOffset"/> to a <see cref="KdlElement"/>.
         /// </summary>
         /// <param name="value">A <see cref="DateTimeOffset"/> to explicitly convert.</param>
         /// <returns>A value converted from the <see cref="KdlElement"/> instance.</returns>
-        public static explicit operator DateTimeOffset?(KdlElement? value) => value?.GetValue<DateTimeOffset>();
+        public static explicit operator DateTimeOffset?(KdlElement? value) =>
+            value?.GetValue<DateTimeOffset>();
 
         /// <summary>
         ///   Defines an explicit conversion of a given <see cref="decimal"/> to a <see cref="KdlElement"/>.

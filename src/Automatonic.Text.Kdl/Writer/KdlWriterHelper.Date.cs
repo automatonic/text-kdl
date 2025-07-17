@@ -8,19 +8,37 @@ namespace Automatonic.Text.Kdl
     {
         private static readonly StandardFormat s_dateTimeStandardFormat = new('O');
 
-        public static void WriteDateTimeTrimmed(Span<byte> buffer, DateTime value, out int bytesWritten)
+        public static void WriteDateTimeTrimmed(
+            Span<byte> buffer,
+            DateTime value,
+            out int bytesWritten
+        )
         {
             Span<byte> tempSpan = stackalloc byte[KdlConstants.MaximumFormatDateTimeOffsetLength];
-            bool result = Utf8Formatter.TryFormat(value, tempSpan, out bytesWritten, s_dateTimeStandardFormat);
+            bool result = Utf8Formatter.TryFormat(
+                value,
+                tempSpan,
+                out bytesWritten,
+                s_dateTimeStandardFormat
+            );
             Debug.Assert(result);
             TrimDateTimeOffset(tempSpan[..bytesWritten], out bytesWritten);
             tempSpan[..bytesWritten].CopyTo(buffer);
         }
 
-        public static void WriteDateTimeOffsetTrimmed(Span<byte> buffer, DateTimeOffset value, out int bytesWritten)
+        public static void WriteDateTimeOffsetTrimmed(
+            Span<byte> buffer,
+            DateTimeOffset value,
+            out int bytesWritten
+        )
         {
             Span<byte> tempSpan = stackalloc byte[KdlConstants.MaximumFormatDateTimeOffsetLength];
-            bool result = Utf8Formatter.TryFormat(value, tempSpan, out bytesWritten, s_dateTimeStandardFormat);
+            bool result = Utf8Formatter.TryFormat(
+                value,
+                tempSpan,
+                out bytesWritten,
+                s_dateTimeStandardFormat
+            );
             Debug.Assert(result);
             TrimDateTimeOffset(tempSpan[..bytesWritten], out bytesWritten);
             tempSpan[..bytesWritten].CopyTo(buffer);
@@ -44,9 +62,12 @@ namespace Automatonic.Text.Kdl
             // YYYY-MM-DDThh:mm:ss.fffffff (KdlConstants.MaximumFormatDateTimeLength)
             // YYYY-MM-DDThh:mm:ss.fffffffZ (KdlConstants.MaximumFormatDateTimeLength + 1)
             // YYYY-MM-DDThh:mm:ss.fffffff(+|-)hh:mm (KdlConstants.MaximumFormatDateTimeOffsetLength)
-            Debug.Assert(buffer.Length is maxDateTimeLength or
-                (maxDateTimeLength + 1) or
-                KdlConstants.MaximumFormatDateTimeOffsetLength);
+            Debug.Assert(
+                buffer.Length
+                    is maxDateTimeLength
+                        or (maxDateTimeLength + 1)
+                        or KdlConstants.MaximumFormatDateTimeOffsetLength
+            );
 
             // Find the last significant digit.
             int curIndex;
@@ -68,22 +89,34 @@ namespace Automatonic.Text.Kdl
                                         curIndex = maxDateTimeLength - 7 - 1;
                                     }
                                     else
-                                    { curIndex = maxDateTimeLength - 6; }
+                                    {
+                                        curIndex = maxDateTimeLength - 6;
+                                    }
                                 }
                                 else
-                                { curIndex = maxDateTimeLength - 5; }
+                                {
+                                    curIndex = maxDateTimeLength - 5;
+                                }
                             }
                             else
-                            { curIndex = maxDateTimeLength - 4; }
+                            {
+                                curIndex = maxDateTimeLength - 4;
+                            }
                         }
                         else
-                        { curIndex = maxDateTimeLength - 3; }
+                        {
+                            curIndex = maxDateTimeLength - 3;
+                        }
                     }
                     else
-                    { curIndex = maxDateTimeLength - 2; }
+                    {
+                        curIndex = maxDateTimeLength - 2;
+                    }
                 }
                 else
-                { curIndex = maxDateTimeLength - 1; }
+                {
+                    curIndex = maxDateTimeLength - 1;
+                }
             }
             else
             {

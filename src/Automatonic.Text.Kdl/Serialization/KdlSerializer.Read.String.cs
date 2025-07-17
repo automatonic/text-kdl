@@ -78,7 +78,10 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static TValue? Deserialize<TValue>(ReadOnlySpan<char> kdl, KdlSerializerOptions? options = null)
+        public static TValue? Deserialize<TValue>(
+            ReadOnlySpan<char> kdl,
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             return ReadFromSpan(kdl, kdlTypeInfo);
@@ -113,7 +116,11 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(string kdl, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(
+            string kdl,
+            Type returnType,
+            KdlSerializerOptions? options = null
+        )
         {
             if (kdl is null)
             {
@@ -157,7 +164,11 @@ namespace Automatonic.Text.Kdl
         /// </remarks>
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        public static object? Deserialize(ReadOnlySpan<char> kdl, Type returnType, KdlSerializerOptions? options = null)
+        public static object? Deserialize(
+            ReadOnlySpan<char> kdl,
+            Type returnType,
+            KdlSerializerOptions? options = null
+        )
         {
             if (returnType is null)
             {
@@ -239,7 +250,10 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static TValue? Deserialize<TValue>(ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static TValue? Deserialize<TValue>(
+            ReadOnlySpan<char> kdl,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -405,7 +419,11 @@ namespace Automatonic.Text.Kdl
         /// <remarks>Using a <see cref="string"/> is not as efficient as using the
         /// UTF-8 methods since the implementation natively uses UTF-8.
         /// </remarks>
-        public static object? Deserialize(ReadOnlySpan<char> kdl, Type returnType, KdlSerializerContext context)
+        public static object? Deserialize(
+            ReadOnlySpan<char> kdl,
+            Type returnType,
+            KdlSerializerContext context
+        )
         {
             if (returnType is null)
             {
@@ -420,7 +438,10 @@ namespace Automatonic.Text.Kdl
             return ReadFromSpanAsObject(kdl, kdlTypeInfo);
         }
 
-        private static TValue? ReadFromSpan<TValue>(ReadOnlySpan<char> kdl, KdlTypeInfo<TValue> kdlTypeInfo)
+        private static TValue? ReadFromSpan<TValue>(
+            ReadOnlySpan<char> kdl,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
             byte[]? tempArray = null;
@@ -428,9 +449,23 @@ namespace Automatonic.Text.Kdl
             // For performance, avoid obtaining actual byte count unless memory usage is higher than the threshold.
             Span<byte> utf8 =
                 // Use stack memory
-                kdl.Length <= (KdlConstants.StackallocByteThreshold / KdlConstants.MaxExpansionFactorWhileTranscoding) ? stackalloc byte[KdlConstants.StackallocByteThreshold] :
+                kdl.Length
+                <= (
+                    KdlConstants.StackallocByteThreshold
+                    / KdlConstants.MaxExpansionFactorWhileTranscoding
+                )
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                :
                 // Use a pooled array
-                kdl.Length <= (KdlConstants.ArrayPoolMaxSizeBeforeUsingNormalAlloc / KdlConstants.MaxExpansionFactorWhileTranscoding) ? tempArray = ArrayPool<byte>.Shared.Rent(kdl.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) :
+                kdl.Length
+                <= (
+                    KdlConstants.ArrayPoolMaxSizeBeforeUsingNormalAlloc
+                    / KdlConstants.MaxExpansionFactorWhileTranscoding
+                )
+                    ? tempArray = ArrayPool<byte>.Shared.Rent(
+                        kdl.Length * KdlConstants.MaxExpansionFactorWhileTranscoding
+                    )
+                :
                 // Use a normal alloc since the pool would create a normal alloc anyway based on the threshold (per current implementation)
                 // and by using a normal alloc we can avoid the Clear().
                 new byte[KdlReaderHelper.GetUtf8ByteCount(kdl)];
@@ -459,9 +494,23 @@ namespace Automatonic.Text.Kdl
             // For performance, avoid obtaining actual byte count unless memory usage is higher than the threshold.
             Span<byte> utf8 =
                 // Use stack memory
-                kdl.Length <= (KdlConstants.StackallocByteThreshold / KdlConstants.MaxExpansionFactorWhileTranscoding) ? stackalloc byte[KdlConstants.StackallocByteThreshold] :
+                kdl.Length
+                <= (
+                    KdlConstants.StackallocByteThreshold
+                    / KdlConstants.MaxExpansionFactorWhileTranscoding
+                )
+                    ? stackalloc byte[KdlConstants.StackallocByteThreshold]
+                :
                 // Use a pooled array
-                kdl.Length <= (KdlConstants.ArrayPoolMaxSizeBeforeUsingNormalAlloc / KdlConstants.MaxExpansionFactorWhileTranscoding) ? tempArray = ArrayPool<byte>.Shared.Rent(kdl.Length * KdlConstants.MaxExpansionFactorWhileTranscoding) :
+                kdl.Length
+                <= (
+                    KdlConstants.ArrayPoolMaxSizeBeforeUsingNormalAlloc
+                    / KdlConstants.MaxExpansionFactorWhileTranscoding
+                )
+                    ? tempArray = ArrayPool<byte>.Shared.Rent(
+                        kdl.Length * KdlConstants.MaxExpansionFactorWhileTranscoding
+                    )
+                :
                 // Use a normal alloc since the pool would create a normal alloc anyway based on the threshold (per current implementation)
                 // and by using a normal alloc we can avoid the Clear().
                 new byte[KdlReaderHelper.GetUtf8ByteCount(kdl)];

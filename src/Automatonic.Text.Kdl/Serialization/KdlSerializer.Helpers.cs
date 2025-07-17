@@ -7,8 +7,10 @@ namespace Automatonic.Text.Kdl
 {
     public static partial class KdlSerializer
     {
-        internal const string SerializationUnreferencedCodeMessage = "KDL serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a KdlTypeInfo or KdlSerializerContext, or make sure all of the required types are preserved.";
-        internal const string SerializationRequiresDynamicCodeMessage = "KDL serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use Automatonic.Text.Kdl source generation for native AOT applications.";
+        internal const string SerializationUnreferencedCodeMessage =
+            "KDL serialization and deserialization might require types that cannot be statically analyzed. Use the overload that takes a KdlTypeInfo or KdlSerializerContext, or make sure all of the required types are preserved.";
+        internal const string SerializationRequiresDynamicCodeMessage =
+            "KDL serialization and deserialization might require types that cannot be statically analyzed and might need runtime code generation. Use Automatonic.Text.Kdl source generation for native AOT applications.";
 
         /// <summary>
         /// Indicates whether unconfigured <see cref="KdlSerializerOptions"/> instances
@@ -22,8 +24,10 @@ namespace Automatonic.Text.Kdl
         public static bool IsReflectionEnabledByDefault { get; } =
             AppContext.TryGetSwitch(
                 switchName: "Automatonic.Text.Kdl.KdlSerializer.IsReflectionEnabledByDefault",
-                isEnabled: out bool value)
-            ? value : true;
+                isEnabled: out bool value
+            )
+                ? value
+                : true;
 
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
@@ -44,8 +48,8 @@ namespace Automatonic.Text.Kdl
 
         [RequiresUnreferencedCode(SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
-        private static KdlTypeInfo<T> GetTypeInfo<T>(KdlSerializerOptions? options)
-            => (KdlTypeInfo<T>)GetTypeInfo(options, typeof(T));
+        private static KdlTypeInfo<T> GetTypeInfo<T>(KdlSerializerOptions? options) =>
+            (KdlTypeInfo<T>)GetTypeInfo(options, typeof(T));
 
         private static KdlTypeInfo GetTypeInfo(KdlSerializerContext context, Type inputType)
         {
@@ -80,18 +84,23 @@ namespace Automatonic.Text.Kdl
         }
 
         internal static bool IsValidNumberHandlingValue(KdlNumberHandling handling) =>
-            KdlHelpers.IsInRangeInclusive((int)handling, 0,
+            KdlHelpers.IsInRangeInclusive(
+                (int)handling,
+                0,
                 (int)(
-                KdlNumberHandling.Strict |
-                KdlNumberHandling.AllowReadingFromString |
-                KdlNumberHandling.WriteAsString |
-                KdlNumberHandling.AllowNamedFloatingPointLiterals));
+                    KdlNumberHandling.Strict
+                    | KdlNumberHandling.AllowReadingFromString
+                    | KdlNumberHandling.WriteAsString
+                    | KdlNumberHandling.AllowNamedFloatingPointLiterals
+                )
+            );
 
         internal static bool IsValidCreationHandlingValue(KdlObjectCreationHandling handling) =>
             handling is KdlObjectCreationHandling.Replace or KdlObjectCreationHandling.Populate;
 
-        internal static bool IsValidUnmappedMemberHandlingValue(KdlUnmappedMemberHandling handling) =>
-            handling is KdlUnmappedMemberHandling.Skip or KdlUnmappedMemberHandling.Disallow;
+        internal static bool IsValidUnmappedMemberHandlingValue(
+            KdlUnmappedMemberHandling handling
+        ) => handling is KdlUnmappedMemberHandling.Skip or KdlUnmappedMemberHandling.Disallow;
 
         [return: NotNullIfNotNull(nameof(value))]
         internal static T? UnboxOnRead<T>(object? value)
@@ -119,11 +128,16 @@ namespace Automatonic.Text.Kdl
             {
                 if (value is null)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_DeserializeUnableToAssignNull(declaredType: typeof(T));
+                    ThrowHelper.ThrowInvalidOperationException_DeserializeUnableToAssignNull(
+                        declaredType: typeof(T)
+                    );
                 }
                 else
                 {
-                    ThrowHelper.ThrowInvalidCastException_DeserializeUnableToAssignValue(typeOfValue: value.GetType(), declaredType: typeof(T));
+                    ThrowHelper.ThrowInvalidCastException_DeserializeUnableToAssignValue(
+                        typeOfValue: value.GetType(),
+                        declaredType: typeof(T)
+                    );
                 }
             }
         }

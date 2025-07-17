@@ -7,9 +7,14 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     internal sealed class DateOnlyConverter : KdlPrimitiveConverter<DateOnly>
     {
         public const int FormatLength = 10; // YYYY-MM-DD
-        public const int MaxEscapedFormatLength = FormatLength * KdlConstants.MaxExpansionFactorWhileEscaping;
+        public const int MaxEscapedFormatLength =
+            FormatLength * KdlConstants.MaxExpansionFactorWhileEscaping;
 
-        public override DateOnly Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override DateOnly Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             if (reader.TokenType != KdlTokenType.String)
             {
@@ -19,7 +24,11 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return ReadCore(ref reader);
         }
 
-        internal override DateOnly ReadAsPropertyNameCore(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        internal override DateOnly ReadAsPropertyNameCore(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(reader.TokenType == KdlTokenType.PropertyName);
             return ReadCore(ref reader);
@@ -27,7 +36,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         private static DateOnly ReadCore(ref KdlReader reader)
         {
-            if (!KdlHelpers.IsInRangeInclusive(reader.ValueLength, FormatLength, MaxEscapedFormatLength))
+            if (
+                !KdlHelpers.IsInRangeInclusive(
+                    reader.ValueLength,
+                    FormatLength,
+                    MaxEscapedFormatLength
+                )
+            )
             {
                 ThrowHelper.ThrowFormatException(DataType.DateOnly);
             }
@@ -55,19 +70,35 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         public override void Write(KdlWriter writer, DateOnly value, KdlSerializerOptions options)
         {
             Span<byte> buffer = stackalloc byte[FormatLength];
-            bool formattedSuccessfully = value.TryFormat(buffer, out int charsWritten, "O", CultureInfo.InvariantCulture);
+            bool formattedSuccessfully = value.TryFormat(
+                buffer,
+                out int charsWritten,
+                "O",
+                CultureInfo.InvariantCulture
+            );
             Debug.Assert(formattedSuccessfully && charsWritten == FormatLength);
             writer.WriteStringValue(buffer);
         }
 
-        internal override void WriteAsPropertyNameCore(KdlWriter writer, DateOnly value, KdlSerializerOptions options, bool isWritingExtensionDataProperty)
+        internal override void WriteAsPropertyNameCore(
+            KdlWriter writer,
+            DateOnly value,
+            KdlSerializerOptions options,
+            bool isWritingExtensionDataProperty
+        )
         {
             Span<byte> buffer = stackalloc byte[FormatLength];
-            bool formattedSuccessfully = value.TryFormat(buffer, out int charsWritten, "O", CultureInfo.InvariantCulture);
+            bool formattedSuccessfully = value.TryFormat(
+                buffer,
+                out int charsWritten,
+                "O",
+                CultureInfo.InvariantCulture
+            );
             Debug.Assert(formattedSuccessfully && charsWritten == FormatLength);
             writer.WritePropertyName(buffer);
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => new() { Type = KdlSchemaType.String, Format = "date" };
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.String, Format = "date" };
     }
 }

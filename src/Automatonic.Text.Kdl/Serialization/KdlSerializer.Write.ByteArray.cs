@@ -21,7 +21,8 @@ namespace Automatonic.Text.Kdl
         [RequiresDynamicCode(SerializationRequiresDynamicCodeMessage)]
         public static byte[] SerializeToUtf8Bytes<TValue>(
             TValue value,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             KdlTypeInfo<TValue> kdlTypeInfo = GetTypeInfo<TValue>(options);
             return WriteBytes(value, kdlTypeInfo);
@@ -49,7 +50,8 @@ namespace Automatonic.Text.Kdl
         public static byte[] SerializeToUtf8Bytes(
             object? value,
             Type inputType,
-            KdlSerializerOptions? options = null)
+            KdlSerializerOptions? options = null
+        )
         {
             ValidateInputType(value, inputType);
             KdlTypeInfo kdlTypeInfo = GetTypeInfo(options, inputType);
@@ -65,7 +67,10 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentNullException">
         /// <paramref name="kdlTypeInfo"/> is <see langword="null"/>.
         /// </exception>
-        public static byte[] SerializeToUtf8Bytes<TValue>(TValue value, KdlTypeInfo<TValue> kdlTypeInfo)
+        public static byte[] SerializeToUtf8Bytes<TValue>(
+            TValue value,
+            KdlTypeInfo<TValue> kdlTypeInfo
+        )
         {
             if (kdlTypeInfo is null)
             {
@@ -120,7 +125,11 @@ namespace Automatonic.Text.Kdl
         /// The <see cref="KdlSerializerContext.GetTypeInfo(Type)"/> method of the provided
         /// <paramref name="context"/> returns <see langword="null"/> for the type to convert.
         /// </exception>
-        public static byte[] SerializeToUtf8Bytes(object? value, Type inputType, KdlSerializerContext context)
+        public static byte[] SerializeToUtf8Bytes(
+            object? value,
+            Type inputType,
+            KdlSerializerContext context
+        )
         {
             if (context is null)
             {
@@ -136,7 +145,10 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                kdlTypeInfo.Options,
+                out PooledByteBufferWriter output
+            );
 
             try
             {
@@ -153,7 +165,10 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(kdlTypeInfo.IsConfigured);
 
-            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(kdlTypeInfo.Options, out PooledByteBufferWriter output);
+            KdlWriter writer = KdlWriterCache.RentWriterAndBuffer(
+                kdlTypeInfo.Options,
+                out PooledByteBufferWriter output
+            );
 
             try
             {

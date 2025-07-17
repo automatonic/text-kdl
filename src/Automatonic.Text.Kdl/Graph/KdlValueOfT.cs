@@ -10,10 +10,15 @@ namespace Automatonic.Text.Kdl.Graph
     {
         internal readonly TValue Value; // keep as a field for direct access to avoid copies
 
-        protected KdlValue(TValue value, KdlElementOptions? options) : base(options)
+        protected KdlValue(TValue value, KdlElementOptions? options)
+            : base(options)
         {
             Debug.Assert(value != null);
-            Debug.Assert(value is not KdlReadOnlyElement or KdlReadOnlyElement { ValueKind: not KdlValueKind.Null });
+            Debug.Assert(
+                value
+                    is not KdlReadOnlyElement
+                        or KdlReadOnlyElement { ValueKind: not KdlValueKind.Null }
+            );
             Debug.Assert(value is not KdlElement);
             Value = value;
         }
@@ -29,7 +34,10 @@ namespace Automatonic.Text.Kdl.Graph
             // Currently we do not support other conversions.
             // Generics (and also boxing) do not support standard cast operators say from 'long' to 'int',
             //  so attempting to cast here would throw InvalidCastException.
-            ThrowHelper.ThrowInvalidOperationException_NodeUnableToConvert(typeof(TValue), typeof(T));
+            ThrowHelper.ThrowInvalidOperationException_NodeUnableToConvert(
+                typeof(TValue),
+                typeof(T)
+            );
             return default!;
         }
 
@@ -53,14 +61,19 @@ namespace Automatonic.Text.Kdl.Graph
         /// Whether <typeparamref name="TValue"/> is a built-in type that admits primitive KdlValue representation.
         /// </summary>
         internal static bool TypeIsSupportedPrimitive => s_valueKind.HasValue;
-        private static readonly KdlValueKind? s_valueKind = DetermineValueKindForType(typeof(TValue));
+        private static readonly KdlValueKind? s_valueKind = DetermineValueKindForType(
+            typeof(TValue)
+        );
 
         /// <summary>
         /// Determines the KdlValueKind for the value of a built-in type.
         /// </summary>
         private protected static KdlValueKind DetermineValueKind(TValue value)
         {
-            Debug.Assert(s_valueKind is not null, "Should only be invoked for types that are supported primitives.");
+            Debug.Assert(
+                s_valueKind is not null,
+                "Should only be invoked for types that are supported primitives."
+            );
 
             if (value is bool boolean)
             {
@@ -87,11 +100,20 @@ namespace Automatonic.Text.Kdl.Graph
                 return DetermineValueKindForType(underlyingType);
             }
 
-            if (type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(TimeSpan) ||
+            if (
+                type == typeof(DateTime)
+                || type == typeof(DateTimeOffset)
+                || type == typeof(TimeSpan)
+                ||
 #if NET
-                type == typeof(DateOnly) || type == typeof(TimeOnly) ||
+                type == typeof(DateOnly)
+                || type == typeof(TimeOnly)
+                ||
 #endif
-                type == typeof(Guid) || type == typeof(Uri) || type == typeof(Version))
+                type == typeof(Guid)
+                || type == typeof(Uri)
+                || type == typeof(Version)
+            )
             {
                 return KdlValueKind.String;
             }

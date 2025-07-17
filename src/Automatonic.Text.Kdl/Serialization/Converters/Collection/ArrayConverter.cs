@@ -3,7 +3,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     /// <summary>
     /// Converter for <cref>System.Array</cref>.
     /// </summary>
-    internal sealed class ArrayConverter<TCollection, TElement> : IEnumerableDefaultConverter<TElement[], TElement>
+    internal sealed class ArrayConverter<TCollection, TElement>
+        : IEnumerableDefaultConverter<TElement[], TElement>
     {
         internal override bool CanHaveMetadata => false;
 
@@ -13,19 +14,30 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         }
 
         internal override bool SupportsCreateObjectDelegate => false;
-        protected override void CreateCollection(ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+
+        protected override void CreateCollection(
+            ref KdlReader reader,
+            scoped ref ReadStack state,
+            KdlSerializerOptions options
+        )
         {
             state.Current.ReturnValue = new List<TElement>();
         }
 
         internal sealed override bool IsConvertibleCollection => true;
+
         protected override void ConvertCollection(ref ReadStack state, KdlSerializerOptions options)
         {
             List<TElement> list = (List<TElement>)state.Current.ReturnValue!;
             state.Current.ReturnValue = list.ToArray();
         }
 
-        protected override bool OnWriteResume(KdlWriter writer, TElement[] array, KdlSerializerOptions options, ref WriteStack state)
+        protected override bool OnWriteResume(
+            KdlWriter writer,
+            TElement[] array,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        )
         {
             int index = state.Current.EnumeratorIndex;
 

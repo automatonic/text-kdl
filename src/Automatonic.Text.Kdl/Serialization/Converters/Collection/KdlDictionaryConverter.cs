@@ -10,27 +10,43 @@ namespace Automatonic.Text.Kdl.Serialization
     internal abstract class KdlDictionaryConverter<TDictionary> : KdlResumableConverter<TDictionary>
     {
         internal override bool SupportsCreateObjectDelegate => true;
-        private protected sealed override ConverterStrategy GetDefaultConverterStrategy() => ConverterStrategy.Dictionary;
 
-        protected internal abstract bool OnWriteResume(KdlWriter writer, TDictionary dictionary, KdlSerializerOptions options, ref WriteStack state);
+        private protected sealed override ConverterStrategy GetDefaultConverterStrategy() =>
+            ConverterStrategy.Dictionary;
+
+        protected internal abstract bool OnWriteResume(
+            KdlWriter writer,
+            TDictionary dictionary,
+            KdlSerializerOptions options,
+            ref WriteStack state
+        );
     }
 
     /// <summary>
     /// Base class for dictionary converters such as IDictionary, Hashtable, Dictionary{,} IDictionary{,} and SortedList.
     /// </summary>
-    internal abstract class KdlDictionaryConverter<TDictionary, TKey, TValue> : KdlDictionaryConverter<TDictionary>
+    internal abstract class KdlDictionaryConverter<TDictionary, TKey, TValue>
+        : KdlDictionaryConverter<TDictionary>
         where TKey : notnull
     {
         /// <summary>
         /// When overridden, adds the value to the collection.
         /// </summary>
-        protected abstract void Add(TKey key, in TValue value, KdlSerializerOptions options, ref ReadStack state);
+        protected abstract void Add(
+            TKey key,
+            in TValue value,
+            KdlSerializerOptions options,
+            ref ReadStack state
+        );
 
         /// <summary>
         /// When overridden, converts the temporary collection held in state.Current.ReturnValue to the final collection.
         /// This is used with immutable collections.
         /// </summary>
-        protected virtual void ConvertCollection(ref ReadStack state, KdlSerializerOptions options) { }
+        protected virtual void ConvertCollection(
+            ref ReadStack state,
+            KdlSerializerOptions options
+        ) { }
 
         /// <summary>
         /// When overridden, create the collection. It may be a temporary collection or the final collection.
@@ -46,7 +62,11 @@ namespace Automatonic.Text.Kdl.Serialization
 
             if (typeInfo.CreateObject is null)
             {
-                ThrowHelper.ThrowNotSupportedException_DeserializeNoConstructor(typeInfo, ref reader, ref state);
+                ThrowHelper.ThrowNotSupportedException_DeserializeNoConstructor(
+                    typeInfo,
+                    ref reader,
+                    ref state
+                );
             }
 
             state.Current.ReturnValue = typeInfo.CreateObject();
@@ -56,7 +76,6 @@ namespace Automatonic.Text.Kdl.Serialization
         internal override Type ElementType => typeof(TValue);
 
         internal override Type KeyType => typeof(TKey);
-
 
         protected KdlConverter<TKey>? _keyConverter;
         protected KdlConverter<TValue>? _valueConverter;
@@ -71,7 +90,8 @@ namespace Automatonic.Text.Kdl.Serialization
             Type typeToConvert,
             KdlSerializerOptions options,
             scoped ref ReadStack state,
-            [MaybeNullWhen(false)] out TDictionary value)
+            [MaybeNullWhen(false)] out TDictionary value
+        )
         {
             KdlTypeInfo kdlTypeInfo = state.Current.KdlTypeInfo;
             KdlTypeInfo keyTypeInfo = kdlTypeInfo.KeyTypeInfo!;
@@ -141,7 +161,14 @@ namespace Automatonic.Text.Kdl.Serialization
 
                         // Get the value from the converter and add it.
                         state.Current.KdlPropertyInfo = elementTypeInfo.PropertyInfoForTypeInfo;
-                        _valueConverter.TryRead(ref reader, ElementType, options, ref state, out TValue? element, out _);
+                        _valueConverter.TryRead(
+                            ref reader,
+                            ElementType,
+                            options,
+                            ref state,
+                            out TValue? element,
+                            out _
+                        );
                         Add(key, element!, options, ref state);
                     }
                 }
@@ -160,7 +187,10 @@ namespace Automatonic.Text.Kdl.Serialization
                 }
 
                 // Handle the metadata properties.
-                if (state.Current.CanContainMetadata && state.Current.ObjectState < StackFrameObjectState.ReadMetadata)
+                if (
+                    state.Current.CanContainMetadata
+                    && state.Current.ObjectState < StackFrameObjectState.ReadMetadata
+                )
                 {
                     if (!KdlSerializer.TryReadMetadata(this, kdlTypeInfo, ref reader, ref state))
                     {
@@ -178,12 +208,22 @@ namespace Automatonic.Text.Kdl.Serialization
                 }
 
                 // Dispatch to any polymorphic converters: should always be entered regardless of ObjectState progress
-                if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Type) != 0 &&
-                    state.Current.PolymorphicSerializationState != PolymorphicSerializationState.PolymorphicReEntryStarted &&
-                    ResolvePolymorphicConverter(kdlTypeInfo, ref state) is KdlConverter polymorphicConverter)
+                if (
+                    (state.Current.MetadataPropertyNames & MetadataPropertyName.Type) != 0
+                    && state.Current.PolymorphicSerializationState
+                        != PolymorphicSerializationState.PolymorphicReEntryStarted
+                    && ResolvePolymorphicConverter(kdlTypeInfo, ref state)
+                        is KdlConverter polymorphicConverter
+                )
                 {
                     Debug.Assert(!IsValueType);
-                    bool success = polymorphicConverter.OnTryReadAsObject(ref reader, polymorphicConverter.Type!, options, ref state, out object? objectResult);
+                    bool success = polymorphicConverter.OnTryReadAsObject(
+                        ref reader,
+                        polymorphicConverter.Type!,
+                        options,
+                        ref state,
+                        out object? objectResult
+                    );
                     value = (TDictionary)objectResult!;
                     state.ExitPolymorphicConverter(success);
                     return success;
@@ -202,9 +242,14 @@ namespace Automatonic.Text.Kdl.Serialization
                     if ((state.Current.MetadataPropertyNames & MetadataPropertyName.Id) != 0)
                     {
                         Debug.Assert(state.ReferenceId != null);
-                        Debug.Assert(options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve);
+                        Debug.Assert(
+                            options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve
+                        );
                         Debug.Assert(state.Current.ReturnValue is TDictionary);
-                        state.ReferenceResolver.AddReference(state.ReferenceId, state.Current.ReturnValue);
+                        state.ReferenceResolver.AddReference(
+                            state.ReferenceId,
+                            state.Current.ReturnValue
+                        );
                         state.ReferenceId = null;
                     }
 
@@ -247,7 +292,12 @@ namespace Automatonic.Text.Kdl.Serialization
                         if (state.Current.CanContainMetadata)
                         {
                             ReadOnlySpan<byte> propertyName = reader.GetUnescapedSpan();
-                            if (KdlSerializer.IsMetadataPropertyName(propertyName, state.Current.BaseKdlTypeInfo.PolymorphicTypeResolver))
+                            if (
+                                KdlSerializer.IsMetadataPropertyName(
+                                    propertyName,
+                                    state.Current.BaseKdlTypeInfo.PolymorphicTypeResolver
+                                )
+                            )
                             {
                                 if (options.AllowOutOfOrderMetadataProperties)
                                 {
@@ -257,7 +307,11 @@ namespace Automatonic.Text.Kdl.Serialization
                                 }
                                 else
                                 {
-                                    ThrowHelper.ThrowUnexpectedMetadataException(propertyName, ref reader, ref state);
+                                    ThrowHelper.ThrowUnexpectedMetadataException(
+                                        propertyName,
+                                        ref reader,
+                                        ref state
+                                    );
                                 }
                             }
                         }
@@ -273,7 +327,11 @@ namespace Automatonic.Text.Kdl.Serialization
 
                     if (state.Current.PropertyState < StackFramePropertyState.ReadValue)
                     {
-                        if (!reader.TryAdvanceWithOptionalReadAhead(_valueConverter.RequiresReadAhead))
+                        if (
+                            !reader.TryAdvanceWithOptionalReadAhead(
+                                _valueConverter.RequiresReadAhead
+                            )
+                        )
                         {
                             state.Current.DictionaryKey = key;
                             value = default;
@@ -287,7 +345,14 @@ namespace Automatonic.Text.Kdl.Serialization
                     {
                         // Get the value from the converter and add it.
                         state.Current.KdlPropertyInfo = elementTypeInfo.PropertyInfoForTypeInfo;
-                        bool success = _valueConverter.TryRead(ref reader, typeof(TValue), options, ref state, out TValue? element, out _);
+                        bool success = _valueConverter.TryRead(
+                            ref reader,
+                            typeof(TValue),
+                            options,
+                            ref state,
+                            out TValue? element,
+                            out _
+                        );
                         if (!success)
                         {
                             state.Current.DictionaryKey = key;
@@ -308,7 +373,12 @@ namespace Automatonic.Text.Kdl.Serialization
 
             return true;
 
-            static TKey ReadDictionaryKey(KdlConverter<TKey> keyConverter, ref KdlReader reader, scoped ref ReadStack state, KdlSerializerOptions options)
+            static TKey ReadDictionaryKey(
+                KdlConverter<TKey> keyConverter,
+                ref KdlReader reader,
+                scoped ref ReadStack state,
+                KdlSerializerOptions options
+            )
             {
                 TKey key;
                 string unescapedPropertyNameAsString = reader.GetString()!;
@@ -321,7 +391,11 @@ namespace Automatonic.Text.Kdl.Serialization
                 }
                 else
                 {
-                    key = keyConverter.ReadAsPropertyNameCore(ref reader, keyConverter.Type, options);
+                    key = keyConverter.ReadAsPropertyNameCore(
+                        ref reader,
+                        keyConverter.Type,
+                        options
+                    );
                 }
 
                 return key;
@@ -332,7 +406,8 @@ namespace Automatonic.Text.Kdl.Serialization
             KdlWriter writer,
             TDictionary dictionary,
             KdlSerializerOptions options,
-            ref WriteStack state)
+            ref WriteStack state
+        )
         {
             if (dictionary == null)
             {
@@ -355,7 +430,9 @@ namespace Automatonic.Text.Kdl.Serialization
                     KdlSerializer.WriteMetadataForObject(this, ref state, writer);
                 }
 
-                state.Current.KdlPropertyInfo = kdlTypeInfo.ElementTypeInfo!.PropertyInfoForTypeInfo;
+                state.Current.KdlPropertyInfo = kdlTypeInfo
+                    .ElementTypeInfo!
+                    .PropertyInfoForTypeInfo;
             }
 
             bool success = OnWriteResume(writer, dictionary, options, ref state);

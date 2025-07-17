@@ -30,7 +30,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 // IEnumerable should always be second to last since they can convert any IEnumerable.
                 new IEnumerableConverterFactory(),
                 // Object should always be last since it converts any type.
-                new ObjectConverterFactory()
+                new ObjectConverterFactory(),
             ];
         }
 
@@ -81,8 +81,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
             return converters;
 
-            void Add(KdlConverter converter) =>
-                converters.Add(converter.Type!, converter);
+            void Add(KdlConverter converter) => converters.Add(converter.Type!, converter);
         }
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
@@ -113,7 +112,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             }
         }
 
-        internal static bool TryGetDefaultSimpleConverter(Type typeToConvert, [NotNullWhen(true)] out KdlConverter? converter)
+        internal static bool TryGetDefaultSimpleConverter(
+            Type typeToConvert,
+            [NotNullWhen(true)] out KdlConverter? converter
+        )
         {
             if (s_defaultSimpleConverters is null)
             {
@@ -126,18 +128,29 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static KdlConverter? GetCustomConverterForMember(Type typeToConvert, MemberInfo memberInfo, KdlSerializerOptions options)
+        private static KdlConverter? GetCustomConverterForMember(
+            Type typeToConvert,
+            MemberInfo memberInfo,
+            KdlSerializerOptions options
+        )
         {
             Debug.Assert(memberInfo is FieldInfo or PropertyInfo);
             Debug.Assert(typeToConvert != null);
 
-            KdlConverterAttribute? converterAttribute = memberInfo.GetUniqueCustomAttribute<KdlConverterAttribute>(inherit: false);
-            return converterAttribute is null ? null : GetConverterFromAttribute(converterAttribute, typeToConvert, memberInfo, options);
+            KdlConverterAttribute? converterAttribute =
+                memberInfo.GetUniqueCustomAttribute<KdlConverterAttribute>(inherit: false);
+            return converterAttribute is null
+                ? null
+                : GetConverterFromAttribute(converterAttribute, typeToConvert, memberInfo, options);
         }
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        internal static KdlConverter GetConverterForType(Type typeToConvert, KdlSerializerOptions options, bool resolveKdlConverterAttribute = true)
+        internal static KdlConverter GetConverterForType(
+            Type typeToConvert,
+            KdlSerializerOptions options,
+            bool resolveKdlConverterAttribute = true
+        )
         {
             // Priority 1: Attempt to get custom converter from the Converters list.
             KdlConverter? converter = options.GetConverterFromList(typeToConvert);
@@ -145,10 +158,16 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             // Priority 2: Attempt to get converter from [KdlConverter] on the type being converted.
             if (resolveKdlConverterAttribute && converter == null)
             {
-                KdlConverterAttribute? converterAttribute = typeToConvert.GetUniqueCustomAttribute<KdlConverterAttribute>(inherit: false);
+                KdlConverterAttribute? converterAttribute =
+                    typeToConvert.GetUniqueCustomAttribute<KdlConverterAttribute>(inherit: false);
                 if (converterAttribute != null)
                 {
-                    converter = GetConverterFromAttribute(converterAttribute, typeToConvert: typeToConvert, memberInfo: null, options);
+                    converter = GetConverterFromAttribute(
+                        converterAttribute,
+                        typeToConvert: typeToConvert,
+                        memberInfo: null,
+                        options
+                    );
                 }
             }
 
@@ -159,16 +178,27 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             converter = options.ExpandConverterFactory(converter, typeToConvert);
             if (!converter.Type!.IsInSubtypeRelationshipWith(typeToConvert))
             {
-                ThrowHelper.ThrowInvalidOperationException_SerializationConverterNotCompatible(converter.GetType(), typeToConvert);
+                ThrowHelper.ThrowInvalidOperationException_SerializationConverterNotCompatible(
+                    converter.GetType(),
+                    typeToConvert
+                );
             }
 
-            KdlSerializerOptions.CheckConverterNullabilityIsSameAsPropertyType(converter, typeToConvert);
+            KdlSerializerOptions.CheckConverterNullabilityIsSameAsPropertyType(
+                converter,
+                typeToConvert
+            );
             return converter;
         }
 
         [RequiresUnreferencedCode(KdlSerializer.SerializationUnreferencedCodeMessage)]
         [RequiresDynamicCode(KdlSerializer.SerializationRequiresDynamicCodeMessage)]
-        private static KdlConverter GetConverterFromAttribute(KdlConverterAttribute converterAttribute, Type typeToConvert, MemberInfo? memberInfo, KdlSerializerOptions options)
+        private static KdlConverter GetConverterFromAttribute(
+            KdlConverterAttribute converterAttribute,
+            Type typeToConvert,
+            MemberInfo? memberInfo,
+            KdlSerializerOptions options
+        )
         {
             KdlConverter? converter;
 
@@ -180,15 +210,26 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 converter = converterAttribute.CreateConverter(typeToConvert);
                 if (converter == null)
                 {
-                    ThrowHelper.ThrowInvalidOperationException_SerializationConverterOnAttributeNotCompatible(declaringType, memberInfo, typeToConvert);
+                    ThrowHelper.ThrowInvalidOperationException_SerializationConverterOnAttributeNotCompatible(
+                        declaringType,
+                        memberInfo,
+                        typeToConvert
+                    );
                 }
             }
             else
             {
                 ConstructorInfo? ctor = converterType.GetConstructor(Type.EmptyTypes);
-                if (!typeof(KdlConverter).IsAssignableFrom(converterType) || ctor == null || !ctor.IsPublic)
+                if (
+                    !typeof(KdlConverter).IsAssignableFrom(converterType)
+                    || ctor == null
+                    || !ctor.IsPublic
+                )
                 {
-                    ThrowHelper.ThrowInvalidOperationException_SerializationConverterOnAttributeInvalid(declaringType, memberInfo);
+                    ThrowHelper.ThrowInvalidOperationException_SerializationConverterOnAttributeInvalid(
+                        declaringType,
+                        memberInfo
+                    );
                 }
 
                 converter = (KdlConverter)Activator.CreateInstance(converterType)!;
@@ -209,7 +250,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     return NullableConverterFactory.CreateValueConverter(underlyingType, converter);
                 }
 
-                ThrowHelper.ThrowInvalidOperationException_SerializationConverterOnAttributeNotCompatible(declaringType, memberInfo, typeToConvert);
+                ThrowHelper.ThrowInvalidOperationException_SerializationConverterOnAttributeNotCompatible(
+                    declaringType,
+                    memberInfo,
+                    typeToConvert
+                );
             }
 
             return converter;

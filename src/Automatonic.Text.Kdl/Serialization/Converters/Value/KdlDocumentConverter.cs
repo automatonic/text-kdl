@@ -7,12 +7,20 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
     {
         public override bool HandleNull => true;
 
-        public override KdlReadOnlyDocument Read(ref KdlReader reader, Type typeToConvert, KdlSerializerOptions options)
+        public override KdlReadOnlyDocument Read(
+            ref KdlReader reader,
+            Type typeToConvert,
+            KdlSerializerOptions options
+        )
         {
             return KdlReadOnlyDocument.ParseValue(ref reader);
         }
 
-        public override void Write(KdlWriter writer, KdlReadOnlyDocument? value, KdlSerializerOptions options)
+        public override void Write(
+            KdlWriter writer,
+            KdlReadOnlyDocument? value,
+            KdlSerializerOptions options
+        )
         {
             if (value is null)
             {

@@ -56,7 +56,12 @@ namespace Automatonic.Text.Kdl
 
             if (KdlTypeInfo.IsInvalidForSerialization(type))
             {
-                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(nameof(type), type, null, null);
+                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(
+                    nameof(type),
+                    type,
+                    null,
+                    null
+                );
             }
 
             return GetTypeInfoInternal(type, resolveIfMutable: true);
@@ -84,7 +89,12 @@ namespace Automatonic.Text.Kdl
 
             if (KdlTypeInfo.IsInvalidForSerialization(type))
             {
-                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(nameof(type), type, null, null);
+                ThrowHelper.ThrowArgumentException_CannotSerializeInvalidType(
+                    nameof(type),
+                    type,
+                    null,
+                    null
+                );
             }
 
             typeInfo = GetTypeInfoInternal(type, ensureNotNull: null, resolveIfMutable: true);
@@ -102,10 +112,17 @@ namespace Automatonic.Text.Kdl
             // so use a nullable representation instead to piggy-back on the NotNullIfNotNull attribute.
             bool? ensureNotNull = true,
             bool resolveIfMutable = false,
-            bool fallBackToNearestAncestorType = false)
+            bool fallBackToNearestAncestorType = false
+        )
         {
-            Debug.Assert(!fallBackToNearestAncestorType || IsReadOnly, "ancestor resolution should only be invoked in read-only options.");
-            Debug.Assert(ensureNotNull is null or true, "Explicitly passing false will result in invalid result annotation.");
+            Debug.Assert(
+                !fallBackToNearestAncestorType || IsReadOnly,
+                "ancestor resolution should only be invoked in read-only options."
+            );
+            Debug.Assert(
+                ensureNotNull is null or true,
+                "Explicitly passing false will result in invalid result annotation."
+            );
 
             KdlTypeInfo? typeInfo = null;
 
@@ -145,19 +162,28 @@ namespace Automatonic.Text.Kdl
         /// Return the TypeInfo for root API calls.
         /// This has an LRU cache that is intended only for public API calls that specify the root type.
         /// </summary>
-        internal KdlTypeInfo GetTypeInfoForRootType(Type type, bool fallBackToNearestAncestorType = false)
+        internal KdlTypeInfo GetTypeInfoForRootType(
+            Type type,
+            bool fallBackToNearestAncestorType = false
+        )
         {
             KdlTypeInfo? kdlTypeInfo = _lastTypeInfo;
 
             if (kdlTypeInfo?.Type != type)
             {
-                _lastTypeInfo = kdlTypeInfo = GetTypeInfoInternal(type, fallBackToNearestAncestorType: fallBackToNearestAncestorType);
+                _lastTypeInfo = kdlTypeInfo = GetTypeInfoInternal(
+                    type,
+                    fallBackToNearestAncestorType: fallBackToNearestAncestorType
+                );
             }
 
             return kdlTypeInfo;
         }
 
-        internal bool TryGetPolymorphicTypeInfoForRootType(object rootValue, [NotNullWhen(true)] out KdlTypeInfo? polymorphicTypeInfo)
+        internal bool TryGetPolymorphicTypeInfoForRootType(
+            object rootValue,
+            [NotNullWhen(true)] out KdlTypeInfo? polymorphicTypeInfo
+        )
         {
             Debug.Assert(rootValue != null);
 
@@ -167,7 +193,10 @@ namespace Automatonic.Text.Kdl
                 // To determine the contract for an object value:
                 // 1. Find the KdlTypeInfo for the runtime type with fallback to the nearest ancestor, if not available.
                 // 2. If the resolved type is deriving from a polymorphic type, use the contract of the polymorphic type instead.
-                polymorphicTypeInfo = GetTypeInfoForRootType(runtimeType, fallBackToNearestAncestorType: true);
+                polymorphicTypeInfo = GetTypeInfoForRootType(
+                    runtimeType,
+                    fallBackToNearestAncestorType: true
+                );
                 if (polymorphicTypeInfo.AncestorPolymorphicType is { } ancestorPolymorphicType)
                 {
                     polymorphicTypeInfo = ancestorPolymorphicType;
@@ -223,11 +252,15 @@ namespace Automatonic.Text.Kdl
 
             public KdlSerializerOptions Options { get; }
             public int HashCode { get; }
+
             // Property only accessed by reflection in testing -- do not remove.
             // If changing please ensure that src/ILLink.Descriptors.LibraryBuild.xml is up-to-date.
             public int Count => _cache.Count;
 
-            public KdlTypeInfo? GetOrAddTypeInfo(Type type, bool fallBackToNearestAncestorType = false)
+            public KdlTypeInfo? GetOrAddTypeInfo(
+                Type type,
+                bool fallBackToNearestAncestorType = false
+            )
             {
                 CacheEntry entry = GetOrAddCacheEntry(type);
                 return fallBackToNearestAncestorType && !entry.HasResult
@@ -281,8 +314,11 @@ namespace Automatonic.Text.Kdl
                 return nearestAncestor?.GetResult();
             }
 
-            [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2070:UnrecognizedReflectionPattern",
-                Justification = "We only need to examine the interface types that are supported by the underlying resolver.")]
+            [UnconditionalSuppressMessage(
+                "ReflectionAnalysis",
+                "IL2070:UnrecognizedReflectionPattern",
+                Justification = "We only need to examine the interface types that are supported by the underlying resolver."
+            )]
             private CacheEntry? DetermineNearestAncestor(Type type, CacheEntry entry)
             {
                 // In cases where the underlying TypeInfoResolver returns `null` for a given type,
@@ -341,7 +377,12 @@ namespace Automatonic.Text.Kdl
                             {
                                 // We have found two possible ancestors that are not in subtype relationship.
                                 // This indicates we have encountered a diamond ambiguity -- abort search and record an exception.
-                                NotSupportedException nse = ThrowHelper.GetNotSupportedException_AmbiguousMetadataForType(type, candidateType, interfaceType);
+                                NotSupportedException nse =
+                                    ThrowHelper.GetNotSupportedException_AmbiguousMetadataForType(
+                                        type,
+                                        candidateType,
+                                        interfaceType
+                                    );
                                 candidate = new CacheEntry(ExceptionDispatchInfo.Capture(nse));
                                 break;
                             }
@@ -394,17 +435,28 @@ namespace Automatonic.Text.Kdl
         internal static class TrackedCachingContexts
         {
             private const int MaxTrackedContexts = 64;
-            private static readonly WeakReference<CachingContext>?[] s_trackedContexts = new WeakReference<CachingContext>[MaxTrackedContexts];
+            private static readonly WeakReference<CachingContext>?[] s_trackedContexts =
+                new WeakReference<CachingContext>[MaxTrackedContexts];
             private static readonly EqualityComparer s_optionsComparer = new();
 
             public static CachingContext GetOrCreate(KdlSerializerOptions options)
             {
-                Debug.Assert(options.IsReadOnly, "Cannot create caching contexts for mutable KdlSerializerOptions instances");
+                Debug.Assert(
+                    options.IsReadOnly,
+                    "Cannot create caching contexts for mutable KdlSerializerOptions instances"
+                );
                 Debug.Assert(options._typeInfoResolver != null);
 
                 int hashCode = s_optionsComparer.GetHashCode(options);
 
-                if (TryGetContext(options, hashCode, out int firstUnpopulatedIndex, out CachingContext? result))
+                if (
+                    TryGetContext(
+                        options,
+                        hashCode,
+                        out int firstUnpopulatedIndex,
+                        out CachingContext? result
+                    )
+                )
                 {
                     return result;
                 }
@@ -426,7 +478,9 @@ namespace Automatonic.Text.Kdl
                     if (firstUnpopulatedIndex >= 0)
                     {
                         // Cache has capacity -- store the context in the first available index.
-                        ref WeakReference<CachingContext>? weakRef = ref s_trackedContexts[firstUnpopulatedIndex];
+                        ref WeakReference<CachingContext>? weakRef = ref s_trackedContexts[
+                            firstUnpopulatedIndex
+                        ];
 
                         if (weakRef is null)
                         {
@@ -447,7 +501,8 @@ namespace Automatonic.Text.Kdl
                 KdlSerializerOptions options,
                 int hashCode,
                 out int firstUnpopulatedIndex,
-                [NotNullWhen(true)] out CachingContext? result)
+                [NotNullWhen(true)] out CachingContext? result
+            )
             {
                 WeakReference<CachingContext>?[] trackedContexts = s_trackedContexts;
 
@@ -463,7 +518,10 @@ namespace Automatonic.Text.Kdl
                             firstUnpopulatedIndex = i;
                         }
                     }
-                    else if (hashCode == ctx.HashCode && s_optionsComparer.Equals(options, ctx.Options))
+                    else if (
+                        hashCode == ctx.HashCode
+                        && s_optionsComparer.Equals(options, ctx.Options)
+                    )
                     {
                         result = ctx;
                         return true;
@@ -486,36 +544,42 @@ namespace Automatonic.Text.Kdl
             {
                 Debug.Assert(left != null && right != null);
 
-                return
-                    left._dictionaryKeyPolicy == right._dictionaryKeyPolicy &&
-                    left._kdlPropertyNamingPolicy == right._kdlPropertyNamingPolicy &&
-                    left._readCommentHandling == right._readCommentHandling &&
-                    left._referenceHandler == right._referenceHandler &&
-                    left._encoder == right._encoder &&
-                    left._defaultIgnoreCondition == right._defaultIgnoreCondition &&
-                    left._numberHandling == right._numberHandling &&
-                    left._preferredObjectCreationHandling == right._preferredObjectCreationHandling &&
-                    left._unknownTypeHandling == right._unknownTypeHandling &&
-                    left._unmappedMemberHandling == right._unmappedMemberHandling &&
-                    left._defaultBufferSize == right._defaultBufferSize &&
-                    left._maxDepth == right._maxDepth &&
-                    left.NewLine == right.NewLine && // Read through property due to lazy initialization of the backing field
-                    left._allowOutOfOrderMetadataProperties == right._allowOutOfOrderMetadataProperties &&
-                    left._allowTrailingCommas == right._allowTrailingCommas &&
-                    left._respectNullableAnnotations == right._respectNullableAnnotations &&
-                    left._respectRequiredConstructorParameters == right._respectRequiredConstructorParameters &&
-                    left._ignoreNullValues == right._ignoreNullValues &&
-                    left._ignoreReadOnlyProperties == right._ignoreReadOnlyProperties &&
-                    left._ignoreReadonlyFields == right._ignoreReadonlyFields &&
-                    left._includeFields == right._includeFields &&
-                    left._propertyNameCaseInsensitive == right._propertyNameCaseInsensitive &&
-                    left._writeIndented == right._writeIndented &&
-                    left._indentCharacter == right._indentCharacter &&
-                    left._indentSize == right._indentSize &&
-                    left._typeInfoResolver == right._typeInfoResolver &&
-                    CompareLists(left._converters, right._converters);
+                return left._dictionaryKeyPolicy == right._dictionaryKeyPolicy
+                    && left._kdlPropertyNamingPolicy == right._kdlPropertyNamingPolicy
+                    && left._readCommentHandling == right._readCommentHandling
+                    && left._referenceHandler == right._referenceHandler
+                    && left._encoder == right._encoder
+                    && left._defaultIgnoreCondition == right._defaultIgnoreCondition
+                    && left._numberHandling == right._numberHandling
+                    && left._preferredObjectCreationHandling
+                        == right._preferredObjectCreationHandling
+                    && left._unknownTypeHandling == right._unknownTypeHandling
+                    && left._unmappedMemberHandling == right._unmappedMemberHandling
+                    && left._defaultBufferSize == right._defaultBufferSize
+                    && left._maxDepth == right._maxDepth
+                    && left.NewLine == right.NewLine
+                    && // Read through property due to lazy initialization of the backing field
+                    left._allowOutOfOrderMetadataProperties
+                        == right._allowOutOfOrderMetadataProperties
+                    && left._allowTrailingCommas == right._allowTrailingCommas
+                    && left._respectNullableAnnotations == right._respectNullableAnnotations
+                    && left._respectRequiredConstructorParameters
+                        == right._respectRequiredConstructorParameters
+                    && left._ignoreNullValues == right._ignoreNullValues
+                    && left._ignoreReadOnlyProperties == right._ignoreReadOnlyProperties
+                    && left._ignoreReadonlyFields == right._ignoreReadonlyFields
+                    && left._includeFields == right._includeFields
+                    && left._propertyNameCaseInsensitive == right._propertyNameCaseInsensitive
+                    && left._writeIndented == right._writeIndented
+                    && left._indentCharacter == right._indentCharacter
+                    && left._indentSize == right._indentSize
+                    && left._typeInfoResolver == right._typeInfoResolver
+                    && CompareLists(left._converters, right._converters);
 
-                static bool CompareLists<TValue>(ConfigurationList<TValue>? left, ConfigurationList<TValue>? right)
+                static bool CompareLists<TValue>(
+                    ConfigurationList<TValue>? left,
+                    ConfigurationList<TValue>? right
+                )
                     where TValue : class?
                 {
                     // equates null with empty lists
@@ -581,7 +645,10 @@ namespace Automatonic.Text.Kdl
 
                 return hc.ToHashCode();
 
-                static void AddListHashCode<TValue>(ref HashCode hc, ConfigurationList<TValue>? list)
+                static void AddListHashCode<TValue>(
+                    ref HashCode hc,
+                    ConfigurationList<TValue>? list
+                )
                 {
                     // equates null with empty lists
                     if (list is null)
@@ -617,7 +684,9 @@ namespace Automatonic.Text.Kdl
             private struct HashCode
             {
                 private int _hashCode;
+
                 public void Add<T>(T? value) => _hashCode = (_hashCode, value).GetHashCode();
+
                 public int ToHashCode() => _hashCode;
             }
 #endif
