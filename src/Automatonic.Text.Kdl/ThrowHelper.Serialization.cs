@@ -687,11 +687,8 @@ namespace Automatonic.Text.Kdl
             string message = ex.Message;
 
             // Insert the "Path" portion before "LineNumber" and "BytePositionInLine".
-#if NET
             int iPos = message.AsSpan().LastIndexOf(" LineNumber: ");
-#else
-            int iPos = message.LastIndexOf(" LineNumber: ", StringComparison.Ordinal);
-#endif
+
             if (iPos >= 0)
             {
                 message = $"{message[..iPos]} Path: {path} |{message[iPos..]}";

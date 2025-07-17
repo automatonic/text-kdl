@@ -122,21 +122,7 @@ internal static partial class ReflectionExtensions
             parameterTypes,
             null
         )!;
-#if NET
         return ctorInfo.Invoke(BindingFlags.DoNotWrapExceptions, null, parameters, null);
-#else
-        object? result = null;
-        try
-        {
-            result = ctorInfo.Invoke(parameters);
-        }
-        catch (TargetInvocationException ex)
-        {
-            ExceptionDispatchInfo.Capture(ex.InnerException).Throw();
-        }
-
-        return result;
-#endif
     }
 
     public static ParameterInfo GetGenericParameterDefinition(this ParameterInfo parameter)

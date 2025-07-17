@@ -52,7 +52,6 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             s_dateTimeOffsetConverter ??= new DateTimeOffsetConverter();
         private static KdlConverter<DateTimeOffset>? s_dateTimeOffsetConverter;
 
-#if NET
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="DateOnly"/> values.
         /// </summary>
@@ -68,7 +67,6 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         public static KdlConverter<TimeOnly> TimeOnlyConverter =>
             s_timeOnlyConverter ??= new TimeOnlyConverter();
         private static KdlConverter<TimeOnly>? s_timeOnlyConverter;
-#endif
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="decimal"/> values.
@@ -116,7 +114,6 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             s_int64Converter ??= new Int64Converter();
         private static KdlConverter<long>? s_int64Converter;
 
-#if NET
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="Int128"/> values.
         /// </summary>
@@ -133,7 +130,6 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         public static KdlConverter<UInt128> UInt128Converter =>
             s_uint128Converter ??= new UInt128Converter();
         private static KdlConverter<UInt128>? s_uint128Converter;
-#endif
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="KdlNode"/> values.
@@ -207,14 +203,12 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             s_objectConverter ??= new DefaultObjectConverter();
         private static KdlConverter<object?>? s_objectConverter;
 
-#if NET
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="Half"/> values.
         /// </summary>
         /// <remarks>This API is for use by the output of the Automatonic.Text.Kdl source generator and should not be called directly.</remarks>
         public static KdlConverter<Half> HalfConverter => s_halfConverter ??= new HalfConverter();
         private static KdlConverter<Half>? s_halfConverter;
-#endif
 
         /// <summary>
         /// Returns a <see cref="KdlConverter{T}"/> instance that converts <see cref="float"/> values.

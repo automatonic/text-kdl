@@ -18,16 +18,11 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 static MemberAccessor Initialize()
                 {
                     MemberAccessor value =
-#if NET
                         // if dynamic code isn't supported, fallback to reflection
                         RuntimeFeature.IsDynamicCodeSupported
                             ? new ReflectionEmitCachingMemberAccessor()
                             : new ReflectionMemberAccessor();
-#elif NETFRAMEWORK
-                    new ReflectionEmitCachingMemberAccessor();
-#else
-                    new ReflectionMemberAccessor();
-#endif
+
                     return Interlocked.CompareExchange(ref s_memberAccessor, value, null) ?? value;
                 }
             }

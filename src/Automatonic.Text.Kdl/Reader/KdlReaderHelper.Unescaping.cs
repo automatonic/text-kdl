@@ -298,21 +298,7 @@ namespace Automatonic.Text.Kdl
         {
             try
             {
-#if NET
                 return s_utf8Encoding.GetString(utf8Unescaped);
-#else
-                if (utf8Unescaped.IsEmpty)
-                {
-                    return string.Empty;
-                }
-                unsafe
-                {
-                    fixed (byte* bytePtr = utf8Unescaped)
-                    {
-                        return s_utf8Encoding.GetString(bytePtr, utf8Unescaped.Length);
-                    }
-                }
-#endif
             }
             catch (DecoderFallbackException ex)
             {
@@ -329,27 +315,7 @@ namespace Automatonic.Text.Kdl
         {
             try
             {
-#if NET
                 return s_utf8Encoding.GetChars(utf8Unescaped, destination);
-#else
-                if (utf8Unescaped.IsEmpty)
-                {
-                    return 0;
-                }
-                unsafe
-                {
-                    fixed (byte* srcPtr = utf8Unescaped)
-                    fixed (char* destPtr = destination)
-                    {
-                        return s_utf8Encoding.GetChars(
-                            srcPtr,
-                            utf8Unescaped.Length,
-                            destPtr,
-                            destination.Length
-                        );
-                    }
-                }
-#endif
             }
             catch (DecoderFallbackException dfe)
             {

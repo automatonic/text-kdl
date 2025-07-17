@@ -71,15 +71,7 @@ namespace Automatonic.Text.Kdl.Serialization
             do
             {
                 int bytesRead = await utf8Kdl
-                    .ReadAsync(
-#if NET
-                        bufferState._buffer.AsMemory(bufferState._count),
-#else
-                        bufferState._buffer,
-                        bufferState._count,
-                        bufferState._buffer.Length - bufferState._count,
-#endif
-                        cancellationToken)
+                    .ReadAsync(bufferState._buffer.AsMemory(bufferState._count), cancellationToken)
                     .ConfigureAwait(false);
 
                 if (bytesRead == 0)
@@ -104,12 +96,7 @@ namespace Automatonic.Text.Kdl.Serialization
         {
             do
             {
-                int bytesRead = utf8Kdl.Read(
-#if NET
-                    _buffer.AsSpan(_count));
-#else
-                    _buffer, _count, _buffer.Length - _count);
-#endif
+                int bytesRead = utf8Kdl.Read(_buffer.AsSpan(_count));
 
                 if (bytesRead == 0)
                 {

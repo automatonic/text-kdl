@@ -2,9 +2,6 @@ using System.Buffers;
 using System.Buffers.Text;
 using System.Diagnostics;
 using System.Text.Encodings.Web;
-#if !NET
-using System.Runtime.CompilerServices;
-#endif
 
 namespace Automatonic.Text.Kdl
 {
@@ -277,9 +274,7 @@ namespace Automatonic.Text.Kdl
                 0, // U+00F0..U+00FF
             ];
 
-#if NET
         private const string HexFormatString = "X4";
-#endif
 
         private static readonly StandardFormat s_hexStandardFormat = new('X', 4);
 
@@ -568,7 +563,6 @@ namespace Automatonic.Text.Kdl
                     break;
                 default:
                     destination[written++] = 'u';
-#if NET
                     int intChar = value;
                     intChar.TryFormat(
                         destination[written..],
@@ -577,22 +571,8 @@ namespace Automatonic.Text.Kdl
                     );
                     Debug.Assert(charsWritten == 4);
                     written += charsWritten;
-#else
-                    written = WriteHex(value, destination, written);
-#endif
                     break;
             }
         }
-
-#if !NET
-        private static int WriteHex(int value, Span<char> destination, int written)
-        {
-            destination[written++] = HexConverter.ToCharUpper(value >> 12);
-            destination[written++] = HexConverter.ToCharUpper(value >> 8);
-            destination[written++] = HexConverter.ToCharUpper(value >> 4);
-            destination[written++] = HexConverter.ToCharUpper(value);
-            return written;
-        }
-#endif
     }
 }

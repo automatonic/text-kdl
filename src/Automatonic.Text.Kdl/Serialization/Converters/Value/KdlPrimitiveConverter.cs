@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-using Automatonic.Text.Kdl.Graph;
 using Automatonic.Text.Kdl.Schema;
 
 namespace Automatonic.Text.Kdl.Serialization.Converters
@@ -46,7 +45,6 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             Debug.Assert(schemaType is KdlSchemaType.Integer or KdlSchemaType.Number);
             Debug.Assert(!isIeeeFloatingPoint || schemaType is KdlSchemaType.Number);
-#if NET
             Debug.Assert(
                 isIeeeFloatingPoint
                     == (
@@ -55,7 +53,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                         || typeof(T) == typeof(Half)
                     )
             );
-#endif
+
             string? pattern = null;
 
             if (

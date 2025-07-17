@@ -36,13 +36,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         public override void Write(KdlWriter writer, char value, KdlSerializerOptions options)
         {
-            writer.WriteStringValue(
-#if NET
-                new ReadOnlySpan<char>(in value)
-#else
-                value.ToString()
-#endif
-            );
+            writer.WriteStringValue(new ReadOnlySpan<char>(in value));
         }
 
         internal override char ReadAsPropertyNameCore(
@@ -62,13 +56,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             bool isWritingExtensionDataProperty
         )
         {
-            writer.WritePropertyName(
-#if NET
-                new ReadOnlySpan<char>(in value)
-#else
-                value.ToString()
-#endif
-            );
+            writer.WritePropertyName(new ReadOnlySpan<char>(in value));
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) =>

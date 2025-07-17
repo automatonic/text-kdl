@@ -105,7 +105,6 @@ namespace Automatonic.Text.Kdl
             return TryCreateDateTimeOffsetInterpretingDataAsLocalTime(parseData, out value);
         }
 
-#if NET
         public static bool TryParseAsIso(ReadOnlySpan<byte> source, out DateOnly value)
         {
             if (
@@ -121,7 +120,6 @@ namespace Automatonic.Text.Kdl
             value = default;
             return false;
         }
-#endif
 
         /// <summary>
         /// ISO 8601 date time parser (ISO 8601-1:2019).

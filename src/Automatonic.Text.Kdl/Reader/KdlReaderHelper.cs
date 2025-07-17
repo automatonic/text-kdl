@@ -140,7 +140,6 @@ namespace Automatonic.Text.Kdl
             return false;
         }
 
-#if NET
         public static bool TryGetFloatingPointConstant(ReadOnlySpan<byte> span, out Half value)
         {
             if (span.Length == 3)
@@ -171,7 +170,6 @@ namespace Automatonic.Text.Kdl
             value = default;
             return false;
         }
-#endif
 
         public static bool TryGetFloatingPointConstant(ReadOnlySpan<byte> span, out float value)
         {

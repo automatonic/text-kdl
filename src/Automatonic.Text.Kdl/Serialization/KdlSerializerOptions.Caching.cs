@@ -234,24 +234,12 @@ namespace Automatonic.Text.Kdl
         /// this is to prevent multiple options instances from leaking into the object graphs of converters which
         /// could break user invariants.
         /// </summary>
-        internal sealed class CachingContext
+        internal sealed class CachingContext(KdlSerializerOptions options, int hashCode)
         {
             private readonly ConcurrentDictionary<Type, CacheEntry> _cache = new();
-#if !NET
-            private readonly Func<Type, CacheEntry> _cacheEntryFactory;
-#endif
 
-            public CachingContext(KdlSerializerOptions options, int hashCode)
-            {
-                Options = options;
-                HashCode = hashCode;
-#if !NET
-                _cacheEntryFactory = type => CreateCacheEntry(type, this);
-#endif
-            }
-
-            public KdlSerializerOptions Options { get; }
-            public int HashCode { get; }
+            public KdlSerializerOptions Options { get; } = options;
+            public int HashCode { get; } = hashCode;
 
             // Property only accessed by reflection in testing -- do not remove.
             // If changing please ensure that src/ILLink.Descriptors.LibraryBuild.xml is up-to-date.
@@ -282,11 +270,7 @@ namespace Automatonic.Text.Kdl
 
             private CacheEntry GetOrAddCacheEntry(Type type)
             {
-#if NET
                 return _cache.GetOrAdd(type, CreateCacheEntry, this);
-#else
-                return _cache.GetOrAdd(type, _cacheEntryFactory);
-#endif
             }
 
             private static CacheEntry CreateCacheEntry(Type type, CachingContext context)
@@ -676,20 +660,6 @@ namespace Automatonic.Text.Kdl
                     }
                 }
             }
-
-#if !NET
-            /// <summary>
-            /// Polyfill for System.HashCode.
-            /// </summary>
-            private struct HashCode
-            {
-                private int _hashCode;
-
-                public void Add<T>(T? value) => _hashCode = (_hashCode, value).GetHashCode();
-
-                public int ToHashCode() => _hashCode;
-            }
-#endif
         }
     }
 }

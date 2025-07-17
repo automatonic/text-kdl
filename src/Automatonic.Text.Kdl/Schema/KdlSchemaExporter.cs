@@ -523,25 +523,18 @@ namespace Automatonic.Text.Kdl.Schema
                     context.TypeInfo,
                     context.PropertyInfo
                 );
-#if NET
                 ref string[]? pathToSchema = ref CollectionsMarshal.GetValueRefOrAddDefault(
                     _generated,
                     key,
                     out bool exists
                 );
-#else
-                bool exists = _generated.TryGetValue(key, out string[]? pathToSchema);
-#endif
+
                 if (exists)
                 {
                     existingKdlPointer = FormatKdlPointer(pathToSchema);
                     return true;
                 }
-#if NET
                 pathToSchema = context._path;
-#else
-                _generated[key] = context._path;
-#endif
                 existingKdlPointer = null;
                 return false;
             }

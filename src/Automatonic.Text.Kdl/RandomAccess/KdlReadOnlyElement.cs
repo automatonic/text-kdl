@@ -1380,38 +1380,26 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         do
                         {
                             IKdlEntry prop2 = objectEnumerator2.Current;
-#if NET
                             ref ValueQueue<KdlReadOnlyElement> values =
                                 ref CollectionsMarshal.GetValueRefOrAddDefault(
                                     properties2,
                                     prop2.Name,
                                     out bool _
                                 );
-#else
-                            properties2.TryGetValue(prop2.Name, out ValueQueue<KdlElement> values);
-#endif
+
                             values.Enqueue(prop2.Value);
-#if !NET
-                            properties2[prop2.Name] = values;
-#endif
                         } while (objectEnumerator2.MoveNext());
 
                         do
                         {
                             IKdlEntry prop = objectEnumerator1.Current;
-#if NET
                             ref ValueQueue<KdlReadOnlyElement> values =
                                 ref CollectionsMarshal.GetValueRefOrAddDefault(
                                     properties2,
                                     prop.Name,
                                     out bool exists
                                 );
-#else
-                            bool exists = properties2.TryGetValue(
-                                prop.Name,
-                                out ValueQueue<KdlElement> values
-                            );
-#endif
+
                             if (
                                 !exists
                                 || !values.TryDequeue(out KdlReadOnlyElement value)
@@ -1420,9 +1408,6 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             {
                                 return false;
                             }
-#if !NET
-                            properties2[prop.Name] = values;
-#endif
                         } while (objectEnumerator1.MoveNext());
 
                         return true;

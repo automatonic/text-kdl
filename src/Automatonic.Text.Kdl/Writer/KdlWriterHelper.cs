@@ -334,7 +334,6 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-
         public static unsafe bool IsValidUtf8String(ReadOnlySpan<byte> bytes)
         {
             return Utf8.IsValid(bytes);
@@ -346,7 +345,6 @@ namespace Automatonic.Text.Kdl
             out int written
         )
         {
-#if NET
             OperationStatus status = Utf8.FromUtf16(
                 source,
                 destination,
@@ -363,35 +361,6 @@ namespace Automatonic.Text.Kdl
             );
             Debug.Assert(charsRead == source.Length || status is not OperationStatus.Done);
             return status;
-#else
-            written = 0;
-            try
-            {
-                if (!source.IsEmpty)
-                {
-                    fixed (char* charPtr = source)
-                    fixed (byte* destPtr = destination)
-                    {
-                        written = s_utf8Encoding.GetBytes(
-                            charPtr,
-                            source.Length,
-                            destPtr,
-                            destination.Length
-                        );
-                    }
-                }
-
-                return OperationStatus.Done;
-            }
-            catch (EncoderFallbackException)
-            {
-                return OperationStatus.InvalidData;
-            }
-            catch (ArgumentException)
-            {
-                return OperationStatus.DestinationTooSmall;
-            }
-#endif
         }
     }
 }

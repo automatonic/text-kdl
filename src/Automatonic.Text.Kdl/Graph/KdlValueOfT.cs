@@ -104,13 +104,9 @@ namespace Automatonic.Text.Kdl.Graph
                 type == typeof(DateTime)
                 || type == typeof(DateTimeOffset)
                 || type == typeof(TimeSpan)
-                ||
-#if NET
-                type == typeof(DateOnly)
+                || type == typeof(DateOnly)
                 || type == typeof(TimeOnly)
-                ||
-#endif
-                type == typeof(Guid)
+                || type == typeof(Guid)
                 || type == typeof(Uri)
                 || type == typeof(Version)
             )
@@ -118,12 +114,10 @@ namespace Automatonic.Text.Kdl.Graph
                 return KdlValueKind.String;
             }
 
-#if NET
             if (type == typeof(Half) || type == typeof(UInt128) || type == typeof(Int128))
             {
                 return KdlValueKind.Number;
             }
-#endif
             return Type.GetTypeCode(type) switch
             {
                 TypeCode.Boolean => KdlValueKind.Undefined, // Can vary dependending on value.

@@ -685,18 +685,7 @@ namespace Automatonic.Text.Kdl
 
             int indexOfFirstMismatch;
 
-#if NET
             indexOfFirstMismatch = span.CommonPrefixLength(literal);
-#else
-            int minLength = Math.Min(span.Length, literal.Length);
-            for (indexOfFirstMismatch = 0; indexOfFirstMismatch < minLength; indexOfFirstMismatch++)
-            {
-                if (span[indexOfFirstMismatch] != literal[indexOfFirstMismatch])
-                {
-                    break;
-                }
-            }
-#endif
 
             Debug.Assert(indexOfFirstMismatch >= 0 && indexOfFirstMismatch < literal.Length);
 

@@ -899,13 +899,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
             }
         }
 
-        private static async
-#if NET
-        ValueTask<ArraySegment<byte>>
-#else
-        Task<ArraySegment<byte>>
-#endif
-        ReadToEndAsync(Stream stream, CancellationToken cancellationToken)
+        private static async ValueTask<ArraySegment<byte>> ReadToEndAsync(
+            Stream stream,
+            CancellationToken cancellationToken
+        )
         {
             int written = 0;
             byte[]? rented = null;
@@ -938,11 +935,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
                     lastRead = await stream
                         .ReadAsync(
-#if NET
                             rented.AsMemory(written, utf8BomLength - written),
-#else
-                            rented, written, utf8BomLength - written,
-#endif
                             cancellationToken
                         )
                         .ConfigureAwait(false);
@@ -971,13 +964,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     }
 
                     lastRead = await stream
-                        .ReadAsync(
-#if NET
-                            rented.AsMemory(written),
-#else
-                            rented, written, rented.Length - written,
-#endif
-                            cancellationToken)
+                        .ReadAsync(rented.AsMemory(written), cancellationToken)
                         .ConfigureAwait(false);
 
                     written += lastRead;

@@ -262,11 +262,7 @@ namespace Automatonic.Text.Kdl.Serialization
             bool isContinuation = state.IsContinuation;
             bool success;
 
-            if (
-#if NET
-                !typeof(T).IsValueType &&
-#endif
-                CanBePolymorphic)
+            if (!typeof(T).IsValueType && CanBePolymorphic)
             {
                 // Special case object converters since they don't
                 // require the expensive ReadStack.Push()/Pop() operations.
@@ -467,15 +463,10 @@ namespace Automatonic.Text.Kdl.Serialization
             bool success;
 
             if (
-#if NET
-                // Short-circuit the check against "is not null"; treated as a constant by recent versions of the JIT.
+                // Short-circuit the check against "is not null";
+                // treated as a constant by recent versions of the JIT.
                 !typeof(T).IsValueType
-                &&
-#else
-                !IsValueType
-                &&
-#endif
-                value is not null
+                && value is not null
                 &&
                 // Do not handle objects that have already been
                 // handled by a polymorphic converter for a base type.

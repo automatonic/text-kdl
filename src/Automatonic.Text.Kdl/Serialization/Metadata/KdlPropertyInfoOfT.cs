@@ -193,13 +193,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             T value = Get!(obj);
 
             if (
-#if NET
                 !typeof(T).IsValueType
                 && // treated as a constant by recent versions of the JIT.
-#else
-                !EffectiveConverter.IsValueType
-                &&
-#endif
                 Options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.IgnoreCycles
                 && value is not null
                 && !state.IsContinuation

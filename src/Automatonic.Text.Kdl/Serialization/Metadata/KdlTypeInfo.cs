@@ -1427,7 +1427,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             return type == typeof(void)
                 || type.IsPointer
                 || type.IsByRef
-                || IsByRefLike(type)
+                || type.IsByRefLike
                 || type.ContainsGenericParameters;
         }
 
@@ -1487,33 +1487,6 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 SetCreateObject(createObject);
             }
-        }
-
-        private static bool IsByRefLike(Type type)
-        {
-#if NET
-            return type.IsByRefLike;
-#else
-            if (!type.IsValueType)
-            {
-                return false;
-            }
-
-            object[] attributes = type.GetCustomAttributes(inherit: false);
-
-            for (int i = 0; i < attributes.Length; i++)
-            {
-                if (
-                    attributes[i].GetType().FullName
-                    == "System.Runtime.CompilerServices.IsByRefLikeAttribute"
-                )
-                {
-                    return true;
-                }
-            }
-
-            return false;
-#endif
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]

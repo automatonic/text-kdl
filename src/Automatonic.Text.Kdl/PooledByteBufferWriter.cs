@@ -141,18 +141,10 @@ namespace Automatonic.Text.Kdl
             return _rentedBuffer.AsSpan(_index);
         }
 
-#if NET
         internal void WriteToStream(Stream destination)
         {
             destination.Write(WrittenMemory.Span);
         }
-#else
-        internal void WriteToStream(Stream destination)
-        {
-            Debug.Assert(_rentedBuffer != null);
-            destination.Write(_rentedBuffer, 0, _index);
-        }
-#endif
 
         private void CheckAndResizeBuffer(int sizeHint)
         {
@@ -208,14 +200,8 @@ namespace Automatonic.Text.Kdl
         )
         {
             Debug.Assert(_stream is not null);
-#if NET
             await _stream.WriteAsync(WrittenMemory, cancellationToken).ConfigureAwait(false);
-#else
-            Debug.Assert(_rentedBuffer != null);
-            await _stream
-                .WriteAsync(_rentedBuffer, 0, _index, cancellationToken)
-                .ConfigureAwait(false);
-#endif
+
             Clear();
 
             return new FlushResult(isCanceled: false, isCompleted: false);

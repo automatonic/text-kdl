@@ -5,14 +5,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 {
     internal sealed class VersionConverter : KdlPrimitiveConverter<Version?>
     {
-#if NET
         private const int MinimumVersionLength = 3; // 0.0
 
         private const int MaximumVersionLength = 43; // 2147483647.2147483647.2147483647.2147483647
 
         private const int MaximumEscapedVersionLength =
             KdlConstants.MaxExpansionFactorWhileEscaping * MaximumVersionLength;
-#endif
 
         public override Version? Read(
             ref KdlReader reader,
@@ -37,7 +35,6 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             Debug.Assert(reader.TokenType is KdlTokenType.PropertyName or KdlTokenType.String);
 
-#if NET
             if (
                 !KdlHelpers.IsInRangeInclusive(
                     reader.ValueLength,
@@ -66,27 +63,6 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             {
                 return result;
             }
-#else
-            string? versionString = reader.GetString();
-            if (
-                !string.IsNullOrEmpty(versionString)
-                && (
-                    !char.IsDigit(versionString[0])
-                    || !char.IsDigit(versionString[versionString.Length - 1])
-                )
-            )
-            {
-                // Since leading and trailing whitespaces are forbidden throughout Automatonic.Text.Kdl converters
-                // we need to make sure that our input doesn't have them,
-                // and if it has - we need to throw, to match behaviour of other converters
-                // since Version.TryParse allows them and silently parses input to Version
-                ThrowHelper.ThrowFormatException(DataType.Version);
-            }
-            if (Version.TryParse(versionString, out Version? result))
-            {
-                return result;
-            }
-#endif
             ThrowHelper.ThrowKdlException();
             return null;
         }
@@ -98,15 +74,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 writer.WriteNullValue();
                 return;
             }
-
-#if NET
             Span<byte> span = stackalloc byte[MaximumVersionLength];
             bool formattedSuccessfully = value.TryFormat(span, out int charsWritten);
             Debug.Assert(formattedSuccessfully && charsWritten >= MinimumVersionLength);
             writer.WriteStringValue(span[..charsWritten]);
-#else
-            writer.WriteStringValue(value.ToString());
-#endif
         }
 
         internal override Version ReadAsPropertyNameCore(
@@ -130,14 +101,10 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 ThrowHelper.ThrowArgumentNullException(nameof(value));
             }
 
-#if NET
             Span<byte> span = stackalloc byte[MaximumVersionLength];
             bool formattedSuccessfully = value.TryFormat(span, out int charsWritten);
             Debug.Assert(formattedSuccessfully && charsWritten >= MinimumVersionLength);
             writer.WritePropertyName(span[..charsWritten]);
-#else
-            writer.WritePropertyName(value.ToString());
-#endif
         }
 
         internal override KdlSchema? GetSchema(KdlNumberHandling _) =>

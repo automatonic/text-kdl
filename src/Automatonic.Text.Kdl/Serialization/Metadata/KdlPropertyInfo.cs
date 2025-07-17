@@ -501,6 +501,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         {
             Debug.Assert(Name != null);
 
+#pragma warning disable format
             if (
                 Options.ReferenceHandlingStrategy is KdlKnownReferenceHandler.Preserve
                 && this
@@ -521,6 +522,7 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                     Name
                 );
             }
+#pragma warning restore format
 
             NameAsUtf8Bytes = Encoding.UTF8.GetBytes(Name);
             EscapedNameSection = KdlHelpers.GetEscapedPropertyNameSection(
@@ -822,17 +824,10 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 || potentialNumberType == typeof(ushort)
                 || potentialNumberType == typeof(uint)
                 || potentialNumberType == typeof(ulong)
-                ||
-#if NET
-                potentialNumberType == typeof(Half)
-                ||
-#endif
-#if NET
-                potentialNumberType == typeof(Int128)
+                || potentialNumberType == typeof(Half)
+                || potentialNumberType == typeof(Int128)
                 || potentialNumberType == typeof(UInt128)
-                ||
-#endif
-                potentialNumberType == KdlTypeInfo.ObjectType;
+                || potentialNumberType == KdlTypeInfo.ObjectType;
         }
 
         /// <summary>

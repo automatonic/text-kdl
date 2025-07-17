@@ -28,11 +28,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 writer.Flush();
             }
             else if (
-#if NET
                 !typeof(T).IsValueType
-                &&
-#endif
-                Converter.CanBePolymorphic
+                && Converter.CanBePolymorphic
                 && rootValue is not null
                 && Options.TryGetPolymorphicTypeInfoForRootType(
                     rootValue,
@@ -151,11 +148,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 }
             }
             else if (
-#if NET
                 !typeof(T).IsValueType
-                &&
-#endif
-                Converter.CanBePolymorphic
+                && Converter.CanBePolymorphic
                 && rootValue is not null
                 && Options.TryGetPolymorphicTypeInfoForRootType(
                     rootValue,
@@ -318,11 +312,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                 }
             }
             else if (
-#if NET
                 !typeof(T).IsValueType
-                &&
-#endif
-                Converter.CanBePolymorphic
+                && Converter.CanBePolymorphic
                 && rootValue is not null
                 && Options.TryGetPolymorphicTypeInfoForRootType(
                     rootValue,

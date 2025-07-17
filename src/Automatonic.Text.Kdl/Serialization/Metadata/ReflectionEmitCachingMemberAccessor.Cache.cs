@@ -18,13 +18,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             {
                 CacheEntry entry = _cache.GetOrAdd(
                     key,
-#if NET
                     static (key, valueFactory) => new(valueFactory(key)),
                     valueFactory
                 );
-#else
-                    key => new(valueFactory(key)));
-#endif
                 long utcNowTicks = DateTime.UtcNow.Ticks;
                 Volatile.Write(ref entry.LastUsedTicks, utcNowTicks);
 

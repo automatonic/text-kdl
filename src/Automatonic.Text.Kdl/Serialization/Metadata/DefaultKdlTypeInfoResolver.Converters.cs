@@ -47,11 +47,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             Add(KdlMetadataServices.CharConverter);
             Add(KdlMetadataServices.DateTimeConverter);
             Add(KdlMetadataServices.DateTimeOffsetConverter);
-#if NET
             Add(KdlMetadataServices.DateOnlyConverter);
             Add(KdlMetadataServices.TimeOnlyConverter);
             Add(KdlMetadataServices.HalfConverter);
-#endif
             Add(KdlMetadataServices.DoubleConverter);
             Add(KdlMetadataServices.DecimalConverter);
             Add(KdlMetadataServices.GuidConverter);
@@ -70,10 +68,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             Add(KdlMetadataServices.UInt16Converter);
             Add(KdlMetadataServices.UInt32Converter);
             Add(KdlMetadataServices.UInt64Converter);
-#if NET
             Add(KdlMetadataServices.Int128Converter);
             Add(KdlMetadataServices.UInt128Converter);
-#endif
             Add(KdlMetadataServices.UriConverter);
             Add(KdlMetadataServices.VersionConverter);
 

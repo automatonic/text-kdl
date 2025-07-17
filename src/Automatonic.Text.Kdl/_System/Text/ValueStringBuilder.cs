@@ -160,11 +160,7 @@ namespace System.Text
 
             int remaining = _pos - index;
             _chars.Slice(index, remaining).CopyTo(_chars[(index + count)..]);
-            s
-#if !NET
-            .AsSpan()
-#endif
-            .CopyTo(_chars[index..]);
+            s.CopyTo(_chars[index..]);
             _pos += count;
         }
 
@@ -212,11 +208,7 @@ namespace System.Text
                 Grow(s.Length);
             }
 
-            s
-#if !NET
-            .AsSpan()
-#endif
-            .CopyTo(_chars[pos..]);
+            s.CopyTo(_chars[pos..]);
             _pos += s.Length;
         }
 
