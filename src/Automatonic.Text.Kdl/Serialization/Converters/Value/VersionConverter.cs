@@ -100,11 +100,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
 
 #if NET
-#if NET8_0_OR_GREATER
             Span<byte> span = stackalloc byte[MaximumVersionLength];
-#else
-            Span<char> span = stackalloc char[MaximumVersionLength];
-#endif
             bool formattedSuccessfully = value.TryFormat(span, out int charsWritten);
             Debug.Assert(formattedSuccessfully && charsWritten >= MinimumVersionLength);
             writer.WriteStringValue(span[..charsWritten]);
@@ -135,11 +131,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
 
 #if NET
-#if NET8_0_OR_GREATER
             Span<byte> span = stackalloc byte[MaximumVersionLength];
-#else
-            Span<char> span = stackalloc char[MaximumVersionLength];
-#endif
             bool formattedSuccessfully = value.TryFormat(span, out int charsWritten);
             Debug.Assert(formattedSuccessfully && charsWritten >= MinimumVersionLength);
             writer.WritePropertyName(span[..charsWritten]);

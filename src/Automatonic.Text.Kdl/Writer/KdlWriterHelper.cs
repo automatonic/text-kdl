@@ -334,38 +334,10 @@ namespace Automatonic.Text.Kdl
             }
         }
 
-#if !NET8_0_OR_GREATER
-        private static readonly UTF8Encoding s_utf8Encoding = new UTF8Encoding(
-            encoderShouldEmitUTF8Identifier: false,
-            throwOnInvalidBytes: true
-        );
-#endif
 
         public static unsafe bool IsValidUtf8String(ReadOnlySpan<byte> bytes)
         {
-#if NET8_0_OR_GREATER
             return Utf8.IsValid(bytes);
-#else
-            try
-            {
-#if NET
-                s_utf8Encoding.GetCharCount(bytes);
-#else
-                if (!bytes.IsEmpty)
-                {
-                    fixed (byte* ptr = bytes)
-                    {
-                        s_utf8Encoding.GetCharCount(ptr, bytes.Length);
-                    }
-                }
-#endif
-                return true;
-            }
-            catch (DecoderFallbackException)
-            {
-                return false;
-            }
-#endif
         }
 
         internal static unsafe OperationStatus ToUtf8(

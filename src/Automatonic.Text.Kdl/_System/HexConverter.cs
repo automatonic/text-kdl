@@ -230,27 +230,12 @@ namespace System
 
         public static unsafe string ToString(ReadOnlySpan<byte> bytes, Casing casing = Casing.Upper)
         {
-#if NETFRAMEWORK || NETSTANDARD2_0
-            Span<char> result =
-                bytes.Length > 16
-                    ? new char[bytes.Length * 2].AsSpan()
-                    : stackalloc char[bytes.Length * 2];
-
-            int pos = 0;
-            foreach (byte b in bytes)
-            {
-                ToCharsBuffer(b, result, pos, casing);
-                pos += 2;
-            }
-            return result.ToString();
-#else
             return string.Create(
                 bytes.Length * 2,
                 (RosPtr: (IntPtr)(&bytes), casing),
                 static (chars, args) =>
                     EncodeToUtf16(*(ReadOnlySpan<byte>*)args.RosPtr, chars, args.casing)
             );
-#endif
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

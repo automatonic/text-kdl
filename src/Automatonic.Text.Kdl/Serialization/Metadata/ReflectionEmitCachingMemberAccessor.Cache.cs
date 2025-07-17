@@ -1,5 +1,4 @@
-﻿#if NETFRAMEWORK || NET
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 
 namespace Automatonic.Text.Kdl.Serialization.Metadata
 {
@@ -73,4 +72,3 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
         }
     }
 }
-#endif

@@ -241,17 +241,9 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
                             if (state.PendingTask is not null)
                             {
                                 // Exceptions should only be propagated by the resuming converter
-#if NET8_0_OR_GREATER
                                 await state.PendingTask.ConfigureAwait(
                                     ConfigureAwaitOptions.SuppressThrowing
                                 );
-#else
-                                try
-                                {
-                                    await state.PendingTask.ConfigureAwait(false);
-                                }
-                                catch { }
-#endif
                             }
 
                             // Dispose any pending async disposables (currently these can only be completed IAsyncEnumerators).

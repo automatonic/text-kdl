@@ -1,4 +1,3 @@
-#if NETFRAMEWORK || NET
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
@@ -134,4 +133,3 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             );
     }
 }
-#endif

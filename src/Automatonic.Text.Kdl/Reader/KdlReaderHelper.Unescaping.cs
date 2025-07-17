@@ -370,61 +370,17 @@ namespace Automatonic.Text.Kdl
 
         public static void ValidateUtf8(ReadOnlySpan<byte> utf8Buffer)
         {
-#if NET8_0_OR_GREATER
             if (!Utf8.IsValid(utf8Buffer))
             {
                 throw ThrowHelper.GetInvalidOperationException_ReadInvalidUTF8();
             }
-#else
-            try
-            {
-#if NET
-                s_utf8Encoding.GetCharCount(utf8Buffer);
-#else
-                if (utf8Buffer.IsEmpty)
-                {
-                    return;
-                }
-                unsafe
-                {
-                    fixed (byte* srcPtr = utf8Buffer)
-                    {
-                        s_utf8Encoding.GetCharCount(srcPtr, utf8Buffer.Length);
-                    }
-                }
-#endif
-            }
-            catch (DecoderFallbackException ex)
-            {
-                // We want to be consistent with the exception being thrown
-                // so the user only has to catch a single exception.
-                // Since we already throw InvalidOperationException for mismatch token type,
-                // and while unescaping, using that exception for failure to decode invalid UTF-8 bytes as well.
-                // Therefore, wrapping the DecoderFallbackException around an InvalidOperationException.
-                throw ThrowHelper.GetInvalidOperationException_ReadInvalidUTF8(ex);
-            }
-#endif
         }
 
         internal static int GetUtf8ByteCount(ReadOnlySpan<char> text)
         {
             try
             {
-#if NET
                 return s_utf8Encoding.GetByteCount(text);
-#else
-                if (text.IsEmpty)
-                {
-                    return 0;
-                }
-                unsafe
-                {
-                    fixed (char* charPtr = text)
-                    {
-                        return s_utf8Encoding.GetByteCount(charPtr, text.Length);
-                    }
-                }
-#endif
             }
             catch (EncoderFallbackException ex)
             {
@@ -441,23 +397,7 @@ namespace Automatonic.Text.Kdl
         {
             try
             {
-#if NET
                 return s_utf8Encoding.GetBytes(text, dest);
-#else
-                if (text.IsEmpty)
-                {
-                    return 0;
-                }
-
-                unsafe
-                {
-                    fixed (char* charPtr = text)
-                    fixed (byte* destPtr = dest)
-                    {
-                        return s_utf8Encoding.GetBytes(charPtr, text.Length, destPtr, dest.Length);
-                    }
-                }
-#endif
             }
             catch (EncoderFallbackException ex)
             {
@@ -472,22 +412,7 @@ namespace Automatonic.Text.Kdl
 
         internal static string GetTextFromUtf8(ReadOnlySpan<byte> utf8Text)
         {
-#if NET
             return s_utf8Encoding.GetString(utf8Text);
-#else
-            if (utf8Text.IsEmpty)
-            {
-                return string.Empty;
-            }
-
-            unsafe
-            {
-                fixed (byte* bytePtr = utf8Text)
-                {
-                    return s_utf8Encoding.GetString(bytePtr, utf8Text.Length);
-                }
-            }
-#endif
         }
 
         internal static void Unescape(
@@ -680,19 +605,11 @@ namespace Automatonic.Text.Kdl
                                 + KdlConstants.UnicodePlane01StartValue;
                         }
 
-#if NET
                         var rune = new Rune(scalar);
                         bool success = rune.TryEncodeToUtf8(
                             destination[written..],
                             out int bytesWritten
                         );
-#else
-                        bool success = TryEncodeToUtf8Bytes(
-                            (uint)scalar,
-                            destination.Slice(written),
-                            out int bytesWritten
-                        );
-#endif
                         if (!success)
                         {
                             goto DestinationTooShort;
@@ -760,76 +677,5 @@ namespace Automatonic.Text.Kdl
             return false;
         }
 
-#if !NET
-        /// <summary>
-        /// Copies the UTF-8 code unit representation of this scalar to an output buffer.
-        /// The buffer must be large enough to hold the required number of <see cref="byte"/>s.
-        /// </summary>
-        private static bool TryEncodeToUtf8Bytes(
-            uint scalar,
-            Span<byte> utf8Destination,
-            out int bytesWritten
-        )
-        {
-            Debug.Assert(KdlHelpers.IsValidUnicodeScalar(scalar));
-
-            if (scalar < 0x80U)
-            {
-                // Single UTF-8 code unit
-                if ((uint)utf8Destination.Length < 1u)
-                {
-                    bytesWritten = 0;
-                    return false;
-                }
-
-                utf8Destination[0] = (byte)scalar;
-                bytesWritten = 1;
-            }
-            else if (scalar < 0x800U)
-            {
-                // Two UTF-8 code units
-                if ((uint)utf8Destination.Length < 2u)
-                {
-                    bytesWritten = 0;
-                    return false;
-                }
-
-                utf8Destination[0] = (byte)(0xC0U | (scalar >> 6));
-                utf8Destination[1] = (byte)(0x80U | (scalar & 0x3FU));
-                bytesWritten = 2;
-            }
-            else if (scalar < 0x10000U)
-            {
-                // Three UTF-8 code units
-                if ((uint)utf8Destination.Length < 3u)
-                {
-                    bytesWritten = 0;
-                    return false;
-                }
-
-                utf8Destination[0] = (byte)(0xE0U | (scalar >> 12));
-                utf8Destination[1] = (byte)(0x80U | ((scalar >> 6) & 0x3FU));
-                utf8Destination[2] = (byte)(0x80U | (scalar & 0x3FU));
-                bytesWritten = 3;
-            }
-            else
-            {
-                // Four UTF-8 code units
-                if ((uint)utf8Destination.Length < 4u)
-                {
-                    bytesWritten = 0;
-                    return false;
-                }
-
-                utf8Destination[0] = (byte)(0xF0U | (scalar >> 18));
-                utf8Destination[1] = (byte)(0x80U | ((scalar >> 12) & 0x3FU));
-                utf8Destination[2] = (byte)(0x80U | ((scalar >> 6) & 0x3FU));
-                utf8Destination[3] = (byte)(0x80U | (scalar & 0x3FU));
-                bytesWritten = 4;
-            }
-
-            return true;
-        }
-#endif
     }
 }

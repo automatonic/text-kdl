@@ -1,4 +1,3 @@
-#if NETFRAMEWORK || NET
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
@@ -500,4 +499,3 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             where T : Delegate => (T?)method?.CreateDelegate(typeof(T));
     }
 }
-#endif

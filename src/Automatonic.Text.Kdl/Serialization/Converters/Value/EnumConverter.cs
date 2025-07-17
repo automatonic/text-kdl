@@ -292,14 +292,9 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
             int charsWritten = reader.CopyString(charBuffer);
             charBuffer = charBuffer[..charsWritten];
-#if NET9_0_OR_GREATER
             ReadOnlySpan<char> source = charBuffer.Trim();
             ConcurrentDictionary<string, ulong>.AlternateLookup<ReadOnlySpan<char>> lookup =
                 _nameCacheForReading.GetAlternateLookup<ReadOnlySpan<char>>();
-#else
-            string source = ((ReadOnlySpan<char>)charBuffer).Trim().ToString();
-            ConcurrentDictionary<string, ulong> lookup = _nameCacheForReading;
-#endif
             if (lookup.TryGetValue(source, out ulong key))
             {
                 result = ConvertFromUInt64(key);
@@ -340,22 +335,12 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             return success;
         }
 
-        private bool TryParseNamedEnum(
-#if NET9_0_OR_GREATER
-            ReadOnlySpan<char> source,
-#else
-            string source,
-#endif
+        private bool TryParseNamedEnum(ReadOnlySpan<char> source,
             out T result)
         {
-#if NET9_0_OR_GREATER
             Dictionary<string, EnumFieldInfo>.AlternateLookup<ReadOnlySpan<char>> lookup =
                 _enumFieldInfoIndex.GetAlternateLookup<ReadOnlySpan<char>>();
             ReadOnlySpan<char> rest = source;
-#else
-            Dictionary<string, EnumFieldInfo> lookup = _enumFieldInfoIndex;
-            ReadOnlySpan<char> rest = source.AsSpan();
-#endif
             ulong key = 0;
 
             do
@@ -374,12 +359,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 }
 
                 if (
-                    lookup.TryGetValue(
-#if NET9_0_OR_GREATER
-                        next,
-#else
-                        next.ToString(),
-#endif
+                    lookup.TryGetValue(next,
                         out EnumFieldInfo? firstResult)
                     && firstResult.GetMatchingField(next) is EnumFieldInfo match
                 )
@@ -602,13 +582,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
         private static EnumFieldInfo[] ResolveEnumFields(KdlNamingPolicy? namingPolicy)
         {
-#if NET
             string[] names = Enum.GetNames<T>();
             T[] values = Enum.GetValues<T>();
-#else
-            string[] names = Enum.GetNames(typeof(T));
-            T[] values = (T[])Enum.GetValues(typeof(T));
-#endif
             Debug.Assert(names.Length == values.Length);
 
             Dictionary<string, string>? enumMemberAttributes = null;
