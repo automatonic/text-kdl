@@ -9,7 +9,6 @@
         Integer = 4,
         Number = 8,
         String = 16,
-        Object = 32,
-        Array = 64,
+        Node = 32,
     }
 }

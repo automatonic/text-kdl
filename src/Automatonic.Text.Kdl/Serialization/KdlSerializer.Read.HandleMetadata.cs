@@ -345,7 +345,7 @@ namespace Automatonic.Text.Kdl
 
                     case MetadataPropertyName.Values:
 
-                        if (reader.TokenType != KdlTokenType.StartArray)
+                        if (reader.TokenType != KdlTokenType.StartChildrenBlock)
                         {
                             ThrowHelper.ThrowKdlException_MetadataValuesInvalidToken(
                                 reader.TokenType
@@ -635,7 +635,7 @@ namespace Automatonic.Text.Kdl
         {
             switch (reader.TokenType)
             {
-                case KdlTokenType.StartArray:
+                case KdlTokenType.StartChildrenBlock:
                     Debug.Assert(
                         state.Current.MetadataPropertyNames is MetadataPropertyName.None
                             || state.Current.MetadataPropertyNames.HasFlag(

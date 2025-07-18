@@ -11,12 +11,12 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(!_options.SkipValidation);
 
-            if (_inObject)
+            if (_inNode)
             {
                 if (_tokenType != KdlTokenType.PropertyName)
                 {
                     Debug.Assert(
-                        _tokenType is not KdlTokenType.None and not KdlTokenType.StartArray
+                        _tokenType is not KdlTokenType.None and not KdlTokenType.StartChildrenBlock
                     );
                     ThrowHelper.ThrowInvalidOperationException(
                         ExceptionResource.CannotWriteValueWithinObject,

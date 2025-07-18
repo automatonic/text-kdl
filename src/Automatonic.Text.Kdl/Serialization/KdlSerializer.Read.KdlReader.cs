@@ -381,7 +381,6 @@ namespace Automatonic.Text.Kdl
                 {
                     // Any of the "value start" states are acceptable.
                     case KdlTokenType.StartChildrenBlock:
-                    case KdlTokenType.StartArray:
                         long startingOffset = reader.TokenStartIndex;
 
                         if (!reader.TrySkip())
@@ -410,7 +409,7 @@ namespace Automatonic.Text.Kdl
                         Debug.Assert(
                             reader.TokenType
                                 is KdlTokenType.EndChildrenBlock
-                                    or KdlTokenType.EndArray
+                                    or KdlTokenType.EndChildrenBlock
                         );
                         break;
 

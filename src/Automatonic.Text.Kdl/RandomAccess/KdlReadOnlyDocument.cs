@@ -140,7 +140,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             DbRow row = _parsedData.Get(index);
 
-            CheckExpectedType(KdlTokenType.StartArray, row.TokenType);
+            CheckExpectedType(KdlTokenType.StartChildrenBlock, row.TokenType);
 
             return row.SizeOrLength;
         }
@@ -162,7 +162,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
 
             DbRow row = _parsedData.Get(currentIndex);
 
-            CheckExpectedType(KdlTokenType.StartArray, row.TokenType);
+            CheckExpectedType(KdlTokenType.StartChildrenBlock, row.TokenType);
 
             int arrayLength = row.SizeOrLength;
 
@@ -856,11 +856,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
             switch (row.TokenType)
             {
                 case KdlTokenType.StartChildrenBlock:
-                    writer.WriteStartObject();
-                    WriteComplexElement(index, writer);
-                    return;
-                case KdlTokenType.StartArray:
-                    writer.WriteStartArray();
+                    writer.WriteStartChildrenBlock();
                     WriteComplexElement(index, writer);
                     return;
                 case KdlTokenType.String:
@@ -912,16 +908,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                         writer.WriteNullValue();
                         continue;
                     case KdlTokenType.StartChildrenBlock:
-                        writer.WriteStartObject();
+                        writer.WriteStartChildrenBlock();
                         continue;
                     case KdlTokenType.EndChildrenBlock:
-                        writer.WriteEndObject();
-                        continue;
-                    case KdlTokenType.StartArray:
-                        writer.WriteStartArray();
-                        continue;
-                    case KdlTokenType.EndArray:
-                        writer.WriteEndArray();
+                        writer.WriteEndChildrenBlock();
                         continue;
                     case KdlTokenType.PropertyName:
                         WritePropertyName(row, writer);
@@ -1057,7 +1047,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     arrayItemsOrPropertyCount = row.SizeOrLength;
                     numberOfRowsForMembers += row.NumberOfRows;
                 }
-                else if (tokenType == KdlTokenType.StartArray)
+                else if (tokenType == KdlTokenType.StartChildrenBlock)
                 {
                     if (inArray)
                     {
@@ -1071,10 +1061,10 @@ namespace Automatonic.Text.Kdl.RandomAccess
                     arrayItemsOrPropertyCount = 0;
                     numberOfRowsForValues = 0;
                 }
-                else if (tokenType == KdlTokenType.EndArray)
+                else if (tokenType == KdlTokenType.EndChildrenBlock)
                 {
                     int rowIndex = database.FindIndexOfFirstUnsetSizeOrLength(
-                        KdlTokenType.StartArray
+                        KdlTokenType.StartChildrenBlock
                     );
 
                     numberOfRowsForValues++;

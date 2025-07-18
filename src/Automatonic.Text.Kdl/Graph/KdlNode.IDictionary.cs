@@ -208,7 +208,7 @@ namespace Automatonic.Text.Kdl.Graph
                 {
                     foreach (IKdlEntry jElementProperty in kdlElement.Value.EnumerateNode())
                     {
-                        KdlElement? node = KdlVertexConverter.Create(
+                        KdlElement? node = KdlElementConverter.Create(
                             jElementProperty.Value,
                             Options
                         );

@@ -2,45 +2,56 @@
 using Automatonic.Text.Kdl.Graph;
 using Automatonic.Text.Kdl.RandomAccess;
 using Automatonic.Text.Kdl.Schema;
+using Automatonic.Text.Kdl.Serialization.Metadata;
 
 namespace Automatonic.Text.Kdl.Serialization.Converters
 {
-    /// <summary>
-    /// Converter for KdlVertex-derived types. The {T} value must be Object and not KdlVertex
-    /// since we allow Object-declared members\variables to deserialize as {KdlVertex}.
-    /// </summary>
-    internal sealed class KdlVertexConverter : KdlConverter<KdlElement?>
+    internal sealed partial class KdlNodeConverter : KdlConverter<KdlNode?>
     {
-        private static KdlVertexConverter? s_nodeConverter;
-        private static KdlArrayConverter? s_arrayConverter;
-        private static KdlObjectConverter? s_objectConverter;
-        private static KdlValueConverter? s_valueConverter;
-
-        public static KdlVertexConverter Instance => s_nodeConverter ??= new KdlVertexConverter();
-        public static KdlArrayConverter ArrayConverter =>
-            s_arrayConverter ??= new KdlArrayConverter();
-        public static KdlObjectConverter ObjectConverter =>
-            s_objectConverter ??= new KdlObjectConverter();
-        public static KdlValueConverter ValueConverter =>
-            s_valueConverter ??= new KdlValueConverter();
-
-        public override void Write(
-            KdlWriter writer,
-            KdlElement? value,
+        internal override void ConfigureKdlTypeInfo(
+            KdlTypeInfo kdlTypeInfo,
             KdlSerializerOptions options
         )
+        {
+            kdlTypeInfo.CreateObjectForExtensionDataProperty = () =>
+                new KdlNode(options.GetNodeOptions());
+        }
+
+        internal override void ReadElementAndSetProperty(
+            object obj,
+            string propertyName,
+            ref KdlReader reader,
+            KdlSerializerOptions options,
+            scoped ref ReadStack state
+        )
+        {
+            bool success = KdlElementConverter.Instance.TryRead(
+                ref reader,
+                typeof(KdlElement),
+                options,
+                ref state,
+                out KdlElement? value,
+                out _
+            );
+            Debug.Assert(success); // Node converters are not resumable.
+
+            Debug.Assert(obj is KdlNode);
+            KdlNode node = (KdlNode)obj;
+            node[propertyName] = value;
+        }
+
+        public override void Write(KdlWriter writer, KdlNode? value, KdlSerializerOptions options)
         {
             if (value is null)
             {
                 writer.WriteNullValue();
+                return;
             }
-            else
-            {
-                value.WriteTo(writer, options);
-            }
+
+            value.WriteTo(writer, options);
         }
 
-        public override KdlElement? Read(
+        public override KdlNode? Read(
             ref KdlReader reader,
             Type typeToConvert,
             KdlSerializerOptions options
@@ -48,34 +59,24 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             switch (reader.TokenType)
             {
-                case KdlTokenType.String:
-                case KdlTokenType.False:
-                case KdlTokenType.True:
-                case KdlTokenType.Number:
-                    return ValueConverter.Read(ref reader, typeToConvert, options);
                 case KdlTokenType.StartChildrenBlock:
-                    return ObjectConverter.Read(ref reader, typeToConvert, options);
-                case KdlTokenType.StartArray:
-                    return ArrayConverter.Read(ref reader, typeToConvert, options);
+                    return ReadObject(ref reader, options.GetNodeOptions());
                 case KdlTokenType.Null:
                     return null;
                 default:
                     Debug.Assert(false);
-                    throw new KdlException();
+                    throw ThrowHelper.GetInvalidOperationException_ExpectedObject(reader.TokenType);
             }
         }
 
-        public static KdlElement? Create(KdlReadOnlyElement element, KdlElementOptions? options)
+        public static KdlNode ReadObject(ref KdlReader reader, KdlElementOptions? options)
         {
-            KdlElement? node = element.ValueKind switch
-            {
-                KdlValueKind.Null => null,
-                KdlValueKind.Node => new KdlNode(element, options),
-                _ => new KdlValueOfElement(element, options),
-            };
+            KdlReadOnlyElement kroElement = KdlReadOnlyElement.ParseValue(ref reader);
+            KdlNode node = new KdlNode(kroElement, options);
             return node;
         }
 
-        internal override KdlSchema? GetSchema(KdlNumberHandling _) => KdlSchema.CreateTrueSchema();
+        internal override KdlSchema? GetSchema(KdlNumberHandling _) =>
+            new() { Type = KdlSchemaType.Node };
     }
 }

@@ -470,11 +470,11 @@ namespace Automatonic.Text.Kdl
             string message = "";
             switch (resource)
             {
-                case ExceptionResource.ArrayDepthTooLarge:
-                    message = Format(SR.ArrayDepthTooLarge, kdl.CurrentState.Options.MaxDepth);
+                case ExceptionResource.NodeDepthTooLarge:
+                    message = Format(SR.NodeDepthTooLarge, kdl.CurrentState.Options.MaxDepth);
                     break;
-                case ExceptionResource.MismatchedObjectArray:
-                    message = Format(SR.MismatchedObjectArray, character);
+                case ExceptionResource.MismatchedChildrenBlock:
+                    message = Format(SR.MismatchedChildrenBlock, character);
                     break;
                 case ExceptionResource.TrailingCommaNotAllowedBeforeArrayEnd:
                     message = SR.TrailingCommaNotAllowedBeforeArrayEnd;
@@ -523,9 +523,6 @@ namespace Automatonic.Text.Kdl
                     break;
                 case ExceptionResource.InvalidEndOfKdlNonPrimitive:
                     message = Format(SR.InvalidEndOfKdlNonPrimitive, kdl.TokenType);
-                    break;
-                case ExceptionResource.ObjectDepthTooLarge:
-                    message = Format(SR.ObjectDepthTooLarge, kdl.CurrentState.Options.MaxDepth);
                     break;
                 case ExceptionResource.ExpectedFalse:
                     message = Format(SR.ExpectedFalse, characters);
@@ -708,12 +705,12 @@ namespace Automatonic.Text.Kdl
             string message = "";
             switch (resource)
             {
-                case ExceptionResource.MismatchedObjectArray:
-                    Debug.Assert(token is KdlConstants.CloseBracket or KdlConstants.CloseBrace);
+                case ExceptionResource.MismatchedChildrenBlock:
+                    Debug.Assert(token is KdlConstants.CloseBrace);
                     message =
                         (tokenType == KdlTokenType.PropertyName)
                             ? Format(SR.CannotWriteEndAfterProperty, (char)token)
-                            : Format(SR.MismatchedObjectArray, (char)token);
+                            : Format(SR.MismatchedChildrenBlock, (char)token);
                     break;
                 case ExceptionResource.DepthTooLarge:
                     message = Format(
@@ -879,7 +876,6 @@ namespace Automatonic.Text.Kdl
 
     internal enum ExceptionResource
     {
-        ArrayDepthTooLarge,
         EndOfCommentNotFound,
         EndOfStringNotFound,
         RequiredDigitNotFoundAfterDecimal,
@@ -901,8 +897,8 @@ namespace Automatonic.Text.Kdl
         InvalidCharacterAfterEscapeWithinString,
         InvalidHexCharacterWithinString,
         InvalidEndOfKdlNonPrimitive,
-        MismatchedObjectArray,
-        ObjectDepthTooLarge,
+        MismatchedChildrenBlock,
+        NodeDepthTooLarge,
         ZeroDepthAtEnd,
         DepthTooLarge,
         CannotStartObjectArrayWithoutProperty,

@@ -514,7 +514,6 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 {
                     // Any of the "value start" states are acceptable.
                     case KdlTokenType.StartChildrenBlock:
-                    case KdlTokenType.StartArray:
                     {
                         long startingOffset = reader.TokenStartIndex;
 
@@ -548,11 +547,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                             valueSequence = sequence.Slice(startingOffset, totalLength);
                         }
 
-                        Debug.Assert(
-                            reader.TokenType
-                                is KdlTokenType.EndChildrenBlock
-                                    or KdlTokenType.EndArray
-                        );
+                        Debug.Assert(reader.TokenType is KdlTokenType.EndChildrenBlock);
 
                         break;
                     }

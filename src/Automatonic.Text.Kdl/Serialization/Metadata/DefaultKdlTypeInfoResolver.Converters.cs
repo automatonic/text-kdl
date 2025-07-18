@@ -56,8 +56,8 @@ namespace Automatonic.Text.Kdl.Serialization.Metadata
             Add(KdlMetadataServices.Int16Converter);
             Add(KdlMetadataServices.Int32Converter);
             Add(KdlMetadataServices.Int64Converter);
-            Add(KdlMetadataServices.KdlElementConverter);
-            Add(KdlMetadataServices.KdlDocumentConverter);
+            Add(KdlMetadataServices.KdlReadOnlyElementConverter);
+            Add(KdlMetadataServices.KdlReadOnlyDocumentConverter);
             Add(KdlMetadataServices.MemoryByteConverter);
             Add(KdlMetadataServices.ReadOnlyMemoryByteConverter);
             Add(KdlMetadataServices.ObjectConverter);

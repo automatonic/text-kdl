@@ -12,21 +12,16 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
         {
             if (typeof(KdlValue).IsAssignableFrom(typeToConvert))
             {
-                return KdlVertexConverter.ValueConverter;
+                return KdlElementConverter.ValueConverter;
             }
 
             if (typeof(KdlNode) == typeToConvert)
             {
-                return KdlVertexConverter.ObjectConverter;
-            }
-
-            if (typeof(KdlNode) == typeToConvert)
-            {
-                return KdlVertexConverter.ArrayConverter;
+                return KdlElementConverter.NodeConverter;
             }
 
             Debug.Assert(typeof(KdlElement) == typeToConvert);
-            return KdlVertexConverter.Instance;
+            return KdlElementConverter.Instance;
         }
 
         public override bool CanConvert(Type typeToConvert) =>

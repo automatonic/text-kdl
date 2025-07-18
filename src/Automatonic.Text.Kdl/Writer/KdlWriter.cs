@@ -33,10 +33,10 @@ namespace Automatonic.Text.Kdl
 
         private Memory<byte> _memory;
 
-        private bool _inObject;
+        private bool _inNode;
         private bool _commentAfterNoneOrPropertyName;
         private KdlTokenType _tokenType;
-        private BitStack _bitStack;
+        private NodeStack _bitStack;
 
         // The highest order bit of _currentDepth is used to discern whether we are writing the first item in a list or not.
         // if (_currentDepth >> 31) == 1, add a list separator before writing the item
@@ -257,7 +257,7 @@ namespace Automatonic.Text.Kdl
             BytesCommitted = default;
             _memory = default;
 
-            _inObject = default;
+            _inNode = default;
             _tokenType = default;
             _commentAfterNoneOrPropertyName = default;
             _currentDepth = default;
@@ -428,26 +428,13 @@ namespace Automatonic.Text.Kdl
         }
 
         /// <summary>
-        /// Writes the beginning of a KDL array.
+        /// Writes the beginning of a KDL node's children block.
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
         /// OR if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WriteStartArray()
-        {
-            WriteStart(KdlConstants.OpenBracket);
-            _tokenType = KdlTokenType.StartArray;
-        }
-
-        /// <summary>
-        /// Writes the beginning of a KDL object.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
-        /// OR if this would result in invalid KDL being written (while validation is enabled).
-        /// </exception>
-        public void WriteStartObject()
+        public void WriteStartChildrenBlock()
         {
             WriteStart(KdlConstants.OpenBrace);
             _tokenType = KdlTokenType.StartChildrenBlock;
@@ -518,12 +505,12 @@ namespace Automatonic.Text.Kdl
 
         private void ValidateStart()
         {
-            if (_inObject)
+            if (_inNode)
             {
                 if (_tokenType != KdlTokenType.PropertyName)
                 {
                     Debug.Assert(
-                        _tokenType is not KdlTokenType.None and not KdlTokenType.StartArray
+                        _tokenType is not KdlTokenType.None and not KdlTokenType.StartChildrenBlock
                     );
                     ThrowHelper.ThrowInvalidOperationException(
                         ExceptionResource.CannotStartObjectArrayWithoutProperty,
@@ -594,21 +581,7 @@ namespace Automatonic.Text.Kdl
         /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
         /// OR if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WriteStartArray(KdlEncodedText propertyName)
-        {
-            WriteStartHelper(propertyName.EncodedUtf8Bytes, KdlConstants.OpenBracket);
-            _tokenType = KdlTokenType.StartArray;
-        }
-
-        /// <summary>
-        /// Writes the beginning of a KDL object with a pre-encoded property name as the key.
-        /// </summary>
-        /// <param name="propertyName">The KDL-encoded name of the property to write.</param>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
-        /// OR if this would result in invalid KDL being written (while validation is enabled).
-        /// </exception>
-        public void WriteStartObject(KdlEncodedText propertyName)
+        public void WriteStartChildrenBlock(KdlEncodedText propertyName)
         {
             WriteStartHelper(propertyName.EncodedUtf8Bytes, KdlConstants.OpenBrace);
             _tokenType = KdlTokenType.StartChildrenBlock;
@@ -627,31 +600,6 @@ namespace Automatonic.Text.Kdl
         }
 
         /// <summary>
-        /// Writes the beginning of a KDL array with a property name as the key.
-        /// </summary>
-        /// <param name="utf8PropertyName">The UTF-8 encoded property name of the KDL array to be written.</param>
-        /// <remarks>
-        /// The property name is escaped before writing.
-        /// </remarks>
-        /// <exception cref="ArgumentException">
-        /// Thrown when the specified property name is too large.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
-        /// OR if this would result in invalid KDL being written (while validation is enabled).
-        /// </exception>
-        public void WriteStartArray(ReadOnlySpan<byte> utf8PropertyName)
-        {
-            ValidatePropertyNameAndDepth(utf8PropertyName);
-
-            WriteStartEscape(utf8PropertyName, KdlConstants.OpenBracket);
-
-            _currentDepth &= KdlConstants.RemoveFlagsBitMask;
-            _currentDepth++;
-            _tokenType = KdlTokenType.StartArray;
-        }
-
-        /// <summary>
         /// Writes the beginning of a KDL object with a property name as the key.
         /// </summary>
         /// <param name="utf8PropertyName">The UTF-8 encoded property name of the KDL object to be written.</param>
@@ -665,7 +613,7 @@ namespace Automatonic.Text.Kdl
         /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
         /// OR if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WriteStartObject(ReadOnlySpan<byte> utf8PropertyName)
+        public void WriteStartChildrenBlock(ReadOnlySpan<byte> utf8PropertyName)
         {
             ValidatePropertyNameAndDepth(utf8PropertyName);
 
@@ -765,13 +713,13 @@ namespace Automatonic.Text.Kdl
         /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
         /// OR if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WriteStartArray(string propertyName)
+        public void WriteStartChildrenBlock(string propertyName)
         {
             if (propertyName is null)
             {
                 ThrowHelper.ThrowArgumentNullException(nameof(propertyName));
             }
-            WriteStartArray(propertyName.AsSpan());
+            WriteStartChildrenBlock(propertyName.AsSpan());
         }
 
         /// <summary>
@@ -814,15 +762,15 @@ namespace Automatonic.Text.Kdl
         /// Thrown when the depth of the KDL has exceeded the maximum depth of 1000
         /// OR if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WriteStartArray(ReadOnlySpan<char> propertyName)
+        public void WriteStartChildrenBlock(ReadOnlySpan<char> propertyName)
         {
             ValidatePropertyNameAndDepth(propertyName);
 
-            WriteStartEscape(propertyName, KdlConstants.OpenBracket);
+            WriteStartEscape(propertyName, KdlConstants.OpenBrace);
 
             _currentDepth &= KdlConstants.RemoveFlagsBitMask;
             _currentDepth++;
-            _tokenType = KdlTokenType.StartArray;
+            _tokenType = KdlTokenType.StartChildrenBlock;
         }
 
         /// <summary>
@@ -920,24 +868,12 @@ namespace Automatonic.Text.Kdl
         }
 
         /// <summary>
-        /// Writes the end of a KDL array.
+        /// Writes the end of a KDL node's children block.
         /// </summary>
         /// <exception cref="InvalidOperationException">
         /// Thrown if this would result in invalid KDL being written (while validation is enabled).
         /// </exception>
-        public void WriteEndArray()
-        {
-            WriteEnd(KdlConstants.CloseBracket);
-            _tokenType = KdlTokenType.EndArray;
-        }
-
-        /// <summary>
-        /// Writes the end of a KDL object.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if this would result in invalid KDL being written (while validation is enabled).
-        /// </exception>
-        public void WriteEndObject()
+        public void WriteEndChildrenBlock()
         {
             WriteEnd(KdlConstants.CloseBrace);
             _tokenType = KdlTokenType.EndChildrenBlock;
@@ -998,7 +934,7 @@ namespace Automatonic.Text.Kdl
             if (_bitStack.CurrentDepth <= 0 || _tokenType == KdlTokenType.PropertyName)
             {
                 ThrowHelper.ThrowInvalidOperationException(
-                    ExceptionResource.MismatchedObjectArray,
+                    ExceptionResource.MismatchedChildrenBlock,
                     currentDepth: default,
                     maxDepth: _options.MaxDepth,
                     token,
@@ -1006,13 +942,12 @@ namespace Automatonic.Text.Kdl
                 );
             }
 
-            if (token == KdlConstants.CloseBracket)
+            if (token == KdlConstants.CloseBrace)
             {
-                if (_inObject)
+                if (!_inNode)
                 {
-                    Debug.Assert(_tokenType != KdlTokenType.None);
                     ThrowHelper.ThrowInvalidOperationException(
-                        ExceptionResource.MismatchedObjectArray,
+                        ExceptionResource.MismatchedChildrenBlock,
                         currentDepth: default,
                         maxDepth: _options.MaxDepth,
                         token,
@@ -1020,29 +955,13 @@ namespace Automatonic.Text.Kdl
                     );
                 }
             }
-            else
-            {
-                Debug.Assert(token == KdlConstants.CloseBrace);
-
-                if (!_inObject)
-                {
-                    ThrowHelper.ThrowInvalidOperationException(
-                        ExceptionResource.MismatchedObjectArray,
-                        currentDepth: default,
-                        maxDepth: _options.MaxDepth,
-                        token,
-                        _tokenType
-                    );
-                }
-            }
-
-            _inObject = _bitStack.Pop();
+            _inNode = _bitStack.Pop();
         }
 
         private void WriteEndIndented(byte token)
         {
             // Do not format/indent empty KDL object/array.
-            if (_tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray)
+            if (_tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartChildrenBlock)
             {
                 WriteEndMinimized(token);
             }
@@ -1099,16 +1018,10 @@ namespace Automatonic.Text.Kdl
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UpdateBitStackOnStart(byte token)
         {
-            if (token == KdlConstants.OpenBracket)
+            if (token == KdlConstants.OpenBrace)
             {
-                _bitStack.PushFalse();
-                _inObject = false;
-            }
-            else
-            {
-                Debug.Assert(token == KdlConstants.OpenBrace);
-                _bitStack.PushTrue();
-                _inObject = true;
+                _bitStack.Push();
+                _inNode = true;
             }
         }
 

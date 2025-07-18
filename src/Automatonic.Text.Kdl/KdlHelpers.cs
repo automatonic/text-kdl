@@ -89,7 +89,7 @@ namespace Automatonic.Text.Kdl
 
             // Perform the actual read-ahead.
             KdlTokenType tokenType = reader.TokenType;
-            if (tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray)
+            if (tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartChildrenBlock)
             {
                 // Attempt to skip to make sure we have all the data we need.
                 bool complete = reader.TrySkipPartial();

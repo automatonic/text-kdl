@@ -254,7 +254,7 @@ namespace Automatonic.Text.Kdl.Graph
             }
             else
             {
-                writer.WriteStartObject();
+                writer.WriteStartChildrenBlock();
 
                 foreach (KeyValuePair<KdlEntryKey, KdlElement?> entry in Dictionary)
                 {
@@ -270,7 +270,7 @@ namespace Automatonic.Text.Kdl.Graph
                     }
                 }
 
-                writer.WriteEndObject();
+                writer.WriteEndChildrenBlock();
             }
         }
 

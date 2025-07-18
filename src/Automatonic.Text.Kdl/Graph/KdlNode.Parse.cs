@@ -41,7 +41,7 @@ namespace Automatonic.Text.Kdl.Graph
         public static KdlElement? Parse(ref KdlReader reader, KdlElementOptions? nodeOptions = null)
         {
             KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(ref reader);
-            return KdlVertexConverter.Create(element, nodeOptions);
+            return KdlElementConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Automatonic.Text.Kdl.Graph
             }
 
             KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(kdl, documentOptions);
-            return KdlVertexConverter.Create(element, nodeOptions);
+            return KdlElementConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -93,7 +93,7 @@ namespace Automatonic.Text.Kdl.Graph
         )
         {
             KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(utf8Kdl, documentOptions);
-            return KdlVertexConverter.Create(element, nodeOptions);
+            return KdlElementConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace Automatonic.Text.Kdl.Graph
             }
 
             KdlReadOnlyElement element = KdlReadOnlyElement.ParseValue(utf8Kdl, documentOptions);
-            return KdlVertexConverter.Create(element, nodeOptions);
+            return KdlElementConverter.Create(element, nodeOptions);
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace Automatonic.Text.Kdl.Graph
             KdlReadOnlyDocument document = await KdlReadOnlyDocument
                 .ParseAsyncCoreUnrented(utf8Kdl, documentOptions, cancellationToken)
                 .ConfigureAwait(false);
-            return KdlVertexConverter.Create(document.RootElement, nodeOptions);
+            return KdlElementConverter.Create(document.RootElement, nodeOptions);
         }
     }
 }

@@ -22,7 +22,7 @@ namespace Automatonic.Text.Kdl.RandomAccess
                 _target = target;
                 _curIdx = -1;
 
-                Debug.Assert(target.TokenType == KdlTokenType.StartArray);
+                Debug.Assert(target.TokenType == KdlTokenType.StartChildrenBlock);
 
                 _endIdxOrVersion = target._parent.GetEndIndex(
                     _target._idx,

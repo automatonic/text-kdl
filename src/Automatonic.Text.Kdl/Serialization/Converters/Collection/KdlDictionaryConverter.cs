@@ -423,7 +423,7 @@ namespace Automatonic.Text.Kdl.Serialization
 
                 kdlTypeInfo.OnSerializing?.Invoke(dictionary);
 
-                writer.WriteStartObject();
+                writer.WriteStartChildrenBlock();
 
                 if (state.CurrentContainsMetadata && CanHaveMetadata)
                 {
@@ -441,7 +441,7 @@ namespace Automatonic.Text.Kdl.Serialization
                 if (!state.Current.ProcessedEndToken)
                 {
                     state.Current.ProcessedEndToken = true;
-                    writer.WriteEndObject();
+                    writer.WriteEndChildrenBlock();
                 }
 
                 kdlTypeInfo.OnSerialized?.Invoke(dictionary);

@@ -78,7 +78,7 @@ namespace Automatonic.Text.Kdl
         )
         {
             // For collections with metadata, we nest the array payload within a KDL object.
-            writer.WriteStartObject();
+            writer.WriteStartChildrenBlock();
             MetadataPropertyName writtenMetadata = WriteMetadataForObject(
                 kdlConverter,
                 ref state,
@@ -108,9 +108,9 @@ namespace Automatonic.Text.Kdl
             if (alreadyExists)
             {
                 // Instance already serialized, write as { "$ref" : "referenceId" }
-                writer.WriteStartObject();
+                writer.WriteStartChildrenBlock();
                 writer.WriteString(s_metadataRef, referenceId);
-                writer.WriteEndObject();
+                writer.WriteEndChildrenBlock();
 
                 // clear out any polymorphism state.
                 state.PolymorphicTypeDiscriminator = null;

@@ -41,16 +41,6 @@ namespace Automatonic.Text.Kdl
         EndChildrenBlock,
 
         /// <summary>
-        ///   Indicates that the token type is the start of a KDL array.
-        /// </summary>
-        StartArray,
-
-        /// <summary>
-        ///   Indicates that the token type is the end of a KDL array.
-        /// </summary>
-        EndArray,
-
-        /// <summary>
         ///   Indicates that the token type is a KDL property name.
         /// </summary>
         PropertyName,

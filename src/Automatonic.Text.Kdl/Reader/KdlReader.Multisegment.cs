@@ -27,7 +27,7 @@ namespace Automatonic.Text.Kdl
 
             _lineNumber = state._lineNumber;
             _bytePositionInLine = state._bytePositionInLine;
-            _inObject = state._inObject;
+            _inNode = state._inObject;
             _isNotPrimitive = state._isNotPrimitive;
             ValueIsEscaped = state._valueIsEscaped;
             _trailingCommaBeforeComment = state._trailingCommaBeforeComment;
@@ -38,7 +38,7 @@ namespace Automatonic.Text.Kdl
             {
                 _readerOptions.MaxDepth = KdlReaderOptions.DefaultMaxDepth; // If max depth is not set, revert to the default depth.
             }
-            _bitStack = state._bitStack;
+            _nodeStack = state._nodeStack;
 
             _consumed = 0;
             TokenStartIndex = 0;
@@ -166,7 +166,7 @@ namespace Automatonic.Text.Kdl
             {
                 if (first == KdlConstants.CloseBrace)
                 {
-                    EndObject();
+                    EndChildrenBlock();
                 }
                 else
                 {
@@ -198,18 +198,18 @@ namespace Automatonic.Text.Kdl
                     goto Done;
                 }
             }
-            else if (_tokenType == KdlTokenType.StartArray)
-            {
-                if (first == KdlConstants.CloseBracket)
-                {
-                    EndArray();
-                }
-                else
-                {
-                    retVal = ConsumeValueMultiSegment(first);
-                    goto Done;
-                }
-            }
+            // else if (_tokenType == KdlTokenType.StartChildrenBlock)
+            // {
+            //     if (first == KdlConstants.CloseBracket)
+            //     {
+            //         EndArray();
+            //     }
+            //     else
+            //     {
+            //         retVal = ConsumeValueMultiSegment(first);
+            //         goto Done;
+            //     }
+            // }
             else if (_tokenType == KdlTokenType.PropertyName)
             {
                 retVal = ConsumeValueMultiSegment(first);
@@ -235,7 +235,7 @@ namespace Automatonic.Text.Kdl
         {
             Debug.Assert(_isNotPrimitive && IsLastSpan);
 
-            if (_bitStack.CurrentDepth != 0)
+            if (_nodeStack.CurrentDepth != 0)
             {
                 ThrowHelper.ThrowKdlReaderException(ref this, ExceptionResource.ZeroDepthAtEnd);
             }
@@ -248,7 +248,7 @@ namespace Automatonic.Text.Kdl
                 return false;
             }
 
-            if (_tokenType is not KdlTokenType.EndArray and not KdlTokenType.EndChildrenBlock)
+            if (_tokenType is not KdlTokenType.EndChildrenBlock)
             {
                 ThrowHelper.ThrowKdlReaderException(
                     ref this,
@@ -349,21 +349,12 @@ namespace Automatonic.Text.Kdl
         {
             if (first == KdlConstants.OpenBrace)
             {
-                _bitStack.SetFirstBit();
+                _nodeStack.Push();
                 _tokenType = KdlTokenType.StartChildrenBlock;
                 ValueSpan = _buffer.Slice(_consumed, 1);
                 _consumed++;
                 _bytePositionInLine++;
-                _inObject = true;
-                _isNotPrimitive = true;
-            }
-            else if (first == KdlConstants.OpenBracket)
-            {
-                _bitStack.ResetFirstBit();
-                _tokenType = KdlTokenType.StartArray;
-                ValueSpan = _buffer.Slice(_consumed, 1);
-                _consumed++;
-                _bytePositionInLine++;
+                _inNode = true;
                 _isNotPrimitive = true;
             }
             else
@@ -382,8 +373,7 @@ namespace Automatonic.Text.Kdl
                     return false;
                 }
 
-                _isNotPrimitive =
-                    _tokenType is KdlTokenType.StartChildrenBlock or KdlTokenType.StartArray;
+                _isNotPrimitive = _tokenType is KdlTokenType.StartChildrenBlock;
                 // Intentionally fall out of the if-block to return true
             }
             return true;
@@ -433,11 +423,7 @@ namespace Automatonic.Text.Kdl
                 }
                 else if (marker == KdlConstants.OpenBrace)
                 {
-                    StartObject();
-                }
-                else if (marker == KdlConstants.OpenBracket)
-                {
-                    StartArray();
+                    StartChildrenBlock();
                 }
                 else if (KdlHelpers.IsDigit(marker) || marker == '-')
                 {
@@ -485,7 +471,7 @@ namespace Automatonic.Text.Kdl
                                         if (
                                             _isNotPrimitive
                                             && IsLastSpan
-                                            && _tokenType != KdlTokenType.EndArray
+                                            && _tokenType != KdlTokenType.EndChildrenBlock
                                             && _tokenType != KdlTokenType.EndChildrenBlock
                                         )
                                         {
@@ -499,7 +485,7 @@ namespace Automatonic.Text.Kdl
                                             if (
                                                 _isNotPrimitive
                                                 && IsLastSpan
-                                                && _tokenType != KdlTokenType.EndArray
+                                                && _tokenType != KdlTokenType.EndChildrenBlock
                                                 && _tokenType != KdlTokenType.EndChildrenBlock
                                             )
                                             {
@@ -1776,7 +1762,7 @@ namespace Automatonic.Text.Kdl
                 }
             }
 
-            if (_bitStack.CurrentDepth == 0)
+            if (_nodeStack.CurrentDepth == 0)
             {
                 return ReadFirstTokenMultiSegment(marker)
                     ? ConsumeTokenResult.Success
@@ -1844,7 +1830,7 @@ namespace Automatonic.Text.Kdl
                         : ConsumeTokenResult.NotEnoughDataRollBackState;
                 }
 
-                if (_inObject)
+                if (_inNode)
                 {
                     if (first != KdlConstants.Quote)
                     {
@@ -1852,7 +1838,7 @@ namespace Automatonic.Text.Kdl
                         {
                             if (_readerOptions.AllowTrailingCommas)
                             {
-                                EndObject();
+                                EndChildrenBlock();
                                 return ConsumeTokenResult.Success;
                             }
                             ThrowHelper.ThrowKdlReaderException(
@@ -1872,11 +1858,11 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    if (first == KdlConstants.CloseBracket)
+                    if (first == KdlConstants.CloseBrace)
                     {
                         if (_readerOptions.AllowTrailingCommas)
                         {
-                            EndArray();
+                            EndChildrenBlock();
                             return ConsumeTokenResult.Success;
                         }
                         ThrowHelper.ThrowKdlReaderException(
@@ -1891,11 +1877,7 @@ namespace Automatonic.Text.Kdl
             }
             else if (marker == KdlConstants.CloseBrace)
             {
-                EndObject();
-            }
-            else if (marker == KdlConstants.CloseBracket)
-            {
-                EndArray();
+                EndChildrenBlock();
             }
             else
             {
@@ -1915,7 +1897,7 @@ namespace Automatonic.Text.Kdl
 
             if (KdlReaderHelper.IsTokenTypePrimitive(_previousTokenType))
             {
-                _tokenType = _inObject ? KdlTokenType.StartChildrenBlock : KdlTokenType.StartArray;
+                _tokenType = KdlTokenType.StartChildrenBlock;
             }
             else
             {
@@ -1942,7 +1924,7 @@ namespace Automatonic.Text.Kdl
                 first = _buffer[_consumed];
             }
 
-            if (_bitStack.CurrentDepth == 0 && _tokenType != KdlTokenType.None)
+            if (_nodeStack.CurrentDepth == 0 && _tokenType != KdlTokenType.None)
             {
                 return ReadFirstTokenMultiSegment(first)
                     ? ConsumeTokenResult.Success
@@ -1958,7 +1940,6 @@ namespace Automatonic.Text.Kdl
                 // A comma without some KDL value preceding it is invalid
                 if (
                     _previousTokenType <= KdlTokenType.StartChildrenBlock
-                    || _previousTokenType == KdlTokenType.StartArray
                     || _trailingCommaBeforeComment
                 )
                 {
@@ -2030,7 +2011,7 @@ namespace Automatonic.Text.Kdl
                     }
                 }
 
-                if (_inObject)
+                if (_inNode)
                 {
                     if (first != KdlConstants.Quote)
                     {
@@ -2038,7 +2019,7 @@ namespace Automatonic.Text.Kdl
                         {
                             if (_readerOptions.AllowTrailingCommas)
                             {
-                                EndObject();
+                                EndChildrenBlock();
                                 goto Done;
                             }
                             ThrowHelper.ThrowKdlReaderException(
@@ -2064,11 +2045,11 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    if (first == KdlConstants.CloseBracket)
+                    if (first == KdlConstants.CloseBrace)
                     {
                         if (_readerOptions.AllowTrailingCommas)
                         {
-                            EndArray();
+                            EndChildrenBlock();
                             goto Done;
                         }
                         ThrowHelper.ThrowKdlReaderException(
@@ -2089,11 +2070,7 @@ namespace Automatonic.Text.Kdl
             }
             else if (first == KdlConstants.CloseBrace)
             {
-                EndObject();
-            }
-            else if (first == KdlConstants.CloseBracket)
-            {
-                EndArray();
+                EndChildrenBlock();
             }
             else if (_tokenType == KdlTokenType.None)
             {
@@ -2134,9 +2111,9 @@ namespace Automatonic.Text.Kdl
                 }
                 goto Done;
             }
-            else if (_tokenType == KdlTokenType.StartArray)
+            else if (_tokenType == KdlTokenType.StartChildrenBlock)
             {
-                Debug.Assert(first != KdlConstants.CloseBracket);
+                Debug.Assert(first != KdlConstants.CloseBrace);
                 if (!ConsumeValueMultiSegment(first))
                 {
                     goto RollBack;
@@ -2153,8 +2130,8 @@ namespace Automatonic.Text.Kdl
             }
             else
             {
-                Debug.Assert(_tokenType is KdlTokenType.EndArray or KdlTokenType.EndChildrenBlock);
-                if (_inObject)
+                Debug.Assert(_tokenType is KdlTokenType.EndChildrenBlock);
+                if (_inNode)
                 {
                     Debug.Assert(first != KdlConstants.CloseBrace);
                     if (first != KdlConstants.Quote)
@@ -2177,7 +2154,7 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    Debug.Assert(first != KdlConstants.CloseBracket);
+                    Debug.Assert(first != KdlConstants.CloseBrace);
 
                     if (ConsumeValueMultiSegment(first))
                     {
@@ -2284,7 +2261,7 @@ namespace Automatonic.Text.Kdl
             {
                 if (marker == KdlConstants.CloseBrace)
                 {
-                    EndObject();
+                    EndChildrenBlock();
                 }
                 else
                 {
@@ -2316,11 +2293,11 @@ namespace Automatonic.Text.Kdl
                     goto Done;
                 }
             }
-            else if (_tokenType == KdlTokenType.StartArray)
+            else if (_tokenType == KdlTokenType.StartChildrenBlock)
             {
-                if (marker == KdlConstants.CloseBracket)
+                if (marker == KdlConstants.CloseBrace)
                 {
-                    EndArray();
+                    EndChildrenBlock();
                 }
                 else
                 {
@@ -2339,7 +2316,7 @@ namespace Automatonic.Text.Kdl
                 }
                 goto Done;
             }
-            else if (_bitStack.CurrentDepth == 0)
+            else if (_nodeStack.CurrentDepth == 0)
             {
                 return ReadFirstTokenMultiSegment(marker)
                     ? ConsumeTokenResult.Success
@@ -2405,7 +2382,7 @@ namespace Automatonic.Text.Kdl
 
                 TokenStartIndex = BytesConsumed;
 
-                if (_inObject)
+                if (_inNode)
                 {
                     if (marker != KdlConstants.Quote)
                     {
@@ -2413,7 +2390,7 @@ namespace Automatonic.Text.Kdl
                         {
                             if (_readerOptions.AllowTrailingCommas)
                             {
-                                EndObject();
+                                EndChildrenBlock();
                                 goto Done;
                             }
                             ThrowHelper.ThrowKdlReaderException(
@@ -2434,11 +2411,11 @@ namespace Automatonic.Text.Kdl
                 }
                 else
                 {
-                    if (marker == KdlConstants.CloseBracket)
+                    if (marker == KdlConstants.CloseBrace)
                     {
                         if (_readerOptions.AllowTrailingCommas)
                         {
-                            EndArray();
+                            EndChildrenBlock();
                             goto Done;
                         }
                         ThrowHelper.ThrowKdlReaderException(
@@ -2453,11 +2430,7 @@ namespace Automatonic.Text.Kdl
             }
             else if (marker == KdlConstants.CloseBrace)
             {
-                EndObject();
-            }
-            else if (marker == KdlConstants.CloseBracket)
-            {
-                EndArray();
+                EndChildrenBlock();
             }
             else
             {

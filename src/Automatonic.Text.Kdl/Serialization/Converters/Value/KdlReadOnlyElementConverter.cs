@@ -3,7 +3,7 @@ using Automatonic.Text.Kdl.Schema;
 
 namespace Automatonic.Text.Kdl.Serialization.Converters
 {
-    internal sealed class KdlElementConverter : KdlConverter<KdlReadOnlyElement>
+    internal sealed class KdlReadOnlyElementConverter : KdlConverter<KdlReadOnlyElement>
     {
         public override KdlReadOnlyElement Read(
             ref KdlReader reader,

@@ -53,10 +53,10 @@ namespace Automatonic.Text.Kdl.Serialization
         /// When overridden, converts the temporary collection held in state.Current.ReturnValue to the final collection.
         /// The <see cref="KdlConverter.IsConvertibleCollection"/> property must also be set to <see langword="true"/>.
         /// </summary>
-        protected virtual void ConvertCollection(
-            ref ReadStack state,
-            KdlSerializerOptions options
-        ) { }
+        protected virtual void ConvertCollection(ref ReadStack state, KdlSerializerOptions options)
+        {
+            //No implementation by default.
+        }
 
         protected static KdlConverter<TElement> GetElementConverter(KdlTypeInfo elementTypeInfo)
         {
@@ -84,7 +84,7 @@ namespace Automatonic.Text.Kdl.Serialization
             {
                 // Fast path that avoids maintaining state variables and dealing with preserved references.
 
-                if (reader.TokenType != KdlTokenType.StartArray)
+                if (reader.TokenType != KdlTokenType.StartChildrenBlock)
                 {
                     ThrowHelper.ThrowKdlException_DeserializeUnableToConvertValue(Type);
                 }
@@ -104,7 +104,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     while (true)
                     {
                         reader.ReadWithVerify();
-                        if (reader.TokenType == KdlTokenType.EndArray)
+                        if (reader.TokenType == KdlTokenType.EndChildrenBlock)
                         {
                             break;
                         }
@@ -124,7 +124,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     while (true)
                     {
                         reader.ReadWithVerify();
-                        if (reader.TokenType == KdlTokenType.EndArray)
+                        if (reader.TokenType == KdlTokenType.EndChildrenBlock)
                         {
                             break;
                         }
@@ -147,7 +147,7 @@ namespace Automatonic.Text.Kdl.Serialization
                 // Slower path that supports continuation and reading metadata.
                 if (state.Current.ObjectState == StackFrameObjectState.None)
                 {
-                    if (reader.TokenType == KdlTokenType.StartArray)
+                    if (reader.TokenType == KdlTokenType.StartChildrenBlock)
                     {
                         state.Current.ObjectState = StackFrameObjectState.ReadMetadata;
                     }
@@ -266,7 +266,7 @@ namespace Automatonic.Text.Kdl.Serialization
 
                         if (state.Current.PropertyState < StackFramePropertyState.ReadValueIsEnd)
                         {
-                            if (reader.TokenType == KdlTokenType.EndArray)
+                            if (reader.TokenType == KdlTokenType.EndChildrenBlock)
                             {
                                 break;
                             }
@@ -395,7 +395,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     }
 
                     // Writing the start of the array must happen after any metadata
-                    writer.WriteStartArray();
+                    writer.WriteStartChildrenBlock();
                     state.Current.KdlPropertyInfo = kdlTypeInfo
                         .ElementTypeInfo!
                         .PropertyInfoForTypeInfo;
@@ -407,13 +407,7 @@ namespace Automatonic.Text.Kdl.Serialization
                     if (!state.Current.ProcessedEndToken)
                     {
                         state.Current.ProcessedEndToken = true;
-                        writer.WriteEndArray();
-
-                        if (state.Current.MetadataPropertyName != 0)
-                        {
-                            // Write the EndObject for $values.
-                            writer.WriteEndObject();
-                        }
+                        writer.WriteEndChildrenBlock();
                     }
 
                     kdlTypeInfo.OnSerialized?.Invoke(value);

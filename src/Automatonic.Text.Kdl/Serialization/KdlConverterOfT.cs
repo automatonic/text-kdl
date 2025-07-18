@@ -634,18 +634,6 @@ namespace Automatonic.Text.Kdl.Serialization
 
             switch (tokenType)
             {
-                case KdlTokenType.StartArray:
-                    if (reader.TokenType != KdlTokenType.EndArray)
-                    {
-                        ThrowHelper.ThrowKdlException_SerializationConverterRead(this);
-                    }
-                    else if (depth != reader.CurrentDepth)
-                    {
-                        ThrowHelper.ThrowKdlException_SerializationConverterRead(this);
-                    }
-
-                    break;
-
                 case KdlTokenType.StartChildrenBlock:
                     if (reader.TokenType != KdlTokenType.EndChildrenBlock)
                     {

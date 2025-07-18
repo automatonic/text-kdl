@@ -390,7 +390,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             {
                 kdlTypeInfo.OnSerializing?.Invoke(obj);
 
-                writer.WriteStartObject();
+                writer.WriteStartChildrenBlock();
 
                 if (state.CurrentContainsMetadata && CanHaveMetadata)
                 {
@@ -431,13 +431,13 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                     state.Current.EndProperty();
                 }
 
-                writer.WriteEndObject();
+                writer.WriteEndChildrenBlock();
             }
             else
             {
                 if (!state.Current.ProcessedStartToken)
                 {
-                    writer.WriteStartObject();
+                    writer.WriteStartChildrenBlock();
 
                     if (state.CurrentContainsMetadata && CanHaveMetadata)
                     {
@@ -520,7 +520,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 if (!state.Current.ProcessedEndToken)
                 {
                     state.Current.ProcessedEndToken = true;
-                    writer.WriteEndObject();
+                    writer.WriteEndChildrenBlock();
                 }
             }
 

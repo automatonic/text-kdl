@@ -19,7 +19,7 @@ namespace Automatonic.Text.Kdl
         internal readonly KdlTokenType _tokenType;
         internal readonly KdlTokenType _previousTokenType;
         internal readonly KdlReaderOptions _readerOptions;
-        internal readonly BitStack _bitStack;
+        internal readonly NodeStack _nodeStack;
 
         /// <summary>
         /// Constructs a new <see cref="KdlReaderState"/> instance.
@@ -47,7 +47,7 @@ namespace Automatonic.Text.Kdl
 
             // Only allocate if the user reads a KDL payload beyond the depth that the _allocationFreeContainer can handle.
             // This way we avoid allocations in the common, default cases, and allocate lazily.
-            _bitStack = default;
+            _nodeStack = default;
         }
 
         internal KdlReaderState(
@@ -60,7 +60,7 @@ namespace Automatonic.Text.Kdl
             KdlTokenType tokenType,
             KdlTokenType previousTokenType,
             KdlReaderOptions readerOptions,
-            BitStack bitStack
+            NodeStack bitStack
         )
         {
             _lineNumber = lineNumber;
@@ -72,7 +72,7 @@ namespace Automatonic.Text.Kdl
             _tokenType = tokenType;
             _previousTokenType = previousTokenType;
             _readerOptions = readerOptions;
-            _bitStack = bitStack;
+            _nodeStack = bitStack;
         }
 
         /// <summary>

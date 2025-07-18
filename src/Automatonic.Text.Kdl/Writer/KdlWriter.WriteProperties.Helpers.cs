@@ -52,7 +52,7 @@ namespace Automatonic.Text.Kdl
         {
             if (!_options.SkipValidation)
             {
-                if (!_inObject || _tokenType == KdlTokenType.PropertyName)
+                if (!_inNode || _tokenType == KdlTokenType.PropertyName)
                 {
                     Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
                     ThrowHelper.ThrowInvalidOperationException(
@@ -71,7 +71,7 @@ namespace Automatonic.Text.Kdl
         {
             if (!_options.SkipValidation)
             {
-                if (!_inObject || _tokenType == KdlTokenType.PropertyName)
+                if (!_inNode || _tokenType == KdlTokenType.PropertyName)
                 {
                     Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
                     ThrowHelper.ThrowInvalidOperationException(

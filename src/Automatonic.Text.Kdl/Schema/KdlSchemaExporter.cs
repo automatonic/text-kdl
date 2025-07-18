@@ -312,7 +312,7 @@ namespace Automatonic.Text.Kdl.Schema
                         ref state,
                         new()
                         {
-                            Type = KdlSchemaType.Object,
+                            Type = KdlSchemaType.Node,
                             Properties = properties,
                             Required = required,
                             AdditionalProperties = additionalProperties,
@@ -336,7 +336,7 @@ namespace Automatonic.Text.Kdl.Schema
                             ref state,
                             new()
                             {
-                                Type = KdlSchemaType.Array,
+                                Type = KdlSchemaType.Node,
                                 Items = items.IsTrue ? null : items,
                             }
                         );
@@ -367,7 +367,7 @@ namespace Automatonic.Text.Kdl.Schema
                             ref state,
                             new()
                             {
-                                Type = KdlSchemaType.Object,
+                                Type = KdlSchemaType.Node,
                                 Properties =
                                 [
                                     typeDiscriminator.Value,
@@ -375,7 +375,7 @@ namespace Automatonic.Text.Kdl.Schema
                                         ValuesKeyword,
                                         new KdlSchema()
                                         {
-                                            Type = KdlSchemaType.Array,
+                                            Type = KdlSchemaType.Node,
                                             Items = items.IsTrue ? null : items,
                                         }
                                     ),
@@ -415,7 +415,7 @@ namespace Automatonic.Text.Kdl.Schema
                         ref state,
                         new()
                         {
-                            Type = KdlSchemaType.Object,
+                            Type = KdlSchemaType.Node,
                             Properties = dictProps,
                             Required = dictRequired,
                             AdditionalProperties = valueSchema.IsTrue ? null : valueSchema,

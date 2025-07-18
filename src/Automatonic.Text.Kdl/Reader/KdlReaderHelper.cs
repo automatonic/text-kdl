@@ -36,8 +36,6 @@ namespace Automatonic.Text.Kdl
             {
                 case KdlTokenType.None:
                     return KdlValueKind.Undefined;
-                case KdlTokenType.StartArray:
-                    return KdlValueKind.Node;
                 case KdlTokenType.StartChildrenBlock:
                     return KdlValueKind.Node;
                 case KdlTokenType.String:

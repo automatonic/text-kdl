@@ -431,8 +431,7 @@ namespace Automatonic.Text.Kdl.Schema
                 KdlSchemaType.Integer,
                 KdlSchemaType.Number,
                 KdlSchemaType.Boolean,
-                KdlSchemaType.Array,
-                KdlSchemaType.Object,
+                KdlSchemaType.Node,
                 KdlSchemaType.Null,
             ];
 
@@ -477,8 +476,7 @@ namespace Automatonic.Text.Kdl.Schema
                     KdlSchemaType.Integer => "integer",
                     KdlSchemaType.Number => "number",
                     KdlSchemaType.String => "string",
-                    KdlSchemaType.Array => "array",
-                    KdlSchemaType.Object => "object",
+                    KdlSchemaType.Node => "node",
                     _ => null,
                 };
         }

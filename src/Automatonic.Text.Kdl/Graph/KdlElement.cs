@@ -382,7 +382,7 @@ namespace Automatonic.Text.Kdl.Graph
 
             if (value is KdlReadOnlyElement element)
             {
-                return KdlVertexConverter.Create(element, options);
+                return KdlElementConverter.Create(element, options);
             }
 
             var kdlTypeInfo = (KdlTypeInfo<T>)KdlSerializerOptions.Default.GetTypeInfo(typeof(T));

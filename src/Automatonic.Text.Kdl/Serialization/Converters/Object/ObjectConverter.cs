@@ -45,8 +45,8 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
                 return;
             }
 
-            writer.WriteStartObject();
-            writer.WriteEndObject();
+            writer.WriteStartChildrenBlock();
+            writer.WriteEndChildrenBlock();
         }
 
         public sealed override void WriteAsPropertyName(
@@ -137,7 +137,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
             }
 
             Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
-            return KdlVertexConverter.Instance.Read(ref reader, typeToConvert, options);
+            return KdlElementConverter.Instance.Read(ref reader, typeToConvert, options);
         }
 
         internal override bool OnTryRead(
@@ -177,7 +177,7 @@ namespace Automatonic.Text.Kdl.Serialization.Converters
 
             Debug.Assert(options.UnknownTypeHandling == KdlUnknownTypeHandling.KdlVertex);
 
-            KdlElement? node = KdlVertexConverter.Instance.Read(ref reader, typeToConvert, options);
+            KdlElement? node = KdlElementConverter.Instance.Read(ref reader, typeToConvert, options);
 
             if (
                 options.ReferenceHandlingStrategy == KdlKnownReferenceHandler.Preserve

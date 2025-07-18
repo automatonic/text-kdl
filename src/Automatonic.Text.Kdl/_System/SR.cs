@@ -9,7 +9,6 @@ namespace System
         public const string Argument_InvalidOffLen = "Argument_InvalidOffLen";
         public const string ArgumentOutOfRange_Generic_MustBeNonNegative =
             "ArgumentOutOfRange_Generic_MustBeNonNegative";
-        public const string ArrayDepthTooLarge = "ArrayDepthTooLarge";
         public const string ArrayIndexNegative = "ArrayIndexNegative";
         public const string ArrayTooSmall = "ArrayTooSmall";
         public const string BufferMaximumSizeExceeded = "BufferMaximumSizeExceeded";
@@ -161,7 +160,7 @@ namespace System
         public const string MetadataStandaloneValuesProperty = "MetadataStandaloneValuesProperty";
         public const string MetadataUnexpectedProperty = "MetadataUnexpectedProperty";
         public const string MetadataValueWasNotString = "MetadataValueWasNotString";
-        public const string MismatchedObjectArray = "MismatchedObjectArray";
+        public const string MismatchedChildrenBlock = "MismatchedObjectArray";
         public const string MissingFSharpCoreMember = "MissingFSharpCoreMember";
         public const string MultipleMembersBindWithConstructorParameter =
             "MultipleMembersBindWithConstructorParameter";
@@ -197,7 +196,7 @@ namespace System
             "ObjectCreationHandlingPropertyMustHaveAGetter";
         public const string ObjectCreationHandlingPropertyValueTypeMustHaveASetter =
             "ObjectCreationHandlingPropertyValueTypeMustHaveASetter";
-        public const string ObjectDepthTooLarge = "ObjectDepthTooLarge";
+        public const string NodeDepthTooLarge = "NodeDepthTooLarge";
         public const string ObjectWithParameterizedCtorRefMetadataNotSupported =
             "ObjectWithParameterizedCtorRefMetadataNotSupported";
         public const string OnDeserializingCallbacksNotSupported =

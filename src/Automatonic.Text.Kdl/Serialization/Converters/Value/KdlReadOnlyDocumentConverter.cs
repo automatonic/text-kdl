@@ -3,7 +3,7 @@ using Automatonic.Text.Kdl.Schema;
 
 namespace Automatonic.Text.Kdl.Serialization.Converters
 {
-    internal sealed class KdlDocumentConverter : KdlConverter<KdlReadOnlyDocument?>
+    internal sealed class KdlReadOnlyDocumentConverter : KdlConverter<KdlReadOnlyDocument?>
     {
         public override bool HandleNull => true;
 

@@ -4,8 +4,9 @@ namespace Automatonic.Text.Kdl
     {
         public const byte OpenBrace = (byte)'{';
         public const byte CloseBrace = (byte)'}';
-        public const byte OpenBracket = (byte)'[';
-        public const byte CloseBracket = (byte)']';
+
+        // public const byte OpenBracket = (byte)'[';
+        // public const byte CloseBracket = (byte)']';
         public const byte Space = (byte)' ';
         public const byte CarriageReturn = (byte)'\r';
         public const byte LineFeed = (byte)'\n';
