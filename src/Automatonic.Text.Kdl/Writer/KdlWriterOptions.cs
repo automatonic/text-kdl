@@ -25,6 +25,8 @@ namespace Automatonic.Text.Kdl
         /// </summary>
         public JavaScriptEncoder? Encoder { get; set; }
 
+        public KdlCommentEncoder? CommentEncoder { get; set; }
+
         /// <summary>
         /// Defines whether the <see cref="KdlWriter"/> should pretty print the KDL which includes:
         /// indenting nested KDL tokens, adding new lines, and adding white space between property names and values.

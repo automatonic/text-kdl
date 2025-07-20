@@ -85,6 +85,14 @@ namespace Automatonic.Text.Kdl
                 ThrowHelper.ThrowArgumentException_PropertyNameTooLarge(propertyName.Length);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateNode(ReadOnlySpan<byte> nodeName)
+        {
+            if (nodeName.Length > KdlConstants.MaxUnescapedTokenSize)
+            {
+                ThrowHelper.ThrowArgumentException_NodeNameTooLarge(nodeName.Length);
+            }
+        }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static void ValidateValue(ReadOnlySpan<byte> value)
@@ -119,6 +127,15 @@ namespace Automatonic.Text.Kdl
             if (propertyName.Length > KdlConstants.MaxCharacterTokenSize)
             {
                 ThrowHelper.ThrowArgumentException_PropertyNameTooLarge(propertyName.Length);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static void ValidateNode(ReadOnlySpan<char> nodeName)
+        {
+            if (nodeName.Length > KdlConstants.MaxCharacterTokenSize)
+            {
+                ThrowHelper.ThrowArgumentException_NodeNameTooLarge(nodeName.Length);
             }
         }
 

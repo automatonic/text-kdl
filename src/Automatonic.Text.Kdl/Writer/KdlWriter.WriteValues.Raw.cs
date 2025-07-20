@@ -15,7 +15,7 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentException">Thrown if the length of the input is zero or greater than 715,827,882 (<see cref="int.MaxValue"/> / 3).</exception>
         /// <exception cref="KdlException">
         /// Thrown if <paramref name="skipInputValidation"/> is <see langword="false"/>, and the input
-        /// is not a valid, complete, single KDL value according to the KDL RFC (https://tools.ietf.org/html/rfc8259)
+        /// is not a valid, complete, single KDL value according to the KDL RFC (https://kdl.dev/spec/)
         /// or the input KDL exceeds a recursive depth of 64.
         /// </exception>
         /// <remarks>
@@ -48,7 +48,7 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentException">Thrown if the length of the input is zero or greater than 715,827,882 (<see cref="int.MaxValue"/> / 3).</exception>
         /// <exception cref="KdlException">
         /// Thrown if <paramref name="skipInputValidation"/> is <see langword="false"/>, and the input
-        /// is not a valid, complete, single KDL value according to the KDL RFC (https://tools.ietf.org/html/rfc8259)
+        /// is not a valid, complete, single KDL value according to the KDL RFC (https://kdl.dev/spec/)
         /// or the input KDL exceeds a recursive depth of 64.
         /// </exception>
         /// <remarks>
@@ -79,7 +79,7 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentException">Thrown if the length of the input is zero or greater than or equal to <see cref="int.MaxValue"/>.</exception>
         /// <exception cref="KdlException">
         /// Thrown if <paramref name="skipInputValidation"/> is <see langword="false"/>, and the input
-        /// is not a valid, complete, single KDL value according to the KDL RFC (https://tools.ietf.org/html/rfc8259)
+        /// is not a valid, complete, single KDL value according to the KDL RFC (https://kdl.dev/spec/)
         /// or the input KDL exceeds a recursive depth of 64.
         /// </exception>
         /// <remarks>
@@ -115,7 +115,7 @@ namespace Automatonic.Text.Kdl
         /// <exception cref="ArgumentException">Thrown if the length of the input is zero or equal to <see cref="int.MaxValue"/>.</exception>
         /// <exception cref="KdlException">
         /// Thrown if <paramref name="skipInputValidation"/> is <see langword="false"/>, and the input
-        /// is not a valid, complete, single KDL value according to the KDL RFC (https://tools.ietf.org/html/rfc8259)
+        /// is not a valid, complete, single KDL value according to the KDL RFC (https://kdl.dev/spec/)
         /// or the input KDL exceeds a recursive depth of 64.
         /// </exception>
         /// <remarks>

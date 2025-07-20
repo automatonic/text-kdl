@@ -10,7 +10,7 @@ namespace Automatonic.Text.Kdl
     /// <remarks>
     ///   <para>
     ///     It writes the text sequentially with no caching and adheres to the KDL RFC
-    ///     by default (https://tools.ietf.org/html/rfc8259), with the exception of writing comments.
+    ///     by default (https://kdl.dev/spec/), with the exception of writing comments.
     ///   </para>
     ///   <para>
     ///     When the user attempts to write invalid KDL and validation is enabled, it throws

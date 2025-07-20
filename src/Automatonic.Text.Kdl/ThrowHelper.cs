@@ -136,6 +136,11 @@ namespace Automatonic.Text.Kdl
         {
             throw GetArgumentException(Format(SR.PropertyNameTooLarge, tokenLength));
         }
+        [DoesNotReturn]
+        public static void ThrowArgumentException_NodeNameTooLarge(int tokenLength)
+        {
+            throw GetArgumentException(Format(SR.NodeNameTooLarge, tokenLength));
+        }
 
         [DoesNotReturn]
         public static void ThrowArgumentException_ValueTooLarge(long tokenLength)
@@ -874,7 +879,7 @@ namespace Automatonic.Text.Kdl
         }
     }
 
-    internal enum ExceptionResource
+    public enum ExceptionResource
     {
         EndOfCommentNotFound,
         EndOfStringNotFound,

@@ -85,6 +85,44 @@ namespace Automatonic.Text.Kdl
                 UpdateBitStackOnStart(token);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ValidateWritingNode()
+        {
+            if (!_options.SkipValidation)
+            {
+                if (!_inNode || _tokenType == KdlTokenType.PropertyName)
+                {
+                    Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotWritePropertyWithinArray,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
+                }
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private void ValidateWritingNode(byte token)
+        {
+            if (!_options.SkipValidation)
+            {
+                if (!_inNode || _tokenType == KdlTokenType.PropertyName)
+                {
+                    Debug.Assert(_tokenType != KdlTokenType.StartChildrenBlock);
+                    ThrowHelper.ThrowInvalidOperationException(
+                        ExceptionResource.CannotWritePropertyWithinArray,
+                        currentDepth: default,
+                        maxDepth: _options.MaxDepth,
+                        token: default,
+                        _tokenType
+                    );
+                }
+                UpdateBitStackOnStart(token);
+            }
+        }
 
         private void WritePropertyNameMinimized(ReadOnlySpan<byte> escapedPropertyName, byte token)
         {

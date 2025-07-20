@@ -1,8 +1,10 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
 namespace Automatonic.Text.Kdl
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Style",
+        "IDE0075:Simplify conditional expression",
+        Justification = "<Pending>"
+    )]
     internal static class AppContextSwitchHelper
     {
         public static bool IsSourceGenReflectionFallbackEnabled { get; } =

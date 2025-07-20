@@ -1029,7 +1029,7 @@ namespace Automatonic.Text.Kdl
 
         // Found a backslash or control characters which are considered invalid within a string.
         // Search through the rest of the string one byte at a time.
-        // https://tools.ietf.org/html/rfc8259#section-7
+        // https://kdl.dev/spec/#section-7
         private bool ConsumeStringAndValidateMultiSegment(ReadOnlySpan<byte> data, int idx)
         {
             Debug.Assert(idx >= 0 && idx < data.Length);

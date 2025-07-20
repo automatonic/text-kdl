@@ -60,7 +60,7 @@ namespace Automatonic.Text.Kdl
             KdlTokenType tokenType,
             KdlTokenType previousTokenType,
             KdlReaderOptions readerOptions,
-            NodeStack bitStack
+            NodeStack nodeStack
         )
         {
             _lineNumber = lineNumber;
@@ -72,7 +72,7 @@ namespace Automatonic.Text.Kdl
             _tokenType = tokenType;
             _previousTokenType = previousTokenType;
             _readerOptions = readerOptions;
-            _nodeStack = bitStack;
+            _nodeStack = nodeStack;
         }
 
         /// <summary>

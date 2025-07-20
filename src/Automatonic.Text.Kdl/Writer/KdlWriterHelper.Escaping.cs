@@ -287,6 +287,11 @@ namespace Automatonic.Text.Kdl
             return (encoder ?? JavaScriptEncoder.Default).FindFirstCharacterToEncodeUtf8(value);
         }
 
+        public static int NeedsEscaping(ReadOnlySpan<byte> value, KdlCommentEncoder? encoder)
+        {
+            return (encoder ?? KdlCommentEncoder.Default).FindFirstCharacterToEncodeUtf8(value);
+        }
+
         public static unsafe int NeedsEscaping(ReadOnlySpan<char> value, JavaScriptEncoder? encoder)
         {
             // Some implementations of JavaScriptEncoder.FindFirstCharacterToEncode may not accept

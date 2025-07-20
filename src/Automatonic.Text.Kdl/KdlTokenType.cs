@@ -46,6 +46,11 @@ namespace Automatonic.Text.Kdl
         PropertyName,
 
         /// <summary>
+        ///   Indicates that the token type is a KDL node identifier.
+        /// </summary>
+        NodeIdentifier,
+
+        /// <summary>
         ///   Indicates that the token type is the comment string.
         /// </summary>
         Comment,

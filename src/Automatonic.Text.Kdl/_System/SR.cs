@@ -228,6 +228,7 @@ namespace System
             "Polymorphism_UnrecognizedTypeDiscriminator";
         public const string PropertyGetterDisallowNull = "PropertyGetterDisallowNull";
         public const string PropertyNameTooLarge = "PropertyNameTooLarge";
+        public const string NodeNameTooLarge = "NodeNameTooLarge";
         public const string PropertySetterDisallowNull = "PropertySetterDisallowNull";
         public const string PropertyTypeNotNullable = "PropertyTypeNotNullable";
         public const string RequiredDigitNotFoundAfterDecimal = "RequiredDigitNotFoundAfterDecimal";
@@ -288,5 +289,8 @@ namespace System
         public const string UnsupportedFormat = "UnsupportedFormat";
         public const string ValueTooLarge = "ValueTooLarge";
         public const string ZeroDepthAtEnd = "ZeroDepthAtEnd";
+        public const string KdlWriter_DocumentBomOnlyAtStart = "KdlWriter_DocumentBomOnlyAtStart";
+        public const string KdlWriter_VersionMustPrecedeAnyNode =
+            "KdlWriter_VersionMustPrecedeAnyNode";
     }
 }

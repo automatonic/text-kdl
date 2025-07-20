@@ -1467,5 +1467,17 @@ namespace Automatonic.Text.Kdl
         {
             throw new InvalidOperationException(SR.KdlSchemaExporter_DepthTooLarge);
         }
+
+        [DoesNotReturn]
+        public static void ThrowInvalidOperationException_KdlWriter_DocumentBomOnlyAtStart()
+        {
+            throw new InvalidOperationException(SR.KdlWriter_DocumentBomOnlyAtStart);
+        }
+
+        [DoesNotReturn]
+        public static void ThrowInvalidOperationException_KdlWriter_VersionMustPrecedeAnyNode()
+        {
+            throw new InvalidOperationException(SR.KdlWriter_VersionMustPrecedeAnyNode);
+        }
     }
 }
